@@ -9,36 +9,41 @@
 
 WANI adalah platform yang mengubah WhatsApp UMKM dari sekadar "papan pengumuman" menjadi **sistem bisnis hidup** — AI CS otomatis, order management, dan integrasi kasir. Pelanggan chat WA biasa, AI yang handle, order langsung tercatat.
 
+**Teknologi inti:** Node.js + Express + MongoDB + Baileys + LLM (OpenRouter/DeepSeek)
+
 ---
 
 ## 🏗️ System Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                        WAHA SERVER                          │
-│               (WhatsApp API / Bot Gateway)                    │
-└────────────────────┬────────────────────────────────────────┘
-                     │ Webhook Events
-                     ▼
-┌─────────────────────────────────────────────────────────────┐
-│                   WANI CORE BACKEND                          │
+│                      WANI APP (Node.js)                      │
+│                                                              │
 │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐   │
-│  │ Message  │  │   LLM    │  │  Order   │  │Customer  │   │
-│  │ Router   │◄─┤ Engine   │──┤ Manager  │──┤ Manager  │   │
+│  │  Baileys │──│ Message  │──│   LLM    │──│  Order   │   │
+│  │ (WA lib) │  │ Router   │  │ Engine   │  │ Manager  │   │
 │  └──────────┘  └──────────┘  └──────────┘  └──────────┘   │
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐   │
-│  │ Product  │  │ Payment  │  │  Merchant│  │  Agent   │   │
-│  │ Manager  │  │ Manager  │  │  Manager │  │  Config  │   │
+│                                    │                        │
+│  ┌──────────┐  ┌──────────┐  ┌────┴──────┐  ┌──────────┐   │
+│  │ Customer │  │ Product  │  │  Payment  │  │  AI      │   │
+│  │ Manager  │  │ Manager  │  │  Manager  │  │  Agent   │   │
 │  └──────────┘  └──────────┘  └──────────┘  └──────────┘   │
-└────────────────────┬────────────────────────────────────────┘
-                     │
-         ┌───────────┴───────────┐
-         ▼                       ▼
-┌─────────────────┐   ┌──────────────────────┐
-│    MongoDB      │   │   REST API / GraphQL  │
-│  (Database)     │   │   (Dashboard & Mobile)│
-└─────────────────┘   └──────────────────────┘
+│                                    │                        │
+│  ┌──────────┐  ┌──────────┐                                   │
+│  │ Merchant │  │Settings  │                                   │
+│  │ Manager  │  │ Manager  │                                   │
+│  └──────────┘  └──────────┘                                   │
+└──────────────────────┬─────────────────────────────────────────┘
+                       │
+              ┌────────┴────────┐
+              ▼                 ▼
+     ┌──────────────┐  ┌───────────────────┐
+     │   MongoDB    │  │  REST API / WS    │
+     │  (Database)  │  │  (Dashboard UI)   │
+     └──────────────┘  └───────────────────┘
 ```
+
+**Aliran data:** WhatsApp ↔ Baileys (WebSocket langsung) ↔ WANI Backend ↔ MongoDB
 
 ---
 
@@ -224,21 +229,40 @@ WANI adalah platform yang mengubah WhatsApp UMKM dari sekadar "papan pengumuman"
 ## 🌊 Data Flow (WA Chat → Order)
 
 ```
-1. Customer chat WA ──→ WAHA Server
-2. WAHA kirim webhook ──→ WANI Message Router
-3. Router cek:
-   ├── Pelanggan baru? → Create Customer + Conversation
-   └── Existing? → Append ke Conversation
-4. Kirim ke AI/LLM Engine untuk diproses:
-   ├── "Pesan 2 nasi goreng" → Parse → Order Object
-   ├── "Warung buka jam berapa?" → Jawab dari knowledge_base
-   └── Garbage → Reply: "Maaf, bisa diulang?"
-5. Kalo order → Order Manager:
-   ├── Validate product + stock
-   ├── Create Order + OrderItem
-   └── Kirim invoice via WA
-6. Payment → Update status Order
-7. All data masuk Dashboard merchant
+1. Customer chat WA ke nomor merchant
+         │
+         ▼
+2. Baileys (built-in WANI) menangkap event messages.upsert
+         │
+         ▼
+3. Message Router:
+   ├── Cek nomor WA pelanggan (registered?)
+   │   ├── Belum → Create Customer + Conversation
+   │   └── Udah → Append ke Conversation existing
+   │
+         ▼
+4. Kirim ke AI/LLM Engine
+   ├── "Pesan 2 nasi goreng + 1 es teh" → LLM Parse → Order Object
+   ├── "Warung buka jam berapa?"      → Ambil dari knowledge_base → Jawab
+   ├── "Makasih kak"                  → Reply sambutan
+   └── Garbage/tidak jelas            → "Maaf, bisa diulang kak?"
+         │
+         ▼
+5. Kalo hasil parse = ORDER:
+   ├── Order Manager:
+   │   ├── Validate product + stock (cek ke MongoDB)
+   │   ├── Create Order + OrderItem
+   │   └── Generate invoice text
+   └── Baileys → Kirim invoice ke WA customer
+         │
+         ▼
+6. Payment konfirmasi:
+   ├── Customer bayar (transfer/QRIS/cash)
+   ├── Merchant update status via Dashboard / WA
+   └── Order → paid
+         │
+         ▼
+7. Semua data masuk MongoDB → Dashboard merchant
 ```
 
 ---
@@ -247,14 +271,14 @@ WANI adalah platform yang mengubah WhatsApp UMKM dari sekadar "papan pengumuman"
 
 | Layer | Teknologi | Alasan |
 |-------|-----------|--------|
-| **Runtime** | Node.js 20+ (Express) | Familiar, ringan, ecosystem WAHA juga Node |
-| **Database** | MongoDB | Flexible buat chat messages (no-schema), JSON native |
-| **ORM** | Mongoose | Mature, populasi reference gampang |
-| **WA Gateway** | WAHA (WhatsApp HTTP API) | Self-hosted, full control, webhook events |
+| **Runtime** | Node.js 20+ (Express) | Familiar, ringan, satu ekosistem |
+| **Database** | MongoDB + Mongoose | Flexible buat chat messages, JSON native |
+| **WA Engine** | **Baileys** ✅ | Library langsung, ringan, kontrol penuh |
+| **Session WA** | MongoDB / File | Baileys auth credentials bisa disimpan di MongoDB |
 | **AI/LLM** | OpenRouter / DeepSeek | Free tier, multi-model, OpenAI-compatible |
-| **AI Framework** | LangChain / Custom | Prompt chaining, conversation memory |
-| **Dashboard** | React (Next.js) / EJS | Nanti belakangan, prioritas backend dulu |
-| **Auth** | JWT + WA OTP | Simple, no email needed buat UMKM |
+| **Dashboard** | Next.js / EJS | Nanti belakangan, prioritas backend dulu |
+| **Auth** | JWT + WA OTP | Simple, no email, cocok UMKM |
+| **Deploy** | **Docker Compose** 🐳 | 3 service: WANI + MongoDB + (opsional Redis) |
 
 ---
 
@@ -262,11 +286,19 @@ WANI adalah platform yang mengubah WhatsApp UMKM dari sekadar "papan pengumuman"
 
 ```
 WANI/
-├── server.js                 # Entry point
+├── server.js                 # Entry point (Express + Baileys init)
 ├── package.json
-├── .env                      # API keys, DB URI
+├── .env                      # API keys, DB URI, WA credentials
+├── docker-compose.yml        # 🐳 3 service: wani, mongo, redis
+├── Dockerfile                # Multi-stage build
+├── .dockerignore
 ├── config/
-│   └── index.js              # DB, WAHA, AI config
+│   └── index.js              # DB, Baileys, AI config
+├── baileys/                  # Baileys WhatsApp logic
+│   ├── client.js             # Init & manage Baileys socket
+│   ├── auth.js               # Session save/load (file or MongoDB)
+│   ├── handlers.js           # messages.upsert, presence, etc
+│   └── sender.js             # Helper: send text, image, buttons
 ├── models/
 │   ├── Merchant.js
 │   ├── Customer.js
@@ -285,17 +317,18 @@ WANI/
 │   ├── products.js
 │   ├── orders.js
 │   ├── conversations.js
-│   └── webhooks.js           # WAHA webhook handler
+│   └── auth.js
 ├── services/
-│   ├── waha.js               # WAHA API wrapper
-│   ├── llm.js                # AI/LLM engine
-│   ├── order-parser.js       # Parse WA chat → order
-│   └── merchant-setup.js     # Onboarding
+│   ├── llm.js                # AI/LLM engine (OpenRouter)
+│   ├── message-router.js     # Baileys event → intent → action
+│   ├── order-parser.js       # Parse LLM output → Order object
+│   ├── order-manager.js      # CRUD order + validation
+│   └── merchant-setup.js     # Onboarding flow
 ├── middleware/
-│   ├── auth.js
+│   ├── auth.js               # JWT verify
 │   └── error-handler.js
 ├── utils/
-│   ├── whatsapp.js           # Send WA messages
+│   ├── wa-formatter.js       # Format WA messages (bold, list, dll)
 │   └── helpers.js
 └── public/                   # (Future: dashboard frontend)
 ```
@@ -319,7 +352,7 @@ WANI/
 ### Orders
 - `GET  /api/orders?merchant_id=xxx` — List orders
 - `GET  /api/orders/:id` — Detail order
-- `PUT  /api/orders/:id/status` — Update status (confirm/send/cancel)
+- `PUT  /api/orders/:id/status` — Update status
 
 ### Conversations
 - `GET /api/conversations?merchant_id=xxx` — Riwayat chat
@@ -329,37 +362,117 @@ WANI/
 - `GET  /api/ai-agent/:merchant_id` — Config AI CS
 - `PUT  /api/ai-agent/:merchant_id` — Update prompt/model
 
-### Webhooks (WAHA)
-- `POST /webhooks/waha/incoming` — Pesan WA masuk → diolah AI
-- `POST /webhooks/waha/status` — Status delivery message
+### WhatsApp (Baileys - internal, bukan endpoint)
+- `messages.upsert` (Event) → Message Router → LLM Engine
+- `Baileys.sendMessage()` (Function) → Kirim WA
 
 ---
 
 ## 🧠 AI/LLM Flow Detail
 
 ```
-[WA Message In]
-      │
-      ▼
+[Baileys Event: messages.upsert]
+         │
+         ▼
 [Conversation Memory Loader]
-  - Load last N messages sebagai context
-  - Ambil data customer + produk
-      │
-      ▼
-[Intent Classifier]
-  ├── ORDER_INTENT   → "saya mau pesan..."
+  - Load last N messages dari MongoDB
+  - Ambil data customer + produk terkait
+         │
+         ▼
+[Build Prompt ke LLM]
+  Prompt = system_prompt merchant
+         + riwayat chat (N pesan terakhir)
+         + pesan baru dari customer
+         + daftar produk (untuk konteks)
+         │
+         ▼
+[LLM Response → Parse Intent]
+  ├── ORDER_INTENT   → "saya mau pesan 2 nasi goreng"
   ├── INQUIRY        → "harganya berapa?"
   ├── GREETING       → "pagi kak"
   ├── COMPLAINT      → "pesanan saya kok belum sampai"
   └── UNKNOWN        → fallback reply
-      │
-      ▼
+         │
+         ▼
 [Action Executor]
   ├── ORDER_INTENT → OrderParser → Validate → Create Order → Reply Invoice
-  ├── INQUIRY      → Query katalog → Reply
-  ├── GREETING     → Reply salam + menu
-  ├── COMPLAINT    → Escalate ke human
-  └── UNKNOWN      → "Maaf, bisa diulang?"
+  ├── INQUIRY      → Query katalog → Format → Reply
+  ├── GREETING     → Reply salam + menu produk
+  ├── COMPLAINT    → Minta maaf → Escalate ke human (forward ke merchant)
+  └── UNKNOWN      → "Maaf kak, bisa diulang? Ketik 'MENU' lihat daftar produk"
+         │
+         ▼
+[Baileys.sendMessage() → Customer terima balasan]
+```
+
+---
+
+## 🐳 Docker Compose (Final Deployment)
+
+Setelah semua fitur selesai, proyek dibungkus dengan Docker Compose untuk kemudahan instalasi:
+
+```yaml
+version: "3.8"
+
+services:
+  # ─── MongoDB ────────────────────────────────────────
+  mongo:
+    image: mongo:7
+    container_name: wani-mongo
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - wani-net
+
+  # ─── WANI Backend ────────────────────────────────────
+  wani:
+    build: .
+    container_name: wani-app
+    restart: unless-stopped
+    depends_on:
+      - mongo
+    ports:
+      - "3000:3000"          # REST API + Dashboard
+    volumes:
+      - wani_media:/app/uploads   # Image produk
+      - wani_baileys:/app/baileys_auth  # Session WA (file-based)
+    environment:
+      - NODE_ENV=production
+      - MONGO_URI=mongodb://mongo:27017/wani
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - JWT_SECRET=${JWT_SECRET}
+      - WA_PHONE_NUMBER=${WA_PHONE_NUMBER}
+    networks:
+      - wani-net
+
+volumes:
+  mongo_data:
+  wani_media:
+  wani_baileys:
+
+networks:
+  wani-net:
+    driver: bridge
+```
+
+### Cara Install (untuk user akhir):
+
+```bash
+# 1. Clone repo
+git clone https://github.com/FarrelGhozy/WANI.git
+cd WANI
+
+# 2. Setup environment
+cp .env.example .env
+nano .env     # Isi API key & nomor WA
+
+# 3. Jalanin!
+docker compose up -d
+
+# 4. Scan QR (pertama kali)
+docker compose logs -f wani  # lihat QR code
+# Scan pake WhatsApp > Linked Devices
 ```
 
 ---
@@ -368,11 +481,12 @@ WANI/
 
 | Phase | Target | Deliverable |
 |-------|--------|-------------|
-| **P1** | Minggu 1 | Foundation: models, DB, auth, struktur project |
-| **P2** | Minggu 2 | WA Integration: WAHA connect, webhook, send/receive |
-| **P3** | Minggu 3 | AI Engine: LLM integration, order parsing, conversation |
-| **P4** | Minggu 4 | Order Flow: CRUD order, payment, invoice WA |
-| **P5** | Implementasi | Dashboard UI, integrasi Kasir_UTC_02 |
+| **P1** | Minggu 1-2 | Foundation: Express setup, MongoDB models, Mongoose schemas, Auth JWT |
+| **P2** | Minggu 3 | WA Integration: Baileys init, auth session, send/receive message, message handler |
+| **P3** | Minggu 4 | AI Engine: LLM integration (OpenRouter), intent classification, order parsing |
+| **P4** | Minggu 5 | Business Logic: Order CRUD, product/customer management, invoice via WA |
+| **P5** | Minggu 6 | Polish + Deploy: error handling, Docker Compose, docs, testing |
+| **P6** | Future | Dashboard UI, integrasi Kasir_UTC_02 |
 
 ---
 
