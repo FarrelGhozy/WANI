@@ -1,0 +1,31 @@
+# ─── Dependencies ───
+node_modules/
+
+# ─── Build output ───
+dist/
+
+# ─── Environment ───
+.env
+.env.local
+.env.production
+
+# ─── IDE ───
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ─── OS ───
+.DS_Store
+Thumbs.db
+
+# ─── Logs ───
+logs/
+*.log
+
+# ─── Uploads (runtime) ───
+public/uploads/*
+!public/uploads/.gitkeep
+
+# ─── Baileys auth temp (kalau file-based) ───
+baileys_auth/
