@@ -1,4 +1,4 @@
-import { OrderStatus, PaymentStatus, ConversationStatus } from '@prisma/client';
+import { OrderStatus } from '@prisma/client';
 
 // ─── LLM Output Types ───────────────────────────────────
 

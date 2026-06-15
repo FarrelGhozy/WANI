@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { ApiResponse } from '../types/index.js';
 
 export function success<T>(data: T, meta?: ApiResponse['meta']): ApiResponse<T> {
@@ -23,4 +24,16 @@ export function formatCurrency(amount: number | bigint): string {
     currency: 'IDR',
     minimumFractionDigits: 0,
   }).format(num);
+}
+
+/**
+ * Download a URL and return its content as a Buffer.
+ * Used by media sender helpers.
+ */
+export async function downloadAndBuffer(url: string): Promise<Buffer> {
+  const response = await axios.get<ArrayBuffer>(url, {
+    responseType: 'arraybuffer',
+    timeout: 30_000,
+  });
+  return Buffer.from(response.data);
 }
