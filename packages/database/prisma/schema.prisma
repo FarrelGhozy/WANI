@@ -63,6 +63,7 @@ model Merchant {
   settings      Setting[]
   activityLogs  ActivityLog[]
   waSession     WaSession?
+  webStore      WebStore?
 
   @@map("merchants")
 }
@@ -267,4 +268,38 @@ model ActivityLog {
 
   @@index([merchantId, createdAt])
   @@map("activity_logs")
+}
+
+// ─── Web Store ───────────────────────────────────────────
+
+model WebStore {
+  id           String   @id @default(uuid())
+  merchantId   String   @unique @map("merchant_id")
+  slug         String   @unique
+  template     String   @default("default")
+  isPublished  Boolean  @default(false) @map("is_published")
+  customDomain String?  @map("custom_domain")
+  seoTitle     String?
+  seoDesc      String?
+  theme        Json?
+  heroImage    String?  @map("hero_image")
+  heroText     String?  @map("hero_text")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  merchant Merchant @relation(fields: [merchantId], references: [id])
+
+  @@map("web_stores")
+}
+
+model Template {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  label     String
+  thumbnail String?
+  config    Json?
+  isPublic  Boolean  @default(true) @map("is_public")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("templates")
 }

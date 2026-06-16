@@ -78,12 +78,83 @@ Gratis ongkir area sekitar (maks 3km).
     },
   });
 
+  // Create templates
+  const templates = await Promise.all([
+    prisma.template.upsert({
+      where: { name: 'modern' },
+      update: {},
+      create: {
+        name: 'modern',
+        label: 'Modern',
+        thumbnail: null,
+        isPublic: true,
+        config: {
+          colors: { primary: '#4F46E5', secondary: '#7C3AED', accent: '#F59E0B', background: '#FFFFFF', text: '#1F2937' },
+          fonts: { heading: 'Inter', body: 'Inter' },
+          layout: { style: 'modern', rounded: true, shadows: true },
+        },
+      },
+    }),
+    prisma.template.upsert({
+      where: { name: 'minimal' },
+      update: {},
+      create: {
+        name: 'minimal',
+        label: 'Minimal',
+        thumbnail: null,
+        isPublic: true,
+        config: {
+          colors: { primary: '#111827', secondary: '#374151', accent: '#3B82F6', background: '#F9FAFB', text: '#111827' },
+          fonts: { heading: 'Inter', body: 'Inter' },
+          layout: { style: 'minimal', rounded: false, shadows: false },
+        },
+      },
+    }),
+    prisma.template.upsert({
+      where: { name: 'classic' },
+      update: {},
+      create: {
+        name: 'classic',
+        label: 'Klasik',
+        thumbnail: null,
+        isPublic: true,
+        config: {
+          colors: { primary: '#92400E', secondary: '#B45309', accent: '#D97706', background: '#FFFBEB', text: '#451A03' },
+          fonts: { heading: 'Merriweather', body: 'Inter' },
+          layout: { style: 'classic', rounded: false, shadows: true },
+        },
+      },
+    }),
+  ]);
+
+  // Create web store for merchant
+  await prisma.webStore.upsert({
+    where: { merchantId: merchant.id },
+    update: {},
+    create: {
+      merchantId: merchant.id,
+      slug: 'warung-berkah',
+      template: 'modern',
+      isPublished: true,
+      seoTitle: 'Warung Berkah — Belanja Online',
+      seoDesc: 'Warung Berkah menyediakan makanan dan minuman dengan harga terjangkau. Pesan lewat WhatsApp!',
+      heroText: 'Selamat datang di Warung Berkah! 🏪',
+      theme: {
+        colors: { primary: '#4F46E5', secondary: '#7C3AED', accent: '#F59E0B', background: '#FFFFFF', text: '#1F2937' },
+        fonts: { heading: 'Inter', body: 'Inter' },
+        layout: { style: 'modern', rounded: true, shadows: true },
+      },
+    },
+  });
+
   console.log(`
   ✅ Seed complete!
   ──────────────────────
   🏪 Merchant: ${merchant.businessName} (ID: ${merchant.id})
   📦 Products: ${products.count}
   👤 Customer: ${customer.name}
+  🎨 Templates: ${templates.length}
+  🌐 Web Store: warung-berkah
   ──────────────────────
   `);
 }
