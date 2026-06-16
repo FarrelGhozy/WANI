@@ -10,9 +10,9 @@ importers:
 
   apps/api:
     dependencies:
-      '@prisma/client':
-        specifier: ^6.6.0
-        version: 6.19.3(prisma@6.19.3(typescript@5.9.3))(typescript@5.9.3)
+      '@wani/database':
+        specifier: workspace:*
+        version: link:../../packages/database
       '@whiskeysockets/baileys':
         specifier: ^7.0.0-rc13
         version: 7.0.0-rc13(sharp@0.35.1)
@@ -77,6 +77,19 @@ importers:
       vitest:
         specifier: ^3.2.6
         version: 3.2.6(@types/node@22.19.21)(jiti@2.7.0)(tsx@4.22.4)
+
+  packages/database:
+    dependencies:
+      '@prisma/client':
+        specifier: ^6.6.0
+        version: 6.19.3(prisma@6.19.3(typescript@5.9.3))(typescript@5.9.3)
+    devDependencies:
+      prisma:
+        specifier: ^6.6.0
+        version: 6.19.3(typescript@5.9.3)
+      typescript:
+        specifier: ^5.7.0
+        version: 5.9.3
 
 packages:
 

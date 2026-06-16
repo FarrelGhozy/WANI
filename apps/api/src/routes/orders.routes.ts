@@ -7,7 +7,7 @@ import {
   getOrderById,
   transitionOrderStatus,
 } from '../services/order.service.js';
-import { OrderStatus } from '@prisma/client';
+import { OrderStatus } from '@wani/database';
 
 const router = Router();
 router.use(requireMerchant);

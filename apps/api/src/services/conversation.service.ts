@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { prisma } from '../config/prisma.js';
 import { ApiResponse, PaginationParams } from '../types/index.js';
 import { success } from '../utils/helpers.js';
-import { Prisma } from '@prisma/client';
+import { Prisma } from '@wani/database';
 
 // ─── Zod Schemas ─────────────────────────────────────────
 

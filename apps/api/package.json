@@ -10,10 +10,10 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "tsc --noEmit",
-    "db:seed": "tsx prisma/seed.ts"
+    "db:seed": "echo 'use pnpm db:seed from root'"
   },
   "dependencies": {
-    "@prisma/client": "^6.6.0",
+    "@wani/database": "workspace:*",
     "@whiskeysockets/baileys": "^7.0.0-rc13",
     "axios": "^1.7.0",
     "cors": "^2.8.5",

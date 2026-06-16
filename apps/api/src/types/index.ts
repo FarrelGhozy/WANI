@@ -1,4 +1,4 @@
-import { OrderStatus } from '@prisma/client';
+import { OrderStatus } from '@wani/database';
 
 // ─── LLM Output Types ───────────────────────────────────
 

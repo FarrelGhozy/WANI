@@ -1,5 +1,5 @@
 import type { AuthenticationState, AuthenticationCreds, SignalDataTypeMap, SignalDataSet, SignalKeyStore } from '@whiskeysockets/baileys';
-import type { Prisma } from '@prisma/client';
+import type { Prisma } from '@wani/database';
 import { prisma } from '../config/prisma.js';
 import { logger } from '../config/logger.js';
 

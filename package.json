@@ -20,7 +20,7 @@
     "db:migrate": "pnpm --filter @wani/database db:migrate",
     "db:push": "pnpm --filter @wani/database db:push",
     "db:studio": "pnpm --filter @wani/database db:studio",
-    "db:seed": "pnpm --filter @wani/api db:seed",
+    "db:seed": "pnpm --filter @wani/database db:seed",
     "docker:dev": "docker compose up",
     "docker:dev:build": "docker compose up --build",
     "docker:dev:down": "docker compose down",
