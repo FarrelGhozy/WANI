@@ -119,10 +119,29 @@ export async function processOrder(
         },
       });
 
+      // Decrement stock for each item
+      for (const oi of orderItems) {
+        await tx.product.update({
+          where: { id: oi.productId },
+          data: { stock: { decrement: oi.qty } },
+        });
+      }
+
       // Update customer total orders
       await tx.customer.update({
         where: { id: customerId },
         data: { totalOrders: { increment: 1 } },
+      });
+
+      // Log activity
+      await tx.activityLog.create({
+        data: {
+          merchantId,
+          type: 'ORDER_CREATED',
+          referenceId: created.id,
+          description: `Pesanan baru dari ${customerId} — ${orderItems.length} item, total ${totalAmount}`,
+          metadata: { itemCount: orderItems.length, totalAmount },
+        },
       });
 
       return created;

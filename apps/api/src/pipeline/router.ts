@@ -114,7 +114,24 @@ export async function handleIncomingMessage(
     data: { lastMessageAt: new Date() },
   });
 
-  // ── 4. Build routing context ──────────────────────
+  // ── 4. Check AI agent enabled ─────────────────────
+  const aiAgent = await prisma.aIAgent.findUnique({
+    where: { merchantId },
+    select: { isActive: true },
+  });
+
+  if (aiAgent && !aiAgent.isActive) {
+    logger.info({ merchantId }, 'AI agent disabled, skipping auto-reply');
+    return null;
+  }
+
+  // ── 5. Skip AI reply if conversation is ESCALATED ──
+  if (conversation.status === 'ESCALATED') {
+    logger.info({ conversationId: conversation.id }, 'Conversation escalated, skipping AI reply');
+    return null;
+  }
+
+  // ── 6. Build routing context ──────────────────────
   const ctx: RoutingContext = {
     merchantId,
     customerId: customer.id,
@@ -122,7 +139,7 @@ export async function handleIncomingMessage(
     message: msg,
   };
 
-  // ── 5. Classify intent ────────────────────────────
+  // ── 7. Classify intent ────────────────────────────
   let output: LLMOutput;
   try {
     output = await classifyIntent(merchantId, msg.text);
@@ -132,7 +149,7 @@ export async function handleIncomingMessage(
     return 'Maaf, terjadi gangguan teknis. Silakan coba lagi.';
   }
 
-  // ── 6. Route ─────────────────────────────────────
+  // ── 8. Route ─────────────────────────────────────
   try {
     switch (output.intent) {
       case 'order':
