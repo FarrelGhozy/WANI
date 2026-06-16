@@ -3,6 +3,7 @@ node_modules/
 
 # ─── Build output ───
 dist/
+.next/
 
 # ─── Environment ───
 .env
@@ -32,3 +33,4 @@ baileys_auth/
 
 
 AGENTS.md
+next-env.d.ts
