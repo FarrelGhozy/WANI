@@ -29,3 +29,6 @@ public/uploads/*
 
 # ─── Baileys auth temp (kalau file-based) ───
 baileys_auth/
+
+
+AGENTS.md
