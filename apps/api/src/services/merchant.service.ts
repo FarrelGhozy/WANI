@@ -9,6 +9,7 @@ export const createMerchantSchema = z.object({
   businessName: z.string().min(1).max(200),
   phone: z.string().min(8).max(20),
   address: z.string().optional(),
+  passwordHash: z.string().optional(),
 });
 
 export const updateMerchantSchema = z.object({

@@ -12,6 +12,7 @@ async function main() {
     create: {
       businessName: 'Warung Berkah',
       phone: '6281234567890',
+      passwordHash: '$2b$12$lxzYe.rIA3ZUYcdb8s.5JOaPuj.CxXB/byQUnNiCQWNKkM0pFTypO',
       address: 'Jl. Merdeka No. 123, Jakarta',
       aiAgent: {
         create: {

@@ -49,6 +49,7 @@ model Merchant {
   id           String   @id @default(uuid())
   businessName String   @map("business_name")
   phone        String   @unique
+  passwordHash String?  @map("password_hash")
   address      String?
   isActive     Boolean  @default(true) @map("is_active")
   createdAt    DateTime @default(now()) @map("created_at")
