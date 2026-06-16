@@ -8,13 +8,6 @@ export {
   deleteMerchant,
   toggleMerchantActive,
   getMerchantStats,
-  createMerchantSchema,
-  updateMerchantSchema,
-} from './merchant.service.js';
-
-export type {
-  CreateMerchantInput,
-  UpdateMerchantInput,
 } from './merchant.service.js';
 
 export {
@@ -28,13 +21,6 @@ export {
   incrementOrderCount,
   getCustomerOrders,
   searchCustomers,
-  createCustomerSchema,
-  updateCustomerSchema,
-} from './customer.service.js';
-
-export type {
-  CreateCustomerInput,
-  UpdateCustomerInput,
 } from './customer.service.js';
 
 export {
@@ -49,13 +35,6 @@ export {
   searchProducts,
   getProductsByCategory,
   getAvailableProducts,
-  createProductSchema,
-  updateProductSchema,
-} from './product.service.js';
-
-export type {
-  CreateProductInput,
-  UpdateProductInput,
 } from './product.service.js';
 
 export {
@@ -69,15 +48,6 @@ export {
   getPendingOrders,
   getTodayOrders,
   getOrderStats,
-  createOrderSchema,
-  updateOrderSchema,
-  transitionOrderSchema,
-} from './order.service.js';
-
-export type {
-  CreateOrderInput,
-  UpdateOrderInput,
-  TransitionOrderInput,
 } from './order.service.js';
 
 export {
@@ -91,13 +61,6 @@ export {
   payOrder,
   refundPayment,
   getPaymentStats,
-  createPaymentSchema,
-  updatePaymentSchema,
-} from './payment.service.js';
-
-export type {
-  CreatePaymentInput,
-  UpdatePaymentInput,
 } from './payment.service.js';
 
 export {
@@ -114,15 +77,6 @@ export {
   escalateConversation,
   getActiveConversations,
   getConversationStats,
-  createConversationSchema,
-  updateConversationSchema,
-  sendMessageSchema,
-} from './conversation.service.js';
-
-export type {
-  CreateConversationInput,
-  UpdateConversationInput,
-  SendMessageInput,
 } from './conversation.service.js';
 
 export {
@@ -142,11 +96,56 @@ export {
   updateAIAgentModel,
   updateKnowledgeBase,
   getActiveAIAgentByMerchant,
-  createAIAgentSchema,
-  updateAIAgentSchema,
 } from './ai-agent.service.js';
 
+// ─── Re-export Zod schemas & types from shared validation ─
+
+export {
+  registerSchema,
+  loginSchema,
+  createMerchantSchema,
+  updateMerchantSchema,
+  createCategorySchema,
+  updateCategorySchema,
+  createProductSchema,
+  updateProductSchema,
+  createCustomerSchema,
+  updateCustomerSchema,
+  createOrderSchema,
+  updateOrderSchema,
+  transitionOrderSchema,
+  createPaymentSchema,
+  updatePaymentSchema,
+  createConversationSchema,
+  updateConversationSchema,
+  sendMessageSchema,
+  createAIAgentSchema,
+  updateAIAgentSchema,
+  updateWebStoreSchema,
+  updateSettingsSchema,
+} from '../lib/validation.js';
+
 export type {
+  RegisterInput,
+  LoginInput,
+  CreateMerchantInput,
+  UpdateMerchantInput,
+  CreateCategoryInput,
+  UpdateCategoryInput,
+  CreateProductInput,
+  UpdateProductInput,
+  CreateCustomerInput,
+  UpdateCustomerInput,
+  CreateOrderInput,
+  UpdateOrderInput,
+  TransitionOrderInput,
+  CreatePaymentInput,
+  UpdatePaymentInput,
+  CreateConversationInput,
+  UpdateConversationInput,
+  SendMessageInput,
   CreateAIAgentInput,
   UpdateAIAgentInput,
-} from './ai-agent.service.js';
+  UpdateWebStoreInput,
+  UpdateSettingsInput,
+} from '../lib/validation.js';

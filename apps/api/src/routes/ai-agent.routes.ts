@@ -1,5 +1,4 @@
 import { Router, Response, NextFunction } from 'express';
-import { z } from 'zod';
 import { requireMerchant, AuthRequest } from '../middleware/auth.js';
 import { validate } from '../middleware/validator.js';
 import {
@@ -7,9 +6,8 @@ import {
   createAIAgent,
   updateAIAgent,
   toggleAIAgent,
-  createAIAgentSchema,
-  updateAIAgentSchema,
 } from '../services/ai-agent.service.js';
+import { createAIAgentSchema, updateAIAgentSchema } from '../lib/validation.js';
 
 const router = Router();
 router.use(requireMerchant);

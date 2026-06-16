@@ -3,28 +3,8 @@ import { prisma } from '../config/prisma.js';
 import { ApiResponse, PaginationParams } from '../types/index.js';
 import { success } from '../utils/helpers.js';
 import { Prisma } from '@wani/database';
-
-// ─── Zod Schemas ─────────────────────────────────────────
-
-export const createConversationSchema = z.object({
-  merchantId: z.string().uuid(),
-  customerId: z.string().uuid(),
-});
-
-export const updateConversationSchema = z.object({
-  status: z.enum(['ACTIVE', 'RESOLVED', 'ARCHIVED', 'ESCALATED']).optional(),
-});
-
-export const sendMessageSchema = z.object({
-  role: z.enum(['CUSTOMER', 'BOT', 'HUMAN']),
-  content: z.string().min(1),
-  msgType: z.string().default('text'),
-  metadata: z.record(z.unknown()).optional(),
-});
-
-export type CreateConversationInput = z.infer<typeof createConversationSchema>;
-export type UpdateConversationInput = z.infer<typeof updateConversationSchema>;
-export type SendMessageInput = z.infer<typeof sendMessageSchema>;
+import { createConversationSchema, updateConversationSchema, sendMessageSchema } from '../lib/validation.js';
+import type { CreateConversationInput, UpdateConversationInput, SendMessageInput } from '../lib/validation.js';
 
 // ─── CRUD Methods ────────────────────────────────────────
 

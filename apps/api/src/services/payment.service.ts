@@ -2,23 +2,8 @@ import { z } from 'zod';
 import { prisma } from '../config/prisma.js';
 import { ApiResponse, PaginationParams } from '../types/index.js';
 import { success } from '../utils/helpers.js';
-
-// ─── Zod Schemas ─────────────────────────────────────────
-
-export const createPaymentSchema = z.object({
-  orderId: z.string().uuid(),
-  method: z.enum(['CASH', 'TRANSFER', 'QRIS']).optional(),
-  amount: z.number().positive(),
-});
-
-export const updatePaymentSchema = z.object({
-  method: z.enum(['CASH', 'TRANSFER', 'QRIS']).optional(),
-  status: z.enum(['PENDING', 'PAID', 'FAILED', 'REFUNDED']).optional(),
-  paidAt: z.string().datetime().optional(),
-});
-
-export type CreatePaymentInput = z.infer<typeof createPaymentSchema>;
-export type UpdatePaymentInput = z.infer<typeof updatePaymentSchema>;
+import { createPaymentSchema, updatePaymentSchema } from '../lib/validation.js';
+import type { CreatePaymentInput, UpdatePaymentInput } from '../lib/validation.js';
 
 // ─── CRUD Methods ────────────────────────────────────────
 

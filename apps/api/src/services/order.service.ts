@@ -3,34 +3,8 @@ import { prisma } from '../config/prisma.js';
 import { ApiResponse, PaginationParams, canTransition } from '../types/index.js';
 import { success } from '../utils/helpers.js';
 import { Prisma } from '@wani/database';
-
-// ─── Zod Schemas ─────────────────────────────────────────
-
-export const createOrderSchema = z.object({
-  merchantId: z.string().uuid(),
-  customerId: z.string().uuid(),
-  source: z.string().default('wa_chat'),
-  notes: z.string().optional(),
-  items: z.array(
-    z.object({
-      productId: z.string().uuid(),
-      qty: z.number().int().positive(),
-    }),
-  ).min(1),
-});
-
-export const updateOrderSchema = z.object({
-  notes: z.string().optional(),
-  source: z.string().optional(),
-});
-
-export const transitionOrderSchema = z.object({
-  status: z.enum(['PENDING', 'CONFIRMED', 'PROCESSING', 'COMPLETED', 'CANCELLED']),
-});
-
-export type CreateOrderInput = z.infer<typeof createOrderSchema>;
-export type UpdateOrderInput = z.infer<typeof updateOrderSchema>;
-export type TransitionOrderInput = z.infer<typeof transitionOrderSchema>;
+import { createOrderSchema, updateOrderSchema, transitionOrderSchema } from '../lib/validation.js';
+import type { CreateOrderInput, UpdateOrderInput, TransitionOrderInput } from '../lib/validation.js';
 
 // ─── CRUD Methods ────────────────────────────────────────
 

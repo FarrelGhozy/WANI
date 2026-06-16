@@ -2,31 +2,8 @@ import { z } from 'zod';
 import { prisma } from '../config/prisma.js';
 import { ApiResponse } from '../types/index.js';
 import { success } from '../utils/helpers.js';
-
-// ─── Zod Schemas ─────────────────────────────────────────
-
-export const createAIAgentSchema = z.object({
-  merchantId: z.string().uuid(),
-  systemPrompt: z.string().min(1),
-  model: z.string().default('opencode/deepseek-v4-flash-free'),
-  greetingMessage: z.string().optional(),
-  knowledgeBase: z.string().optional(),
-  maxTokens: z.number().int().positive().default(2048),
-  temperature: z.number().min(0).max(2).default(0.7),
-});
-
-export const updateAIAgentSchema = z.object({
-  isActive: z.boolean().optional(),
-  systemPrompt: z.string().min(1).optional(),
-  model: z.string().optional(),
-  greetingMessage: z.string().optional(),
-  knowledgeBase: z.string().optional(),
-  maxTokens: z.number().int().positive().optional(),
-  temperature: z.number().min(0).max(2).optional(),
-});
-
-export type CreateAIAgentInput = z.infer<typeof createAIAgentSchema>;
-export type UpdateAIAgentInput = z.infer<typeof updateAIAgentSchema>;
+import { createAIAgentSchema, updateAIAgentSchema } from '../lib/validation.js';
+import type { CreateAIAgentInput, UpdateAIAgentInput } from '../lib/validation.js';
 
 // ─── CRUD Methods ────────────────────────────────────────
 

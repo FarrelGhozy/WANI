@@ -2,32 +2,8 @@ import { z } from 'zod';
 import { prisma } from '../config/prisma.js';
 import { ApiResponse, PaginationParams } from '../types/index.js';
 import { success } from '../utils/helpers.js';
-
-// ─── Zod Schemas ─────────────────────────────────────────
-
-export const createProductSchema = z.object({
-  merchantId: z.string().uuid(),
-  categoryId: z.string().uuid().optional(),
-  name: z.string().min(1).max(200),
-  description: z.string().optional(),
-  price: z.number().positive(),
-  stock: z.number().int().min(0).default(0),
-  isAvailable: z.boolean().default(true),
-  imageUrl: z.string().url().optional(),
-});
-
-export const updateProductSchema = z.object({
-  categoryId: z.string().uuid().optional(),
-  name: z.string().min(1).max(200).optional(),
-  description: z.string().optional(),
-  price: z.number().positive().optional(),
-  stock: z.number().int().min(0).optional(),
-  isAvailable: z.boolean().optional(),
-  imageUrl: z.string().url().optional(),
-});
-
-export type CreateProductInput = z.infer<typeof createProductSchema>;
-export type UpdateProductInput = z.infer<typeof updateProductSchema>;
+import { createProductSchema, updateProductSchema } from '../lib/validation.js';
+import type { CreateProductInput, UpdateProductInput } from '../lib/validation.js';
 
 // ─── CRUD Methods ────────────────────────────────────────
 

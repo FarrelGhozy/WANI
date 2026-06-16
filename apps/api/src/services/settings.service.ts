@@ -1,24 +1,7 @@
 import { z } from 'zod';
 import { prisma } from '../config/prisma.js';
 import { success } from '../utils/helpers.js';
-
-export const updateSettingsSchema = z.object({
-  currency: z.string().optional(),
-  timezone: z.string().optional(),
-  min_order: z.number().optional(),
-  free_delivery_km: z.number().optional(),
-  delivery_fee_city: z.number().optional(),
-  delivery_fee_outside: z.number().optional(),
-  estimated_delivery: z.string().optional(),
-  delivery_area: z.string().optional(),
-  business_hours: z.any().optional(),
-  payment_methods: z.any().optional(),
-  bank_name: z.string().optional(),
-  bank_account: z.string().optional(),
-  bank_holder: z.string().optional(),
-  qris_image: z.string().optional(),
-  qris_holder: z.string().optional(),
-});
+import { updateSettingsSchema } from '../lib/validation.js';
 
 export async function getSettings(merchantId: string) {
   try {

@@ -1,5 +1,4 @@
 import { Router, Response, NextFunction } from 'express';
-import { z } from 'zod';
 import bcrypt from 'bcryptjs';
 import { validate } from '../middleware/validator.js';
 import { AuthRequest, generateMerchantToken } from '../middleware/auth.js';
@@ -8,19 +7,9 @@ import {
   getMerchantByPhone,
 } from '../services/merchant.service.js';
 import { success } from '../utils/helpers.js';
+import { registerSchema, loginSchema } from '../lib/validation.js';
 
 const router = Router();
-
-const registerSchema = z.object({
-  businessName: z.string().min(1, 'Nama usaha wajib diisi').max(100),
-  phone: z.string().min(10, 'Nomor WA minimal 10 digit').max(20),
-  password: z.string().min(6, 'Kata sandi minimal 6 karakter'),
-});
-
-const loginSchema = z.object({
-  phone: z.string().min(1, 'Nomor WA wajib diisi'),
-  password: z.string().min(1, 'Kata sandi wajib diisi'),
-});
 
 function setTokenCookie(res: Response, token: string) {
   res.cookie('token', token, {

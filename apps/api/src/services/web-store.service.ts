@@ -2,38 +2,8 @@ import { z } from 'zod';
 import { prisma } from '../config/prisma.js';
 import { ApiResponse } from '../types/index.js';
 import { success } from '../utils/helpers.js';
-
-const themeSchema = z.object({
-  colors: z.object({
-    primary: z.string().optional(),
-    secondary: z.string().optional(),
-    accent: z.string().optional(),
-    background: z.string().optional(),
-    text: z.string().optional(),
-  }).optional(),
-  fonts: z.object({
-    heading: z.string().optional(),
-    body: z.string().optional(),
-  }).optional(),
-  layout: z.object({
-    style: z.enum(['modern', 'minimal', 'classic']).optional(),
-    rounded: z.boolean().optional(),
-    shadows: z.boolean().optional(),
-  }).optional(),
-}).optional();
-
-export const updateWebStoreSchema = z.object({
-  slug: z.string().min(3).max(50).regex(/^[a-z0-9-]+$/).optional(),
-  template: z.string().optional(),
-  seoTitle: z.string().max(70).optional(),
-  seoDesc: z.string().max(160).optional(),
-  heroImage: z.string().url().optional(),
-  heroText: z.string().max(200).optional(),
-  customDomain: z.string().optional(),
-  theme: themeSchema,
-});
-
-export type UpdateWebStoreInput = z.infer<typeof updateWebStoreSchema>;
+import { updateWebStoreSchema } from '../lib/validation.js';
+import type { UpdateWebStoreInput } from '../lib/validation.js';
 
 export async function getWebStore(merchantId: string): Promise<ApiResponse> {
   try {

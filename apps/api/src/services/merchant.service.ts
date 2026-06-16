@@ -2,25 +2,8 @@ import { z } from 'zod';
 import { prisma } from '../config/prisma.js';
 import { ApiResponse, PaginationParams } from '../types/index.js';
 import { success } from '../utils/helpers.js';
-
-// ─── Zod Schemas ─────────────────────────────────────────
-
-export const createMerchantSchema = z.object({
-  businessName: z.string().min(1).max(200),
-  phone: z.string().min(8).max(20),
-  address: z.string().optional(),
-  passwordHash: z.string().optional(),
-});
-
-export const updateMerchantSchema = z.object({
-  businessName: z.string().min(1).max(200).optional(),
-  phone: z.string().min(8).max(20).optional(),
-  address: z.string().optional(),
-  isActive: z.boolean().optional(),
-});
-
-export type CreateMerchantInput = z.infer<typeof createMerchantSchema>;
-export type UpdateMerchantInput = z.infer<typeof updateMerchantSchema>;
+import { createMerchantSchema, updateMerchantSchema } from '../lib/validation.js';
+import type { CreateMerchantInput, UpdateMerchantInput } from '../lib/validation.js';
 
 // ─── CRUD Methods ────────────────────────────────────────
 
