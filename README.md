@@ -1,44 +1,127 @@
 # WANI — WA Niaga untuk UMKM
 
-**WANI** (WA + Niaga) adalah platform open-source yang menghidupkan WhatsApp UMKM dengan AI-powered customer service, order management, dan integrasi kasir.
+**WANI** (WA + Niaga) adalah platform open-source **omnichannel** yang menghidupkan bisnis UMKM dengan AI-powered customer service, dashboard manajemen web, dan website toko auto-generated.
 
 > _"WANI — Berani Digital. WA Niaga untuk UMKM."_
+
+---
 
 ## 🚀 Visi
 
 Banyak UMKM Indonesia cuma pake WA sebagai "papan pengumuman" — kirim katalog, trus customer japri manual. Customer servicenya ya pemiliknya sendiri, sambil jualan, sambil packing, sambil produksi.
 
-**WANI** hadir buat ngubah itu. Biar WA mereka jadi **hidup** — order otomatis, customer service pake AI/LLM, semua nyambung ke sistem kasir. Data aman dengan PostgreSQL ACID transaction.
+**WANI hadir buat ngubah itu.** Bukan cuma chatbot WA biasa, tapi **ekosistem bisnis digital lengkap**:
+
+- 🤖 **AI Customer Service** di WhatsApp — otomatis, natural, 24/7
+- 🖥️ **Dashboard Web Admin** — atur produk, order, AI prompt, laporan
+- 🌐 **Auto-Generated Web Store** — tiap UMKM dapet website toko sendiri
+- 💰 **Payment Tracking** — QRIS, transfer, cash — semua tercatat
+- 🔗 **Single Source of Truth** — satu data, semua channel (WA + Web)
+
+---
 
 ## ✨ Fitur Inti
 
-- 🤖 **AI Customer Service** — LLM-powered WA bot yang handle chat pelanggan secara natural (DeepSeek / OpenRouter)
-- 📋 **Auto Order Parsing** — Langganan order dari chat WA langsung masuk ke sistem
-- 🏪 **Katalog Digital** — Produk UMKM bisa diakses dan dipesan via WA
-- 💰 **Payment Tracking** — Cash, transfer, QRIS — semua tercatat
-- 🔌 **Human Escalation** — Kalo AI ga sanggup, langsung forward ke admin
-- 📊 **Dashboard UMKM** — Laporan penjualan, riwayat chat, analisa pelanggan
-- 🐳 **Docker Compose Deploy** — Siap jalan di VPS 24/7 dalam 5 menit
-- 🔓 **Open Source (MIT)** — Bebas pake, bebas modif, bebas kontribusi
+### 🤖 WA Bot + AI
+- LLM-powered customer service (DeepSeek / OpenRouter)
+- Auto order parsing dari chat WA
+- Human escalation flow
+- Reconnection engine (24/7 online)
+
+### 🖥️ Dashboard Web (Next.js)
+- 📊 **Overview** — Statistik real-time: order, revenue, AI vs human handle rate
+- 🛍️ **Products** — CRUD produk: nama, harga, stok, kategori, foto
+- 📦 **Orders** — Semua order dari WA, status tracking (pending → confirmed → processing → completed)
+- 💬 **Chats** — Riwayat percakapan per customer, filter AI vs human
+- 🤖 **AI Config** — Atur system prompt, fallback message, auto-reply rules
+- 👥 **Customers** — Data pelanggan, riwayat order, total transaksi
+- ⚙️ **Settings** — Profil toko, WA number, payment method (QRIS, transfer, cash), koneksi Baileys
+- 🌐 **Web Store** — Preview + setting landing page auto-generated
+
+### 🌐 Auto-Generated Web Store
+Tiap UMKM yang pake WANI otomatis dapet website toko:
+
+```
+tokobudi.wani.my.id
+├── 🏪 Landing page dengan profil toko
+├── 🛍️ Katalog produk online (real-time dari database)
+├── 🔍 Kategori & pencarian produk
+├── 💬 Tombol WA tiap produk → langsung chat dengan pesan otomatis
+└── 📱 Mobile-first, responsive
+```
+
+**Cara kerja:**
+1. Data produk diambil dari database yang **SAMA** dengan WA bot
+2. Pilih template → web langsung jadi (auto-generate)
+3. Tombol WA di tiap produk → "Halo, saya mau pesan [produk] — Rp[price]"
+4. Chat masuk langsung diproses AI WANI seperti biasa
+5. **Single source of truth** — produk di dashboard = produk di WA bot = produk di website
+
+### 🔧 Lainnya
+- Payment tracking (QRIS, transfer, cash)
+- Activity log & audit trail
+- Self-hosted via Docker
+
+---
 
 ## 🛠️ Tech Stack
 
 | Layer | Teknologi |
 |-------|-----------|
-| **Runtime** | Node.js 20+ (Express + TypeScript) |
-| **Database** | PostgreSQL 16 + Prisma ORM (ACID transaction) |
-| **WhatsApp** | Baileys WebSocket (langsung, ringan) |
-| **AI/LLM** | OpenRouter / DeepSeek (free tier) |
-| **Logging** | Pino structured logger |
-| **Deploy** | Docker Compose (wani + postgres) |
+| **Runtime** | Node.js 20+ |
+| **Backend API** | Express + TypeScript |
+| **Frontend** | Next.js 14+ (App Router) |
+| **Database** | PostgreSQL 16 + Prisma ORM |
+| **WhatsApp** | Baileys WebSocket |
+| **AI/LLM** | OpenRouter / DeepSeek |
+| **Auth** | JWT + WA OTP |
+| **Deploy** | Docker Compose |
+
+---
+
+## 📁 Struktur Proyek
+
+```
+WANI/
+├── apps/
+│   ├── api/                  # Express backend (WA bot, REST API)
+│   │   ├── src/
+│   │   │   ├── baileys/      # WhatsApp engine
+│   │   │   ├── ai/           # AI/LLM pipeline
+│   │   │   ├── pipeline/     # Message routing
+│   │   │   ├── services/     # Business logic
+│   │   │   └── routes/       # REST API endpoints
+│   │   └── ...
+│   └── web/                  # Next.js (Dashboard + Web Store)
+│       ├── src/
+│       │   ├── app/
+│       │   │   ├── dashboard/  # Admin panel (login required)
+│       │   │   ├── store/      # Public web toko (auto-gen)
+│       │   │   └── templates/  # Template editor
+│       │   └── ...
+│       └── ...
+├── packages/
+│   └── database/             # Prisma schema (shared)
+├── docker-compose.yml
+└── ...
+```
+
+---
 
 ## 🚦 Status
 
-🚧 **Development — fase perencanaan pondasi selesai.**
+🚧 **Development — fase perencanaan pondasi selesai. Memasuki fase coding.**
 
-✅ Arsitektur & ERD — fix
-✅ Tech stack — fix
-❌ Coding — belum dimulai
+| Komponen | Status |
+|----------|--------|
+| ✅ Arsitektur & ERD | Done |
+| ✅ Tech stack | Done |
+| 🏗️ Express backend | In progress |
+| ⏳ Next.js dashboard | Planned |
+| ⏳ Web Store generator | Planned |
+| ⏳ Docker Compose | Planned |
+
+---
 
 ## 📄 Lisensi
 
