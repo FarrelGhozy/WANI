@@ -11,12 +11,12 @@ interface Column<T> {
 interface TableProps<T> {
   columns: Column<T>[];
   data: T[];
-  keyField: string;
+  keyField: keyof T;
   loading?: boolean;
   emptyText?: string;
 }
 
-export function Table<T extends Record<string, unknown>>({
+export function Table<T>({
   columns,
   data,
   keyField,
@@ -61,11 +61,11 @@ export function Table<T extends Record<string, unknown>>({
           </tr>
         </thead>
         <tbody className="divide-y divide-surface-100">
-          {data.map((row) => (
-            <tr key={String(row[keyField])} className="hover:bg-surface-50">
+          {data.map((row, idx) => (
+            <tr key={String(row[keyField] ?? idx)} className="hover:bg-surface-50">
               {columns.map((col) => (
                 <td key={col.key} className={cn('px-4 py-3 text-surface-700', col.className)}>
-                  {col.cell ? col.cell(row) : String(row[col.key] ?? '')}
+                  {col.cell ? col.cell(row) : String((row as Record<string, unknown>)[col.key] ?? '')}
                 </td>
               ))}
             </tr>

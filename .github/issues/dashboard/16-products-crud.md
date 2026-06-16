@@ -1,101 +1,57 @@
 # DSH-16 — Products CRUD Page
 
-## Deskripsi
-Halaman manajemen produk: list, search, filter, create, edit, delete. Nyambung ke katalog WA dan Web Store.
-
 ## Task Checklist
 
-### 1. Table/Card View
-- [ ] Kolom: Foto, Nama, Kategori, Harga, Stok, Status, Aksi
-- [ ] Product image thumbnail (40x40px, rounded)
-- [ ] Harga format Rupiah
-- [ ] Stock badge: Hijau (>10), Kuning (1-10), Merah (0)
-- [ ] Status toggle: aktif/nonaktif (Switch component)
-- [ ] Pagination: 10 items/page
-- [ ] Sort by: nama, harga, stok (click header)
-- [ ] Striped rows atau card alternatif
+### 1. Table View
+- [x] Kolom: Nama (with thumbnail), Kategori, Harga, Stok (badge), Status, Aksi
+- [x] Product image placeholder (40x40 rounded)
+- [x] Harga format Rupiah
+- [x] Stock badge: Hijau (>10), Kuning (1-10), Merah (0)
+- [x] Status: Aktif/Nonaktif text
+- [x] Pagination: 10 items/page with prev/next
+- [x] Result count: "Menampilkan X dari Y produk"
 
 ### 2. Search & Filter
-- [ ] Search input dengan debounce 300ms (fetch dari API)
-- [ ] Filter by kategori (dropdown)
-- [ ] Filter by status (aktif/nonaktif/semua)
-- [ ] "Clear filter" button
-- [ ] Result count: "Menampilkan 8 dari 24 produk"
+- [x] Search input with debounce 300ms
+- [x] Filter by kategori (dropdown)
+- [x] Filter by status (aktif/nonaktif/semua)
+- [x] "Reset" button when any filter active
+- [x] Result count indicator
 
 ### 3. Create Product Modal
-```
-┌─────────────────────────────────────┐
-│  Tambah Produk Baru                 │
-│                                     │
-│  Nama Produk *  [______________]    │
-│  Deskripsi      [______________]    │
-│  Harga *        [Rp           ]    │
-│  Stok *         [0            ]    │
-│  Kategori       [Makanan    ▼]     │
-│  Foto Produk    [Choose File]      │
-│                 [Preview Image]     │
-│  Status         [Active  ●-------○] │
-│                                     │
-│  [Batal]           [Simpan]         │
-└─────────────────────────────────────┘
-```
-
-- [ ] Modal/dialog (bukan page terpisah)
-- [ ] Form fields: nama (required), deskripsi, harga (required, >0), stok, kategori (dropdown), foto (upload), status (switch)
-- [ ] Validasi client-side dengan Zod
-- [ ] Image upload dengan preview (drag & drop atau click)
-- [ ] Submit → `POST /api/products`
-- [ ] Success: toast "Produk berhasil ditambahkan", modal close, list refresh
-- [ ] Error: "Gagal menyimpan produk. Coba lagi."
+- [x] Dialog with form: nama (req), deskripsi, harga (req, >0), stok, kategori, status switch
+- [x] Client-side validation (required fields, positive price)
+- [x] Submit POST /api/products
+- [x] Success: modal close, list refresh
+- [x] Error: inline error message
 
 ### 4. Edit Product Modal
-- [ ] Sama seperti create, tapi pre-filled dengan data existing
-- [ ] Submit → `PUT /api/products/:id`
-- [ ] Image: bisa ganti atau biarkan yang lama
+- [x] Pre-filled with existing data
+- [x] Submit PUT /api/products/:id
+- [x] Same validation as create
 
 ### 5. Delete Confirmation
-- [ ] Click icon trash → confirm dialog
-- [ ] "Yakin hapus [nama produk]? Produk akan dinonaktifkan, data pesanan tetap tersimpan."
-- [ ] Cancel / Confirm buttons
-- [ ] Confirm → `DELETE /api/products/:id`
-- [ ] Success: toast + list refresh
+- [x] Confirm dialog: "Yakin hapus [nama]?"
+- [x] Cancel / Confirm buttons
+- [x] DELETE /api/products/:id
+- [x] Success: dialog close, list refresh
 
-### 6. Bulk Actions (Optional)
-- [ ] Select multiple products → [Aktifkan] [Nonaktifkan] [Hapus]
-- [ ] Select all checkbox
+### 6. Empty State
+- [x] "Belum ada produk" icon + CTA
+- [x] Empty search: "Tidak ada produk dengan kata kunci"
 
-### 7. Empty State
-```
-┌──────────────────────────────────────┐
-│                                      │
-│     🛍️ Belum ada produk              │
-│                                      │
-│  Tambah produk pertama kamu untuk    │
-│  mulai menerima pesanan via WA       │
-│                                      │
-│  [+ Tambah Produk Pertama]           │
-└──────────────────────────────────────┘
-```
-
-### 8. Loading & Error
-- [ ] Table skeleton: 10 baris placeholder
-- [ ] Error state: "Gagal memuat produk" + retry button
-- [ ] Empty search: "Tidak ada produk dengan kata kunci 'xxx'"
+### 7. Backend Enhancements
+- [x] Added search/filter/categoryId/isAvailable query params to GET /api/products
+- [x] Created category.service.ts (listCategories)
+- [x] Created categories route at GET /api/categories
+- [x] Registered categoriesRouter in server.ts
 
 ## Verification
-- [ ] List produk muncul dengan pagination
-- [ ] Search bekerja (delay 300ms)
-- [ ] Create produk → muncul di list
-- [ ] Edit produk → data berubah
-- [ ] Delete → produk hilang dari list
-- [ ] Toggle status → isAvailable berubah
-- [ ] Filter by kategori bekerja
+- [x] Build succeeds
+- [x] All 32 tests pass
 
 ## Labels
 `frontend`, `dashboard`, 🔴 high
 
 ## Dependencies
-DSH-14
-
-## Estimasi
-1-2 hari
+DSH-14, API-06

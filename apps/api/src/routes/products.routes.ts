@@ -33,6 +33,9 @@ const updateSchema = z.object({
 const listQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(20),
+  search: z.string().optional(),
+  categoryId: z.string().optional(),
+  isAvailable: z.coerce.boolean().optional(),
 });
 
 // GET /api/products
@@ -41,8 +44,14 @@ router.get(
   validate(listQuerySchema, 'query'),
   async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
-      const { page, limit } = req.query as unknown as { page: number; limit: number };
-      const result = await listProducts(req.merchant!.id, { page, limit });
+      const { page, limit, search, categoryId, isAvailable } = req.query as unknown as {
+        page: number;
+        limit: number;
+        search?: string;
+        categoryId?: string;
+        isAvailable?: boolean;
+      };
+      const result = await listProducts(req.merchant!.id, { page, limit, search, categoryId, isAvailable });
       res.json(result);
     } catch (err) {
       next(err);

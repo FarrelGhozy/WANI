@@ -31,23 +31,40 @@ export type UpdateProductInput = z.infer<typeof updateProductSchema>;
 
 // ─── CRUD Methods ────────────────────────────────────────
 
+interface ProductFilterParams extends PaginationParams {
+  search?: string;
+  categoryId?: string;
+  isAvailable?: boolean;
+}
+
 export async function listProducts(
   merchantId: string,
-  params: PaginationParams,
+  params: ProductFilterParams,
 ): Promise<ApiResponse> {
   try {
-    const { page, limit } = params;
+    const { page, limit, search, categoryId, isAvailable } = params;
     const skip = (page - 1) * limit;
+
+    const where: Record<string, unknown> = { merchantId };
+    if (search) {
+      where.name = { contains: search, mode: 'insensitive' };
+    }
+    if (categoryId) {
+      where.categoryId = categoryId;
+    }
+    if (isAvailable !== undefined) {
+      where.isAvailable = isAvailable;
+    }
 
     const [data, total] = await Promise.all([
       prisma.product.findMany({
-        where: { merchantId },
+        where,
         skip,
         take: limit,
         orderBy: { createdAt: 'desc' },
         include: { category: true },
       }),
-      prisma.product.count({ where: { merchantId } }),
+      prisma.product.count({ where }),
     ]);
 
     return success(data, { page, limit, total });

@@ -126,6 +126,11 @@ export type {
 } from './conversation.service.js';
 
 export {
+  // Category
+  listCategories,
+} from './category.service.js';
+
+export {
   // AI Agent
   getAIAgent,
   getAIAgentByMerchant,
