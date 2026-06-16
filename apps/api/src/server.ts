@@ -16,6 +16,8 @@ import { categoriesRouter } from './routes/categories.routes.js';
 import { webStoreRouter } from './routes/web-store.routes.js';
 import { dashboardRouter } from './routes/dashboard.routes.js';
 import { waSessionRouter } from './routes/wa-session.routes.js';
+import { aiAgentRouter } from './routes/ai-agent.routes.js';
+import { settingsRouter } from './routes/settings.routes.js';
 
 const app = express();
 
@@ -46,6 +48,8 @@ app.use('/api/categories', categoriesRouter);
 app.use('/api', webStoreRouter);
 app.use('/api/dashboard', dashboardRouter);
 app.use('/api', waSessionRouter);
+app.use('/api/ai-agent', aiAgentRouter);
+app.use('/api/settings', settingsRouter);
 
 // ─── Global Error Handler ─────────────────────────────
 app.use(errorHandler);
