@@ -1,0 +1,40 @@
+# ─── Development ────────────────────────────────────────
+FROM node:22-alpine AS development
+
+RUN corepack enable && corepack prepare pnpm@latest --activate
+WORKDIR /app
+
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
+COPY packages/database/package.json ./packages/database/
+COPY apps/web/package.json ./apps/web/
+
+RUN pnpm install --frozen-lockfile
+
+COPY packages/database ./packages/database
+COPY apps/web ./apps/web
+
+EXPOSE 3000
+
+CMD ["pnpm", "dev:web"]
+
+
+# ─── Production ─────────────────────────────────────────
+FROM node:22-alpine AS production
+
+RUN corepack enable && corepack prepare pnpm@latest --activate
+WORKDIR /app
+
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
+COPY packages/database/package.json ./packages/database/
+COPY apps/web/package.json ./apps/web/
+
+RUN pnpm install --frozen-lockfile
+
+COPY packages/database ./packages/database
+COPY apps/web ./apps/web
+
+RUN pnpm --filter @wani/web build
+
+EXPOSE 3000
+
+CMD ["pnpm", "start:web"]

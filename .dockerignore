@@ -1,8 +1,11 @@
-node_modules
-dist
-.env
-.env.local
-.git
+node_modules/
+.git/
 .gitignore
+.env
+.env.*
+*.md
+.next/
+dist/
+logs/
 *.log
-coverage
+.DS_Store
