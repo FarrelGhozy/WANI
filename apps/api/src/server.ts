@@ -13,6 +13,7 @@ import { customersRouter } from './routes/customers.routes.js';
 import { ordersRouter } from './routes/orders.routes.js';
 import { conversationsRouter } from './routes/conversations.routes.js';
 import { webStoreRouter } from './routes/web-store.routes.js';
+import { dashboardRouter } from './routes/dashboard.routes.js';
 
 const app = express();
 
@@ -40,6 +41,7 @@ app.use('/api/customers', customersRouter);
 app.use('/api/orders', ordersRouter);
 app.use('/api/conversations', conversationsRouter);
 app.use('/api', webStoreRouter);
+app.use('/api/dashboard', dashboardRouter);
 
 // ─── Global Error Handler ─────────────────────────────
 app.use(errorHandler);
