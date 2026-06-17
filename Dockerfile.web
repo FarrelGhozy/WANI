@@ -33,6 +33,7 @@ RUN pnpm install --frozen-lockfile
 COPY packages/database ./packages/database
 COPY apps/web ./apps/web
 
+RUN pnpm --filter @wani/database db:generate
 RUN pnpm --filter @wani/web build
 
 EXPOSE 3000
