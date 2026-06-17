@@ -49,7 +49,7 @@ export default function WASessionPage() {
   const [disconnecting, setDisconnecting] = useState(false);
   const [activity, setActivity] = useState<ActivityLog[]>([]);
   const [qrExpiry, setQrExpiry] = useState(0);
-  const timerRef = useRef<ReturnType<typeof setInterval>>();
+  const timerRef = useRef<ReturnType<typeof setInterval>>(undefined);
   const [confirmDisconnect, setConfirmDisconnect] = useState(false);
 
   const fetchStatus = useCallback(async () => {
