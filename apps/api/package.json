@@ -10,7 +10,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "tsc --noEmit",
-    "db:seed": "echo 'use pnpm db:seed from root'"
+    "db:seed": "echo 'use pnpm db:seed from root'",
+    "static:generate": "tsx scripts/generate-static-store.ts"
   },
   "dependencies": {
     "@wani/database": "workspace:*",
