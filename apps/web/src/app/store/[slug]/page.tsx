@@ -24,6 +24,19 @@ interface Merchant {
   address: string | null;
 }
 
+interface RenderedTheme {
+  name: string;
+  label: string;
+  cssVars: Record<string, string>;
+  css: string;
+  googleFonts: string[];
+  config: {
+    colors: Record<string, string>;
+    fonts: Record<string, string>;
+    layout: Record<string, unknown>;
+  };
+}
+
 interface WebStoreData {
   id: string;
   slug: string;
@@ -32,28 +45,10 @@ interface WebStoreData {
   seoDesc: string | null;
   heroImage: string | null;
   heroText: string | null;
-  theme: ThemeConfig | null;
+  theme: Record<string, unknown> | null;
+  renderedTheme: RenderedTheme;
   merchant: Merchant;
   categories: Category[];
-}
-
-interface ThemeConfig {
-  colors?: {
-    primary?: string;
-    secondary?: string;
-    accent?: string;
-    background?: string;
-    text?: string;
-  };
-  fonts?: {
-    heading?: string;
-    body?: string;
-  };
-  layout?: {
-    style?: string;
-    rounded?: boolean;
-    shadows?: boolean;
-  };
 }
 
 async function getStore(slug: string): Promise<WebStoreData | null> {
@@ -70,15 +65,8 @@ async function getStore(slug: string): Promise<WebStoreData | null> {
   }
 }
 
-function themeVars(theme: ThemeConfig | null): Record<string, string> {
-  const c = theme?.colors ?? {};
-  return {
-    '--store-primary': c.primary ?? '#6366F1',
-    '--store-secondary': c.secondary ?? '#F59E0B',
-    '--store-accent': c.accent ?? '#10B981',
-    '--store-bg': c.background ?? '#FFFFFF',
-    '--store-text': c.text ?? '#1E293B',
-  } as Record<string, string>;
+function themeVars(theme: RenderedTheme | null): Record<string, string> {
+  return theme?.cssVars ?? {};
 }
 
 export default async function StorePage({ params }: { params: Promise<{ slug: string }> }) {
@@ -87,23 +75,26 @@ export default async function StorePage({ params }: { params: Promise<{ slug: st
 
   if (!store) notFound();
 
-  const style = store.theme?.layout?.style ?? 'modern';
-  const isRounded = store.theme?.layout?.rounded ?? true;
-  const isShadow = store.theme?.layout?.shadows ?? true;
+  const rt = store.renderedTheme;
+  const layout = rt?.config?.layout ?? {};
+  const isRounded = layout.rounded !== false;
+  const isShadow = layout.shadows !== false;
 
   return (
     <div
-      style={themeVars(store.theme) as React.CSSProperties}
+      style={themeVars(rt) as React.CSSProperties}
       className="min-h-screen"
     >
+      {rt?.googleFonts?.length > 0 && (
+        <link
+          href={`https://fonts.googleapis.com/css2?${rt.googleFonts.map((f) => `family=${f.replace(/\s+/g, '+')}:wght@400;500;600;700`).join('&')}&display=swap`}
+          rel="stylesheet"
+        />
+      )}
+      {rt?.css && <style>{rt.css}</style>}
+
       {/* ─── Navbar ─── */}
-      <nav
-        className="sticky top-0 z-50 border-b"
-        style={{
-          backgroundColor: 'var(--store-bg)',
-          borderColor: `color-mix(in srgb, var(--store-text) 10%, transparent)`,
-        }}
-      >
+      <nav className="sticky top-0 z-50 border-b store-nav">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
           <span className="text-lg font-bold" style={{ color: 'var(--store-primary)' }}>
             {store.merchant.businessName}
@@ -123,10 +114,7 @@ export default async function StorePage({ params }: { params: Promise<{ slug: st
 
       {/* ─── Hero ─── */}
       {store.heroImage || store.heroText ? (
-        <section
-          className="relative overflow-hidden"
-          style={{ backgroundColor: `color-mix(in srgb, var(--store-primary) 8%, var(--store-bg))` }}
-        >
+        <section className="relative overflow-hidden store-hero">
           {store.heroImage && (
             <img
               src={store.heroImage}
@@ -136,10 +124,7 @@ export default async function StorePage({ params }: { params: Promise<{ slug: st
           )}
           <div className="relative mx-auto max-w-6xl px-4 py-16 text-center md:py-24">
             {store.heroText && (
-              <h1
-                className="text-3xl font-bold md:text-5xl"
-                style={{ color: 'var(--store-text)' }}
-              >
+              <h1 className="text-3xl font-bold md:text-5xl" style={{ color: 'var(--store-text)' }}>
                 {store.heroText}
               </h1>
             )}
@@ -163,10 +148,7 @@ export default async function StorePage({ params }: { params: Promise<{ slug: st
       ) : null}
 
       {/* ─── Categories & Products ─── */}
-      <main
-        className="mx-auto max-w-6xl px-4 py-8"
-        style={{ backgroundColor: 'var(--store-bg)' }}
-      >
+      <main className="mx-auto max-w-6xl px-4 py-8" style={{ backgroundColor: 'var(--store-bg)' }}>
         {store.categories.length === 0 ? (
           <div className="py-20 text-center" style={{ color: `color-mix(in srgb, var(--store-text) 40%, transparent)` }}>
             <p className="text-lg">Toko belum memiliki produk</p>
@@ -178,10 +160,7 @@ export default async function StorePage({ params }: { params: Promise<{ slug: st
 
             return (
               <section key={cat.id} className="mb-10">
-                <h2
-                  className="mb-4 text-xl font-semibold"
-                  style={{ color: 'var(--store-text)' }}
-                >
+                <h2 className="mb-4 text-xl font-semibold" style={{ color: 'var(--store-text)' }}>
                   {cat.name}
                 </h2>
                 <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
@@ -203,22 +182,14 @@ export default async function StorePage({ params }: { params: Promise<{ slug: st
       </main>
 
       {/* ─── Footer ─── */}
-      <footer
-        className="border-t py-8 text-center text-sm"
-        style={{
-          backgroundColor: `color-mix(in srgb, var(--store-primary) 5%, var(--store-bg))`,
-          borderColor: `color-mix(in srgb, var(--store-text) 10%, transparent)`,
-          color: `color-mix(in srgb, var(--store-text) 50%, transparent)`,
-        }}
-      >
+      <footer className="border-t py-8 text-center text-sm store-footer">
         <p>{store.merchant.businessName}</p>
         {store.merchant.address && <p className="mt-1">{store.merchant.address}</p>}
         <a
           href={`https://wa.me/${store.merchant.phone.replace(/^0/, '62')}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-2 inline-flex items-center gap-1 font-medium hover:underline"
-          style={{ color: 'var(--store-primary)' }}
+          className="mt-2 inline-flex items-center gap-1 font-medium store-link hover:underline"
         >
           <ExternalLink className="h-3 w-3" />
           {store.merchant.phone}

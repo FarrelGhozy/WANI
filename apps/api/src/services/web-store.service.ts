@@ -4,6 +4,7 @@ import { ApiResponse } from '../types/index.js';
 import { success } from '../utils/helpers.js';
 import { updateWebStoreSchema } from '../lib/validation.js';
 import type { UpdateWebStoreInput } from '../lib/validation.js';
+import { renderTemplate } from './template-engine.service.js';
 
 export async function getWebStore(merchantId: string): Promise<ApiResponse> {
   try {
@@ -100,7 +101,16 @@ export async function getWebStoreBySlug(slug: string): Promise<ApiResponse> {
       },
     });
     if (!store) return { success: false, error: 'Store not found or not published' };
-    return success(store);
+
+    const rendered = await renderTemplate(
+      store.template || undefined,
+      store.theme as Record<string, unknown> | null,
+    );
+
+    return success({
+      ...store,
+      renderedTheme: rendered,
+    });
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Failed to get store';
     return { success: false, error: message };
