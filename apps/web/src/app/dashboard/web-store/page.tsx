@@ -20,6 +20,7 @@ import { Switch } from '@/components/ui/switch';
 import { Skeleton } from '@/components/ui/skeleton';
 import { api } from '@/lib/api';
 import { useMerchant } from '@/lib/auth-context';
+import { TemplatePreview } from '@/components/store/template-preview';
 
 interface WebStoreData {
   id: string;
@@ -204,9 +205,16 @@ export default function WebStorePage() {
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-bold text-surface-900">Web Store</h1>
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-surface-900">Web Store</h1>
+      </div>
 
-      <div className="space-y-6 max-w-2xl">
+      <div className="grid gap-6 lg:grid-cols-5">
+        {/* ─── Settings ─── */}
+        <div className="space-y-6 lg:col-span-3">
+
+
+
         {error && (
           <div className="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
             <AlertCircle className="h-4 w-4" />{error}
@@ -399,6 +407,31 @@ export default function WebStorePage() {
           )}
         </div>
       </div>
+
+      {/* ─── Live Preview ─── */}
+      <div className="lg:col-span-2">
+        <div className="sticky top-24 space-y-3">
+          <h2 className="text-sm font-semibold text-surface-700">Pratinjau Langsung</h2>
+          <div className="max-w-xs">
+            <TemplatePreview
+              colors={{
+                primary: colorPrimary,
+                secondary: colorSecondary,
+                accent: colorAccent,
+                background: colorBg,
+                text: colorText,
+              }}
+              layout={{ style: layoutStyle, rounded, shadows }}
+              heroText={heroText}
+              businessName={merchant?.businessName}
+            />
+          </div>
+          <p className="text-xs text-surface-400 leading-relaxed">
+            Pratinjau akan berubah secara otomatis saat kamu mengubah pengaturan di samping.
+          </p>
+        </div>
+      </div>
+    </div>
     </div>
   );
 }
