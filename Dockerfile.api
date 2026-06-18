@@ -45,4 +45,4 @@ RUN pnpm --filter @wani/api build
 
 EXPOSE 3001
 
-CMD ["pnpm", "start:api"]
+CMD ["sh", "-c", "pnpm --filter @wani/database db:push && pnpm start:api"]

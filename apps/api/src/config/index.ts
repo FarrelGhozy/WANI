@@ -28,6 +28,8 @@ export const config = {
     temperature: 0.7,
   },
 
+  corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+
   auth: {
     jwtSecret: requireEnv('JWT_SECRET'),
     jwtExpiresIn: '7d',

@@ -23,7 +23,10 @@ const app = express();
 
 // ─── Security ──────────────────────────────────────────
 app.use(helmet());
-app.use(cors({ origin: '*' })); // tighten in production
+app.use(cors({
+  origin: config.corsOrigin,
+  credentials: true,
+}));
 app.use(rateLimit({
   windowMs: 60_000,
   max: 100,
