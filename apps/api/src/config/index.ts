@@ -30,6 +30,8 @@ export const config = {
 
   corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:3000',
 
+  sentryDsn: process.env.SENTRY_DSN || '',
+
   auth: {
     jwtSecret: requireEnv('JWT_SECRET'),
     jwtExpiresIn: '7d',

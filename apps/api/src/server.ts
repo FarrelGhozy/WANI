@@ -2,9 +2,16 @@ import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
+import * as Sentry from '@sentry/node';
 import { config } from './config/index.js';
 import { logger } from './config/logger.js';
 import { errorHandler } from './middleware/error-handler.js';
+
+Sentry.init({
+  dsn: config.sentryDsn,
+  environment: config.nodeEnv,
+  tracesSampleRate: 0.1,
+});
 import { healthRouter } from './routes/health.routes.js';
 import { authRouter } from './routes/auth.routes.js';
 import { merchantsRouter } from './routes/merchants.routes.js';
@@ -20,6 +27,10 @@ import { aiAgentRouter } from './routes/ai-agent.routes.js';
 import { settingsRouter } from './routes/settings.routes.js';
 
 const app = express();
+
+// ─── Monitoring ────────────────────────────────────────
+app.use(Sentry.Handlers.requestHandler());
+app.use(Sentry.Handlers.tracingHandler());
 
 // ─── Security ──────────────────────────────────────────
 app.use(helmet());
@@ -56,6 +67,7 @@ app.use('/api/settings', settingsRouter);
 
 // ─── Global Error Handler ─────────────────────────────
 app.use(errorHandler);
+app.use(Sentry.Handlers.errorHandler());
 
 // ─── Start Server ─────────────────────────────────────
 app.listen(config.port, () => {

@@ -14,6 +14,7 @@
     "static:generate": "tsx scripts/generate-static-store.ts"
   },
   "dependencies": {
+    "@sentry/node": "^10.58.0",
     "@wani/database": "workspace:*",
     "@whiskeysockets/baileys": "^7.0.0-rc13",
     "axios": "^1.7.0",
