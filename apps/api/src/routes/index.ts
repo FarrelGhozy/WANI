@@ -6,3 +6,8 @@ export { customersRouter } from './customers.routes.js';
 export { ordersRouter } from './orders.routes.js';
 export { conversationsRouter } from './conversations.routes.js';
 export { categoriesRouter } from './categories.routes.js';
+export { webStoreRouter } from './web-store.routes.js';
+export { dashboardRouter } from './dashboard.routes.js';
+export { waSessionRouter } from './wa-session.routes.js';
+export { aiAgentRouter } from './ai-agent.routes.js';
+export { settingsRouter } from './settings.routes.js';

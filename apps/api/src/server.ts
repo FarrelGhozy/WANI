@@ -3,6 +3,7 @@ import helmet from 'helmet';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 import * as Sentry from '@sentry/node';
+import { expressIntegration } from '@sentry/node';
 import { config } from './config/index.js';
 import { logger } from './config/logger.js';
 import { errorHandler } from './middleware/error-handler.js';
@@ -11,26 +12,17 @@ Sentry.init({
   dsn: config.sentryDsn,
   environment: config.nodeEnv,
   tracesSampleRate: 0.1,
+  integrations: [expressIntegration()],
 });
-import { healthRouter } from './routes/health.routes.js';
-import { authRouter } from './routes/auth.routes.js';
-import { merchantsRouter } from './routes/merchants.routes.js';
-import { productsRouter } from './routes/products.routes.js';
-import { customersRouter } from './routes/customers.routes.js';
-import { ordersRouter } from './routes/orders.routes.js';
-import { conversationsRouter } from './routes/conversations.routes.js';
-import { categoriesRouter } from './routes/categories.routes.js';
-import { webStoreRouter } from './routes/web-store.routes.js';
-import { dashboardRouter } from './routes/dashboard.routes.js';
-import { waSessionRouter } from './routes/wa-session.routes.js';
-import { aiAgentRouter } from './routes/ai-agent.routes.js';
-import { settingsRouter } from './routes/settings.routes.js';
+import {
+  healthRouter, authRouter, merchantsRouter,
+  productsRouter, customersRouter, ordersRouter,
+  conversationsRouter, categoriesRouter,
+  webStoreRouter, dashboardRouter,
+  waSessionRouter, aiAgentRouter, settingsRouter,
+} from './routes/index.js';
 
 const app = express();
-
-// ─── Monitoring ────────────────────────────────────────
-app.use(Sentry.Handlers.requestHandler());
-app.use(Sentry.Handlers.tracingHandler());
 
 // ─── Security ──────────────────────────────────────────
 app.use(helmet());
@@ -67,7 +59,7 @@ app.use('/api/settings', settingsRouter);
 
 // ─── Global Error Handler ─────────────────────────────
 app.use(errorHandler);
-app.use(Sentry.Handlers.errorHandler());
+Sentry.setupExpressErrorHandler(app);
 
 // ─── Start Server ─────────────────────────────────────
 app.listen(config.port, () => {

@@ -7,7 +7,7 @@ import {
   updateAIAgent,
   toggleAIAgent,
 } from '../services/ai-agent.service.js';
-import { createAIAgentSchema, updateAIAgentSchema } from '../lib/validation.js';
+import { updateAIAgentSchema } from '../lib/validation.js';
 
 const router = Router();
 router.use(requireMerchant);

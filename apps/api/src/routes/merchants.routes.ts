@@ -7,7 +7,6 @@ import {
   updateMerchant,
   getMerchantStats,
 } from '../services/merchant.service.js';
-import { success } from '../utils/helpers.js';
 
 const router = Router();
 router.use(requireMerchant);
@@ -17,11 +16,11 @@ const updateSchema = z.object({
   address: z.string().optional(),
 });
 
-// GET /api/merchants/me — current merchant profile
+// GET /api/merchants/me
 router.get('/me', async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const result = await getMerchantById(req.merchant!.id);
-    res.json(success(result.data));
+    res.json(result);
   } catch (err) {
     next(err);
   }
@@ -34,7 +33,7 @@ router.put(
   async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
       const result = await updateMerchant(req.merchant!.id, req.body);
-      res.json(success(result.data));
+      res.json(result);
     } catch (err) {
       next(err);
     }
@@ -45,7 +44,7 @@ router.put(
 router.get('/me/stats', async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const result = await getMerchantStats(req.merchant!.id);
-    res.json(success(result.data));
+    res.json(result);
   } catch (err) {
     next(err);
   }
