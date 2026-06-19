@@ -87,7 +87,7 @@ export default function WebStorePage() {
 
   const fetchData = useCallback(async () => {
     setError('');
-    if (!merchant) return;
+    if (!merchant) { setLoading(false); return; }
     const merchantId = merchant.id;
 
     const [storeRes, templateRes] = await Promise.all([

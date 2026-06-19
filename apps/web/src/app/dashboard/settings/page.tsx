@@ -74,7 +74,7 @@ export default function SettingsPage() {
   const [deliveryArea, setDeliveryArea] = useState('city');
 
   const fetchSettings = useCallback(async () => {
-    if (!merchant) return;
+    if (!merchant) { setLoading(false); return; }
     setBusinessName(merchant.businessName);
     setAddress(merchant.address || '');
     const res = await api.get<{ data: Settings }>('/settings');
