@@ -9,6 +9,7 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 export const metadata: Metadata = {
   title: 'WANI — WA Niaga untuk UMKM',
   description: 'Platform omnichannel UMKM: WhatsApp Bot + Dashboard + Web Store',
+  icons: { icon: '/favicon.svg' },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -83,6 +83,7 @@ export default function LoginPage() {
           <input
             id="phone"
             type="tel"
+            autoComplete="username"
             placeholder="6281234567890"
             value={form.phone}
             onChange={e => updateField('phone', e.target.value)}
@@ -103,6 +104,7 @@ export default function LoginPage() {
             <input
               id="password"
               type={showPassword ? 'text' : 'password'}
+              autoComplete="current-password"
               placeholder="Minimal 6 karakter"
               value={form.password}
               onChange={e => updateField('password', e.target.value)}

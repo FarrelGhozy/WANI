@@ -1,6 +1,7 @@
 import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import rateLimit from 'express-rate-limit';
 import * as Sentry from '@sentry/node';
 import { expressIntegration } from '@sentry/node';
@@ -41,6 +42,7 @@ app.use(rateLimit({
 // ─── Body Parsing ─────────────────────────────────────
 app.use(express.json({ limit: '5mb' }));
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 // ─── Routes ───────────────────────────────────────────
 app.use('/health', healthRouter);

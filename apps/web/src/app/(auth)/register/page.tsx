@@ -120,6 +120,7 @@ export default function RegisterPage() {
           <input
             id="phone"
             type="tel"
+            autoComplete="username"
             placeholder="6281234567890"
             value={form.phone}
             onChange={e => updateField('phone', e.target.value)}
@@ -140,6 +141,7 @@ export default function RegisterPage() {
             <input
               id="password"
               type={showPassword ? 'text' : 'password'}
+              autoComplete="new-password"
               placeholder="Minimal 6 karakter"
               value={form.password}
               onChange={e => updateField('password', e.target.value)}
@@ -169,6 +171,7 @@ export default function RegisterPage() {
             <input
               id="confirmPassword"
               type={showConfirmPassword ? 'text' : 'password'}
+              autoComplete="new-password"
               placeholder="Ulangi kata sandi"
               value={form.confirmPassword}
               onChange={e => updateField('confirmPassword', e.target.value)}
