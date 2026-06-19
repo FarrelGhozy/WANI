@@ -21,6 +21,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { api } from '@/lib/api';
 import { relativeTime } from '@/lib/format';
 import { cn } from '@/lib/utils';
+import { WaStatusBadge } from '@/components/dashboard/wa-status';
 
 interface Conversation {
   id: string;
@@ -133,6 +134,9 @@ function ChatsPage() {
     <div className="flex h-[calc(100vh-8rem)] gap-4">
       <div className="w-80 shrink-0 flex flex-col">
         <h1 className="text-lg font-bold text-surface-900 mb-3">Chat</h1>
+        <div className="mb-3">
+          <WaStatusBadge />
+        </div>
         <div className="relative mb-3">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-surface-400" />
           <input
