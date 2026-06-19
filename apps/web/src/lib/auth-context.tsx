@@ -8,6 +8,7 @@ interface Merchant {
   id: string;
   businessName: string;
   phone: string;
+  address?: string;
 }
 
 interface LoginInput {

@@ -21,6 +21,9 @@ CMD ["pnpm", "dev:web"]
 # ─── Production ─────────────────────────────────────────
 FROM node:22-alpine AS production
 
+ARG NEXT_PUBLIC_API_URL=http://localhost:3001
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+
 RUN corepack enable && corepack prepare pnpm@latest --activate
 WORKDIR /app
 

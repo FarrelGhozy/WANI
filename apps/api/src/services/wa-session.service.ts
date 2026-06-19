@@ -1,23 +1,49 @@
+import QRCode from 'qrcode';
 import { prisma } from '../config/prisma.js';
 import { BaileysManager } from '../baileys/index.js';
 import { success } from '../utils/helpers.js';
+
+async function qrToDataUrl(qr: string | null): Promise<string | null> {
+  if (!qr) return null;
+  try {
+    return await QRCode.toDataURL(qr, { width: 256, margin: 2 });
+  } catch {
+    return qr;
+  }
+}
 
 export async function getSessionStatus(merchantId: string) {
   try {
     const manager = BaileysManager.getInstance(merchantId);
     const state = manager.state;
+    const qrCode = manager.qr;
 
     const session = await prisma.waSession.findUnique({
       where: { merchantId },
-      select: { status: true, updatedAt: true, createdAt: true },
+      select: { id: true, status: true, updatedAt: true, createdAt: true, creds: true },
     });
 
+    let phone: string | null = null;
+    if (session?.creds && typeof session.creds === 'object') {
+      const creds = session.creds as Record<string, unknown>;
+      if (creds.me && typeof creds.me === 'object') {
+        const me = creds.me as Record<string, unknown>;
+        phone = (me.id as string)?.split(':')[0] || null;
+      }
+    }
+
+    const qrDataUrl = await qrToDataUrl(qrCode || session?.qrCode || null);
+
     return success({
+      id: session?.id || null,
       status: state,
-      phone: null,
+      qrCode: qrDataUrl,
+      phone,
       connectedSince: state === 'connected' ? (session?.updatedAt ?? null) : null,
       lastDisconnected: null,
       retryCount: 0,
+      createdAt: session?.createdAt || null,
+      updatedAt: session?.updatedAt || null,
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Failed to get session status';
@@ -42,7 +68,7 @@ export async function initiateConnection(merchantId: string) {
 
     const qrCode = manager.qr;
     if (qrCode) {
-      return success({ qrCode, status: 'connecting' });
+      return success({ qrCode: await qrToDataUrl(qrCode), status: 'connecting' });
     }
 
     const session = await prisma.waSession.findUnique({
@@ -51,7 +77,7 @@ export async function initiateConnection(merchantId: string) {
     });
 
     if (session?.qrCode) {
-      return success({ qrCode: session.qrCode, status: 'connecting' });
+      return success({ qrCode: await qrToDataUrl(session.qrCode), status: 'connecting' });
     }
 
     return success({ qrCode: null, status: 'connecting', message: 'Waiting for QR code...' });
@@ -67,7 +93,7 @@ export async function getQRCode(merchantId: string) {
     const qrCode = manager.qr;
 
     if (qrCode) {
-      return success({ qrCode, expiresIn: 45, refreshedAt: new Date().toISOString() });
+      return success({ qrCode: await qrToDataUrl(qrCode), expiresIn: 45, refreshedAt: new Date().toISOString() });
     }
 
     const session = await prisma.waSession.findUnique({
@@ -77,7 +103,7 @@ export async function getQRCode(merchantId: string) {
 
     if (session?.qrCode) {
       return success({
-        qrCode: session.qrCode,
+        qrCode: await qrToDataUrl(session.qrCode),
         expiresIn: 45,
         refreshedAt: new Date().toISOString(),
       });

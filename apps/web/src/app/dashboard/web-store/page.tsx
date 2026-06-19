@@ -73,6 +73,7 @@ export default function WebStorePage() {
   const [seoDesc, setSeoDesc] = useState('');
   const [heroImage, setHeroImage] = useState('');
   const [heroText, setHeroText] = useState('');
+  const [customDomain, setCustomDomain] = useState('');
 
   const [layoutStyle, setLayoutStyle] = useState('modern');
   const [rounded, setRounded] = useState(true);
@@ -107,6 +108,7 @@ export default function WebStorePage() {
       setSeoDesc(s.seoDesc || '');
       setHeroImage(s.heroImage || '');
       setHeroText(s.heroText || '');
+      setCustomDomain(s.customDomain || '');
       setPreviewUrl(`${STORE_URL}/store/${s.slug}`);
 
       if (s.theme?.layout) {
@@ -124,7 +126,7 @@ export default function WebStorePage() {
     }
 
     setLoading(false);
-  }, []);
+  }, [merchant]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
@@ -147,6 +149,7 @@ export default function WebStorePage() {
 
     const res = await api.put(`/web-store/${merchantId}`, {
       slug: slug || undefined,
+      customDomain: customDomain || undefined,
       template,
       seoTitle: seoTitle || undefined,
       seoDesc: seoDesc || undefined,
@@ -388,7 +391,7 @@ export default function WebStorePage() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <Input label="Slug URL" value={slug} onChange={(e) => setSlug(e.target.value.replace(/[^a-z0-9-]/g, '').toLowerCase())} placeholder="toko-namaku" />
-              <Input label="Domain Kustom" value={slug} disabled placeholder="tokoku.com (opsional)" />
+              <Input label="Domain Kustom" value={customDomain} onChange={(e) => setCustomDomain(e.target.value)} placeholder="tokoku.com (opsional)" />
             </div>
           </div>
         </Card>

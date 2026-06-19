@@ -76,6 +76,7 @@ export default function SettingsPage() {
   const fetchSettings = useCallback(async () => {
     if (!merchant) return;
     setBusinessName(merchant.businessName);
+    setAddress(merchant.address || '');
     const res = await api.get<{ data: Settings }>('/settings');
     if (res.success && res.data.data) {
       const s = res.data.data;

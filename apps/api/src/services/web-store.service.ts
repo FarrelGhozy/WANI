@@ -102,13 +102,18 @@ export async function getWebStoreBySlug(slug: string): Promise<ApiResponse> {
     });
     if (!store) return { success: false, error: 'Store not found or not published' };
 
+    const { merchant, ...storeData } = store;
+    const { categories, ...merchantData } = merchant;
+
     const rendered = await renderTemplate(
       store.template || undefined,
       store.theme as Record<string, unknown> | null,
     );
 
     return success({
-      ...store,
+      ...storeData,
+      merchant: merchantData,
+      categories,
       renderedTheme: rendered,
     });
   } catch (err) {

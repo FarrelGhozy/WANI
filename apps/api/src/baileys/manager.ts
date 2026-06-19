@@ -11,6 +11,7 @@ import type { WaConnectionState } from '../types/index.js';
 import { createAuthState, updateSessionStatus, deleteSession } from './auth.js';
 import { registerHandlers, type MessageHandler, type MessageEventPayload } from './handlers.js';
 import { sendText, sendImage, sendVideo, markRead, sendTyping } from './sender.js';
+import { handleIncomingMessage as pipelineHandleMessage } from '../pipeline/index.js';
 
 // ─── Constants ─────────────────────────────────────────
 
@@ -214,7 +215,6 @@ export class BaileysManager extends EventEmitter {
         shouldIgnoreJid: (jid) => jid.includes('@g.us') || jid.includes('@broadcast'),
         getMessage: async () => undefined,
         cachedGroupMetadata: async () => undefined,
-        makeSignalRepository: undefined as any, // let baileys default
       };
 
       // Force phone number connection if configured
@@ -324,6 +324,9 @@ export class BaileysManager extends EventEmitter {
 
   private async onMessage(payload: MessageEventPayload): Promise<void> {
     this.emit('message', payload);
+    defaultMessageHandler(payload).catch((err) =>
+      this.log.error({ err }, 'defaultMessageHandler error'),
+    );
   }
 
   // ── Reconnection Logic ──────────────────────────────
@@ -367,12 +370,30 @@ export class BaileysManager extends EventEmitter {
 // ─── Default Message Handler ─────────────────────────
 
 /**
- * Log incoming messages to the console.
- * Replace this with your own handler when using the manager.
+ * Process incoming messages through the AI pipeline and send auto-replies.
  */
 export const defaultMessageHandler: MessageHandler = async (payload) => {
   logger.info(
     { from: payload.jid, text: payload.text.slice(0, 100), merchantId: payload.merchantId },
     '📩 WA message received',
   );
+
+  const fromJid = payload.jid.replace(/[^0-9]/g, '');
+  const manager = BaileysManager.getInstance(payload.merchantId);
+
+  try {
+    const reply = await pipelineHandleMessage(payload.merchantId, {
+      id: payload.raw.key?.id || '',
+      from: fromJid,
+      text: payload.text,
+      senderName: payload.raw.pushName || undefined,
+    });
+
+    if (reply && manager.state === 'connected' && manager.socket) {
+      await sendText(manager.socket, payload.jid, reply);
+      logger.info({ to: payload.jid, reply: reply.slice(0, 80) }, 'Auto-reply sent');
+    }
+  } catch (err) {
+    logger.error({ err, from: payload.jid }, 'Pipeline handler error');
+  }
 };

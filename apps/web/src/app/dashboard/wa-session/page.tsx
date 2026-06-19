@@ -24,6 +24,7 @@ interface WASession {
   id: string;
   status: string;
   qrCode?: string | null;
+  phone?: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -66,6 +67,9 @@ export default function WASessionPage() {
     if (res.success) setActivity(res.data.data);
   }, []);
 
+  const statusRef = useRef(session?.status);
+  statusRef.current = session?.status;
+
   useEffect(() => {
     fetchStatus();
     fetchActivity();
@@ -93,6 +97,18 @@ export default function WASessionPage() {
     setDisconnecting(false);
     fetchStatus();
     fetchActivity();
+  }
+
+  async function handleRefreshQR() {
+    setConnecting(true);
+    const res = await api.get<{ data: { qrCode: string } }>('/wa-session/me/qr');
+    if (res.success && res.data.data.qrCode) {
+      setSession(prev => prev ? { ...prev, qrCode: res.data.data.qrCode } : null);
+      setQrExpiry(60);
+    } else {
+      await handleConnect();
+    }
+    setConnecting(false);
   }
 
   const statusInfo = session ? statusConfig[session.status] || statusConfig.disconnected : null;
@@ -127,9 +143,10 @@ export default function WASessionPage() {
                     {statusInfo?.label || 'Memuat...'}
                   </p>
                   {session?.status === 'connected' && (
-                    <p className="text-sm text-surface-400">
-                      Tersambung sejak {new Date(session.updatedAt).toLocaleString('id-ID')}
-                    </p>
+                    <div className="text-sm text-surface-400 space-y-0.5">
+                      {session.phone && <p>Nomor: {session.phone}</p>}
+                      <p>Tersambung sejak {new Date(session.updatedAt).toLocaleString('id-ID')}</p>
+                    </div>
                   )}
                 </div>
               </div>
@@ -158,7 +175,7 @@ export default function WASessionPage() {
           )}
         </Card>
 
-        {(session?.status === 'disconnected' || session?.status === 'expired') && session?.qrCode && (
+        {session?.qrCode && (
           <Card>
             <CardHeader>
               <CardTitle>Scan QR Code</CardTitle>
@@ -176,7 +193,7 @@ export default function WASessionPage() {
               <p className="text-sm text-surface-500">
                 QR akan kedaluwarsa dalam {qrExpiry} detik
               </p>
-              <Button variant="outline" onClick={handleConnect} loading={connecting}>
+              <Button variant="outline" onClick={handleRefreshQR} loading={connecting}>
                 <RefreshCw className="h-4 w-4" />
                 Muat Ulang QR
               </Button>
@@ -197,6 +214,18 @@ export default function WASessionPage() {
               <li>Scan QR code yang muncul</li>
               <li>Selesai! Pesanan akan otomatis masuk.</li>
             </ol>
+          </Card>
+        )}
+
+        {session?.status === 'connecting' && !session?.qrCode && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Menghubungkan...</CardTitle>
+            </CardHeader>
+            <div className="flex flex-col items-center gap-4 py-8">
+              <Loader2 className="h-12 w-12 animate-spin text-primary-500" />
+              <p className="text-sm text-surface-500">Menunggu QR code dari WhatsApp...</p>
+            </div>
           </Card>
         )}
 
