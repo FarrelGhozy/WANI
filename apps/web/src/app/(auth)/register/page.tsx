@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { z } from 'zod';
-import { Store, Loader2 } from 'lucide-react';
+import { Store, Loader2, Eye, EyeOff } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const registerSchema = z.object({
@@ -30,6 +30,8 @@ export default function RegisterPage() {
     address: '',
   });
   const [errors, setErrors] = useState<Partial<Record<keyof RegisterForm, string>>>({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [serverError, setServerError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -134,18 +136,28 @@ export default function RegisterPage() {
           <label htmlFor="password" className="block text-sm font-medium text-surface-700">
             Kata Sandi
           </label>
-          <input
-            id="password"
-            type="password"
-            placeholder="Minimal 6 karakter"
-            value={form.password}
-            onChange={e => updateField('password', e.target.value)}
-            className={cn(
-              'mt-1 block w-full rounded-lg border px-3 py-2 text-sm shadow-xs outline-none transition-colors',
-              'focus:border-primary-500 focus:ring-1 focus:ring-primary-500',
-              errors.password ? 'border-red-400' : 'border-surface-300',
-            )}
-          />
+          <div className="relative mt-1">
+            <input
+              id="password"
+              type={showPassword ? 'text' : 'password'}
+              placeholder="Minimal 6 karakter"
+              value={form.password}
+              onChange={e => updateField('password', e.target.value)}
+              className={cn(
+                'block w-full rounded-lg border px-3 py-2 text-sm shadow-xs outline-none transition-colors',
+                'focus:border-primary-500 focus:ring-1 focus:ring-primary-500',
+                errors.password ? 'border-red-400' : 'border-surface-300',
+                'pr-10',
+              )}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute inset-y-0 right-0 flex items-center pr-3 text-surface-400 hover:text-surface-600"
+            >
+              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
+          </div>
           {errors.password && <p className="mt-1 text-xs text-red-500">{errors.password}</p>}
         </div>
 
@@ -153,18 +165,28 @@ export default function RegisterPage() {
           <label htmlFor="confirmPassword" className="block text-sm font-medium text-surface-700">
             Konfirmasi Kata Sandi
           </label>
-          <input
-            id="confirmPassword"
-            type="password"
-            placeholder="Ulangi kata sandi"
-            value={form.confirmPassword}
-            onChange={e => updateField('confirmPassword', e.target.value)}
-            className={cn(
-              'mt-1 block w-full rounded-lg border px-3 py-2 text-sm shadow-xs outline-none transition-colors',
-              'focus:border-primary-500 focus:ring-1 focus:ring-primary-500',
-              errors.confirmPassword ? 'border-red-400' : 'border-surface-300',
-            )}
-          />
+          <div className="relative mt-1">
+            <input
+              id="confirmPassword"
+              type={showConfirmPassword ? 'text' : 'password'}
+              placeholder="Ulangi kata sandi"
+              value={form.confirmPassword}
+              onChange={e => updateField('confirmPassword', e.target.value)}
+              className={cn(
+                'block w-full rounded-lg border px-3 py-2 text-sm shadow-xs outline-none transition-colors',
+                'focus:border-primary-500 focus:ring-1 focus:ring-primary-500',
+                errors.confirmPassword ? 'border-red-400' : 'border-surface-300',
+                'pr-10',
+              )}
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              className="absolute inset-y-0 right-0 flex items-center pr-3 text-surface-400 hover:text-surface-600"
+            >
+              {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
+          </div>
           {errors.confirmPassword && <p className="mt-1 text-xs text-red-500">{errors.confirmPassword}</p>}
         </div>
 
