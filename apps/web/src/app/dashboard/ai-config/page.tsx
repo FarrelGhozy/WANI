@@ -63,8 +63,8 @@ export default function AIConfigPage() {
       setGreetingMessage(a.greetingMessage || '');
       setKnowledgeBase(a.knowledgeBase || '');
       setModel(a.model);
-      setMaxTokens(a.maxTokens);
-      setTemperature(a.temperature);
+      setMaxTokens(Number(a.maxTokens));
+      setTemperature(Number(a.temperature));
     }
     setLoading(false);
   }, []);
@@ -153,6 +153,7 @@ export default function AIConfigPage() {
               onChange={(e) => setModel(e.target.value)}
               className="w-full rounded-lg border border-surface-300 px-3 py-2 text-sm outline-none focus:border-primary-500"
             >
+              <option value="google/gemma-4-26b-a4b-it:free">Gemma 4 26B A4B (Free)</option>
               <option value="opencode/deepseek-v4-flash-free">DeepSeek V4 Flash (Free)</option>
               <option value="google/gemini-2.0-flash-exp:free">Gemini 2.0 Flash (Free)</option>
             </select>

@@ -92,17 +92,16 @@ export function Sidebar({ open, onClose }: SidebarProps) {
               </div>
             </div>
           ) : null}
-          <button
-            onClick={async () => {
-              await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
-              onClose();
-              window.location.href = '/login';
-            }}
-            className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-surface-600 hover:bg-surface-100 hover:text-red-600"
-          >
-            <LogOut className="h-5 w-5" />
-            Keluar
-          </button>
+          <form action="/logout" method="POST">
+            <button
+              type="submit"
+              onClick={() => onClose()}
+              className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-surface-600 hover:bg-surface-100 hover:text-red-600"
+            >
+              <LogOut className="h-5 w-5" />
+              Keluar
+            </button>
+          </form>
         </div>
       </aside>
     </>

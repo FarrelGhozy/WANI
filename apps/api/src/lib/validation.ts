@@ -183,7 +183,7 @@ export type SendMessageInput = z.infer<typeof sendMessageSchema>;
 export const createAIAgentSchema = z.object({
   merchantId: z.string().uuid(),
   systemPrompt: z.string().min(1),
-  model: z.string().default('opencode/deepseek-v4-flash-free'),
+  model: z.string().default('google/gemma-4-26b-a4b-it:free'),
   greetingMessage: z.string().optional(),
   knowledgeBase: z.string().optional(),
   maxTokens: z.number().int().positive().default(2048),

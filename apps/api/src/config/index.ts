@@ -22,7 +22,7 @@ export const config = {
 
   ai: {
     openrouterApiKey: requireEnv('OPENROUTER_API_KEY'),
-    defaultModel: process.env.LLM_MODEL || 'opencode/deepseek-v4-flash-free',
+    defaultModel: process.env.LLM_MODEL || 'google/gemma-4-26b-a4b-it:free',
     fallbackModel: 'google/gemini-2.0-flash-exp:free',
     maxTokens: 2048,
     temperature: 0.7,

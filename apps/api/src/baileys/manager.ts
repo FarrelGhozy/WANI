@@ -241,13 +241,6 @@ export class BaileysManager extends EventEmitter {
         saveCreds,
       );
 
-      // Creds update listener (extra safety net)
-      this.ev.on('creds.update', () => {
-        saveCreds().catch((err) =>
-          this.log.error({ err }, 'creds.update save failed'),
-        );
-      });
-
       this.log.info('Socket created, waiting for connection...');
     } catch (err) {
       this.log.error({ err }, 'Failed to create socket');
