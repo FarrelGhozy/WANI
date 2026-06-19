@@ -25,7 +25,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
     <>
       {open && (
         <div
-          className="fixed inset-0 z-30 bg-black/50 lg:hidden"
+          className="fixed inset-0 z-30 bg-black/50 dark:bg-black/70 lg:hidden"
           onClick={onClose}
         />
       )}

@@ -1,7 +1,9 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { Menu, ChevronRight } from 'lucide-react';
+import { Menu, ChevronRight, Sun, Moon } from 'lucide-react';
+import { useTheme } from 'next-themes';
 import { useMerchant } from '@/lib/auth-context';
 import { dashboardNav } from '@/lib/navigation';
 import { cn } from '@/lib/utils';
@@ -13,6 +15,10 @@ interface HeaderProps {
 export function Header({ onMenuClick }: HeaderProps) {
   const pathname = usePathname();
   const { merchant, isLoading } = useMerchant();
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => { setMounted(true); }, []);
 
   const segments = pathname.split('/').filter(Boolean);
 
@@ -44,7 +50,16 @@ export function Header({ onMenuClick }: HeaderProps) {
         </nav>
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
+        {mounted && (
+          <button
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            className="rounded-lg p-2 text-surface-500 hover:bg-surface-100 transition-colors"
+            aria-label="Toggle theme"
+          >
+            {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+          </button>
+        )}
         {!isLoading && merchant && (
           <div className="flex items-center gap-2">
             <span className="hidden text-sm text-surface-600 sm:block">
