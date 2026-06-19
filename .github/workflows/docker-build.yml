@@ -1,0 +1,42 @@
+name: Build & Push to GHCR
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to ghcr.io
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & push wani-api
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile.api
+          target: production
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/wani-api:latest
+
+      - name: Build & push wani-web
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile.web
+          target: production
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/wani-web:latest
+          build-args: |
+            NEXT_PUBLIC_API_URL=http://api:3001
