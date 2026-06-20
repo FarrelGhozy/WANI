@@ -39,10 +39,7 @@ services:
       - wani-prod
 
   api:
-    build:
-      context: .
-      dockerfile: Dockerfile.api
-      target: production
+    image: ghcr.io/farrelghozy/wani-api:latest
     container_name: wani-api
     restart: unless-stopped
     expose:
@@ -64,10 +61,7 @@ services:
       - wani-prod
 
   web:
-    build:
-      context: .
-      dockerfile: Dockerfile.web
-      target: production
+    image: ghcr.io/farrelghozy/wani-web:latest
     container_name: wani-web
     restart: unless-stopped
     expose:
