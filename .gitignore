@@ -1,3 +1,4 @@
 # Project wide .gitignore file
 
+graphify-out
 erd*
