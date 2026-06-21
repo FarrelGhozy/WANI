@@ -1,0 +1,7 @@
+model SignalKey {
+  type String
+  id   String
+  data String
+
+  @@id([type, id])
+}

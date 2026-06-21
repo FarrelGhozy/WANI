@@ -1,0 +1,28 @@
+{
+  "name": "wa-bot",
+  "module": "src/index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:deploy": "prisma migrate deploy"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "^7",
+    "@prisma/client": "^7",
+    "@whiskeysockets/baileys": "^6",
+    "axios": "^1",
+    "dotenv": "^16",
+    "pg": "^8",
+    "pino": "^9",
+    "qrcode-terminal": "^0.12"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/pg": "^8",
+    "@types/qrcode-terminal": "^0.12",
+    "prisma": "^7",
+    "typescript": "^5"
+  }
+}
