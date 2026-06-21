@@ -1,5 +1,5 @@
 import { prisma } from "@/src/config/db"
-import type { PrismaClient } from "@prisma/client"
+import type { PrismaClient } from "@db/client"
 
 export abstract class BaseModel {
   protected static get db(): PrismaClient {

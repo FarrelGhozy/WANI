@@ -63,7 +63,7 @@ Error classes: BadRequestError (400), UnauthorizedError (401), NotFoundError (40
 
 - `verbatimModuleSyntax` is on everywhere — use `import type` for type-only imports
 - `api/` and `wa-bot/` use `module: "Preserve"`, `allowImportingTsExtensions`, `noEmit: true` (Bun runtime, no tsc emit)
-- API + wa-bot path aliases: `@prisma/*` → `./generated/prisma/*`, `@/*` → `./*`
+- API + wa-bot path aliases: `@db/*` → `./generated/prisma/*`, `@/*` → `./*`
 - Dashboard has TypeScript project references: `tsconfig.app.json` (src/) + `tsconfig.node.json` (vite.config.ts)
 - ESLint 10 flat config with `eslint/config` module — not `.eslintrc*`
 - `erasableSyntaxOnly` in dashboard tsconfig — no enums, no namespaces, no `constructor` parameter properties

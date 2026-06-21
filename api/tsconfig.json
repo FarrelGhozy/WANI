@@ -23,7 +23,7 @@
     "noPropertyAccessFromIndexSignature": false,
 
     "paths": {
-      "@prisma/*": ["./generated/prisma/*"],
+      "@db/*": ["./generated/prisma/*"],
       "@/*": ["./*"]
     }
   },

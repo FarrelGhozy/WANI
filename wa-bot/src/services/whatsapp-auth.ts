@@ -1,4 +1,4 @@
-import type { PrismaClient } from "@prisma/client"
+import type { PrismaClient } from "@db/client"
 import { initAuthCreds, BufferJSON, type AuthenticationState } from "@whiskeysockets/baileys"
 import type { SignalKeyStore } from "@whiskeysockets/baileys"
 

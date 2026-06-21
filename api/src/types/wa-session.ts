@@ -1,4 +1,4 @@
-export type { WaSession } from "@prisma/client"
+export type { WaSession } from "@db/client"
 
 export type WaSessionData = {
   qr?: string | null

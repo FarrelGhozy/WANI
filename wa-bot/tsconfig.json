@@ -22,7 +22,7 @@
 
     // Path aliases
     "paths": {
-      "@prisma/*": ["./generated/prisma/*"],
+      "@db/*": ["./generated/prisma/*"],
       "@/*": ["./*"]
     }
   },
