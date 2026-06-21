@@ -1,0 +1,33 @@
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  CASH
+  TRANSFER
+  QRIS
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum MessageRole {
+  CUSTOMER
+  BOT
+  HUMAN
+}
+
+enum ConversationStatus {
+  ACTIVE
+  RESOLVED
+  ARCHIVED
+  ESCALATED
+}

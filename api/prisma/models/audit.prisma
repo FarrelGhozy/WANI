@@ -1,0 +1,19 @@
+model ActivityLog {
+  id          String   @id @default(uuid())
+  type        String
+  referenceId String?
+  description String   @db.Text
+  metadata    Json?
+  createdAt   DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+// Daily LLM usage, keyed by date (YYYY-MM-DD). Backs the cost/budget guardrail.
+model UsageCounter {
+  id        String   @id
+  llmCalls  Int      @default(0)
+  tokensIn  Int      @default(0)
+  tokensOut Int      @default(0)
+  updatedAt DateTime @updatedAt
+}

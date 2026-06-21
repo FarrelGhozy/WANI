@@ -1,0 +1,12 @@
+model Customer {
+  id          String   @id @default(uuid())
+  phone       String   @unique
+  name        String
+  notes       String?
+  totalOrders Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  orders        Order[]
+  conversations Conversation[]
+}

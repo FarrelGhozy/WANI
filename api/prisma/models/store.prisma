@@ -1,0 +1,14 @@
+// Single-store configuration (one row, id = "default").
+model Store {
+  id             String   @id @default("default")
+  businessName   String   @default("Toko")
+  phone          String   @default("")
+  address        String?
+  businessHours  String?
+  paymentMethods String?
+  shippingInfo   String?
+  returnPolicy   String?
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}

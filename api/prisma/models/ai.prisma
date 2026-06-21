@@ -1,0 +1,13 @@
+// Single AI agent configuration (one row, id = "default").
+model AiConfig {
+  id              String   @id @default("default")
+  isActive        Boolean  @default(true)
+  systemPrompt    String   @default("") @db.Text
+  model           String   @default("opencode/deepseek-v4-flash-free")
+  greetingMessage String?
+  knowledgeBase   String?  @db.Text
+  maxTokens       Int      @default(2048)
+  temperature     Decimal  @default(0.7) @db.Decimal(3, 2)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}

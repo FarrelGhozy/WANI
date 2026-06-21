@@ -1,0 +1,30 @@
+model Conversation {
+  id            String             @id @default(uuid())
+  customerId    String
+  status        ConversationStatus @default(ACTIVE)
+  lastMessageAt DateTime?
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+
+  customer Customer  @relation(fields: [customerId], references: [id])
+  messages Message[]
+
+  @@index([status])
+  @@index([customerId])
+}
+
+model Message {
+  id             String      @id @default(uuid())
+  conversationId String
+  role           MessageRole
+  content        String      @db.Text
+  msgType        String      @default("text")
+  // WhatsApp message id, used for idempotent dedup of inbound messages.
+  waMsgId        String?     @unique
+  metadata       Json?
+  createdAt      DateTime    @default(now())
+
+  conversation Conversation @relation(fields: [conversationId], references: [id])
+
+  @@index([conversationId, createdAt])
+}
