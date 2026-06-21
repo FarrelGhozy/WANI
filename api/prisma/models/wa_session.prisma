@@ -1,0 +1,7 @@
+model WaSession {
+  id        String   @id @default("default")
+  status    String   @default("disconnected")
+  phone     String?
+  qr        String?
+  updatedAt DateTime @updatedAt
+}
