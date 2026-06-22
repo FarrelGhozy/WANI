@@ -60,8 +60,8 @@ export function useProducts() {
 
   const [search, setSearch] = useState('')
   const [categoryFilter, setCategoryFilter] = useState('')
-  const [sortField, setSortField] = useState<'name' | 'price' | 'stock' | 'createdAt'>('createdAt')
-  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
+  const [sortField, setSortField] = useState<'name' | 'category' | 'price' | 'stock' | 'isAvailable'>('name')
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
   const filtered = useMemo(() => {
     const result = allProducts.filter((p) => {
       if (categoryFilter && p.categoryId !== categoryFilter) return false
@@ -73,6 +73,16 @@ export function useProducts() {
     })
 
     result.sort((a, b) => {
+      if (sortField === 'category') {
+        const aName = a.category?.name ?? ''
+        const bName = b.category?.name ?? ''
+        return sortDir === 'asc' ? aName.localeCompare(bName) : bName.localeCompare(aName)
+      }
+      if (sortField === 'isAvailable') {
+        return sortDir === 'asc'
+          ? Number(b.isAvailable) - Number(a.isAvailable)
+          : Number(a.isAvailable) - Number(b.isAvailable)
+      }
       const aVal = a[sortField]
       const bVal = b[sortField]
       if (typeof aVal === 'string' && typeof bVal === 'string') {

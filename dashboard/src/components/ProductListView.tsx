@@ -7,7 +7,7 @@ interface ProductListViewProps {
   onDelete: (id: string) => void
   sortField: string
   sortDir: 'asc' | 'desc'
-  onSort: (field: 'name' | 'price' | 'stock') => void
+  onSort: (field: 'name' | 'category' | 'price' | 'stock' | 'isAvailable') => void
 }
 
 function formatPrice(price: number) {
@@ -19,7 +19,7 @@ function SortArrow({ field, current, dir }: { field: string; current: string; di
   return <span className="ml-1 text-teal-600">{dir === 'asc' ? '\u2191' : '\u2193'}</span>
 }
 
-function SortTh({ field, label, current, dir, onSort, className }: { field: 'name' | 'price' | 'stock'; label: string; current: string; dir: 'asc' | 'desc'; onSort: (f: 'name' | 'price' | 'stock') => void; className?: string }) {
+function SortTh({ field, label, current, dir, onSort, className }: { field: 'name' | 'category' | 'price' | 'stock' | 'isAvailable'; label: string; current: string; dir: 'asc' | 'desc'; onSort: (f: typeof field) => void; className?: string }) {
   return (
     <th className={`px-4 py-3 text-xs font-medium uppercase tracking-wider ${className ?? ''}`}>
       <button onClick={() => onSort(field)} className="inline-flex items-center text-stone-500 transition-colors hover:text-stone-700">
@@ -41,10 +41,10 @@ export default function ProductListView({ products, onDelete, sortField, sortDir
         <thead>
           <tr className="border-b border-stone-100 bg-stone-50">
             <SortTh field="name" label="Product" current={sortField} dir={sortDir} onSort={onSort} />
-            <th className="px-4 py-3 text-xs font-medium uppercase tracking-wider text-stone-500">Category</th>
+            <SortTh field="category" label="Category" current={sortField} dir={sortDir} onSort={onSort} />
             <SortTh field="price" label="Price" current={sortField} dir={sortDir} onSort={onSort} className="text-right" />
             <SortTh field="stock" label="Stock" current={sortField} dir={sortDir} onSort={onSort} className="text-center" />
-            <th className="px-4 py-3 text-xs font-medium uppercase tracking-wider text-stone-500">Status</th>
+            <SortTh field="isAvailable" label="Status" current={sortField} dir={sortDir} onSort={onSort} />
             <th className="w-20 px-4 py-3" />
           </tr>
         </thead>
