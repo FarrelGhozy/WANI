@@ -1,0 +1,33 @@
+---
+import * as fs from "node:fs"
+const store = JSON.parse(fs.readFileSync("src/data/store.json", "utf-8"))
+const siteConfig = JSON.parse(fs.readFileSync("src/data/site-config.json", "utf-8"))
+---
+
+<footer class="bg-stone-900 text-stone-300 mt-16">
+  <div class="max-w-6xl mx-auto px-4 py-10 grid grid-cols-1 sm:grid-cols-3 gap-8">
+    <div>
+      <h3 class="text-white font-semibold mb-3">{store.businessName}</h3>
+      <p class="text-sm leading-relaxed">{siteConfig.about.description}</p>
+    </div>
+    <div>
+      <h3 class="text-white font-semibold mb-3">Menu</h3>
+      <ul class="space-y-2 text-sm">
+        <li><a href="/" class="text-stone-400 hover:text-white no-underline transition-colors">Beranda</a></li>
+        <li><a href="/produk/" class="text-stone-400 hover:text-white no-underline transition-colors">Produk</a></li>
+        <li><a href="/kontak/" class="text-stone-400 hover:text-white no-underline transition-colors">Kontak</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3 class="text-white font-semibold mb-3">Kontak</h3>
+      <ul class="space-y-2 text-sm">
+        <li>{store.phone}</li>
+        <li>{store.address}</li>
+        <li>{store.businessHours}</li>
+      </ul>
+    </div>
+  </div>
+  <div class="border-t border-stone-700 text-center text-sm text-stone-500 py-4">
+    &copy; {new Date().getFullYear()} {store.businessName}. All rights reserved.
+  </div>
+</footer>
