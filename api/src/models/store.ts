@@ -1,0 +1,21 @@
+import { BaseModel } from "@/src/models/base"
+import type { Store } from "@db/client"
+
+export class StoreModel extends BaseModel {
+  protected static override get delegate() {
+    return this.db.store
+  }
+
+  static async find(): Promise<Store | null> {
+    return this.getById<Store>("default")
+  }
+
+  static async upsert(data: Partial<Store>): Promise<Store> {
+    const { id, createdAt, updatedAt, ...rest } = data as any
+    return this.db.store.upsert({
+      where: { id: "default" },
+      create: { id: "default", businessName: "Toko", phone: "", ...rest },
+      update: rest,
+    })
+  }
+}

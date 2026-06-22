@@ -4,8 +4,8 @@ import { PROMPT_CANARY, MSG_OPEN } from "@/src/ai/prompts"
 /** Clean an outbound reply: strip code fences, trim, cap length. */
 export function sanitizeReply(text: string): string {
   let t = text.trim()
-  // Strip a wrapping ```lang ... ``` fence if the model added one.
-  t = t.replace(/^```[a-zA-Z0-9]*\s*\n?/, "").replace(/\n?```$/, "").trim()
+  // Remove code fence markers (```lang or ```) anywhere in the string.
+  t = t.replace(/```[a-zA-Z0-9]*/g, "").replace(/```/g, "").trim()
 
   const max = env.guardrails.maxReplyChars
   if (t.length > max) {

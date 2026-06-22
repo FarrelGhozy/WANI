@@ -36,8 +36,8 @@ export function normalizeInput(text: string): string {
 const INJECTION_PATTERNS: RegExp[] = [
   /ignore\s+(?:all\s+|the\s+|any\s+)?(?:previous|above|prior|earlier)\s+(?:instructions?|prompts?|messages?|rules?)/i,
   /disregard\s+(?:all\s+|the\s+)?(?:previous|above|prior)\s+(?:instructions?|prompts?|rules?)/i,
-  /abaikan\s+(?:semua\s+)?(?:instruksi|perintah|aturan|pesan)/i,
-  /lupakan\s+(?:semua\s+)?(?:instruksi|perintah|aturan)/i,
+  /abaikan\s+(?:semua\s+)?(?:instruksi|perintah|aturan|peraturan|pesan)/i,
+  /lupakan\s+(?:semua\s+)?(?:instruksi|perintah|aturan|peraturan)/i,
   /(?:reveal|show|print|repeat|leak|bocorkan|tampilkan)\s+(?:me\s+)?(?:your\s+|the\s+)?(?:system\s+)?(?:prompt|instructions?|aturan\s+sistem)/i,
   /system\s+prompt/i,
   /you\s+are\s+now\s+(?:a|an|the)?/i,

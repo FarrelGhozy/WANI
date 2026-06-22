@@ -7,7 +7,7 @@ export interface OrderItemInput {
 
 export type LLMOutput =
   | { intent: "order"; items: OrderItemInput[]; notes?: string }
-  | { intent: "inquiry"; query: string }
+  | { intent: "inquiry"; query: string; reply?: string }
   | { intent: "greeting"; reply: string }
   | { intent: "complaint"; reply: string; escalate: boolean }
   | { intent: "unknown"; reply: string }

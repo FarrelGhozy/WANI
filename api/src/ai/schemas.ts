@@ -14,6 +14,7 @@ const OrderIntentSchema = z.object({
 const InquiryIntentSchema = z.object({
   intent: z.literal("inquiry"),
   query: z.string().min(1, "Query is required"),
+  reply: z.string().optional(),
 })
 
 const GreetingIntentSchema = z.object({

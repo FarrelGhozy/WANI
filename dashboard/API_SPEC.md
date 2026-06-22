@@ -700,6 +700,7 @@ Putuskan koneksi WA.
 | `GET` | `/api/qr/status` | — | ✅ Existing |
 | `POST` | `/api/qr` | 🔒 | ✅ Existing |
 | `DELETE` | `/api/qr` | 🔒 | ✅ Existing |
+| `POST` | `/api/chat` | 🔒 | ✅ Existing |
 | `GET` | `/api/dashboard/stats` | — | 📋 Planned |
 | `GET` | `/api/products` | — | 📋 Planned |
 | `GET` | `/api/products/:id` | — | 📋 Planned |
@@ -722,10 +723,10 @@ Putuskan koneksi WA.
 | `GET` | `/api/conversations/:id` | — | 📋 Planned | Consumed via Customers page |
 | `PUT` | `/api/conversations/:id/status` | 🔒 | 📋 Planned | Consumed via Customers page |
 | `POST` | `/api/conversations/:id/messages` | 🔒 | 📋 Planned | Consumed via Customers page |
-| `GET` | `/api/store` | — | 📋 Planned | Settings tab: Store |
-| `PUT` | `/api/store` | 🔒 | 📋 Planned | Settings tab: Store |
-| `GET` | `/api/ai-config` | — | 📋 Planned | Settings tab: AI Agent |
-| `PUT` | `/api/ai-config` | 🔒 | 📋 Planned | Settings tab: AI Agent |
+| `GET` | `/api/store` | — | ✅ Existing | Settings tab: Store |
+| `PUT` | `/api/store` | 🔒 | ✅ Existing | Settings tab: Store |
+| `GET` | `/api/ai-config` | — | ✅ Existing | Settings tab: AI Agent |
+| `PUT` | `/api/ai-config` | 🔒 | ✅ Existing | Settings tab: AI Agent |
 | `GET` | `/api/qr/settings` | — | 📋 Planned | Settings tab: WA Session |
 | `POST` | `/api/qr/disconnect` | 🔒 | 📋 Planned | Settings tab: WA Session |
 | `GET` | `/api/logs` | — | 📋 Planned |

@@ -42,14 +42,33 @@ async function main() {
 
   sock.ev.on("messages.upsert", async ({ messages }) => {
     for (const msg of messages) {
-      if (!msg.key.fromMe && msg.message) {
+      if (!msg.key.fromMe && msg.message && msg.key.remoteJid) {
         const text =
           msg.message.conversation ??
           msg.message.extendedTextMessage?.text ??
           ""
-        await sock.sendMessage(msg.key.remoteJid!, {
-          text: `echo: ${text}`,
-        })
+        if (!text) continue
+
+        const jid = msg.key.remoteJid
+        if (jid.endsWith("@g.us")) continue
+
+        const phone = jid.replace(/[^0-9]/g, "")
+        const pushName = msg.pushName || phone
+
+        try {
+          const { data } = await api.post("/api/chat", {
+            phone,
+            name: pushName,
+            text,
+            waMsgId: msg.key.id,
+          })
+          const reply = data?.data?.reply
+          if (reply) {
+            await sock.sendMessage(jid, { text: reply })
+          }
+        } catch {
+          await sock.sendMessage(jid, { text: "Maaf, sistem sedang sibuk, coba sebentar lagi." }).catch(() => {})
+        }
       }
     }
   })
