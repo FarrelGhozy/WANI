@@ -1,0 +1,17 @@
+{
+  "name": "web-gen",
+  "module": "src/index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "generate": "bun run src/index.ts",
+    "build:template": "cd src/templates/default && npm install && npx astro build"
+  },
+  "dependencies": {
+    "astro": "^6.4"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^7"
+  }
+}
