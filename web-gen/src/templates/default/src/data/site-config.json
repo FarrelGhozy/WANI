@@ -1,0 +1,20 @@
+{
+  "hero": {
+    "headline": "Selamat Datang di Toko Kami",
+    "subheadline": "Produk berkualitas untuk kebutuhan Anda",
+    "ctaText": "Lihat Produk"
+  },
+  "about": {
+    "description": "Kami adalah toko yang menyediakan produk berkualitas terbaik untuk pelanggan setia kami.",
+    "mission": null
+  },
+  "contact": {
+    "email": null,
+    "mapsUrl": null
+  },
+  "colors": {
+    "primary": "#059669",
+    "secondary": "#f59e0b"
+  },
+  "waOrderTemplate": "Halo {store.businessName}, saya tertarik dengan produk berikut:\n\n• {product.name}\n• Harga: Rp {product.price}\n\nApakah produk ini tersedia?"
+}

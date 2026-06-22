@@ -1,0 +1,39 @@
+---
+import * as fs from "node:fs"
+const siteConfig = JSON.parse(fs.readFileSync("src/data/site-config.json", "utf-8"))
+const stats = JSON.parse(fs.readFileSync("src/data/orders-stats.json", "utf-8"))
+---
+
+<section class="bg-primary text-white py-20 px-4">
+  <div class="max-w-4xl mx-auto text-center">
+    <h1 class="text-4xl sm:text-5xl font-bold mb-4 leading-tight">
+      {siteConfig.hero.headline}
+    </h1>
+    {siteConfig.hero.subheadline && (
+      <p class="text-lg sm:text-xl text-white/80 mb-8 max-w-2xl mx-auto">
+        {siteConfig.hero.subheadline}
+      </p>
+    )}
+    <div class="flex flex-wrap justify-center gap-4">
+      {siteConfig.hero.ctaText && (
+        <a
+          href="/produk/"
+          class="bg-white text-primary font-semibold px-8 py-3 rounded-xl no-underline hover:bg-stone-100 transition-colors shadow-lg"
+        >
+          {siteConfig.hero.ctaText}
+        </a>
+      )}
+      <a
+        href="/kontak/"
+        class="border-2 border-white text-white font-semibold px-8 py-3 rounded-xl no-underline hover:bg-white/10 transition-colors"
+      >
+        Hubungi Kami
+      </a>
+    </div>
+    {stats.totalOrders > 0 && (
+      <p class="mt-8 text-white/70 text-sm">
+        {stats.totalOrders}+ pesanan selesai • {stats.completed} pelanggan puas
+      </p>
+    )}
+  </div>
+</section>

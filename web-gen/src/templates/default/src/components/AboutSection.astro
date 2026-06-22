@@ -1,0 +1,29 @@
+---
+import * as fs from "node:fs"
+const store = JSON.parse(fs.readFileSync("src/data/store.json", "utf-8"))
+const siteConfig = JSON.parse(fs.readFileSync("src/data/site-config.json", "utf-8"))
+---
+
+<section class="max-w-4xl mx-auto px-4 py-16">
+  <h2 class="text-3xl font-bold text-center text-stone-900 mb-8">Tentang Kami</h2>
+  <div class="bg-white rounded-xl border border-stone-200 p-6 sm:p-8">
+    <p class="text-stone-700 leading-relaxed mb-4">{siteConfig.about.description}</p>
+    {siteConfig.about.mission && (
+      <p class="text-stone-600 leading-relaxed italic">&ldquo;{siteConfig.about.mission}&rdquo;</p>
+    )}
+    <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4 text-center text-sm">
+      <div class="bg-stone-50 rounded-lg p-4">
+        <p class="font-semibold text-stone-900">Jam Operasional</p>
+        <p class="text-stone-500">{store.businessHours}</p>
+      </div>
+      <div class="bg-stone-50 rounded-lg p-4">
+        <p class="font-semibold text-stone-900">Alamat</p>
+        <p class="text-stone-500">{store.address}</p>
+      </div>
+      <div class="bg-stone-50 rounded-lg p-4">
+        <p class="font-semibold text-stone-900">Pembayaran</p>
+        <p class="text-stone-500">{store.paymentMethods}</p>
+      </div>
+    </div>
+  </div>
+</section>

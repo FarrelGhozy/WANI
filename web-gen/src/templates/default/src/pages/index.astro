@@ -1,0 +1,43 @@
+---
+import * as fs from "node:fs"
+import BaseLayout from "../layouts/BaseLayout.astro"
+import Header from "../components/Header.astro"
+import HeroSection from "../components/HeroSection.astro"
+import AboutSection from "../components/AboutSection.astro"
+import ProductCard from "../components/ProductCard.astro"
+import ContactInfo from "../components/ContactInfo.astro"
+import Footer from "../components/Footer.astro"
+import WaButton from "../components/WaButton.astro"
+
+const store = JSON.parse(fs.readFileSync("src/data/store.json", "utf-8"))
+const products = JSON.parse(fs.readFileSync("src/data/products.json", "utf-8"))
+const siteConfig = JSON.parse(fs.readFileSync("src/data/site-config.json", "utf-8"))
+
+const featuredProducts = products.slice(0, 6)
+---
+
+<BaseLayout>
+  <Header />
+  <HeroSection />
+  <AboutSection />
+
+  {featuredProducts.length > 0 && (
+    <section class="max-w-6xl mx-auto px-4 py-16">
+      <h2 class="text-3xl font-bold text-center text-stone-900 mb-8">Produk Unggulan</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {featuredProducts.map((product) => <ProductCard product={product} />)}
+      </div>
+      {products.length > 6 && (
+        <div class="text-center mt-8">
+          <a href="/produk/" class="inline-block bg-primary text-white font-semibold px-8 py-3 rounded-xl no-underline hover:opacity-90 transition-opacity">
+            Lihat Semua Produk
+          </a>
+        </div>
+      )}
+    </section>
+  )}
+
+  <ContactInfo />
+  <Footer />
+  <WaButton />
+</BaseLayout>

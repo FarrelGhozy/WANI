@@ -1,0 +1,8 @@
+{
+  "name": "wani-site-default",
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "astro": "^6.4"
+  }
+}

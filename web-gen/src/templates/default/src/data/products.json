@@ -1,0 +1,11 @@
+[
+  {
+    "id": "sample-1",
+    "name": "Produk Contoh",
+    "description": "Deskripsi produk contoh",
+    "price": 25000,
+    "stock": 10,
+    "isAvailable": true,
+    "imageUrl": null
+  }
+]
