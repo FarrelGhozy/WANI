@@ -8,14 +8,18 @@
 
 1. [Stack](#stack)
 2. [Peran & Batasan](#peran--batasan)
-3. [Directory Structure](#directory-structure)
-4. [Data Flow](#data-flow)
-5. [Template Architecture](#template-architecture)
-6. [Generator Service](#generator-service)
-7. [Output Structure](#output-structure)
-8. [API Integration](#api-integration)
-9. [Commands](#commands)
-10. [Design System (Generated Site)](#design-system-generated-site)
+3. [Workflow Overview](#workflow-overview)
+4. [Directory Structure](#directory-structure)
+5. [Data Flow](#data-flow)
+6. [Template Architecture](#template-architecture)
+7. [WhatsApp Integration](#whatsapp-integration)
+8. [Generator Service](#generator-service)
+9. [ZIP Download](#zip-download)
+10. [Output Structure](#output-structure)
+11. [API Integration](#api-integration)
+12. [Dashboard UI — Halaman /website](#dashboard-ui--halaman-website)
+13. [Commands](#commands)
+14. [Design System (Generated Site)](#design-system-generated-site)
 
 ---
 
@@ -50,6 +54,40 @@
 
 web-gen **tidak punya akses database sendiri**. Semua data dikirim sebagai argument function oleh API.
 
+### Preview & Download
+
+- **Preview via ZIP** — hasil generate bisa di-download sebagai ZIP untuk preview lokal tanpa perlu deploy.
+- **Tombol WhatsApp** — setiap halaman produk menyertakan tombol "Pesan via WhatsApp" yang otomatis mengisi nomor toko dan template pesanan.
+
+---
+
+## Workflow Overview
+
+Proses dari klik "Generate" sampai site terpublish:
+
+```
+┌────────────┐    ┌───────────────┐    ┌────────────────┐    ┌─────────────┐
+│  Dashboard  │───→│  Generator    │───→│  Static Files  │───→│  Publish    │
+│  /website   │    │  (Bun)        │    │  (HTML/CSS/JS) │    │  (manual)   │
+│  klik       │    │  fetch API    │    │  preview local │    │  Vercel/    │
+│  Generate   │    │  + render     │    │  ZIP download  │    │  Netlify    │
+└────────────┘    └───────────────┘    └────────────────┘    └─────────────┘
+                       │                       │
+                       ▼                       ▼
+                  Data (JSON)            Output Folder
+                  Store + Products       generated-sites/
+                  + Orders Stats         (atau ZIP)
+```
+
+Alur detail:
+
+1. **Dashboard** — `/website` menampilkan form "Content Config" + tombol "Generate Now"
+2. **Generator** — membaca Store, Products, Orders lewat Prisma query langsung (bukan HTTP)
+3. **Render** — data diformat ke JSON, di-inject ke template Astro, lalu `astro build` menghasilkan static files
+4. **Preview** — hasil generate bisa dilihat via `bun run preview` (server statis lokal)
+5. **Download** — hasil generate di-zip jadi `wani-website.zip` untuk di-download user
+6. **Publish** — link ke panduan deploy (Vercel / Netlify / manual FTP)
+
 ---
 
 ## Directory Structure
@@ -64,8 +102,9 @@ web-gen/
 ├── .env.example
 │
 ├── src/
-│   ├── index.ts                 # Entrypoint — export `generate()` function
+│   ├── index.ts                 # Entrypoint — export `generate()` + `createZip()`
 │   ├── generator.ts             # Core logic: copy → inject → build → output
+│   ├── zip.ts                   # ZIP archive generator (archiver)
 │   ├── types.ts                 # Type definitions (SiteConfig, StoreData, dll)
 │   └── templates/
 │       └── default/             # Template Astro standalone
@@ -82,7 +121,8 @@ web-gen/
 │               │   ├── HeroSection.astro
 │               │   ├── ProductCard.astro
 │               │   ├── AboutSection.astro
-│               │   └── ContactInfo.astro
+│               │   ├── ContactInfo.astro
+│               │   └── WaButton.astro         # Tombol "Pesan via WhatsApp"
 │               ├── layouts/
 │               │   └── BaseLayout.astro
 │               └── data/                  ← DI-GENERARE oleh generator.ts
@@ -188,9 +228,9 @@ const stats = JSON.parse(fs.readFileSync("src/data/orders-stats.json", "utf-8"))
 
 | Halaman | Path | Konten |
 |---------|------|--------|
-| **Home** | `/` → `index.html` | Hero section (headline + subheadline + CTA), About section (deskripsi toko), Featured products grid (max 6 produk), Contact info ringkas |
-| **Produk** | `/produk` → `produk/index.html` | Full product catalog. Grid card: image, name, price, stock badge, description. Category filter via anchor links. |
-| **Kontak** | `/kontak` → `kontak/index.html` | Nama toko, alamat lengkap, nomor telepon (click-to-call), jam operasional, metode pembayaran yang diterima, link Google Maps |
+| **Home** | `/` → `index.html` | Hero section (headline + subheadline + CTA), About section (deskripsi toko), Featured products grid (max 6 produk) + tombol WA per produk, Contact info ringkas |
+| **Produk** | `/produk` → `produk/index.html` | Full product catalog. Grid card: image, name, price, stock badge, description, tombol "Pesan via WhatsApp" per produk. Category filter via anchor links. |
+| **Kontak** | `/kontak` → `kontak/index.html` | Nama toko, alamat lengkap, nomor telepon (click-to-call + WA link), jam operasional, metode pembayaran yang diterima, link Google Maps |
 
 ### Komponen Template
 
@@ -203,6 +243,7 @@ const stats = JSON.parse(fs.readFileSync("src/data/orders-stats.json", "utf-8"))
 | `ProductCard.astro` | Card: image, name, price (format Rp), stock status, description truncated |
 | `AboutSection.astro` | About toko: deskripsi, business hours |
 | `ContactInfo.astro` | Contact details: phone, address, maps link, payment methods |
+| `WaButton.astro` | Tombol "Pesan via WhatsApp" dengan nomor toko + template pesanan |
 
 ### Styling Template
 
@@ -229,6 +270,57 @@ Inline style di `<head>` untuk CSS variables:
 ```
 
 Default: primary = teal-600 (`#059669`), secondary = amber-500 (`#f59e0b`).
+
+---
+
+## WhatsApp Integration
+
+Setiap produk yang ditampilkan di generated site memiliki tombol **"Pesan via WhatsApp"** yang mengarah ke chat WhatsApp toko dengan pesan template pesanan.
+
+### Cara Kerja
+
+```
+User klik "Pesan via WhatsApp"
+        │
+        ▼
+Buka WhatsApp dengan pre-filled message:
+https://wa.me/62xxxxxxxxx?text=Halo%20...%2C%20saya%20ingin%20memesan%3A%0A...
+        │
+        ▼
+Template pesan: "Halo {store.nama}, saya ingin memesan:
+                {product.nama} — Rp {product.harga}
+                Terima kasih."
+```
+
+### Implementasi di `WaButton.astro`
+
+```astro
+---
+const waNumber = store.wa.replace(/[^0-9]/g, "")
+const message = encodeURIComponent(
+  `Halo ${store.nama}, saya ingin memesan:\n` +
+  `${product.nama} — Rp ${product.harga.toLocaleString("id-ID")}\n` +
+  `Terima kasih.`
+)
+const waUrl = `https://wa.me/${waNumber}?text=${message}`
+---
+<a href={waUrl} target="_blank" rel="noopener noreferrer">
+  Pesan via WhatsApp
+</a>
+```
+
+### Data Produk di Template
+
+`products.json` menyertakan field yang dibutuhkan WA button:
+- `nama` — nama produk
+- `harga` — number, diformat Rp di rendering
+- `wa` — nomor WhatsApp toko (disalin dari store)
+
+### Keuntungan
+
+- **Zero backend** — semua client-side, WA link murni URL scheme
+- **Pre-filled message** — customer tinggal kirim, tidak perlu ngetik manual
+- **Integrasi erat** — produk dan nomor toko dari data yang sama di database
 
 ---
 
@@ -284,9 +376,49 @@ export async function generate(params: GenerateParams): Promise<GenerateResult>
 
 ---
 
+## ZIP Download
+
+Generator menyediakan fungsi `createZip()` yang mengompres hasil generate menjadi file `.zip` untuk di-download user.
+
+### File: `src/zip.ts`
+
+```typescript
+import archiver from "archiver"
+
+export async function createZip(sourceDir: string, outputPath: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const output = Bun.file(outputPath).writer()
+    const archive = archiver("zip", { zlib: { level: 9 } })
+
+    output.on("done", () => resolve(outputPath))
+    archive.on("error", reject)
+
+    archive.pipe(output as any)
+    archive.directory(sourceDir, false)
+    archive.finalize()
+  })
+}
+```
+
+### Alur ZIP
+
+1. Generator selesai build → output ada di `generated-sites/{slug}/`
+2. API panggil `createZip(outputDir, tempPath)` → hasil `.zip`
+3. API kirim file ZIP sebagai response download (`Content-Type: application/zip`)
+4. File ZIP bersifat sementara — bisa di-cache sesuai kebutuhan
+
+### Keuntungan
+
+- **Preview tanpa deploy** — user download ZIP, extract, buka `index.html` di browser
+- **Satu file** — mudah dikirim via email/chat
+- **Compressed** — level 9 zlib, ukuran minimal
+- **Integrasi langsung** — `createZip()` ada di export `src/index.ts`
+
+---
+
 ## Output Structure
 
-Setelah publish, folder `generated-sites/{slug}/` berisi:
+Setelah generate, folder `generated-sites/{slug}/` berisi:
 
 ```
 {slug}/
@@ -305,13 +437,85 @@ Setelah publish, folder `generated-sites/{slug}/` berisi:
 
 Preview output di `generated-sites/preview/{slug}/` — struktur yang sama. API serve folder ini via Express static middleware di path `/s/{slug}`.
 
-Publish final output di `generated-sites/{slug}/` — folder ini siap di-copy ke:
+### ZIP Download
+
+Hasil generate bisa di-download sebagai file ZIP (`wani-website-{slug}.zip`). File ZIP bersifat sementara, tidak disimpan permanen.
+
+### Publish
+
+Publish memindahkan hasil ke `generated-sites/{slug}/` (final). Folder ini siap di-copy ke:
 - Vercel (`vercel deploy --prebuilt`)
 - Netlify (drag & drop folder)
 - Nginx / Apache (copy ke document root)
 - GitHub Pages (push ke branch `gh-pages`)
 - Cloudflare Pages
 - any static host
+
+---
+
+## Dashboard UI — Halaman /website
+
+Halaman `/website` di Dashboard adalah antarmuka user untuk mengelola website toko. Berada di route `/dashboard/website`.
+
+### Layout Halaman
+
+```
+┌─────────────────────────────────────────────────┐
+│  Topbar: Website                                │
+├─────────────────────────────────────────────────┤
+│  ┌──────────────────┐  ┌──────────────────────┐ │
+│  │  Content Config   │  │  Quick Actions       │ │
+│  │                   │  │                      │ │
+│  │  - Hero Headline  │  │  [Generate Now]      │ │
+│  │  - Hero Subhead   │  │  [Preview Website]   │ │
+│  │  - About Text     │  │  [Download ZIP]      │ │
+│  │  - Warna Primary  │  │  [Publish]           │ │
+│  │  - Warna Second   │  │                      │ │
+│  │  - Pilih Produk   │  └──────────────────────┘ │
+│  │  - Template      │                            │
+│  └──────────────────┘                            │
+│                                                  │
+│  ┌──────────────────────────────────────────────┐│
+│  │  Activity Log / Riwayat Generate              ││
+│  │  [2025-07-20 14:30] Generate ✅ — 3 produk    ││
+│  │  [2025-07-19 10:15] Publish ✅ — ke Vercel   ││
+│  └──────────────────────────────────────────────┘│
+└─────────────────────────────────────────────────┘
+```
+
+### Content Config
+
+Form untuk mengatur konten website:
+
+| Field | Type | Default | Keterangan |
+|-------|------|---------|-----------|
+| `heroHeadline` | text | `"Selamat Datang di {store.name}"` | Headline utama hero section |
+| `heroSubheadline` | text | `"Temukan produk terbaik kami"` | Subheadline hero |
+| `aboutText` | textarea | deskripsi dari Store | About section content |
+| `primaryColor` | color | `#059669` | Warna utama (teal-600) |
+| `secondaryColor` | color | `#f59e0b` | Warna sekunder (amber-500) |
+| `phone` | text | dari Store.noWa | Nomor WhatsApp untuk tombol WA |
+| `selectedProductIds` | multi-select | all | Produk yang ditampilkan |
+| `template` | select | `"default"` | Template yang digunakan |
+
+### Quick Actions
+
+| Tombol | Aksi |
+|--------|------|
+| **Generate Now** | Panggil endpoint `POST /api/website/generate` → build website |
+| **Preview Website** | Buka tab baru ke `/s/preview/{slug}/` |
+| **Download ZIP** | Download `POST /api/website/download` → ZIP file |
+| **Publish** | Panggil `POST /api/website/publish` → output ke folder final |
+
+### API Endpoints (Dashboard → API)
+
+| Method | Path | Deskripsi |
+|--------|------|-----------|
+| `GET` | `/api/website` | Get current website config |
+| `PUT` | `/api/website` | Update website config |
+| `POST` | `/api/website/generate` | Generate website + preview |
+| `POST` | `/api/website/download` | Download hasil generate sebagai ZIP |
+| `POST` | `/api/website/publish` | Publish website (copy ke final dir) |
 
 ---
 
@@ -451,3 +655,7 @@ Setiap halaman punya:
 | **Multi-page** | Template bisa punya halaman lebih dari 3 (blog, testimonial, dll) |
 | **Image optimization** | Integrasi dengan Astro Image untuk responsive images |
 | **Markdown content** | Bisa pakai file .md untuk halaman About, Terms, dll |
+| **Share via WhatsApp** | Tombol share produk/link via WA di card produk |
+| **WhatsApp Catalog** | Integrasi dengan WhatsApp Catalog API untuk sync produk |
+| **Order via WA** | Auto-reply dengan format pesanan dari generated product card |
+| **Multi-template WA style** | Setiap template punya variasi gaya tombol WA (floating, inline, card) |
