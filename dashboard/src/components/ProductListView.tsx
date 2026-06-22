@@ -21,7 +21,7 @@ function SortArrow({ field, current, dir }: { field: string; current: string; di
 
 function SortTh({ field, label, current, dir, onSort, className }: { field: 'name' | 'category' | 'price' | 'stock' | 'isAvailable'; label: string; current: string; dir: 'asc' | 'desc'; onSort: (f: typeof field) => void; className?: string }) {
   return (
-    <th className={`px-4 py-3 text-xs font-medium uppercase tracking-wider ${className ?? ''}`}>
+    <th className={`max-sm:px-2 max-sm:py-2 sm:px-4 sm:py-3 text-xs font-medium uppercase tracking-wider ${className ?? ''}`}>
       <button onClick={() => onSort(field)} className="inline-flex items-center text-stone-500 transition-colors hover:text-stone-700">
         {label}
         <SortArrow field={field} current={current} dir={dir} />
@@ -37,7 +37,7 @@ export default function ProductListView({ products, onDelete, sortField, sortDir
 
   return (
     <div className="overflow-x-auto rounded-xl border border-stone-200 bg-white">
-      <table className="w-full border-collapse text-left text-sm">
+      <table className="w-full border-collapse text-left max-sm:text-xs sm:text-sm">
         <thead>
           <tr className="border-b border-stone-100 bg-stone-50">
             <SortTh field="name" label="Product" current={sortField} dir={sortDir} onSort={onSort} />
@@ -45,7 +45,7 @@ export default function ProductListView({ products, onDelete, sortField, sortDir
             <SortTh field="price" label="Price" current={sortField} dir={sortDir} onSort={onSort} className="text-right" />
             <SortTh field="stock" label="Stock" current={sortField} dir={sortDir} onSort={onSort} className="text-center" />
             <SortTh field="isAvailable" label="Status" current={sortField} dir={sortDir} onSort={onSort} />
-            <th className="w-20 px-4 py-3" />
+            <th className="w-20 max-sm:px-2 max-sm:py-2 sm:px-4 sm:py-3" />
           </tr>
         </thead>
         <tbody>
@@ -55,26 +55,26 @@ export default function ProductListView({ products, onDelete, sortField, sortDir
               onClick={() => navigate(`/products/${item.id}`)}
               className="cursor-pointer border-b border-stone-50 transition-colors last:border-0 hover:bg-stone-50"
             >
-              <td className="px-4 py-3">
+              <td className="max-sm:px-2 max-sm:py-2 sm:px-4 sm:py-3">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-stone-100 text-xs font-medium text-stone-400">
+                  <div className="max-sm:hidden flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-stone-100 text-xs font-medium text-stone-400">
                     {item.name.charAt(0)}
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-stone-900">{item.name}</p>
+                    <p className="max-sm:text-xs sm:text-sm font-medium text-stone-900">{item.name}</p>
                     {item.description && <p className="text-xs text-stone-400 line-clamp-1">{item.description}</p>}
                   </div>
                 </div>
               </td>
-              <td className="px-4 py-3 text-xs text-stone-500">{item.category?.name ?? '-'}</td>
-              <td className="px-4 py-3 text-right font-medium tabular-nums text-stone-900">{formatPrice(item.price)}</td>
-              <td className={`px-4 py-3 text-center tabular-nums ${item.stock === 0 ? 'text-red-500' : 'text-stone-700'}`}>{item.stock}</td>
-              <td className="px-4 py-3">
+              <td className="max-sm:px-2 max-sm:py-2 sm:px-4 sm:py-3 text-xs text-stone-500">{item.category?.name ?? '-'}</td>
+              <td className="max-sm:px-2 max-sm:py-2 sm:px-4 sm:py-3 text-right font-medium tabular-nums text-stone-900">{formatPrice(item.price)}</td>
+              <td className={`max-sm:px-2 max-sm:py-2 sm:px-4 sm:py-3 text-center tabular-nums ${item.stock === 0 ? 'text-red-500' : 'text-stone-700'}`}>{item.stock}</td>
+              <td className="max-sm:px-2 max-sm:py-2 sm:px-4 sm:py-3">
                 <Badge variant={item.isAvailable ? 'green' : 'red'} dot>
                   {item.isAvailable ? 'Active' : 'Inactive'}
                 </Badge>
               </td>
-              <td className="px-4 py-3">
+              <td className="max-sm:px-2 max-sm:py-2 sm:px-4 sm:py-3">
                 <div className="flex items-center justify-end gap-1">
                   <button
                     onClick={(e) => { e.stopPropagation(); navigate(`/products/${item.id}`) }}
