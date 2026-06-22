@@ -90,6 +90,18 @@ export function PhoneIcon() {
   )
 }
 
+export function GlobeIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="10" cy="10" r="7" />
+      <path d="M3 10h14" />
+      <path d="M10 3a7 7 0 010 14" />
+      <path d="M7 4.6A12 12 0 007 15.4" />
+      <path d="M13 4.6A12 12 0 0113 15.4" />
+    </svg>
+  )
+}
+
 export function CartIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">

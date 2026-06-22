@@ -1,11 +1,12 @@
 import { NavLink } from 'react-router'
-import { GridIcon, BagIcon, ClipboardIcon, PeopleIcon, CogIcon } from './Icons.tsx'
+import { GridIcon, BagIcon, ClipboardIcon, PeopleIcon, GlobeIcon, CogIcon } from './Icons.tsx'
 
 const navItems = [
   { to: '/', icon: GridIcon, label: 'Dashboard' },
   { to: '/products', icon: BagIcon, label: 'Products' },
   { to: '/orders', icon: ClipboardIcon, label: 'Orders' },
   { to: '/customers', icon: PeopleIcon, label: 'Customers' },
+  { to: '/website', icon: GlobeIcon, label: 'Website' },
   { to: '/settings', icon: CogIcon, label: 'Settings' },
 ]
 
