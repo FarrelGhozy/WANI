@@ -8,10 +8,12 @@
     "build:template": "cd src/templates/default && npm install && npx astro build"
   },
   "dependencies": {
+    "archiver": "^7",
     "astro": "^6.4"
   },
   "devDependencies": {
+    "@types/archiver": "^6",
     "@types/bun": "latest",
-    "typescript": "^7"
+    "typescript": "^5"
   }
 }
