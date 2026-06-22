@@ -6,11 +6,11 @@ import Button from '../components/ui/Button.tsx'
 import OrderTimeline from '../components/OrderTimeline.tsx'
 import Spinner from '../components/ui/Spinner.tsx'
 
-const statusBadge: Record<OrderStatus, 'teal' | 'amber' | 'green' | 'red'> = {
+const statusBadge: Record<OrderStatus, 'teal' | 'amber' | 'green' | 'gray' | 'red'> = {
   PENDING: 'amber',
-  CONFIRMED: 'green',
-  PROCESSING: 'teal',
-  COMPLETED: 'green',
+  CONFIRMED: 'teal',
+  PROCESSING: 'green',
+  COMPLETED: 'gray',
   CANCELLED: 'red',
 }
 

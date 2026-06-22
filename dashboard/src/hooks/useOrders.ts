@@ -1,6 +1,7 @@
 import { useState, useMemo, useCallback } from 'react'
 
 export type OrderStatus = 'PENDING' | 'CONFIRMED' | 'PROCESSING' | 'COMPLETED' | 'CANCELLED'
+export type OrderSortField = 'id' | 'customerName' | 'items' | 'totalAmount' | 'status' | 'createdAt'
 
 export interface OrderItem {
   id: string
@@ -139,18 +140,58 @@ export function formatPrice(price: number) {
 export function useOrders() {
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
+  const [sortField, setSortField] = useState<OrderSortField>('status')
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
   const [orders, setOrders] = useState(MOCK ? [...mockOrders] : [])
 
-  const filtered = useMemo(() =>
-    orders.filter((o) => {
+  const filtered = useMemo(() => {
+    const result = orders.filter((o) => {
       if (statusFilter && o.status !== statusFilter) return false
       if (search) {
         const q = search.toLowerCase()
         if (!o.customerName.toLowerCase().includes(q) && !o.id.toLowerCase().includes(q)) return false
       }
       return true
-    }),
-  [orders, search, statusFilter])
+    })
+
+    result.sort((a, b) => {
+      let cmp = 0
+      switch (sortField) {
+        case 'id':
+          cmp = a.id.localeCompare(b.id)
+          break
+        case 'customerName':
+          cmp = a.customerName.localeCompare(b.customerName)
+          break
+        case 'items':
+          cmp = a.items.length - b.items.length
+          break
+        case 'totalAmount':
+          cmp = a.totalAmount - b.totalAmount
+          break
+        case 'status': {
+          const priority: Record<string, number> = { PENDING: 0, CONFIRMED: 1, PROCESSING: 2, COMPLETED: 3, CANCELLED: 4 }
+          cmp = (priority[a.status] ?? 99) - (priority[b.status] ?? 99)
+          break
+        }
+        case 'createdAt':
+          cmp = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          break
+      }
+      return sortDir === 'asc' ? cmp : -cmp
+    })
+
+    return result
+  }, [orders, search, statusFilter, sortField, sortDir])
+
+  const toggleSort = useCallback((field: OrderSortField) => {
+    if (sortField === field) {
+      setSortDir((d) => d === 'asc' ? 'desc' : 'asc')
+    } else {
+      setSortField(field)
+      setSortDir('asc')
+    }
+  }, [sortField])
 
   const getOrder = useCallback((id: string): Order | undefined =>
     orders.find((o) => o.id === id),
@@ -179,6 +220,7 @@ export function useOrders() {
     loading: false,
     search, setSearch,
     statusFilter, setStatusFilter,
+    sortField, sortDir, toggleSort,
     getOrder, updateStatus, nextStatuses,
   }
 }

@@ -1,16 +1,19 @@
 import { useNavigate } from 'react-router'
-import type { Order, OrderStatus } from '../hooks/useOrders.ts'
+import type { Order, OrderStatus, OrderSortField } from '../hooks/useOrders.ts'
 import Badge from './ui/Badge.tsx'
 
 interface OrderListViewProps {
   orders: Order[]
+  sortField: string
+  sortDir: 'asc' | 'desc'
+  onSort: (field: OrderSortField) => void
 }
 
-const statusBadge: Record<OrderStatus, 'amber' | 'green' | 'teal' | 'red'> = {
+const statusBadge: Record<OrderStatus, 'amber' | 'teal' | 'green' | 'gray' | 'red'> = {
   PENDING: 'amber',
-  CONFIRMED: 'green',
-  PROCESSING: 'teal',
-  COMPLETED: 'green',
+  CONFIRMED: 'teal',
+  PROCESSING: 'green',
+  COMPLETED: 'gray',
   CANCELLED: 'red',
 }
 
@@ -26,7 +29,23 @@ function formatPrice(price: number) {
   return `Rp${price.toLocaleString('id-ID')}`
 }
 
-export default function OrderListView({ orders }: OrderListViewProps) {
+function SortArrow({ field, current, dir }: { field: string; current: string; dir: 'asc' | 'desc' }) {
+  if (field !== current) return null
+  return <span className="ml-1 text-teal-600">{dir === 'asc' ? '\u2191' : '\u2193'}</span>
+}
+
+function SortTh({ field, label, current, dir, onSort, className }: { field: OrderSortField; label: string; current: string; dir: 'asc' | 'desc'; onSort: (f: OrderSortField) => void; className?: string }) {
+  return (
+    <th className={`max-sm:px-2 max-sm:py-2 sm:px-4 sm:py-3 text-xs font-medium uppercase tracking-wider ${className ?? ''}`}>
+      <button onClick={() => onSort(field)} className="inline-flex items-center text-stone-500 transition-colors hover:text-stone-700">
+        {label}
+        <SortArrow field={field} current={current} dir={dir} />
+      </button>
+    </th>
+  )
+}
+
+export default function OrderListView({ orders, sortField, sortDir, onSort }: OrderListViewProps) {
   const navigate = useNavigate()
 
   if (orders.length === 0) return null
@@ -36,12 +55,12 @@ export default function OrderListView({ orders }: OrderListViewProps) {
       <table className="w-full border-collapse text-left max-sm:text-xs sm:text-sm">
         <thead>
           <tr className="border-b border-stone-100 bg-stone-50">
-            <th className="max-sm:px-2 max-sm:py-2 sm:px-4 sm:py-3 text-xs font-medium uppercase tracking-wider text-stone-500">Order</th>
-            <th className="max-sm:px-2 max-sm:py-2 sm:px-4 sm:py-3 text-xs font-medium uppercase tracking-wider text-stone-500">Customer</th>
-            <th className="max-sm:px-2 max-sm:py-2 sm:px-4 sm:py-3 text-xs font-medium uppercase tracking-wider text-stone-500">Items</th>
-            <th className="max-sm:px-2 max-sm:py-2 sm:px-4 sm:py-3 text-right text-xs font-medium uppercase tracking-wider text-stone-500">Total</th>
-            <th className="max-sm:px-2 max-sm:py-2 sm:px-4 sm:py-3 text-xs font-medium uppercase tracking-wider text-stone-500">Status</th>
-            <th className="max-sm:px-2 max-sm:py-2 sm:px-4 sm:py-3 text-right text-xs font-medium uppercase tracking-wider text-stone-500">Date</th>
+            <SortTh field="id" label="Order" current={sortField} dir={sortDir} onSort={onSort} />
+            <SortTh field="customerName" label="Customer" current={sortField} dir={sortDir} onSort={onSort} />
+            <SortTh field="items" label="Items" current={sortField} dir={sortDir} onSort={onSort} />
+            <SortTh field="totalAmount" label="Total" current={sortField} dir={sortDir} onSort={onSort} className="text-right" />
+            <SortTh field="status" label="Status" current={sortField} dir={sortDir} onSort={onSort} />
+            <SortTh field="createdAt" label="Date" current={sortField} dir={sortDir} onSort={onSort} className="text-right" />
           </tr>
         </thead>
         <tbody className="divide-y divide-stone-50">

@@ -10,11 +10,11 @@ import Badge from '../components/ui/Badge.tsx'
 import QRCode from '../components/QRCode.tsx'
 import { SignalIcon, BagIcon, ClipboardIcon, PeopleIcon } from '../components/Icons.tsx'
 
-const statusBadgeVariant: Record<string, 'amber' | 'green' | 'teal' | 'red'> = {
+const statusBadgeVariant: Record<string, 'amber' | 'teal' | 'green' | 'gray' | 'red'> = {
   PENDING: 'amber',
-  CONFIRMED: 'green',
-  PROCESSING: 'teal',
-  COMPLETED: 'green',
+  CONFIRMED: 'teal',
+  PROCESSING: 'green',
+  COMPLETED: 'gray',
   CANCELLED: 'red',
 }
 

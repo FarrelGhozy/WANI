@@ -12,7 +12,7 @@ const statusOptions = [
 ]
 
 export default function Orders() {
-  const { orders, loading, search, setSearch, statusFilter, setStatusFilter } = useOrders()
+  const { orders, loading, search, setSearch, statusFilter, setStatusFilter, sortField, sortDir, toggleSort } = useOrders()
 
   if (loading) {
     return <div className="flex items-center justify-center py-20"><Spinner size={24} /></div>
@@ -80,7 +80,7 @@ export default function Orders() {
       {/* List */}
       {orders.length > 0 && (
         <div className="max-lg:flex-1 max-lg:overflow-auto">
-          <OrderListView orders={orders} />
+          <OrderListView orders={orders} sortField={sortField} sortDir={sortDir} onSort={toggleSort} />
         </div>
       )}
     </div>
