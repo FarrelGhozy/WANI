@@ -32,7 +32,7 @@ export default function OrderListView({ orders }: OrderListViewProps) {
   if (orders.length === 0) return null
 
   return (
-    <div className="overflow-x-auto rounded-xl border border-stone-200 bg-white">
+    <div className="overflow-x-auto rounded-xl border border-stone-200 bg-white max-lg:h-full">
       <table className="w-full border-collapse text-left max-sm:text-xs sm:text-sm">
         <thead>
           <tr className="border-b border-stone-100 bg-stone-50">

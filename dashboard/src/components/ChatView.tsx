@@ -5,6 +5,7 @@ import Badge from './ui/Badge.tsx'
 interface ChatViewProps {
   customerName: string
   conversation: Conversation
+  onBack?: () => void
 }
 
 const roleLabel: Record<string, string> = {
@@ -44,7 +45,7 @@ const statusVariant: Record<string, 'teal' | 'green' | 'amber' | 'gray'> = {
   ESCALATED: 'amber',
 }
 
-export default function ChatView({ customerName, conversation }: ChatViewProps) {
+export default function ChatView({ customerName, conversation, onBack }: ChatViewProps) {
   const [input, setInput] = useState('')
   const bottomRef = useRef<HTMLDivElement>(null)
 
@@ -61,11 +62,20 @@ export default function ChatView({ customerName, conversation }: ChatViewProps) 
     <div className="flex h-full flex-col">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-stone-200 px-5 py-3">
-        <div>
-          <p className="text-sm font-semibold text-stone-900">{customerName}</p>
-          <Badge variant={statusVariant[conversation.status]} dot>
-            {conversation.status}
-          </Badge>
+        <div className="flex items-center gap-2">
+          {onBack && (
+            <button onClick={onBack} className="lg:hidden -ml-1 rounded-lg p-1.5 text-stone-400 transition-colors hover:bg-stone-100 hover:text-stone-600">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <path d="M19 12H5M12 19l-7-7 7-7" />
+              </svg>
+            </button>
+          )}
+          <div>
+            <p className="text-sm font-semibold text-stone-900">{customerName}</p>
+            <Badge variant={statusVariant[conversation.status]} dot>
+              {conversation.status}
+            </Badge>
+          </div>
         </div>
         <span className="text-xs text-stone-400">{conversation.messages.length} messages</span>
       </div>

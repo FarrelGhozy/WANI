@@ -19,7 +19,7 @@ export default function Orders() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="max-lg:flex max-lg:h-[calc(100dvh-12rem)] max-lg:flex-col lg:space-y-6">
       {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
@@ -78,7 +78,11 @@ export default function Orders() {
       )}
 
       {/* List */}
-      {orders.length > 0 && <OrderListView orders={orders} />}
+      {orders.length > 0 && (
+        <div className="max-lg:flex-1 max-lg:overflow-auto">
+          <OrderListView orders={orders} />
+        </div>
+      )}
     </div>
   )
 }

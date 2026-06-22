@@ -69,7 +69,7 @@ export default function Customers() {
         {/* Right: Chat + Detail */}
         <div className={`overflow-hidden rounded-xl border border-stone-200 bg-white ${!selectedId ? 'hidden lg:flex lg:flex-1' : 'flex-1'}`}>
           {selected && conversation ? (
-            <ChatView customerName={selected.name} conversation={conversation} />
+            <ChatView customerName={selected.name} conversation={conversation} onBack={() => setSelectedId(null)} />
           ) : (
             <EmptyChatPanel />
           )}
