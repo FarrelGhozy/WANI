@@ -1,21 +1,33 @@
+import type { ReactNode } from 'react'
+import Card from './ui/Card.tsx'
+
 interface StatusCardProps {
   label: string
-  value: string | null
-  status?: 'success' | 'warning' | 'error' | 'neutral'
+  value: string
+  accent: 'teal' | 'amber' | 'red'
+  icon?: ReactNode
+  subText?: string
 }
 
-const styles: Record<string, string> = {
-  success: 'bg-green-50 border-green-200 text-green-700',
-  warning: 'bg-yellow-50 border-yellow-200 text-yellow-700',
-  error: 'bg-red-50 border-red-200 text-red-700',
-  neutral: 'bg-gray-50 border-gray-200 text-gray-700',
-}
-
-export default function StatusCard({ label, value, status = 'neutral' }: StatusCardProps) {
+export default function StatusCard({ label, value, accent, icon, subText }: StatusCardProps) {
   return (
-    <div className={`rounded-lg border p-4 ${styles[status]}`}>
-      <p className="text-xs font-medium uppercase tracking-wide">{label}</p>
-      <p className="mt-1 text-lg font-semibold">{value ?? '—'}</p>
-    </div>
+    <Card accent={accent}>
+      <div className="flex items-start justify-between">
+        <div className="space-y-1">
+          <p className="text-xs font-medium uppercase tracking-wider text-stone-500">{label}</p>
+          <p className="text-2xl font-semibold text-stone-900">{value}</p>
+          {subText && <p className="text-xs text-stone-400">{subText}</p>}
+        </div>
+        {icon && (
+          <div className={`rounded-lg p-2 ${
+            accent === 'teal' ? 'bg-teal-50 text-teal-600' :
+            accent === 'amber' ? 'bg-amber-50 text-amber-600' :
+            'bg-red-50 text-red-600'
+          }`}>
+            {icon}
+          </div>
+        )}
+      </div>
+    </Card>
   )
 }

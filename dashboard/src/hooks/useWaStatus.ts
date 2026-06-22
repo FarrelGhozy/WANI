@@ -2,9 +2,9 @@ import { useState, useEffect, useCallback } from 'react'
 import { fetchApi } from '../lib/api.ts'
 
 export interface WaStatus {
-  qr: string | null
+  qr: string
   connection: string
-  phone: string | null
+  phone: string
   loading: boolean
   error: string | null
 }
@@ -12,14 +12,10 @@ export interface WaStatus {
 const MOCK = true
 
 export function useWaStatus(pollInterval = 5000): WaStatus {
-  if (MOCK) {
-    return { qr: 'mock-qr-data-for-development', connection: 'disconnected', phone: null, loading: false, error: null }
-  }
-
-  const [qr, setQr] = useState<string | null>(null)
-  const [connection, setConnection] = useState('disconnected')
-  const [phone, setPhone] = useState<string | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [qr, setQr] = useState(MOCK ? 'mock-qr-data-for-development' : '')
+  const [connection, setConnection] = useState(MOCK ? 'connected' : 'disconnected')
+  const [phone, setPhone] = useState(MOCK ? '+6281234567890' : '')
+  const [loading, setLoading] = useState(!MOCK)
   const [error, setError] = useState<string | null>(null)
 
   const poll = useCallback(async () => {
@@ -28,23 +24,24 @@ export function useWaStatus(pollInterval = 5000): WaStatus {
         fetchApi<{ qr: string | null }>('/api/qr'),
         fetchApi<{ status: string; phone: string | null }>('/api/qr/status'),
       ])
-      setQr(qrRes.data?.qr ?? null)
+      setQr(qrRes.data?.qr ?? '')
       setConnection(statusRes.data?.status ?? 'disconnected')
-      setPhone(statusRes.data?.phone ?? null)
+      setPhone(statusRes.data?.phone ?? '')
+      setLoading(false)
       setError(null)
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'unknown error')
-    } finally {
       setLoading(false)
+      setError(e instanceof Error ? e.message : 'unknown error')
     }
   }, [])
 
   useEffect(() => {
+    if (MOCK) return
     const id = setInterval(poll, pollInterval)
-    const initialId = setTimeout(poll, 0)
+    const initId = setTimeout(poll)
     return () => {
       clearInterval(id)
-      clearTimeout(initialId)
+      clearTimeout(initId)
     }
   }, [poll, pollInterval])
 

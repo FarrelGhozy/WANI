@@ -11,10 +11,9 @@
 3. [Endpoint Dashboard Stats (Planned)](#3-endpoint-dashboard-stats-planned)
 4. [Endpoint Products (Planned)](#4-endpoint-products-planned)
 5. [Endpoint Orders (Planned)](#5-endpoint-orders-planned)
-6. [Endpoint Customers (Planned)](#6-endpoint-customers-planned)
-7. [Endpoint Conversations & Messages (Planned)](#7-endpoint-conversations--messages-planned)
-8. [Endpoint Store & AI Config (Planned)](#8-endpoint-store--ai-config-planned)
-9. [Endpoint Activity Log & Usage (Planned)](#9-endpoint-activity-log--usage-planned)
+6. [Endpoint Customers + Chats (Planned)](#6-endpoint-customers--chats-planned)
+7. [Endpoint Settings (Planned)](#7-endpoint-settings-planned)
+8. [Endpoint Activity Log & Usage (Planned)](#8-endpoint-activity-log--usage-planned)
 10. [Error Codes](#10-error-codes)
 
 ---
@@ -428,9 +427,14 @@ Update / set payment untuk order.
 
 ---
 
-## 6. Endpoint Customers (Planned)
+## 6. Endpoint Customers + Chats (Planned)
 
-Database: `Customer`.
+Database: `Customer` + `Conversation` + `Message`.
+
+### Enums
+
+- `ConversationStatus`: `ACTIVE | RESOLVED | ARCHIVED | ESCALATED`
+- `MessageRole`: `CUSTOMER | BOT | HUMAN`
 
 ### GET /api/customers
 
@@ -447,6 +451,8 @@ Database: `Customer`.
       "name": string,
       "notes": string | null,
       "totalOrders": number,
+      "unreadCount": number,
+      "lastMessage": { "content": string, "role": MessageRole, "createdAt": string } | null,
       "recentOrder": { "id": string, "status": OrderStatus, "totalAmount": number, "createdAt": string } | null,
       "createdAt": string,
       "updatedAt": string
@@ -461,7 +467,7 @@ Database: `Customer`.
 
 ### GET /api/customers/:id
 
-Detail customer + riwayat order.
+Detail customer + riwayat order + percakapan.
 
 ```typescript
 // Response 200
@@ -478,6 +484,19 @@ Detail customer + riwayat order.
       "totalAmount": number,
       "createdAt": string
     }],
+    "conversation": {
+      "id": string,
+      "status": ConversationStatus,
+      "messages": [{
+        "id": string,
+        "role": MessageRole,
+        "content": string,
+        "msgType": string,
+        "waMsgId": string | null,
+        "metadata": Record<string, unknown> | null,
+        "createdAt": string
+      }]
+    } | null,
     "createdAt": string,
     "updatedAt": string
   }
@@ -497,98 +516,13 @@ Update data customer.
 
 ---
 
-## 7. Endpoint Conversations & Messages (Planned)
+## 7. Endpoint Settings (Planned)
 
-Database: `Conversation` + `Message`.
-
-Enums:
-- `ConversationStatus`: `ACTIVE | RESOLVED | ARCHIVED | ESCALATED`
-- `MessageRole`: `CUSTOMER | BOT | HUMAN`
-
-### GET /api/conversations
-
-```typescript
-// Query params
-?page=1&limit=20&status=ACTIVE&search=customerName&sort=lastMessageAt&order=desc
-
-// Response 200
-{
-  "data": {
-    "items": [{
-      "id": string,
-      "customer": { "id": string, "name": string, "phone": string },
-      "status": ConversationStatus,
-      "lastMessage": { "content": string, "role": MessageRole, "createdAt": string } | null,
-      "messageCount": number,
-      "lastMessageAt": string | null,
-      "createdAt": string,
-      "updatedAt": string
-    }],
-    "total": number,
-    "page": number,
-    "limit": number,
-    "totalPages": number
-  }
-}
-```
-
-### GET /api/conversations/:id
-
-Detail percakapan + semua pesan.
-
-```typescript
-// Response 200
-{
-  "data": {
-    "id": string,
-    "customer": { "id": string, "name": string, "phone": string },
-    "status": ConversationStatus,
-    "messages": [{
-      "id": string,
-      "role": MessageRole,
-      "content": string,
-      "msgType": string,
-      "waMsgId": string | null,
-      "metadata": Record<string, unknown> | null,
-      "createdAt": string
-    }],
-    "createdAt": string,
-    "updatedAt": string
-  }
-}
-```
-
-### PUT /api/conversations/:id/status 🔒
-
-Update status percakapan.
-
-```typescript
-// Body
-{ "status": ConversationStatus }
-
-// Response 200
-```
-
-### POST /api/conversations/:id/messages 🔒
-
-Kirim pesan manual (role: HUMAN).
-
-```typescript
-// Body
-{
-  "content": string,
-  "msgType"?: string    // default "text"
-}
-
-// Response 201
-{ "status": "success", "message": "message sent", "data": { ...message } }
-```
-
----
-
-## 8. Endpoint Store & AI Config (Planned)
+Gabungan: **Store Profile** + **AI Config** + **WA Session** — semuanya single-row (`id: "default"`).
 
 ### GET /api/store
+
+Profil toko.
 
 ```typescript
 // Response 200
@@ -610,8 +544,6 @@ Kirim pesan manual (role: HUMAN).
 ```
 
 ### PUT /api/store 🔒
-
-Update profil toko (semua field optional, partial update).
 
 ```typescript
 // Body
@@ -642,7 +574,7 @@ Update profil toko (semua field optional, partial update).
     "greetingMessage": string | null,
     "knowledgeBase": string | null,
     "maxTokens": number,
-    "temperature": number,    // DECIMAL(3,2)
+    "temperature": number,
     "createdAt": string,
     "updatedAt": string
   }
@@ -650,8 +582,6 @@ Update profil toko (semua field optional, partial update).
 ```
 
 ### PUT /api/ai-config 🔒
-
-Update konfigurasi AI.
 
 ```typescript
 // Body
@@ -668,9 +598,33 @@ Update konfigurasi AI.
 // Response 200
 ```
 
+### GET /api/qr/settings
+
+Detail WA Session untuk ditampilkan di Settings (QR, nomor, status).
+
+```typescript
+// Response 200
+{
+  "data": {
+    "status": "connected" | "disconnected" | "connecting",
+    "phone": string | null,
+    "qr": string | null
+  }
+}
+```
+
+### POST /api/qr/disconnect 🔒
+
+Putuskan koneksi WA.
+
+```typescript
+// Response 200
+{ "status": "success", "message": "disconnected" }
+```
+
 ---
 
-## 9. Endpoint Activity Log & Usage (Planned)
+## 8. Endpoint Activity Log & Usage (Planned)
 
 ### GET /api/logs
 
@@ -712,7 +666,7 @@ Update konfigurasi AI.
 
 ---
 
-## 10. Error Codes
+## 9. Error Codes
 
 | Status | Class | Penyebab |
 |--------|-------|----------|
@@ -764,17 +718,19 @@ Update konfigurasi AI.
 | `GET` | `/api/customers` | — | 📋 Planned |
 | `GET` | `/api/customers/:id` | — | 📋 Planned |
 | `PUT` | `/api/customers/:id` | 🔒 | 📋 Planned |
-| `GET` | `/api/conversations` | — | 📋 Planned |
-| `GET` | `/api/conversations/:id` | — | 📋 Planned |
-| `PUT` | `/api/conversations/:id/status` | 🔒 | 📋 Planned |
-| `POST` | `/api/conversations/:id/messages` | 🔒 | 📋 Planned |
-| `GET` | `/api/store` | — | 📋 Planned |
-| `PUT` | `/api/store` | 🔒 | 📋 Planned |
-| `GET` | `/api/ai-config` | — | 📋 Planned |
-| `PUT` | `/api/ai-config` | 🔒 | 📋 Planned |
+| `GET` | `/api/conversations` | — | 📋 Planned | Consumed via Customers page |
+| `GET` | `/api/conversations/:id` | — | 📋 Planned | Consumed via Customers page |
+| `PUT` | `/api/conversations/:id/status` | 🔒 | 📋 Planned | Consumed via Customers page |
+| `POST` | `/api/conversations/:id/messages` | 🔒 | 📋 Planned | Consumed via Customers page |
+| `GET` | `/api/store` | — | 📋 Planned | Settings tab: Store |
+| `PUT` | `/api/store` | 🔒 | 📋 Planned | Settings tab: Store |
+| `GET` | `/api/ai-config` | — | 📋 Planned | Settings tab: AI Agent |
+| `PUT` | `/api/ai-config` | 🔒 | 📋 Planned | Settings tab: AI Agent |
+| `GET` | `/api/qr/settings` | — | 📋 Planned | Settings tab: WA Session |
+| `POST` | `/api/qr/disconnect` | 🔒 | 📋 Planned | Settings tab: WA Session |
 | `GET` | `/api/logs` | — | 📋 Planned |
 | `GET` | `/api/usage` | — | 📋 Planned |
 
 ---
 
-> **Catatan Implementasi**: Semua endpoint baru sebaiknya dibuat tanpa auth dulu untuk development. Auth 🔒 bisa ditambahkan nanti saat production. Dashboard akan polling beberapa endpoint (orders, conversations) via `setInterval` di hooks.
+> **Catatan Implementasi**: Endpoint dibagi sesuai 5 halaman dashboard: Dashboard (QR + stats), Products, Orders, Customers (dengan chat inline), Settings (Store + AI + WA). Semua endpoint baru sebaiknya tanpa auth dulu untuk development.

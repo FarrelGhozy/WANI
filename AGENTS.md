@@ -85,5 +85,5 @@ Error classes: BadRequestError (400), UnauthorizedError (401), NotFoundError (40
 
 ## Referensi Dokumen
 
-- **`dashboard/ARCHITECTURE.md`** — Arsitektur dashboard: component tree, routing, data flow, page spec
-- **`dashboard/API_SPEC.md`** — API contract spec: semua endpoint (existing + planned), format request/response, error codes
+- **`dashboard/ARCHITECTURE.md`** — Arsitektur dashboard: 5 halaman (Dashboard, Products, Orders, Customers+Chats, Settings), component tree, routing, data flow, page spec
+- **`dashboard/API_SPEC.md`** — API contract spec: semua endpoint grouped by 5 halaman, format request/response, error codes

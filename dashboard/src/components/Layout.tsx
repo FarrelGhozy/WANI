@@ -1,15 +1,20 @@
 import { Outlet } from 'react-router'
+import Sidebar from './Sidebar.tsx'
+import Topbar from './Topbar.tsx'
+import { useWaStatus } from '../hooks/useWaStatus.ts'
 
 export default function Layout() {
+  const { connection } = useWaStatus()
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="border-b border-gray-200 bg-white px-6 py-4 shadow-sm">
-        <h1 className="text-xl font-semibold text-gray-900">WANI Dashboard</h1>
-        <p className="text-sm text-gray-500">WhatsApp Bot Monitor</p>
-      </header>
-      <main className="mx-auto max-w-4xl px-4 py-8">
-        <Outlet />
-      </main>
+    <div className="flex min-h-screen bg-stone-50">
+      <Sidebar connection={connection} />
+      <div className="ml-64 flex flex-1 flex-col">
+        <Topbar connection={connection} />
+        <main className="flex-1 p-8">
+          <Outlet />
+        </main>
+      </div>
     </div>
   )
 }

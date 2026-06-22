@@ -138,10 +138,9 @@ Menggunakan skala Tailwind default, tapi dipilih secara intentional:
 │  ● Dashboard            ←active│  ┌─ Content ──────────┐ │
 │  ○ Products                   │  │  Lega, breathing    │ │
 │  ○ Orders                     │  │                     │ │
-│  ○ Chats                      │  │  Cards dengan       │ │
-│  ○ Customers                  │  │  accent border kiri │ │
-│  ○ AI Config                  │  │                     │ │
-│  ○ Settings                   │  └─────────────────────┘ │
+│  ○ Customers                  │  │  Cards dengan       │ │
+│  ○ Settings                   │  │  accent border kiri │ │
+│                                │  └─────────────────────┘ │
 │                                │                         │
 │  ┌── Connection ────────────┐  │                         │
 │  │ 🟢 Connected             │  │                         │
@@ -208,8 +207,7 @@ dashboard/
 │   │   ├── useWaStatus.ts       # Polling WA connection status + QR
 │   │   ├── useProducts.ts       # CRUD produk (future)
 │   │   ├── useOrders.ts         # List + filter orders (future)
-│   │   ├── useConversations.ts  # Chat history (future)
-│   │   └── useCustomers.ts      # Customer list (future)
+│   │   └── useCustomers.ts      # Customer list + chat history (future)
 │   │
 │   ├── components/              # Shared UI components
 │   │   ├── ui/                  # Primitives (button, card, input, badge, table, modal, etc.)
@@ -239,10 +237,8 @@ dashboard/
 │   │   ├── Dashboard.tsx        # Overview: QR + status + quick stats
 │   │   ├── Products.tsx         # Daftar + CRUD produk (future)
 │   │   ├── Orders.tsx           # Manajemen order (future)
-│   │   ├── Chats.tsx            # Riwayat percakapan (future)
-│   │   ├── Customers.tsx        # Data pelanggan (future)
-│   │   ├── AiConfig.tsx         # Setting AI agent (future)
-│   │   └── Settings.tsx         # Profil toko, dll (future)
+│   │   ├── Customers.tsx        # Data pelanggan + riwayat chat (future)
+│   │   └── Settings.tsx         # Profil toko + AI Config + WA Session (future)
 │   │
 │   └── mocks/                   # MSW mock handlers (future)
 │       ├── browser.ts           # MSW browser worker setup
@@ -280,12 +276,10 @@ Semua UI primitives ada di `components/ui/`, menggunakan Tailwind utility classe
 
 <Layout>
   ├── <Sidebar>
-  │     ├── NavItem (QR / Status)       → "/"
+  │     ├── NavItem (Dashboard)          → "/"
   │     ├── NavItem (Products)           → "/products"
   │     ├── NavItem (Orders)             → "/orders"
-  │     ├── NavItem (Chats)              → "/chats"
   │     ├── NavItem (Customers)          → "/customers"
-  │     ├── NavItem (AI Config)          → "/ai-config"
   │     └── NavItem (Settings)           → "/settings"
   │
   ├── <Topbar>
@@ -307,12 +301,9 @@ Semua UI primitives ada di `components/ui/`, menggunakan Tailwind utility classe
 /products/:id       → ProductForm (edit)
 /orders             → Orders (list with filters)
 /orders/:id         → OrderDetail
-/chats              → Conversations (list)
-/chats/:id          → ChatDetail (messages)
-/customers          → Customers (list)
-/customers/:id      → CustomerDetail
-/ai-config          → AI Agent settings
-/settings           → Store profile settings
+/customers          → Customers + Chats (list + inline chat)
+/customers/:id      → CustomerDetail + riwayat pesan
+/settings           → Store + AI Config + WA Session
 ```
 
 React Router v8 dengan `createBrowserRouter`:
@@ -328,11 +319,8 @@ const router = createBrowserRouter([
       { path: 'products/:id',  element: <ProductForm /> },
       { path: 'orders',       element: <Orders /> },
       { path: 'orders/:id',   element: <OrderDetail /> },
-      { path: 'chats',        element: <Chats /> },
-      { path: 'chats/:id',    element: <ChatDetail /> },
       { path: 'customers',    element: <Customers /> },
       { path: 'customers/:id',element: <CustomerDetail /> },
-      { path: 'ai-config',    element: <AiConfig /> },
       { path: 'settings',     element: <Settings /> },
     ],
   },
@@ -378,7 +366,7 @@ const router = createBrowserRouter([
   │  useWaStatus()      → { qr, connection, ... } │
   │  useProducts()       → { products, loading }  │
   │  useOrders()         → { orders, filters }    │
-  │  useConversations()  → { conversations, ... } │
+  │  useCustomers()      → { customers, chats }   │
   └──────────────────┬───────────────────────────┘
                      │
                      ▼
@@ -395,9 +383,9 @@ const router = createBrowserRouter([
 |------|----------|----------|-------|
 | Dashboard | `/api/qr` + `/api/qr/status` | 5 detik | QR & status real-time |
 | Orders | `/api/orders` | 30 detik | Auto-refresh order baru |
-| Chats | `/api/conversations` | 10 detik | Pesan baru dari WA |
+| Customers | `/api/customers` + `/api/conversations` | 10 detik | Pesan baru dari WA (inline di customer detail) |
 
-Non-polling pages (Products, Customers, Settings) pake **manual refresh** atau **optimistic update** setelah mutasi.
+Non-polling pages (Products, Settings) pake **manual refresh** atau **optimistic update** setelah mutasi.
 
 ### Response Format (konsisten dari API)
 
@@ -474,32 +462,43 @@ Non-polling pages (Products, Customers, Settings) pake **manual refresh** atau *
 └─────────────────────────────────────────────────────┘
 ```
 
-### 4. Chats (`/chats`)
+### 4. Customers + Chats (`/customers`)
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│  Chats                                               │
-│  ┌──────────────┬──────────────────────────────────┐│
-│  │ Customers     │ Chat with Budi                   ││
-│  │              │                                  ││
-│  │ 🟢 Budi      │ [10:30] Budi: Saya mau pesan...  ││
-│  │    "Makasih"  │ [10:30] AI: Baik kak, total...  ││
-│  │              │                                  ││
-│  │ 🟡 Siti      │ [10:31] Budi: Iya, settuju      ││
-│  │    "Berapa?"  │ ┌──────────────────────────┐    ││
-│  │              │ │ Type a message... [Send]  │    ││
-│  │              │ └──────────────────────────┘    ││
-│  └──────────────┴──────────────────────────────────┘│
+│  Customers                     [Search...]           │
+│                                                      │
+│  ┌──────────────────┬──────────────────────────────┐│
+│  │  Customer List    │  [Chat Area - jika dipilih]  ││
+│  │                   │                              ││
+│  │  🟢 Budi         │  Customer: Budi              ││
+│  │    3 pesan baru   │  ─────────────────────      ││
+│  │                   │  [10:30] Budi: Pesan...     ││
+│  │  🟡 Siti         │  [10:30] AI: Baik kak...    ││
+│  │    1 pesan baru   │  ┌─────────────────────┐   ││
+│  │                   │  │ Ketik pesan... [➤] │   ││
+│  │  ⚪ Ani           │  └─────────────────────┘   ││
+│  │                   │                              ││
+│  └──────────────────┴──────────────────────────────┘│
 └─────────────────────────────────────────────────────┘
 ```
 
-### 5. AI Config (`/ai-config`)
+Layout: dua panel (desktop) / single column (mobile).
+Kiri: daftar customer + status online + preview chat terakhir.
+Kanan: chat panel penuh dengan input send message.
+Klik customer → load percakapan.
 
-Form untuk mengatur: system prompt, model, greeting message, knowledge base, temperature, max tokens.
+### 5. Settings (`/settings`)
 
-### 6. Settings (`/settings`)
+Settings adalah halaman tab tunggal dengan 3 bagian:
 
-Form: business name, phone, address, business hours, payment methods, shipping info.
+| Tab | Isi |
+|-----|-----|
+| **Store** | Business name, phone, address, business hours, payment methods, shipping info, return policy |
+| **AI Agent** | System prompt, model, greeting message, knowledge base, temperature, max tokens, active toggle |
+| **WA Session** | Status koneksi, nomor telepon, QR code (re-scan), disconnect button |
+
+Desain tab horizontal di bagian atas, konten di bawah. Satu form per tab.
 
 ---
 
@@ -597,8 +596,8 @@ bun run preview
 
 | Phase | Target | Deliverable |
 |-------|--------|-------------|
-| **P1** | Sekarang | ✅ Stack update + QR/Status page |
-| **P2** | Next | Sidebar + Layout + Products CRUD |
-| **P3** | Next | Orders management + Chat viewer |
-| **P4** | Next | AI Config + Settings |
-| **P5** | Final | Customers + Polish + MSW |
+| **P1** | Sekarang | ✅ Stack update + Layout shell + Dashboard page |
+| **P2** | Next | Products CRUD (list, form, categories) |
+| **P3** | Next | Orders management (list, detail, status update) |
+| **P4** | Next | Customers + Inline Chat (dual panel) |
+| **P5** | Final | Settings (Store + AI + WA Session tabs) |
