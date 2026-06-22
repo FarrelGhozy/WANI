@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { useSettings } from '../hooks/useSettings.ts'
+import { useWaStatus } from '../hooks/useWaStatus.ts'
 import StoreTab from '../components/StoreTab.tsx'
 import AiTab from '../components/AiTab.tsx'
 import WaSessionTab from '../components/WaSessionTab.tsx'
@@ -13,7 +14,22 @@ const tabs = [
 
 export default function Settings() {
   const [activeTab, setActiveTab] = useState<string>('store')
-  const { store, aiConfig, waSession, updateStore, updateAiConfig, disconnectWa, loading } = useSettings()
+  const { store, aiConfig, updateStore, updateAiConfig, loading } = useSettings()
+  const { qr: liveQr, connection: liveConn, phone: livePhone } = useWaStatus()
+
+  const [override, setOverride] = useState<{ connection: string; qr: string; phone: string } | null>(null)
+
+  const qr = override?.qr ?? liveQr
+  const connection = override?.connection ?? liveConn
+  const phone = override?.phone ?? livePhone
+
+  const handleDisconnect = useCallback(() => {
+    setOverride({ connection: 'disconnected', qr: '', phone: '' })
+  }, [])
+
+  const handleConnect = useCallback(() => {
+    setOverride(null)
+  }, [])
 
   if (loading) {
     return <div className="flex items-center justify-center py-20"><Spinner size={24} /></div>
@@ -23,7 +39,6 @@ export default function Settings() {
     <div className="space-y-6">
       <h1 className="text-2xl font-semibold tracking-tight text-stone-900">Settings</h1>
 
-      {/* Tabs */}
       <div className="flex overflow-x-auto border-b border-stone-200">
         {tabs.map((tab) => (
           <button
@@ -40,10 +55,17 @@ export default function Settings() {
         ))}
       </div>
 
-      {/* Panels */}
       {activeTab === 'store' && <StoreTab store={store} onUpdate={updateStore} />}
       {activeTab === 'ai' && <AiTab config={aiConfig} onUpdate={updateAiConfig} />}
-      {activeTab === 'wa' && <WaSessionTab session={waSession} onDisconnect={disconnectWa} />}
+      {activeTab === 'wa' && (
+        <WaSessionTab
+          qr={qr}
+          connection={connection}
+          phone={phone}
+          onDisconnect={handleDisconnect}
+          onConnect={handleConnect}
+        />
+      )}
     </div>
   )
 }

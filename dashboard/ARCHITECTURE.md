@@ -203,17 +203,17 @@ dashboard/
 │   ├── assets/                  # Images, SVGs
 │   │
 │   ├── lib/                     # Core utilities
-│   │   ├── api.ts               # Fetch wrapper (unified response parse)
-│   │   └── cn.ts                # clsx + twMerge utility (future)
+│   │   └── api.ts               # Fetch wrapper (unified response parse)
 │   │
-│   ├── hooks/                   # Custom React hooks
-│   │   ├── useWaStatus.ts       # Polling WA connection status + QR
-│   │   ├── useProducts.ts       # CRUD produk (future)
-│   │   ├── useOrders.ts         # List + filter orders (future)
-│   │   └── useCustomers.ts      # Customer list + chat history (future)
+│   ├── hooks/                   # Custom React hooks (mock-based, MOCK toggle)
+│   │   ├── useWaStatus.ts       # WA connection status + QR polling
+│   │   ├── useProducts.ts       # Produk CRUD + sort/filter
+│   │   ├── useOrders.ts         # Order list + sort/filter/status
+│   │   ├── useCustomers.ts      # Customer list + conversations
+│   │   └── useSettings.ts       # Store profile + AI config
 │   │
-│   ├── components/              # Shared UI components
-│   │   ├── ui/                  # Primitives (button, card, input, badge, table, modal, etc.)
+│   ├── components/              # Shared UI components & feature components
+│   │   ├── ui/                  # Primitives
 │   │   │   ├── Button.tsx
 │   │   │   ├── Card.tsx
 │   │   │   ├── Badge.tsx
@@ -222,34 +222,36 @@ dashboard/
 │   │   │   ├── Input.tsx
 │   │   │   ├── Select.tsx
 │   │   │   ├── Spinner.tsx
+│   │   │   ├── Pagination.tsx
 │   │   │   └── EmptyState.tsx
 │   │   │
-│   │   ├── layout/              # Layout components
-│   │   │   ├── Layout.tsx       # Shell: sidebar + topbar + main
-│   │   │   ├── Sidebar.tsx      # Navigation sidebar
-│   │   │   ├── Topbar.tsx       # Header with breadcrumbs
-│   │   │   └── PageHeader.tsx   # Title + actions bar
-│   │   │
-│   │   ├── qr/                  # WA connection related
-│   │   │   ├── QRCode.tsx       # QR display from string
-│   │   │   └── StatusCard.tsx   # Connection status badge
-│   │   │
-│   │   └── ... (feature-specific folders as needed)
+│   │   ├── Layout.tsx           # Shell: sidebar + topbar + main + bottom nav
+│   │   ├── Sidebar.tsx          # Desktop navigation + WA status + store owner
+│   │   ├── Topbar.tsx           # Header breadcrumb + connection indicator
+│   │   ├── BottomNav.tsx        # Mobile bottom tab navigation
+│   │   ├── Icons.tsx            # SVG icon library
+│   │   ├── QRCode.tsx           # QR display from string
+│   │   ├── StatusCard.tsx       # Metric stat card
+│   │   ├── StoreTab.tsx         # Settings — Store tab form
+│   │   ├── AiTab.tsx            # Settings — AI Agent tab form
+│   │   ├── WaSessionTab.tsx     # WA QR login + session detail (uses useWaStatus)
+│   │   ├── ProductListView.tsx  # Products — sortable table view
+│   │   ├── ProductCard.tsx      # Products — card/grid view
+│   │   ├── OrderListView.tsx    # Orders — sortable table view
+│   │   ├── OrderTimeline.tsx    # Orders — status timeline
+│   │   ├── CustomerListView.tsx # Customers — list panel
+│   │   └── ChatView.tsx         # Customers — inline chat panel
 │   │
 │   ├── pages/                   # Page components (one per route)
-│   │   ├── Dashboard.tsx        # Overview: QR + status + quick stats
-│   │   ├── Products.tsx         # Daftar + CRUD produk (future)
-│   │   ├── Orders.tsx           # Manajemen order (future)
-│   │   ├── Customers.tsx        # Data pelanggan + riwayat chat (future)
-│   │   └── Settings.tsx         # Profil toko + AI Config + WA Session (future)
+│   │   ├── Dashboard.tsx        # Revenue, pending orders, stock alerts, WA status
+│   │   ├── Products.tsx         # Product list/card + CRUD form
+│   │   ├── ProductForm.tsx      # Add/Edit product form
+│   │   ├── Orders.tsx           # Order list with sort & status filter
+│   │   ├── OrderDetail.tsx      # Order detail + status timeline
+│   │   ├── Customers.tsx        # Dual-panel: customer list + inline chat
+│   │   └── Settings.tsx         # Tabs: Store / AI Agent / WA Session
 │   │
-│   └── mocks/                   # MSW mock handlers (future)
-│       ├── browser.ts           # MSW browser worker setup
-│       ├── handlers.ts          # All mock handlers
-│       └── data/                # Mock data factories
-│           ├── products.ts
-│           ├── orders.ts
-│           └── customers.ts
+│   └── (no mocks/ — inline mock data in each hook)
 ```
 
 ---
@@ -268,12 +270,15 @@ Semua UI primitives ada di `components/ui/`, menggunakan Tailwind utility classe
 │  │          │  Home / Dashboard                         │ │
 │  │ <Sidebar>├──────────────────────────────────────────┤ │
 │  │          │                                           │ │
-│  │  • QR    │  <main>                                   │ │
-│  │  • Orders│    <Outlet />  ← halaman aktif            │ │
-│  │  • Produk│                                           │ │
-│  │  • Chat  │                                           │ │
-│  │  • DLL   │                                           │ │
+│  │  • Dashboard│  <main>                                │ │
+│  │  • Products│    <Outlet />  ← halaman aktif          │ │
+│  │  • Orders  │                                           │ │
+│  │  • Customers│                                          │ │
+│  │  • Settings│                                           │ │
 │  │          │                                           │ │
+│  │  ────────│                                           │ │
+│  │  🟢 WA   │                                           │ │
+│  │  [W] Store│                                           │ │
 │  └──────────┴──────────────────────────────────────────┘ │
 └─────────────────────────────────────────────────────────┘
 
@@ -305,7 +310,7 @@ Semua UI primitives ada di `components/ui/`, menggunakan Tailwind utility classe
 /orders             → Orders (list with filters)
 /orders/:id         → OrderDetail
 /customers          → Customers + Chats (list + inline chat)
-/customers/:id      → CustomerDetail + riwayat pesan
+/customers/:id      → Customers (state-driven, not a separate page)
 /settings           → Store + AI Config + WA Session
 ```
 
@@ -323,7 +328,7 @@ const router = createBrowserRouter([
       { path: 'orders',       element: <Orders /> },
       { path: 'orders/:id',   element: <OrderDetail /> },
       { path: 'customers',    element: <Customers /> },
-      { path: 'customers/:id',element: <CustomerDetail /> },
+      { path: 'customers/:id',element: <Customers /> },
       { path: 'settings',     element: <Settings /> },
     ],
   },
@@ -385,10 +390,8 @@ const router = createBrowserRouter([
 | Page | Endpoint | Interval | Notes |
 |------|----------|----------|-------|
 | Dashboard | `/api/qr` + `/api/qr/status` | 5 detik | QR & status real-time |
-| Orders | `/api/orders` | 30 detik | Auto-refresh order baru |
-| Customers | `/api/customers` + `/api/conversations` | 10 detik | Pesan baru dari WA (inline di customer detail) |
 
-Non-polling pages (Products, Settings) pake **manual refresh** atau **optimistic update** setelah mutasi.
+Hanya WA status yang di-polling. Semua data bisnis (products, orders, customers, settings) saat ini **mock-only** — tidak ada fetching API. Rencana polling untuk halaman lain akan ditambahkan setelah integrasi API.
 
 ### Response Format (konsisten dari API)
 
@@ -415,55 +418,68 @@ Non-polling pages (Products, Settings) pake **manual refresh** atau **optimistic
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│  Overview                                            │
-│  ┌──────────────┐  ┌──────────────┐  ┌────────────┐│
-│  │ 📡 Connection │  │ 📞 Phone      │  │ 📦 Orders   ││
-│  │ Connected     │  │ +62812...     │  │ 12 today    ││
-│  └──────────────┘  └──────────────┘  └────────────┘│
+│  Dashboard                                           │
+│  Ringkasan bisnis dan status penting                 │
+│                                                      │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────┐│
+│  │ 💰Revenue │  │ ⏳Perlu   │  │ 📦Produk  │  │ 👥    ││
+│  │ Rp215.000│  │ Diproses │  │ Aktif    │  │ Cust  ││
+│  └──────────┘  └──────────┘  └──────────┘  └──────┘│
 │                                                      │
 │  ┌──────────────────────────────────────────────────┐│
-│  │              QR Code                              ││
-│  │              [QR SVG]                             ││
-│  │     Scan with WhatsApp > Linked Devices           ││
+│  │  Pesanan Perlu Diproses           [Lihat Semua →] ││
+│  │  #ORD-003  Budi Santoso            Pending    →  ││
+│  │  #ORD-004  Siti Rahma              Confirmed  →  ││
 │  └──────────────────────────────────────────────────┘│
+│                                                      │
+│  ┌────────────────────┐  ┌────────────────────────┐  │
+│  │ 📡 WhatsApp Status │  │ 📦 Perhatian Stok      │  │
+│  │ 🟢 Connected       │  │ Tahu Crispy (Stok: 0)  │  │
+│  │ +6281234567890     │  │ Jus Alpukat (Tdk aktif)│  │
+│  └────────────────────┘  └────────────────────────┘  │
 └─────────────────────────────────────────────────────┘
 ```
 
-**Data:** QR string, connection status, phone number, quick stats (total orders hari ini, produk aktif, dll)
+**Data:** 4 metrik (revenue, pending orders, active products, customers) + pending orders list + stock alerts + WA status. Semua dari mock hooks.
 
 ### 2. Products (`/products`)
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│  Products                          [+ Add Product]   │
+│  Products                    [List/Card] [+ Add Product]
 │                                                      │
-│  ┌──────────────────────────────────────────────────┐│
-│  │ Search...                            [Category ▽]││
+│  ┌─ Search ──────────────────── [Category ▽] ──────┐│
 │  ├──────┬──────────┬───────┬──────┬───────┬────────┤│
-│  │ Image│ Name      │ Price │ Stock│ Status│ Actions││
+│  │ Name↑│ Category │ Price↑│ Stock│ Status│ Actions││
 │  ├──────┼──────────┼───────┼──────┼───────┼────────┤│
 │  │ [img]│ Nasi Goreg│ 25.000│  12  │ Active│ ✏️ 🗑️ ││
 │  │ [img]│ Es Teh    │  5.000│  50  │ Active│ ✏️ 🗑️ ││
 │  └──────┴──────────┴───────┴──────┴───────┴────────┘│
+│                                                      │
+│  Atau tampilan Card (grid, 20/page, paginated)      │
 └─────────────────────────────────────────────────────┘
 ```
 
-**Data:** GET /api/products, POST/PUT/DELETE /api/products/:id
+**Data:** All products. Sortable headers (Name, Category, Price, Stock, Status). Dual view: List (table, no pagination) / Card (grid, 20/page, paginated). Form di halaman terpisah (`/products/new`, `/products/:id`).
 
 ### 3. Orders (`/orders`)
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│  Orders                    [Status ▽] [Date range]   │
+│  Orders                         [Status ▽]           │
 │                                                      │
-│  ┌──────┬──────────┬──────────┬────────┬───────────┐│
-│  │ Order│ Customer │ Items    │ Total  │ Status    ││
-│  ├──────┼──────────┼──────────┼────────┼───────────┤│
-│  │ #001 │ Budi     │ 2 items  │ Rp45k │ ✅ Selesai ││
-│  │ #002 │ Ani      │ 1 item   │ Rp25k │ ⏳ Proses  ││
-│  └──────┴──────────┴──────────┴────────┴───────────┘│
+│  ┌─ Search ────────────────────────────────────────┐│
+│  ├───────┬──────────┬───────┬────────┬──────┬──────┤│
+│  │ Order↑│ Customer │ Items│ Total↑ │Status│Date↑ ││
+│  ├───────┼──────────┼───────┼────────┼──────┼──────┤│
+│  │ #001  │ Budi     │ 2     │ Rp45k  │ Pending│ 20/6││
+│  │ #002  │ Ani      │ 1     │ Rp25k  │ Proses│ 20/6││
+│  └───────┴──────────┴───────┴────────┴──────┴──────┘│
 └─────────────────────────────────────────────────────┘
 ```
+
+Default sort: PENDING → CONFIRMED → PROCESSING → COMPLETED → CANCELLED.
+Semua header sortable. Klik row → `/orders/:id` (detail + status timeline + payment info).
 
 ### 4. Customers + Chats (`/customers`)
 
@@ -499,9 +515,17 @@ Settings adalah halaman tab tunggal dengan 3 bagian:
 |-----|-----|
 | **Store** | Business name, phone, logo/photo, address, business hours, payment methods, shipping info, return policy |
 | **AI Agent** | System prompt, model, greeting message, knowledge base, temperature, max tokens, active toggle |
-| **WA Session** | Status koneksi, nomor telepon, QR code (re-scan), disconnect button |
+| **WA Session** | QR login flow, status koneksi (dot + label), nomor telepon, session detail (platform, connected since, last active), disconnect/connect button, info card tentang session |
 
 Desain tab horizontal di bagian atas, konten di bawah. Satu form per tab.
+
+**Data Flow WA Session:**
+- Settings menggunakan `useWaStatus` (sama dengan Dashboard) sebagai sumber data — polling `GET /api/qr` + `GET /api/qr/status`
+- Local state `override` di Settings.tsx untuk demo disconnect/connect flow: klik Disconnect → override ke `disconnected` (show QR placeholder); klik Connect → reset override, tampilkan data live dari `useWaStatus`
+- `WaSessionTab` menerima `{ qr, connection, phone }` sebagai props individual (bukan `WaSession` object)
+- Tiga tampilan: **Connected** (detail session card + 4 info fields) | **Disconnected** (QR placeholder + instruksi + tombol Connect) | **Connecting** (QR code + countdown + tombol Generate New QR)
+
+> **Catatan**: `useSettings` tidak lagi mengelola state WA session — semua data WA berasal dari `useWaStatus`. `WaSession` interface telah dihapus dari `useSettings`.
 
 ---
 
@@ -525,48 +549,38 @@ Jika polling data dibutuhkan di multiple pages, hook akan di-memoize dengan `use
 
 ## Mock Strategy
 
-### Development tanpa Backend
+### Inline Mock Data (Current)
 
-Mode mock diaktifkan via konstanta di tiap hook:
+Setiap hook memiliki konstanta `MOCK = true` dan data dummy inline:
 
 ```typescript
-// hooks/useWaStatus.ts
-const MOCK = true   // toggle: false = pakai API beneran
+// hooks/useProducts.ts
+const MOCK = true
 
-export function useWaStatus(): WaStatus {
-  if (MOCK) {
-    return {
-      qr: 'sample-qr-data',
-      connection: 'disconnected',
-      phone: null,
-      loading: false,
-      error: null,
-    }
-  }
-  // ... real API polling logic
+const mockProducts: Product[] = [
+  { id: 'prod-1', name: 'Nasi Goreng Spesial', price: 25000, ... },
+  // ...
+]
+
+export function useProducts() {
+  const allProducts = useMemo(() => MOCK ? mockProducts : [], [])
+  // ...
 }
 ```
 
-### MSW (Mock Service Worker) — Rencana
+**Mekanisme:**
+- `MOCK = true` → return data inline (array/object di file yang sama)
+- `MOCK = false` → return empty/initial state (siap diisi fetching API)
+- Semua mutasi (create/update/delete) berjalan di memori lokal — tidak persist
 
-Untuk development lebih advance, kita akan setup MSW:
+Setiap hook punya toggle sendiri, sehingga bisa progresif switch ke API per fitur.
 
-```typescript
-// mocks/handlers.ts
-import { http, HttpResponse } from 'msw'
+### Transisi ke API
 
-export const handlers = [
-  http.get('/api/qr', () =>
-    HttpResponse.json({ status: 'success', message: 'ok', data: { qr: '...' } })
-  ),
-  http.get('/api/qr/status', () =>
-    HttpResponse.json({ status: 'success', message: 'ok', data: { status: 'disconnected', phone: null } })
-  ),
-  // ... all endpoints
-]
-```
-
-MSW jalan di browser (service worker), mencegat fetch dan return mock data. Tidak perlu backend sama sekali.
+Untuk mengaktifkan API sungguhan:
+1. Set `MOCK = false` di hook terkait
+2. Implementasi fetching via `fetchApi<T>()` dari `lib/api.ts`
+3. Ganti operasi mutasi dengan POST/PUT/DELETE ke API server
 
 ---
 
@@ -599,8 +613,9 @@ bun run preview
 
 | Phase | Target | Deliverable |
 |-------|--------|-------------|
-| **P1** | Sekarang | ✅ Stack update + Layout shell + Dashboard page |
-| **P2** | Next | Products CRUD (list, form, categories) |
-| **P3** | Next | Orders management (list, detail, status update) |
-| **P4** | Next | Customers + Inline Chat (dual panel) |
-| **P5** | Final | Settings (Store + AI + WA Session tabs) |
+| **P1** | ✅ Selesai | Stack update + Layout shell + Dashboard page |
+| **P2** | ✅ Selesai | Products CRUD (list, card, form, categories, sort) |
+| **P3** | ✅ Selesai | Orders management (list, detail, status update, sort) |
+| **P4** | ✅ Selesai | Customers + Inline Chat (dual panel, mobile back) |
+| **P5** | ✅ Selesai | Settings (Store + AI + WA Session tabs with photo) |
+| **P6** | ▶ Selanjutnya | Integrasi API — ganti mock dengan fetch ke backend |

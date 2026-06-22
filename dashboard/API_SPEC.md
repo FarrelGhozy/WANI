@@ -1,6 +1,11 @@
 # WANI API — Specification
 
 > REST API untuk platform WANI. Base URL: `http://localhost:3001/api`
+>
+> **Status implementasi:** Saat ini hanya endpoint QR yang sudah ada di server.
+> Semua endpoint lain (Products, Orders, Customers, Settings, dll) **belum diimplementasikan**
+> di backend — dashboard menggunakan **mock data inline** di tiap hook (`MOCK = true`).
+> Spesifikasi di bawah adalah **kontrak/rencana** untuk implementasi mendatang.
 
 ---
 
@@ -698,42 +703,44 @@ Putuskan koneksi WA.
 
 | Method | Path | Auth | Status |
 |--------|------|------|--------|
-| `GET` | `/api/qr` | — | ✅ Existing |
-| `GET` | `/api/qr/status` | — | ✅ Existing |
-| `POST` | `/api/qr` | 🔒 | ✅ Existing |
-| `DELETE` | `/api/qr` | 🔒 | ✅ Existing |
-| `POST` | `/api/chat` | 🔒 | ✅ Existing |
-| `GET` | `/api/dashboard/stats` | — | 📋 Planned |
-| `GET` | `/api/products` | — | 📋 Planned |
-| `GET` | `/api/products/:id` | — | 📋 Planned |
-| `POST` | `/api/products` | 🔒 | 📋 Planned |
-| `PUT` | `/api/products/:id` | 🔒 | 📋 Planned |
-| `DELETE` | `/api/products/:id` | 🔒 | 📋 Planned |
-| `GET` | `/api/products/categories` | — | 📋 Planned |
-| `POST` | `/api/products/categories` | 🔒 | 📋 Planned |
-| `PUT` | `/api/products/categories/:id` | 🔒 | 📋 Planned |
-| `DELETE` | `/api/products/categories/:id` | 🔒 | 📋 Planned |
-| `GET` | `/api/orders` | — | 📋 Planned |
-| `GET` | `/api/orders/:id` | — | 📋 Planned |
-| `PUT` | `/api/orders/:id/status` | 🔒 | 📋 Planned |
-| `PUT` | `/api/orders/:id/notes` | 🔒 | 📋 Planned |
-| `PUT` | `/api/orders/:id/payment` | 🔒 | 📋 Planned |
-| `GET` | `/api/customers` | — | 📋 Planned |
-| `GET` | `/api/customers/:id` | — | 📋 Planned |
-| `PUT` | `/api/customers/:id` | 🔒 | 📋 Planned |
-| `GET` | `/api/conversations` | — | 📋 Planned | Consumed via Customers page |
-| `GET` | `/api/conversations/:id` | — | 📋 Planned | Consumed via Customers page |
-| `PUT` | `/api/conversations/:id/status` | 🔒 | 📋 Planned | Consumed via Customers page |
-| `POST` | `/api/conversations/:id/messages` | 🔒 | 📋 Planned | Consumed via Customers page |
-| `GET` | `/api/store` | — | ✅ Existing | Settings tab: Store |
-| `PUT` | `/api/store` | 🔒 | ✅ Existing | Settings tab: Store |
-| `GET` | `/api/ai-config` | — | ✅ Existing | Settings tab: AI Agent |
-| `PUT` | `/api/ai-config` | 🔒 | ✅ Existing | Settings tab: AI Agent |
-| `GET` | `/api/qr/settings` | — | 📋 Planned | Settings tab: WA Session |
-| `POST` | `/api/qr/disconnect` | 🔒 | 📋 Planned | Settings tab: WA Session |
-| `GET` | `/api/logs` | — | 📋 Planned |
-| `GET` | `/api/usage` | — | 📋 Planned |
+| `GET` | `/api/qr` | — | ✅ Implemented |
+| `GET` | `/api/qr/status` | — | ✅ Implemented |
+| `POST` | `/api/qr` | 🔒 | ✅ Implemented |
+| `DELETE` | `/api/qr` | 🔒 | ✅ Implemented |
+| `POST` | `/api/chat` | 🔒 | ✅ Implemented |
+| `GET` | `/api/dashboard/stats` | — | ❌ Belum di-backend |
+| `GET` | `/api/products` | — | ❌ Belum di-backend |
+| `GET` | `/api/products/:id` | — | ❌ Belum di-backend |
+| `POST` | `/api/products` | 🔒 | ❌ Belum di-backend |
+| `PUT` | `/api/products/:id` | 🔒 | ❌ Belum di-backend |
+| `DELETE` | `/api/products/:id` | 🔒 | ❌ Belum di-backend |
+| `GET` | `/api/products/categories` | — | ❌ Belum di-backend |
+| `POST` | `/api/products/categories` | 🔒 | ❌ Belum di-backend |
+| `PUT` | `/api/products/categories/:id` | 🔒 | ❌ Belum di-backend |
+| `DELETE` | `/api/products/categories/:id` | 🔒 | ❌ Belum di-backend |
+| `GET` | `/api/orders` | — | ❌ Belum di-backend |
+| `GET` | `/api/orders/:id` | — | ❌ Belum di-backend |
+| `PUT` | `/api/orders/:id/status` | 🔒 | ❌ Belum di-backend |
+| `PUT` | `/api/orders/:id/notes` | 🔒 | ❌ Belum di-backend |
+| `PUT` | `/api/orders/:id/payment` | 🔒 | ❌ Belum di-backend |
+| `GET` | `/api/customers` | — | ❌ Belum di-backend |
+| `GET` | `/api/customers/:id` | — | ❌ Belum di-backend |
+| `PUT` | `/api/customers/:id` | 🔒 | ❌ Belum di-backend |
+| `GET` | `/api/conversations` | — | ❌ Belum di-backend |
+| `GET` | `/api/conversations/:id` | — | ❌ Belum di-backend |
+| `PUT` | `/api/conversations/:id/status` | 🔒 | ❌ Belum di-backend |
+| `POST` | `/api/conversations/:id/messages` | 🔒 | ❌ Belum di-backend |
+| `GET` | `/api/store` | — | ❌ Belum di-backend |
+| `PUT` | `/api/store` | 🔒 | ❌ Belum di-backend |
+| `GET` | `/api/ai-config` | — | ❌ Belum di-backend |
+| `PUT` | `/api/ai-config` | 🔒 | ❌ Belum di-backend |
+| `GET` | `/api/qr/settings` | — | ❌ Belum di-backend |
+| `POST` | `/api/qr/disconnect` | 🔒 | ❌ Belum di-backend |
+| `GET` | `/api/logs` | — | ❌ Belum di-backend |
+| `GET` | `/api/usage` | — | ❌ Belum di-backend |
 
 ---
 
-> **Catatan Implementasi**: Endpoint dibagi sesuai 5 halaman dashboard: Dashboard (QR + stats), Products, Orders, Customers (dengan chat inline), Settings (Store + AI + WA). Semua endpoint baru sebaiknya tanpa auth dulu untuk development.
+> **Catatan Implementasi**: Semua endpoint bertanda ❌ sudah memiliki mock data di dashboard
+> (`hooks/*.ts` dengan `MOCK = true`) tapi belum ada route/controller di backend API.
+> Prioritas implementasi sesuai roadmap: QR → Products → Orders → Customers → Settings.

@@ -24,12 +24,6 @@ export interface AiConfig {
   temperature: number
 }
 
-export interface WaSession {
-  status: 'connected' | 'disconnected' | 'connecting'
-  phone: string | null
-  qr: string | null
-}
-
 const MOCK = true
 
 const mockStore: StoreProfile = {
@@ -56,16 +50,9 @@ const mockAiConfig: AiConfig = {
   temperature: 0.7,
 }
 
-const mockWaSession: WaSession = {
-  status: 'disconnected',
-  phone: null,
-  qr: null,
-}
-
 export function useSettings() {
   const [store, setStore] = useState(MOCK ? { ...mockStore } : mockStore)
   const [aiConfig, setAiConfig] = useState(MOCK ? { ...mockAiConfig } : mockAiConfig)
-  const [waSession, setWaSession] = useState(MOCK ? { ...mockWaSession } : mockWaSession)
   const updateStore = useCallback((patch: Partial<StoreProfile>) => {
     setStore((prev) => ({ ...prev, ...patch }))
   }, [])
@@ -74,17 +61,11 @@ export function useSettings() {
     setAiConfig((prev) => ({ ...prev, ...patch }))
   }, [])
 
-  const disconnectWa = useCallback(() => {
-    setWaSession({ status: 'disconnected', phone: null, qr: null })
-  }, [])
-
   return {
     store,
     aiConfig,
-    waSession,
     updateStore,
     updateAiConfig,
-    disconnectWa,
     loading: false,
   }
 }
