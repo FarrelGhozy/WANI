@@ -7,6 +7,7 @@ import Orders from './pages/Orders.tsx'
 import OrderDetail from './pages/OrderDetail.tsx'
 import Customers from './pages/Customers.tsx'
 import Settings from './pages/Settings.tsx'
+import Website from './pages/Website.tsx'
 
 const router = createBrowserRouter([
   {
@@ -20,6 +21,7 @@ const router = createBrowserRouter([
       { path: 'orders/:id',    element: <OrderDetail /> },
       { path: 'customers',     element: <Customers /> },
       { path: 'customers/:id', element: <Customers /> },
+      { path: 'website',       element: <Website /> },
       { path: 'settings',      element: <Settings /> },
     ],
   },
