@@ -1,9 +1,10 @@
 # WANI — agent guidance
 
-Three independent Bun packages (not a monorepo). Each has its own `bun.lock` and `tsconfig.json`.
+Four independent Bun packages (not a monorepo). Each has its own `bun.lock` and `tsconfig.json`.
 
 - **`api/`** — Express 5 + Prisma 7 — REST server with layered architecture (routes → controllers → models → Prisma delegate)
 - **`dashboard/`** — React 19 + TypeScript 6 + Vite 8 (Rolldown, not esbuild) — frontend UI
+- **`web-gen/`** — Bun + Astro 6.4 — static site generator for UMKM websites
 - **`wa-bot/`** — Baileys 6 + Prisma 7 — WhatsApp bot with persistent auth, auto-reconnect
 
 ## Architecture
@@ -51,6 +52,12 @@ Bot pushes QR/status → API stores in WaSession DB → Dashboard polls GET /api
 - `bun run prisma:migrate` — apply dev migrations
 - `bun run prisma:deploy` — apply production migrations
 
+**Web-Gen** (`web-gen/`):
+- `bun install` — install dependencies
+- `bun run src/generator.ts` — test generate (CLI mode)
+- `bun run build:template` — install dep + build template standalone
+- `bun run tsc --noEmit` — type check
+
 ## API Endpoints
 
 | Method | Path | Auth | Description |
@@ -82,8 +89,9 @@ Error classes: BadRequestError (400), UnauthorizedError (401), NotFoundError (40
 ## Quirks
 
 - `verbatimModuleSyntax` is on everywhere — use `import type` for type-only imports
-- `api/` and `wa-bot/` use `module: "Preserve"`, `allowImportingTsExtensions`, `noEmit: true` (Bun runtime, no tsc emit)
+- `api/`, `web-gen/`, and `wa-bot/` use `module: "Preserve"`, `allowImportingTsExtensions`, `noEmit: true` (Bun runtime, no tsc emit)
 - API + wa-bot path aliases: `@db/*` → `./generated/prisma/*`, `@/*` → `./*`
+- web-gen path alias: `@/*` → `./*`
 - Dashboard has TypeScript project references: `tsconfig.app.json` (src/) + `tsconfig.node.json` (vite.config.ts)
 - ESLint 10 flat config with `eslint/config` module — not `.eslintrc*`
 - `erasableSyntaxOnly` in dashboard tsconfig — no enums, no namespaces, no `constructor` parameter properties
