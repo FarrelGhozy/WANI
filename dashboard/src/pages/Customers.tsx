@@ -28,7 +28,7 @@ export default function Customers() {
   }
 
   return (
-    <div className="flex h-[calc(100vh-8rem)] flex-col">
+    <div className="flex h-[calc(100vh-12rem)] flex-col lg:h-[calc(100vh-9rem)]">
       <div className="mb-4">
         <h1 className="text-2xl font-semibold tracking-tight text-stone-900">Customers</h1>
         <p className="mt-1 text-sm text-stone-500">{customers.length} pelanggan</p>
@@ -52,7 +52,7 @@ export default function Customers() {
       {/* Two-panel */}
       <div className="flex flex-1 gap-4 overflow-hidden">
         {/* Left: Customer list */}
-        <div className="w-80 shrink-0 overflow-hidden rounded-xl border border-stone-200 bg-white">
+        <div className={`overflow-hidden rounded-xl border border-stone-200 bg-white ${selectedId ? 'hidden lg:flex lg:w-80' : 'flex-1 lg:w-80 lg:shrink-0'}`}>
           {customers.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <p className="text-sm text-stone-500">No customers found</p>
@@ -67,7 +67,7 @@ export default function Customers() {
         </div>
 
         {/* Right: Chat + Detail */}
-        <div className="flex flex-1 overflow-hidden rounded-xl border border-stone-200 bg-white">
+        <div className={`overflow-hidden rounded-xl border border-stone-200 bg-white ${!selectedId ? 'hidden lg:flex lg:flex-1' : 'flex-1'}`}>
           {selected && conversation ? (
             <ChatView customerName={selected.name} conversation={conversation} />
           ) : (

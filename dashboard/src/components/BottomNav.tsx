@@ -1,0 +1,42 @@
+import { NavLink } from 'react-router'
+import { GridIcon, BagIcon, ClipboardIcon, PeopleIcon, CogIcon } from './Icons.tsx'
+
+const navItems = [
+  { to: '/', icon: GridIcon, label: 'Dashboard' },
+  { to: '/products', icon: BagIcon, label: 'Products' },
+  { to: '/orders', icon: ClipboardIcon, label: 'Orders' },
+  { to: '/customers', icon: PeopleIcon, label: 'Customers' },
+  { to: '/settings', icon: CogIcon, label: 'Settings' },
+]
+
+export default function BottomNav() {
+  return (
+    <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-stone-200 bg-white lg:hidden">
+      <div className="flex items-center justify-around px-2 py-1">
+        {navItems.map((item) => (
+          <NavLink
+            key={item.to}
+            to={item.to}
+            end={item.to === '/'}
+            className="flex flex-col items-center gap-0.5 px-3 py-2"
+          >
+            {({ isActive }) => (
+              <>
+                <span className={isActive ? 'text-teal-600' : 'text-stone-400'}>
+                  <item.icon />
+                </span>
+                <span
+                  className={`text-[10px] font-medium ${
+                    isActive ? 'text-teal-700' : 'text-stone-400'
+                  }`}
+                >
+                  {item.label}
+                </span>
+              </>
+            )}
+          </NavLink>
+        ))}
+      </div>
+    </nav>
+  )
+}
