@@ -75,3 +75,15 @@ Error classes: BadRequestError (400), UnauthorizedError (401), NotFoundError (40
 - WaSession is single-row (`id: "default"`), always upserted
 - Bot expects API to be running first (POSTs QR on `connection.update`)
 - Both databases on same PG server: `wani_api` (api) + `wa_bot` (bot)
+
+## Stack Stability
+
+- **Never downgrade packages.** Jika error/bug muncul, cari solusi via searching (docs, Stack Overflow, GitHub issues) — jangan turunkan versi dependency.
+- **Research first.** Sebelum menurunkan versi atau mengganti package, cari dulu apakah ada konfigurasi / flag / workaround untuk versi saat ini.
+- **Gunakan latest stable.** Semua dependency harus latest stable version dari npm registry resmi.
+- **Error = cari solusi, bukan turun versi.** Kalau build error, lint error, atau type error, carilah solusi yang kompatibel dengan versi yang ada.
+
+## Referensi Dokumen
+
+- **`dashboard/ARCHITECTURE.md`** — Arsitektur dashboard: component tree, routing, data flow, page spec
+- **`dashboard/API_SPEC.md`** — API contract spec: semua endpoint (existing + planned), format request/response, error codes
