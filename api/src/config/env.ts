@@ -5,6 +5,12 @@ function num(key: string, fallback: number): number {
   return Number.isFinite(parsed) ? parsed : fallback
 }
 
+function bool(key: string, fallback: boolean): boolean {
+  const raw = process.env[key]
+  if (raw === undefined || raw === "") return fallback
+  return raw === "1" || raw.toLowerCase() === "true"
+}
+
 export const env = {
   nodeEnv: process.env.NODE_ENV ?? "development",
 
@@ -24,5 +30,15 @@ export const env = {
     rateLongMax: num("RATE_LIMIT_LONG_MAX", 60),
     rateLongWindowMs: num("RATE_LIMIT_LONG_WINDOW_MS", 3_600_000),
     dailyLlmBudget: num("DAILY_LLM_BUDGET", 2000),
+
+    // Classifier tier (ML model via OpenRouter)
+    classifierEnabled: bool("CLASSIFIER_ENABLED", true),
+    classifierModel: process.env.CLASSIFIER_MODEL ?? "google/gemini-2.0-flash-lite",
+    // Judge tier (deep analysis for SUSPICIOUS cases)
+    judgeEnabled: bool("JUDGE_ENABLED", true),
+    judgeModel: process.env.JUDGE_MODEL ?? "google/gemini-2.0-flash-lite",
+    // Grounding check on output
+    groundingEnabled: bool("GROUNDING_CHECK_ENABLED", true),
+    groundingModel: process.env.GROUNDING_MODEL ?? "google/gemini-2.0-flash-lite",
   },
 } as const

@@ -22,7 +22,7 @@ Bot pushes QR/status → API stores in WaSession DB → Dashboard polls GET /api
 - **api/src/utils/** — `AppError` subclasses (BadRequest/Unauthorized/Forbidden/NotFound/InternalServer), `sendResponse()`
 - **api/src/config/** — PrismaClient singleton (driver adapter `@prisma/adapter-pg`), Winston logger
 - **api/src/ai/** — Orchestrated pipeline: `processMessage()` in `pipeline.ts`, intent action handlers in `actions.ts`, circuit breaker, OpenRouter LLM engine with retry+fallback, intent-based output schemas (order/inquiry/greeting/complaint/unknown/escalate), hardened system prompt builder with canary
-- **api/src/guardrails/** — Per-customer sliding-window rate limit, prompt-injection detection (EN+ID patterns), LLM daily budget tracker, output sanitizer + leak detector; all wired into pipeline
+- **api/src/guardrails/** — Multi-layer defense: PII scanner/redactor, ML classifier (OpenRouter fast model), deep LLM-judge, output grounding check. Plus per-customer sliding-window rate limit, regex injection detection (EN+ID), daily LLM budget tracker, output sanitizer + leak detector. 3-tier injection defense (T1 regex → T2 classifier → T3 judge) with conditional slow path
 - **dashboard/vite.config.ts** — `@vitejs/plugin-react` + `@rolldown/plugin-babel` with `reactCompilerPreset`, Tailwind v4, **proxies `/api` → `http://localhost:3001`**
 - **dashboard/src/index.css** — `@import "tailwindcss"` (Tailwind v4 CSS-first config, no `tailwind.config.*`)
 - **dashboard/src/hooks/** — All hooks use `MOCK = true` toggle — no real API calls until toggled off
@@ -106,13 +106,80 @@ Error classes: BadRequestError (400), UnauthorizedError (401), NotFoundError (40
 
 **Now wired end-to-end.** Bot forwards messages to POST /api/chat → processMessage() → guardrails → LLM → intent handler → reply back to WA.
 
-### Pipeline
+### Full Pipeline Flow (18 steps)
 
 ```
-incoming WA msg → normalizeInput() → detectInjection() → checkRateLimit()
-→ isBudgetExceeded() → buildSystemPrompt() + wrapCustomerMessage()
-→ complete() via OpenRouter → sanitizeReply() → hasLeak() → reply
+incoming WA msg
+  │
+  ├─ 1. normalizeInput()       — strip control chars + NFKC normalize + trim + cap
+  ├─ 2. upsert customer + conv
+  ├─ 3. dedup by waMsgId
+  ├─ 4. persist inbound msg
+  ├─ 5. checkRateLimit()       — per-customer sliding window (short + long)
+  ├─ 6. scanPii()              — log PII matches (phone, email, NIK, API key, address)
+  │
+  ├─ 7. 3-tier injection defense
+  │   ├─ Tier 1 regex [always, ~0ms]
+  │   │   scanInput() → classifyVerdict()
+  │   │   ├─ SAFE     ─────── proceed
+  │   │   ├─ BLOCK    ─────── block
+  │   │   └─ UNCERTAIN ──────→ Tier 2
+  │   │
+  │   ├─ Tier 2 classifier [conditional, ~500-1000ms]
+  │   │   classifyInput() via OpenRouter fast model
+  │   │   ├─ SAFE       ──── proceed
+  │   │   ├─ INJECTION  ──── block
+  │   │   └─ SUSPICIOUS ────→ Tier 3
+  │   │
+  │   └─ Tier 3 deep judge [conditional, ~1000-2000ms]
+  │       judgeInput() via OpenRouter with conversation history
+  │       ├─ SAFE  ──── proceed
+  │       └─ BLOCK ──── block
+  │
+  ├─ 8. isBudgetExceeded()     — daily LLM call budget (UsageCounter table)
+  ├─ 9. load context           — Store, Product, AiConfig, build system prompt
+  ├─10. build messages         — history (10) + current message (wrapped in delimiters)
+  ├─11. complete() via OpenRouter (circuit breaker, retry, fallback model)
+  ├─12. parse LLM output       — JSON extraction + LLMOutputSchema validation
+  ├─13. handleIntent()         — execute action (create order, log escalation, etc.)
+  ├─14. sanitizeReply()        — strip code fences, cap length
+  ├─15. scanOutput()           — canary, delimiter, system prompt section, PII, exfiltration
+  ├─16. redactPii()            — replace leaked PII with type markers
+  ├─17. checkGrounding()       — [inquiry/order only] LLM-as-judge verifies factual accuracy
+  ├─18. record usage + persist outbound + touch conversation
+  │
+  ▼
+reply
 ```
+
+### Unicode Defense
+
+Three independent layers:
+
+| Layer | What | Catches |
+|-------|------|---------|
+| **NFKC normalization** (`normalizeInput`, `scanInput`, `normalizeLeet`) | Converts compatibility chars to canonical form | Fullwidth Latin (`ｉｇｎｏｒｅ` → `ignore`), Mathematical Alphanumerics (`𝐢𝐠𝐧𝐨𝐫𝐞` → `ignore`), Circled/Enclosed alphanumerics |
+| **Homoglyph detector** (`detectObfuscation`) | Counts chars from 13 non-Latin script ranges | Cyrillic (`ignore` via Cyrillic lookalikes), Greek, Letterlike Symbols (ℂℍℕℙℚℝℤ) — these survive NFKC |
+| **Leetspeak normalizer** (`normalizeLeet`) | Maps digits/symbols → letters | `1gn0r3` → `ignore`, `$y$t3m` → `system` |
+
+### Verdict Tiers
+
+scanInput reasons mapped by confidence:
+
+| Confidence | Reasons | Action |
+|-----------|---------|--------|
+| **HIGH** | `delimiter_escape`, `token_injection`, `leet_obfuscated` | Immediate BLOCK |
+| **MEDIUM** | `instruction_override`, `prompt_extraction`, `role_hijack`, `authority_claim` | BLOCK |
+| **LOW** | `crescendo_marker`, `context_overflow` | UNCERTAIN → pass to Tier 2 |
+
+### Latency Profile
+
+| Tier | When | Latency | Call Frequency |
+|------|------|---------|----------------|
+| T1 regex | Always | ~0ms | 100% of messages |
+| T2 classifier | Only when T1 returns UNCERTAIN | ~500-1000ms | <1% of messages |
+| T3 judge | Only when T2 returns SUSPICIOUS | ~1000-2000ms | <0.1% of messages |
+| Grounding | Only for inquiry/order intents | ~500-1500ms | ~30-50% of messages |
 
 ### Files
 
@@ -123,16 +190,25 @@ incoming WA msg → normalizeInput() → detectInjection() → checkRateLimit()
 | `ai/prompts.ts` | `buildSystemPrompt(store, products, ...)` — assembles system prompt with store info, product catalog, security rules, strict JSON-only output requirement, canary token `PROMPT_CANARY` + customer message delimiters `<customer_message>` / `</customer_message>` |
 | `ai/schemas.ts` | Zod discriminated union `LLMOutputSchema` — validates LLM JSON output into 6 intents: `order` / `inquiry` / `greeting` / `complaint` / `unknown` / `escalate` |
 | `ai/types.ts` | `LLMOutput` union type, `ChatMessage`, `CompletionOptions`, `TokenUsage`, `CompletionResult` |
-| `guardrails/input.ts` | `normalizeInput()` strips control/zero-width chars, caps at `MAX_INPUT_CHARS`; `detectInjection()` regex-based EN+ID prompt injection heuristics |
+| `ai/pipeline.ts` | `processMessage()` — 18-step orchestrator: normalize → PII → rate limit → 3-tier firewall → budget → context → LLM → parse → intent → sanitize → output scan → PII redact → grounding → persist |
+| `ai/actions.ts` | `handleIntent()` — intent action handlers: order (creates Order), inquiry, greeting, complaint (may escalate), unknown, escalate (logs to ActivityLog) |
+| `ai/circuit-breaker.ts` | `withCircuit()` — 3 consecutive failures → 60s open → half-open → retry |
+| `guardrails/input.ts` | `normalizeInput()` strips control/zero-width chars + NFKC normalization, caps at `MAX_INPUT_CHARS`; `detectInjection()` regex-based EN+ID prompt injection heuristics |
 | `guardrails/ratelimit.ts` | Per-customer in-memory sliding window (short + long) — single-process, resets on restart |
 | `guardrails/budget.ts` | `isBudgetExceeded()` / `recordLlmUsage()` — daily LLM call budget via `UsageCounter` table |
 | `guardrails/output.ts` | `sanitizeReply()` strips code fences, caps at `MAX_REPLY_CHARS`; `hasLeak()` checks for canary + system prompt keywords |
+| `guardrails/pii.ts` | `scanPii()` / `hasPii()` / `redactPii()` — phone, email, NIK, API key, address detection for Indonesia |
+| `guardrails/classifier.ts` | `classifyInput()` ML injection classifier via OpenRouter fast model; `judgeInput()` deep LLM analysis for borderline cases; `checkGrounding()` LLM-as-judge for factual accuracy |
+| `guardrails/firewall/encoding.ts` | `normalizeUnicode()` (NFKC), `detectObfuscation()` (base64/hex/homoglyph), `normalizeLeet()` (NFKC + leetspeak → plain text) |
+| `guardrails/firewall/injection.ts` | `scanInput()` — 9 attack-class regex groups (delimiter escape, instruction override, prompt extraction, role hijack, authority claim, token injection, context overflow, crescendo, leet-obfuscated) + `classifyVerdict()` — maps reasons to SAFE/UNCERTAIN/BLOCK tiers |
+| `guardrails/firewall/context.ts` | `analyzeTurn()` / `resetConversationState()` — per-customer sliding-window drift tracking, identity challenge scoring, cumulative suspicion over multiple turns |
+| `guardrails/firewall/output.ts` | `scanOutput()` — canary leak, delimiter leak, system prompt reconstruction, PII leak, exfiltration (markdown image URLs, encoded data) |
 
 ### Model config
 
 - **`AiConfig` table** (single-row `id: "default"`) — stores `model`, `systemPrompt`, `temperature`, `maxTokens`, `greetingMessage`, `knowledgeBase`, `isActive`
 - **`.env` env vars** (`LLM_MODEL`, `LLM_TEMPERATURE`, etc.) are fallback defaults — the DB row takes precedence at runtime
-- **Guardrail env vars**: `RATE_LIMIT_*`, `MAX_INPUT_CHARS`, `MAX_REPLY_CHARS`, `DAILY_LLM_BUDGET`
+- **Guardrail env vars**: `RATE_LIMIT_*`, `MAX_INPUT_CHARS`, `MAX_REPLY_CHARS`, `DAILY_LLM_BUDGET`, `CLASSIFIER_ENABLED`, `CLASSIFIER_MODEL`, `JUDGE_ENABLED`, `JUDGE_MODEL`, `GROUNDING_CHECK_ENABLED`, `GROUNDING_MODEL`
 - **OpenRouter** is the provider (`OPENROUTER_API_KEY` env var), not direct OpenAI. Model IDs are OpenRouter slugs (e.g. `opencode/deepseek-v4-flash-free`)
 
 ### Database tables used by AI

@@ -24,9 +24,9 @@ function stripControlChars(text: string): string {
   return out
 }
 
-/** Normalize untrusted inbound text: strip control chars, trim, cap length. */
+/** Normalize untrusted inbound text: strip control chars, NFKC (kills fullwidth/math homoglyphs), trim, cap length. */
 export function normalizeInput(text: string): string {
-  const cleaned = stripControlChars(text).trim()
+  const cleaned = stripControlChars(text).normalize("NFKC").trim()
   const max = env.guardrails.maxInputChars
   return cleaned.length > max ? cleaned.slice(0, max) : cleaned
 }

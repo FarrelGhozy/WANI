@@ -27,6 +27,18 @@ describe("normalizeInput", () => {
   test("returns empty string for empty input", () => {
     expect(normalizeInput("")).toBe("")
   })
+
+  test("NFKC normalizes fullwidth Latin to ASCII", () => {
+    // Fullwidth Latin U+FF41-U+FF5A look identical but have different code points
+    // NFKC converts them to regular ASCII
+    expect(normalizeInput("ｉｇｎｏｒｅ")).toBe("ignore")
+    expect(normalizeInput("ｓｙｓｔｅｍ ｐｒｏｍｐｔ")).toBe("system prompt")
+  })
+
+  test("NFKC normalizes mathematical alphanumerics to ASCII", () => {
+    // Mathematical bold 'a' U+1D41A normalizes to ASCII 'a'
+    expect(normalizeInput("𝐚𝐛𝐜")).toBe("abc")
+  })
 })
 
 describe("detectInjection", () => {
