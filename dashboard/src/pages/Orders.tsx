@@ -21,12 +21,12 @@ export default function Orders() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-stone-900">Orders</h1>
           <p className="mt-1 text-sm text-stone-500">{orders.length} pesanan ditemukan</p>
         </div>
-        <div className="flex items-center gap-2 text-xs text-stone-400">
+        <div className="flex flex-wrap items-center gap-2 text-xs text-stone-400">
           <span className="inline-flex items-center gap-1.5">
             <span className="h-2 w-2 rounded-full bg-amber-400" /> Pending
           </span>

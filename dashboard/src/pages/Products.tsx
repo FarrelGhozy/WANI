@@ -36,12 +36,12 @@ export default function Products() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-stone-900">Products</h1>
           <p className="mt-1 text-sm text-stone-500">{products.length} produk UMKM Anda</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           {/* View toggle */}
           <div className="flex overflow-hidden rounded-lg border border-stone-300 bg-white">
             <button

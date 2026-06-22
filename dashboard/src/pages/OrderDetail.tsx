@@ -63,7 +63,7 @@ export default function OrderDetail() {
       </button>
 
       {/* Header */}
-      <div className="flex items-start justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <div className="flex items-center gap-3">
             <h1 className="text-2xl font-semibold tracking-tight text-stone-900">
@@ -98,12 +98,13 @@ export default function OrderDetail() {
         )}
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid gap-4 lg:gap-6 lg:grid-cols-3">
         {/* Left: Items + Payment */}
         <div className="space-y-6 lg:col-span-2">
           {/* Items */}
           <Card accent="teal">
             <h2 className="mb-4 text-xs font-medium uppercase tracking-wider text-stone-500">Order Items</h2>
+            <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-stone-100 text-xs text-stone-400">
@@ -130,6 +131,7 @@ export default function OrderDetail() {
                 </tr>
               </tfoot>
             </table>
+            </div>
           </Card>
 
           {/* Payment */}

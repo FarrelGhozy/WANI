@@ -27,7 +27,7 @@ export default function Topbar({ connection }: TopbarProps) {
   const currentPage = pathToLabel(location.pathname)
 
   return (
-    <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-stone-200 bg-white/80 px-8 backdrop-blur-sm">
+    <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-stone-200 bg-white/80 px-4 backdrop-blur-sm sm:px-6 lg:px-8">
       <div className="flex items-center gap-2 text-sm">
         <span className="text-stone-400">Home</span>
         <span className="text-stone-300">/</span>

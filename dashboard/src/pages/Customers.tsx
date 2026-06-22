@@ -28,7 +28,7 @@ export default function Customers() {
   }
 
   return (
-    <div className="flex h-[calc(100vh-12rem)] flex-col lg:h-[calc(100vh-9rem)]">
+    <div className="flex h-[calc(100dvh-12rem)] flex-col pb-16 lg:h-[calc(100vh-9rem)] lg:pb-0">
       <div className="mb-4">
         <h1 className="text-2xl font-semibold tracking-tight text-stone-900">Customers</h1>
         <p className="mt-1 text-sm text-stone-500">{customers.length} pelanggan</p>

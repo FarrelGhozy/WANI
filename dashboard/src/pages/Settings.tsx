@@ -24,7 +24,7 @@ export default function Settings() {
       <h1 className="text-2xl font-semibold tracking-tight text-stone-900">Settings</h1>
 
       {/* Tabs */}
-      <div className="flex border-b border-stone-200">
+      <div className="flex overflow-x-auto border-b border-stone-200">
         {tabs.map((tab) => (
           <button
             key={tab.id}
