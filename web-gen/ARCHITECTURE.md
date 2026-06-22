@@ -102,7 +102,7 @@ web-gen/
 ├── .env.example
 │
 ├── src/
-│   ├── index.ts                 # Entrypoint — export `generate()` + `createZip()`
+│   ├── index.ts                 # Entrypoint — export `generate()` + `createZipStream()` / `createZipFile()`
 │   ├── generator.ts             # Core logic: copy → inject → build → output
 │   ├── zip.ts                   # ZIP archive generator (archiver)
 │   ├── types.ts                 # Type definitions (SiteConfig, StoreData, dll)
@@ -378,23 +378,23 @@ export async function generate(params: GenerateParams): Promise<GenerateResult>
 
 ## ZIP Download
 
-Generator menyediakan fungsi `createZip()` yang mengompres hasil generate menjadi file `.zip` untuk di-download user.
+Generator menyediakan fungsi `createZipStream()`/`createZipFile()` yang mengompres hasil generate menjadi file `.zip` untuk di-download user.
 
 ### File: `src/zip.ts`
 
 ```typescript
 import archiver from "archiver"
 
-export async function createZip(sourceDir: string, outputPath: string): Promise<string> {
+export async function createZipFile(params: ZipParams & { outputPath: string }): Promise<void> {
   return new Promise((resolve, reject) => {
-    const output = Bun.file(outputPath).writer()
+    const output = createWriteStream(params.outputPath)
     const archive = archiver("zip", { zlib: { level: 9 } })
 
-    output.on("done", () => resolve(outputPath))
+    output.on("close", resolve)
     archive.on("error", reject)
 
-    archive.pipe(output as any)
-    archive.directory(sourceDir, false)
+    archive.pipe(output)
+    archive.directory(params.sourceDir, params.slug)
     archive.finalize()
   })
 }
@@ -403,8 +403,8 @@ export async function createZip(sourceDir: string, outputPath: string): Promise<
 ### Alur ZIP
 
 1. Generator selesai build → output ada di `generated-sites/{slug}/`
-2. API panggil `createZip(outputDir, tempPath)` → hasil `.zip`
-3. API kirim file ZIP sebagai response download (`Content-Type: application/zip`)
+2. API panggil `createZipFile({ sourceDir: outputDir, slug, outputPath })` → file `.zip` di disk
+3. Atau streaming langsung via `createZipStream({ sourceDir, slug })` → pipe ke HTTP response
 4. File ZIP bersifat sementara — bisa di-cache sesuai kebutuhan
 
 ### Keuntungan
@@ -412,7 +412,7 @@ export async function createZip(sourceDir: string, outputPath: string): Promise<
 - **Preview tanpa deploy** — user download ZIP, extract, buka `index.html` di browser
 - **Satu file** — mudah dikirim via email/chat
 - **Compressed** — level 9 zlib, ukuran minimal
-- **Integrasi langsung** — `createZip()` ada di export `src/index.ts`
+- **Integrasi langsung** — `createZipStream()`/`createZipFile()` ada di export `src/index.ts`
 
 ---
 
