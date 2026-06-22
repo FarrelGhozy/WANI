@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { useProducts, type ProductFormData } from '../hooks/useProducts.ts'
 import Button from '../components/ui/Button.tsx'
@@ -35,6 +35,23 @@ export default function ProductForm() {
   const [priceDisplay, setPriceDisplay] = useState('')
   const [saving, setSaving] = useState(false)
   const [errors, setErrors] = useState<Partial<Record<keyof ProductFormData, string>>>({})
+  const fileRef = useRef<HTMLInputElement>(null)
+  const objectUrlRef = useRef<string | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current)
+    }
+  }, [])
+
+  function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current)
+    const url = URL.createObjectURL(file)
+    objectUrlRef.current = url
+    set('imageUrl', url)
+  }
 
   useEffect(() => {
     if (id) {
@@ -114,6 +131,55 @@ export default function ProductForm() {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Image */}
+        <Card>
+          <h2 className="mb-4 text-xs font-medium uppercase tracking-wider text-stone-500">Image</h2>
+          <div className="flex flex-col items-start gap-4 sm:flex-row">
+            <div className="flex h-28 w-28 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-stone-200 bg-stone-50">
+              {form.imageUrl ? (
+                <img src={form.imageUrl} alt="Product preview" className="h-full w-full object-cover" />
+              ) : (
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-stone-300">
+                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                  <circle cx="8.5" cy="8.5" r="1.5" />
+                  <path d="M21 15l-5-5L5 21" />
+                </svg>
+              )}
+            </div>
+            <div className="flex-1 space-y-3">
+              <Input
+                label="Image URL"
+                placeholder="https://example.com/image.jpg"
+                hint="Tempel link gambar atau upload file"
+                value={form.imageUrl ?? ''}
+                onChange={(e) => set('imageUrl', e.target.value)}
+              />
+              <div className="flex items-center gap-3">
+                <span className="text-xs text-stone-400">atau</span>
+                <button
+                  type="button"
+                  onClick={() => fileRef.current?.click()}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-stone-300 px-3 py-1.5 text-xs font-medium text-stone-600 transition-colors hover:bg-stone-50 hover:text-stone-800"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                    <polyline points="17 8 12 3 7 8" />
+                    <line x1="12" y1="3" x2="12" y2="15" />
+                  </svg>
+                  Upload Image
+                </button>
+                <input
+                  ref={fileRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                />
+              </div>
+            </div>
+          </div>
+        </Card>
+
         {/* Basic Info */}
         <Card accent="teal">
           <h2 className="mb-4 text-xs font-medium uppercase tracking-wider text-stone-500">Basic Info</h2>
@@ -202,13 +268,50 @@ export default function ProductForm() {
         {/* Image */}
         <Card>
           <h2 className="mb-4 text-xs font-medium uppercase tracking-wider text-stone-500">Image</h2>
-          <Input
-            label="Image URL"
-            placeholder="https://example.com/image.jpg"
-            hint="Optional — URL gambar produk"
-            value={form.imageUrl ?? ''}
-            onChange={(e) => set('imageUrl', e.target.value)}
-          />
+          <div className="flex flex-col items-start gap-4 sm:flex-row">
+            <div className="flex h-28 w-28 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-stone-200 bg-stone-50">
+              {form.imageUrl ? (
+                <img src={form.imageUrl} alt="Product preview" className="h-full w-full object-cover" />
+              ) : (
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-stone-300">
+                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                  <circle cx="8.5" cy="8.5" r="1.5" />
+                  <path d="M21 15l-5-5L5 21" />
+                </svg>
+              )}
+            </div>
+            <div className="flex-1 space-y-3">
+              <Input
+                label="Image URL"
+                placeholder="https://example.com/image.jpg"
+                hint="Tempel link gambar atau upload file"
+                value={form.imageUrl ?? ''}
+                onChange={(e) => set('imageUrl', e.target.value)}
+              />
+              <div className="flex items-center gap-3">
+                <span className="text-xs text-stone-400">atau</span>
+                <button
+                  type="button"
+                  onClick={() => fileRef.current?.click()}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-stone-300 px-3 py-1.5 text-xs font-medium text-stone-600 transition-colors hover:bg-stone-50 hover:text-stone-800"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+                    <polyline points="17 8 12 3 7 8" />
+                    <line x1="12" y1="3" x2="12" y2="15" />
+                  </svg>
+                  Upload Image
+                </button>
+                <input
+                  ref={fileRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                />
+              </div>
+            </div>
+          </div>
         </Card>
 
         {/* Actions */}

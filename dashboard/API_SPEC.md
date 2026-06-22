@@ -531,6 +531,7 @@ Profil toko.
     "id": "default",
     "businessName": string,
     "phone": string,
+    "logoUrl": string | null,
     "address": string | null,
     "businessHours": string | null,
     "paymentMethods": string | null,
@@ -550,6 +551,7 @@ Profil toko.
 {
   "businessName"?: string,
   "phone"?: string,
+  "logoUrl"?: string | null,
   "address"?: string | null,
   "businessHours"?: string | null,
   "paymentMethods"?: string | null,

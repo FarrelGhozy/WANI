@@ -11,6 +11,8 @@ const navItems = [
 
 interface SidebarProps {
   connection: string
+  storeName: string
+  storeLogoUrl: string | null
 }
 
 function statusColor(status: string) {
@@ -29,7 +31,9 @@ function statusLabel(status: string) {
   }
 }
 
-export default function Sidebar({ connection }: SidebarProps) {
+export default function Sidebar({ connection, storeName, storeLogoUrl }: SidebarProps) {
+  const initial = storeName.charAt(0).toUpperCase()
+
   return (
     <aside className="fixed left-0 top-0 z-30 hidden h-screen w-64 flex-col bg-teal-800 lg:flex">
       {/* Logo */}
@@ -81,6 +85,23 @@ export default function Sidebar({ connection }: SidebarProps) {
           <div className="flex flex-col">
             <span className="text-xs font-medium text-teal-200">WhatsApp</span>
             <span className="text-sm text-teal-50">{statusLabel(connection)}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Store Owner */}
+      <div className="border-t border-teal-700/50 px-4 py-3">
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-teal-600 ring-2 ring-teal-500/40">
+            {storeLogoUrl ? (
+              <img src={storeLogoUrl} alt={storeName} className="h-full w-full object-cover" />
+            ) : (
+              <span className="text-sm font-bold text-white">{initial}</span>
+            )}
+          </div>
+          <div className="flex min-w-0 flex-col">
+            <span className="truncate text-sm font-medium text-teal-50">{storeName}</span>
+            <span className="text-xs text-teal-300">Store Owner</span>
           </div>
         </div>
       </div>

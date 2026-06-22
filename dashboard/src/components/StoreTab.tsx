@@ -1,3 +1,4 @@
+import { useRef } from 'react'
 import type { ReactNode } from 'react'
 import type { StoreProfile } from '../hooks/useSettings.ts'
 import Card from './ui/Card.tsx'
@@ -18,9 +19,51 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
 }
 
 export default function StoreTab({ store, onUpdate }: StoreTabProps) {
+  const fileRef = useRef<HTMLInputElement>(null)
+
+  function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const url = URL.createObjectURL(file)
+    onUpdate({ logoUrl: url })
+  }
+
+  const initial = store.businessName.charAt(0).toUpperCase()
+
   return (
     <Card accent="teal">
       <h2 className="mb-6 text-lg font-semibold text-stone-900">Store Profile</h2>
+
+      {/* Photo */}
+      <div className="mb-8 flex flex-col items-center gap-4 sm:flex-row">
+        <div className="relative">
+          <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-full bg-teal-50 ring-4 ring-teal-100">
+            {store.logoUrl ? (
+              <img src={store.logoUrl} alt={store.businessName} className="h-full w-full object-cover" />
+            ) : (
+              <span className="text-3xl font-bold text-teal-600">{initial}</span>
+            )}
+          </div>
+        </div>
+        <div className="text-center sm:text-left">
+          <p className="text-sm font-medium text-stone-900">Store Photo</p>
+          <p className="text-xs text-stone-500">Upload foto profil untuk toko Anda</p>
+          <button
+            onClick={() => fileRef.current?.click()}
+            className="mt-2 text-xs font-medium text-teal-600 transition-colors hover:text-teal-700"
+          >
+            Change Photo
+          </button>
+          <input
+            ref={fileRef}
+            type="file"
+            accept="image/*"
+            onChange={handlePhotoChange}
+            className="hidden"
+          />
+        </div>
+      </div>
+
       <div className="grid gap-5 sm:grid-cols-2">
         <Field label="Business Name">
           <input

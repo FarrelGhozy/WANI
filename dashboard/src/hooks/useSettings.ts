@@ -4,6 +4,7 @@ export interface StoreProfile {
   id: string
   businessName: string
   phone: string
+  logoUrl: string | null
   address: string | null
   businessHours: string | null
   paymentMethods: string | null
@@ -35,6 +36,7 @@ const mockStore: StoreProfile = {
   id: 'default',
   businessName: 'WANI Kitchen',
   phone: '+6281234567890',
+  logoUrl: null,
   address: 'Jl. Merdeka No. 123, Jakarta Pusat',
   businessHours: 'Sen-Sab 08:00-20:00, Min 10:00-18:00',
   paymentMethods: 'QRIS, Transfer Bank, Cash',

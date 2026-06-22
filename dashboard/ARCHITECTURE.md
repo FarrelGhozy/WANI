@@ -144,6 +144,9 @@ Menggunakan skala Tailwind default, tapi dipilih secara intentional:
 │                                │                         │
 │  ┌── Connection ────────────┐  │                         │
 │  │ 🟢 Connected             │  │                         │
+│  ├──────────────────────────┤  │                         │
+│  │ [W] WANI Kitchen         │  │                         │
+│  │     Store Owner          │  │                         │
 │  └──────────────────────────┘  │                         │
 └─────────────────────────────────────────────────────────┘
 ```
@@ -494,7 +497,7 @@ Settings adalah halaman tab tunggal dengan 3 bagian:
 
 | Tab | Isi |
 |-----|-----|
-| **Store** | Business name, phone, address, business hours, payment methods, shipping info, return policy |
+| **Store** | Business name, phone, logo/photo, address, business hours, payment methods, shipping info, return policy |
 | **AI Agent** | System prompt, model, greeting message, knowledge base, temperature, max tokens, active toggle |
 | **WA Session** | Status koneksi, nomor telepon, QR code (re-scan), disconnect button |
 
