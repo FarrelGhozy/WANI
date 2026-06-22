@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router'
+import { useLocation, useNavigate } from 'react-router'
 
 function pathToLabel(path: string): string {
   if (path === '/') return 'Dashboard'
@@ -24,12 +24,13 @@ function statusDot(status: string) {
 
 export default function Topbar({ connection }: TopbarProps) {
   const location = useLocation()
+  const navigate = useNavigate()
   const currentPage = pathToLabel(location.pathname)
 
   return (
     <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-stone-200 bg-white/80 px-4 backdrop-blur-sm sm:px-6 lg:px-8">
       <div className="flex items-center gap-2 text-sm">
-        <span className="text-stone-400">Home</span>
+        <button onClick={() => navigate('/')} className="text-stone-400 transition-colors hover:text-stone-700">Home</button>
         <span className="text-stone-300">/</span>
         <span className="font-medium text-stone-900">{currentPage}</span>
       </div>
