@@ -59,6 +59,12 @@ Unified response: `{ status: "success"|"failure", message, data? }`
 
 Error classes: BadRequestError (400), UnauthorizedError (401), NotFoundError (404), InternalServerError (500)
 
+## Coding Rules
+
+- **Pecah halaman React jadi komponen.** Satu file page jangan panjang — ekstrak bagian UI yang berdiri sendiri (tabel, card, form, dll) ke file komponen terpisah di `components/`.
+- **List view tanpa pagination.** Tampilan list (tabel) menampilkan semua data dalam satu halaman tanpa pagination.
+- **Card view dengan pagination.** Tampilan card/grid dibatasi max 20 item per halaman.
+
 ## Quirks
 
 - `verbatimModuleSyntax` is on everywhere — use `import type` for type-only imports

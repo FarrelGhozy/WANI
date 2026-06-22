@@ -62,9 +62,6 @@ export function useProducts() {
   const [categoryFilter, setCategoryFilter] = useState('')
   const [sortField, setSortField] = useState<'name' | 'price' | 'stock' | 'createdAt'>('createdAt')
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
-  const [page, setPage] = useState(1)
-  const limit = 8
-
   const filtered = useMemo(() => {
     const result = allProducts.filter((p) => {
       if (categoryFilter && p.categoryId !== categoryFilter) return false
@@ -88,10 +85,6 @@ export function useProducts() {
 
     return result
   }, [search, categoryFilter, sortField, sortDir, allProducts])
-
-  const totalPages = Math.max(1, Math.ceil(filtered.length / limit))
-  const clampedPage = Math.min(page, totalPages)
-  const paginated = filtered.slice((clampedPage - 1) * limit, clampedPage * limit)
 
   const toggleSort = (field: typeof sortField) => {
     if (sortField === field) {
@@ -140,17 +133,12 @@ export function useProducts() {
   }, [])
 
   return {
-    products: paginated,
-    allProducts: filtered,
+    products: filtered,
     categories: allCategories,
     loading: false,
-    search,
-    setSearch: (v: string) => { setSearch(v); setPage(1) },
-    categoryFilter,
-    setCategoryFilter: (v: string) => { setCategoryFilter(v); setPage(1) },
+    search, setSearch,
+    categoryFilter, setCategoryFilter,
     sortField, sortDir, toggleSort,
-    page, setPage,
-    totalPages,
     getProduct, createProduct, updateProduct, deleteProduct,
   }
 }
