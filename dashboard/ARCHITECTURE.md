@@ -584,6 +584,84 @@ Untuk mengaktifkan API sungguhan:
 
 ---
 
+## 6. Auth (`/login`, `/signup`, `/forgot-password`)
+
+### Routing Architecture
+
+```
+createBrowserRouter([
+  // Public — AuthLayout (no sidebar, centered card)
+  { element: <AuthLayout />, children: [
+    { path: '/login',           element: <LoginPage /> },
+    { path: '/signup',          element: <SignUpPage /> },
+    { path: '/forgot-password', element: <ForgotPasswordPage /> },
+  ]},
+
+  // Protected — Layout (with sidebar + topbar)
+  { element: <ProtectedRoute><Layout /></ProtectedRoute>, children: [
+    { index: true,  element: <Dashboard /> },
+    ... (existing 10 routes)
+  ]},
+])
+```
+
+### Komponen & Halaman
+
+| File | Role |
+|------|------|
+| `hooks/useAuth.ts` | Hook auth mock dengan `MOCK = true`: `{ user, isAuthenticated, login(), register(), logout(), loading, error }` |
+| `components/AuthLayout.tsx` | Layout publik: full-screen centered, card putih shadow-lg dengan logo WANI + `<Outlet />` |
+| `components/ProtectedRoute.tsx` | Gate: cek `isAuthenticated` → render children atau redirect ke `/login` |
+| `pages/LoginPage.tsx` | Form email + password, validasi client-side, show/hide toggle, error alert, loading state. Link ke signup + forgot password |
+| `pages/SignUpPage.tsx` | Form nama + email + password + confirm, validasi match + min 8 char |
+| `pages/ForgotPasswordPage.tsx` | Form email → success state ("cek email Anda") → back to login |
+
+### Data Flow Auth
+
+```
+LoginPage                         ProtectedRoute
+    │                                   │
+    ├─ useAuth().login(email, pass)     ├─ useAuth().isAuthenticated
+    │                                   │
+    ├─ localStorage.setItem(token)      ├─ localStorage.getItem(token)
+    ├─ localStorage.setItem(user)       │
+    ├─ navigate('/')                    ├─ true  → render <Layout>
+    │                                   └─ false → <Navigate to="/login" />
+    └─ Sidebar
+         └─ handleLogout()
+              ├─ useAuth().logout()
+              ├─ localStorage.removeItem(token & user)
+              └─ navigate('/login')
+```
+
+### Mock Credentials
+
+```typescript
+// MOCK = true — semua email & password diterima (asalkan validasi lolos)
+login('admin@wani.id', 'password')   → user { name: 'Admin WANI', email, role: 'admin' }
+register('Nama', 'email', 'password') → user { name, email, role: 'admin' }
+```
+
+Token & user disimpan di localStorage (`wani_auth_token`, `wani_auth_user`). Saat `MOCK = false`, hook akan call `POST /api/auth/login` dan `POST /api/auth/register`.
+
+### API Token Auto-attach
+
+`lib/api.ts` otomatis membaca `wani_auth_token` dari localStorage dan menambahkan header `Authorization: Bearer <token>` ke setiap request. Backend yang akan memvalidasi token.
+
+### UI States
+
+| State | Tampilan |
+|-------|----------|
+| **Initial (no token)** | Redirect ke `/login` via ProtectedRoute |
+| **Loading (login/register)** | Button spinner + disabled |
+| **Validation error** | Field error message merah di bawah input |
+| **Auth error** | Alert box merah di atas form |
+| **Success login** | Navigasi ke `/` (Dashboard) |
+| **Forgot password success** | Halaman "Cek Email Anda" dengan ikon centang |
+| **Logout** | Clear localStorage + redirect `/login` |
+
+---
+
 ## Development Workflow
 
 ```bash

@@ -1,5 +1,7 @@
-import { NavLink } from 'react-router'
-import { GridIcon, BagIcon, ClipboardIcon, PeopleIcon, GlobeIcon, CogIcon } from './Icons.tsx'
+import { useCallback } from 'react'
+import { NavLink, useNavigate } from 'react-router'
+import { useAuth } from '../hooks/useAuth.ts'
+import { GridIcon, BagIcon, ClipboardIcon, PeopleIcon, GlobeIcon, CogIcon, LogOutIcon } from './Icons.tsx'
 
 const navItems = [
   { to: '/', icon: GridIcon, label: 'Dashboard' },
@@ -33,7 +35,14 @@ function statusLabel(status: string) {
 }
 
 export default function Sidebar({ connection, storeName, storeLogoUrl }: SidebarProps) {
+  const navigate = useNavigate()
+  const { logout } = useAuth()
   const initial = storeName.charAt(0).toUpperCase()
+
+  const handleLogout = useCallback(() => {
+    logout()
+    navigate('/login', { replace: true })
+  }, [logout, navigate])
 
   return (
     <aside className="fixed left-0 top-0 z-30 hidden h-screen w-64 flex-col bg-teal-800 lg:flex">
@@ -75,6 +84,19 @@ export default function Sidebar({ connection, storeName, storeLogoUrl }: Sidebar
           </NavLink>
         ))}
       </nav>
+
+      {/* Logout */}
+      <div className="border-t border-teal-700/50 px-3 py-2">
+        <button
+          onClick={handleLogout}
+          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-red-300 transition-all duration-200 hover:bg-white/5 hover:text-red-200"
+        >
+          <span className="shrink-0 text-red-300">
+            <LogOutIcon />
+          </span>
+          <span>Logout</span>
+        </button>
+      </div>
 
       {/* Connection Status */}
       <div className="border-t border-teal-700/50 px-6 py-4">

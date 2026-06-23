@@ -19,6 +19,7 @@
 6. [Endpoint Customers + Chats (Planned)](#6-endpoint-customers--chats-planned)
 7. [Endpoint Settings (Planned)](#7-endpoint-settings-planned)
 8. [Endpoint Activity Log & Usage (Planned)](#8-endpoint-activity-log--usage-planned)
+9. [Endpoint Auth (Planned)](#9-endpoint-auth-planned)
 10. [Error Codes](#10-error-codes)
 
 ---
@@ -673,7 +674,128 @@ Putuskan koneksi WA.
 
 ---
 
-## 9. Error Codes
+## 9. Endpoint Auth (Planned)
+
+### POST /api/auth/register
+
+Daftar akun baru.
+
+```typescript
+// Body
+{
+  "name": string,         // required
+  "email": string,         // required, valid email
+  "password": string       // required, min 8 chars
+}
+
+// Response 201
+{
+  "status": "success",
+  "data": {
+    "token": string,
+    "user": {
+      "id": string,
+      "name": string,
+      "email": string,
+      "role": "admin"
+    }
+  }
+}
+
+// Error 409 — email already registered
+```
+
+### POST /api/auth/login
+
+Masuk dengan email & password.
+
+```typescript
+// Body
+{
+  "email": string,         // required
+  "password": string       // required
+}
+
+// Response 200
+{
+  "status": "success",
+  "data": {
+    "token": string,
+    "user": {
+      "id": string,
+      "name": string,
+      "email": string,
+      "role": "admin"
+    }
+  }
+}
+
+// Error 401 — email/password salah
+```
+
+### GET /api/auth/me 🔒
+
+Ambil data user dari token yang sedang aktif.
+
+```typescript
+// Headers
+Authorization: Bearer {token}
+
+// Response 200
+{
+  "status": "success",
+  "data": {
+    "id": string,
+    "name": string,
+    "email": string,
+    "role": "admin"
+  }
+}
+
+// Error 401 — token invalid/expired
+```
+
+### POST /api/auth/logout 🔒
+
+Invalidasi token (opsional — bisa juga cukup clear token di client).
+
+```typescript
+// Response 200
+{ "status": "success", "message": "logged out" }
+```
+
+### POST /api/auth/forgot-password
+
+Kirim email reset password.
+
+```typescript
+// Body
+{ "email": string }
+
+// Response 200
+{ "status": "success", "message": "reset link sent" }
+```
+
+### POST /api/auth/reset-password
+
+Reset password dengan token dari email.
+
+```typescript
+// Body
+{
+  "token": string,         // dari email
+  "password": string       // new password, min 8 chars
+}
+
+// Response 200
+{ "status": "success", "message": "password reset" }
+
+// Error 400 — token invalid/expired
+```
+
+---
+
+## 10. Error Codes
 
 | Status | Class | Penyebab |
 |--------|-------|----------|
@@ -736,6 +858,12 @@ Putuskan koneksi WA.
 | `PUT` | `/api/ai-config` | 🔒 | ❌ Belum di-backend |
 | `GET` | `/api/qr/settings` | — | ❌ Belum di-backend |
 | `POST` | `/api/qr/disconnect` | 🔒 | ❌ Belum di-backend |
+| `POST` | `/api/auth/register` | — | ❌ Belum di-backend |
+| `POST` | `/api/auth/login` | — | ❌ Belum di-backend |
+| `GET` | `/api/auth/me` | 🔒 | ❌ Belum di-backend |
+| `POST` | `/api/auth/logout` | 🔒 | ❌ Belum di-backend |
+| `POST` | `/api/auth/forgot-password` | — | ❌ Belum di-backend |
+| `POST` | `/api/auth/reset-password` | — | ❌ Belum di-backend |
 | `GET` | `/api/logs` | — | ❌ Belum di-backend |
 | `GET` | `/api/usage` | — | ❌ Belum di-backend |
 
