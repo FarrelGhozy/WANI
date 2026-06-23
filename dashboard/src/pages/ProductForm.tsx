@@ -117,13 +117,13 @@ export default function ProductForm() {
         className="inline-flex items-center gap-1.5 text-sm text-stone-500 transition-colors hover:text-stone-700"
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
-        Back to Products
+        Kembali ke Produk
       </button>
 
       {/* Header */}
       <div>
         <h1 className="text-2xl font-semibold tracking-tight text-stone-900">
-          {isEdit ? 'Edit Product' : 'Add Product'}
+          {isEdit ? 'Edit Produk' : 'Tambah Produk'}
         </h1>
         <p className="mt-1 text-sm text-stone-500">
           {isEdit ? 'Update detail produk Anda' : 'Tambahkan produk baru ke daftar'}
@@ -133,11 +133,11 @@ export default function ProductForm() {
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Image */}
         <Card>
-          <h2 className="mb-4 text-xs font-medium uppercase tracking-wider text-stone-500">Image</h2>
+          <h2 className="mb-4 text-xs font-medium uppercase tracking-wider text-stone-500">Gambar</h2>
           <div className="flex flex-col items-start gap-4 sm:flex-row">
             <div className="flex h-28 w-28 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-stone-200 bg-stone-50">
               {form.imageUrl ? (
-                <img src={form.imageUrl} alt="Product preview" className="h-full w-full object-cover" />
+                <img src={form.imageUrl} alt="Pratinjau produk" className="h-full w-full object-cover" />
               ) : (
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-stone-300">
                   <rect x="3" y="3" width="18" height="18" rx="2" />
@@ -148,7 +148,7 @@ export default function ProductForm() {
             </div>
             <div className="flex-1 space-y-3">
               <Input
-                label="Image URL"
+                label="URL Gambar"
                 placeholder="https://example.com/image.jpg"
                 hint="Tempel link gambar atau upload file"
                 value={form.imageUrl ?? ''}
@@ -166,7 +166,7 @@ export default function ProductForm() {
                     <polyline points="17 8 12 3 7 8" />
                     <line x1="12" y1="3" x2="12" y2="15" />
                   </svg>
-                  Upload Image
+                  Upload Gambar
                 </button>
                 <input
                   ref={fileRef}
@@ -182,24 +182,24 @@ export default function ProductForm() {
 
         {/* Basic Info */}
         <Card accent="teal">
-          <h2 className="mb-4 text-xs font-medium uppercase tracking-wider text-stone-500">Basic Info</h2>
+          <h2 className="mb-4 text-xs font-medium uppercase tracking-wider text-stone-500">Info Dasar</h2>
           <div className="space-y-4">
             <Input
-              label="Product Name"
+              label="Nama Produk"
               placeholder="Nasi Goreng Spesial"
               value={form.name}
               onChange={(e) => set('name', e.target.value)}
               error={errors.name}
             />
             <Select
-              label="Category"
+              label="Kategori"
               options={categories.map((c) => ({ value: c.id, label: c.name }))}
-              placeholder="No category"
+              placeholder="Tanpa Kategori"
               value={form.categoryId ?? ''}
               onChange={(e) => set('categoryId', e.target.value)}
             />
             <div className="space-y-1.5">
-              <label className="text-xs font-medium uppercase tracking-wider text-stone-500">Description</label>
+              <label className="text-xs font-medium uppercase tracking-wider text-stone-500">Deskripsi</label>
               <textarea
                 placeholder="Deskripsi produk..."
                 value={form.description ?? ''}
@@ -213,10 +213,10 @@ export default function ProductForm() {
 
         {/* Pricing & Stock */}
         <Card accent="amber">
-          <h2 className="mb-4 text-xs font-medium uppercase tracking-wider text-stone-500">Pricing & Stock</h2>
+          <h2 className="mb-4 text-xs font-medium uppercase tracking-wider text-stone-500">Harga & Stok</h2>
           <div className="grid gap-4 sm:grid-cols-2">
             <Input
-              label="Price"
+              label="Harga"
               prefix="Rp"
               placeholder="25.000"
               value={priceDisplay}
@@ -229,7 +229,7 @@ export default function ProductForm() {
               error={errors.price}
             />
             <Input
-              label="Stock"
+              label="Stok"
               type="number"
               min={0}
               placeholder="0"
@@ -249,7 +249,7 @@ export default function ProductForm() {
                   onChange={() => set('isAvailable', true)}
                   className="h-4 w-4 accent-teal-600"
                 />
-                Active
+                Aktif
               </label>
               <label className="flex cursor-pointer items-center gap-2 text-sm text-stone-700">
                 <input
@@ -259,7 +259,7 @@ export default function ProductForm() {
                   onChange={() => set('isAvailable', false)}
                   className="h-4 w-4 accent-red-500"
                 />
-                Inactive
+                Nonaktif
               </label>
             </div>
           </div>
@@ -268,10 +268,10 @@ export default function ProductForm() {
         {/* Actions */}
         <div className="flex items-center justify-end gap-3">
           <Button type="button" variant="secondary" onClick={() => navigate('/products')}>
-            Cancel
+            Batal
           </Button>
           <Button type="submit" loading={saving}>
-            {isEdit ? 'Update Product' : 'Save Product'}
+            {isEdit ? 'Update Produk' : 'Simpan Produk'}
           </Button>
         </div>
       </form>

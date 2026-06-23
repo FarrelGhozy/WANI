@@ -40,10 +40,10 @@ export default function ProductListView({ products, onDelete, sortField, sortDir
       <table className="w-full border-collapse text-left max-sm:text-xs sm:text-sm">
         <thead>
           <tr className="border-b border-stone-100 bg-stone-50">
-            <SortTh field="name" label="Product" current={sortField} dir={sortDir} onSort={onSort} />
-            <SortTh field="category" label="Category" current={sortField} dir={sortDir} onSort={onSort} />
-            <SortTh field="price" label="Price" current={sortField} dir={sortDir} onSort={onSort} className="text-right" />
-            <SortTh field="stock" label="Stock" current={sortField} dir={sortDir} onSort={onSort} className="text-center" />
+            <SortTh field="name" label="Produk" current={sortField} dir={sortDir} onSort={onSort} />
+            <SortTh field="category" label="Kategori" current={sortField} dir={sortDir} onSort={onSort} />
+            <SortTh field="price" label="Harga" current={sortField} dir={sortDir} onSort={onSort} className="text-right" />
+            <SortTh field="stock" label="Stok" current={sortField} dir={sortDir} onSort={onSort} className="text-center" />
             <SortTh field="isAvailable" label="Status" current={sortField} dir={sortDir} onSort={onSort} />
             <th className="w-20 max-sm:px-2 max-sm:py-2 sm:px-4 sm:py-3" />
           </tr>
@@ -71,7 +71,7 @@ export default function ProductListView({ products, onDelete, sortField, sortDir
               <td className={`max-sm:px-2 max-sm:py-2 sm:px-4 sm:py-3 text-center tabular-nums ${item.stock === 0 ? 'text-red-500' : 'text-stone-700'}`}>{item.stock}</td>
               <td className="max-sm:px-2 max-sm:py-2 sm:px-4 sm:py-3">
                 <Badge variant={item.isAvailable ? 'green' : 'red'} dot>
-                  {item.isAvailable ? 'Active' : 'Inactive'}
+                  {item.isAvailable ? 'Aktif' : 'Nonaktif'}
                 </Badge>
               </td>
               <td className="max-sm:px-2 max-sm:py-2 sm:px-4 sm:py-3">
@@ -88,7 +88,7 @@ export default function ProductListView({ products, onDelete, sortField, sortDir
                   <button
                     onClick={(e) => { e.stopPropagation(); onDelete(item.id) }}
                     className="rounded-lg p-1.5 text-stone-400 transition-colors hover:bg-red-50 hover:text-red-500"
-                    title="Delete"
+                    title="Hapus"
                   >
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
                       <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2" />

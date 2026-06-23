@@ -20,7 +20,7 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
 export default function AiTab({ config, onUpdate }: AiTabProps) {
   return (
     <Card accent="amber">
-      <h2 className="mb-6 text-lg font-semibold text-stone-900">AI Agent Configuration</h2>
+      <h2 className="mb-6 text-lg font-semibold text-stone-900">Konfigurasi AI Agent</h2>
       <div className="grid gap-5 sm:grid-cols-2">
         <Field label="Model">
           <select
@@ -33,7 +33,7 @@ export default function AiTab({ config, onUpdate }: AiTabProps) {
             <option value="claude-3-haiku">Claude 3 Haiku</option>
           </select>
         </Field>
-        <Field label="Max Tokens">
+        <Field label="Token Maksimal">
           <input
             type="number"
             value={config.maxTokens}
@@ -52,7 +52,7 @@ export default function AiTab({ config, onUpdate }: AiTabProps) {
             className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
           />
         </Field>
-        <Field label="Greeting Message">
+        <Field label="Pesan Sapaan">
           <input
             value={config.greetingMessage ?? ''}
             onChange={(e) => onUpdate({ greetingMessage: e.target.value || null })}
@@ -70,7 +70,7 @@ export default function AiTab({ config, onUpdate }: AiTabProps) {
           </Field>
         </div>
         <div className="sm:col-span-2">
-          <Field label="Knowledge Base">
+          <Field label="Basis Pengetahuan">
             <textarea
               value={config.knowledgeBase ?? ''}
               onChange={(e) => onUpdate({ knowledgeBase: e.target.value || null })}
@@ -82,7 +82,7 @@ export default function AiTab({ config, onUpdate }: AiTabProps) {
       </div>
       <div className="mt-6 flex items-center justify-between rounded-lg bg-stone-50 px-4 py-3">
         <div>
-          <p className="text-sm font-medium text-stone-900">AI Agent Active</p>
+          <p className="text-sm font-medium text-stone-900">AI Agent Aktif</p>
           <p className="text-xs text-stone-500">Matikan untuk menjawab pelanggan secara manual</p>
         </div>
         <button
@@ -99,7 +99,7 @@ export default function AiTab({ config, onUpdate }: AiTabProps) {
         </button>
       </div>
       <div className="mt-4 flex justify-end gap-3">
-        <Button size="sm">Save Changes</Button>
+        <Button size="sm">Simpan Perubahan</Button>
       </div>
     </Card>
   )

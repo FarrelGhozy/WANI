@@ -204,9 +204,9 @@ Dibangun di atas \textit{stack} teknologi modern dan stabil (Bun, Express 5, Pri
 
 \subsection{Darurat Digitalisasi UMKM Indonesia}
 
-Usaha Mikro, Kecil, dan Menengah (UMKM) merupakan pilar fundamental perekonomian Indonesia. Data Kementerian Koperasi dan UKM mencatat bahwa sektor UMKM menyumbang lebih dari \textbf{60\%} terhadap Produk Domestik Bruto (PDB) nasional dan menyerap sekitar \textbf{97\%} dari total tenaga kerja \cite{kemkop2023}. Namun, kesenjangan digital masih menjadi hambatan serius.
+Usaha Mikro, Kecil, dan Menengah (UMKM) merupakan pilar fundamental perekonomian Indonesia. Data Kementerian Koperasi dan UKM mencatat bahwa sektor UMKM menyumbang \textbf{61\%} terhadap Produk Domestik Bruto (PDB) nasional (setara Rp9.580 triliun) dan menyerap sekitar \textbf{97\%} dari total tenaga kerja \cite{kemkop2023}. Namun, kesenjangan digital masih menjadi hambatan serius.
 
-Berdasarkan survei Katadata Insight Center \cite{katadata2022}, hanya sekitar \textbf{20\%} UMKM yang telah mengadopsi teknologi digital secara aktif dalam operasional bisnis mereka. Sebagian besar masih mengelola komunikasi pelanggan, pencatatan pesanan, dan data produk secara manual -- menggunakan buku catatan, spreadsheet sederhana, atau bahkan hanya mengandalkan ingatan. Kondisi ini menyebabkan:
+Berdasarkan survei Kementerian Koperasi dan UKM tahun 2022 \cite{kemkop2022survei}, hanya sekitar \textbf{20\%} UMKM yang telah mengadopsi teknologi digital secara aktif dalam operasional bisnis mereka. Sebagian besar masih mengelola komunikasi pelanggan, pencatatan pesanan, dan data produk secara manual -- menggunakan buku catatan, spreadsheet sederhana, atau bahkan hanya mengandalkan ingatan. Kondisi ini menyebabkan:
 
 \begin{itemize}
     \item \textbf{Inefisiensi operasional} -- Waktu respons lambat, pesanan terlewat, dan kesalahan pencatatan.
@@ -217,7 +217,7 @@ Berdasarkan survei Katadata Insight Center \cite{katadata2022}, hanya sekitar \t
 
 \subsection{WhatsApp: Kanal Komunikasi Utama, Namun Terabaikan}
 
-WhatsApp telah menjadi infrastruktur komunikasi \textit{de facto} bagi UMKM Indonesia. Dengan lebih dari \textbf{90\%} penetrasi pengguna \textit{smartphone} \cite{wearesocial2024}, WhatsApp digunakan secara luas untuk menerima pesanan, menjawab pertanyaan, dan membangun hubungan dengan pelanggan. Ironisnya, potensi besar ini belum dimanfaatkan secara optimal:
+WhatsApp telah menjadi infrastruktur komunikasi \textit{de facto} bagi UMKM Indonesia. Dengan \textbf{90,9\%} tingkat penetrasi sebagai platform media sosial paling banyak digunakan di Indonesia \cite{wearesocial2024}, WhatsApp digunakan secara luas untuk menerima pesanan, menjawab pertanyaan, dan membangun hubungan dengan pelanggan. Ironisnya, potensi besar ini belum dimanfaatkan secara optimal:
 
 \begin{itemize}
     \item Percakapan bisnis bercampur dengan chat pribadi.
@@ -228,7 +228,7 @@ WhatsApp telah menjadi infrastruktur komunikasi \textit{de facto} bagi UMKM Indo
 
 \subsection{Ancaman Prompt Injection pada Chatbot AI}
 
-Seiring dengan maraknya adopsi \textit{large language model} (LLM) untuk layanan pelanggan, muncul ancaman serius berupa \textit{prompt injection attack}. OWASP \cite{owasp2024} mengidentifikasikan \textit{prompt injection} sebagai kerentanan nomor satu pada aplikasi LLM. Pelaku UMKM yang menggunakan chatbot AI tanpa lapisan keamanan yang memadai berisiko mengalami:
+Seiring dengan maraknya adopsi \textit{large language model} (LLM) untuk layanan pelanggan, muncul ancaman serius berupa \textit{prompt injection attack}. OWASP \cite{owasp2025} mengidentifikasikan \textit{prompt injection} (LLM01:2025) sebagai kerentanan nomor satu pada aplikasi LLM. Pelaku UMKM yang menggunakan chatbot AI tanpa lapisan keamanan yang memadai berisiko mengalami:
 
 \begin{itemize}
     \item Kebocoran data sensitif (data pelanggan, informasi bisnis).
@@ -767,21 +767,21 @@ Chris Talkington. (2024). \textit{Archiver -- Streaming Archive Library for Node
 PostgreSQL Global Development Group. (2024). \textit{PostgreSQL Documentation}. \\
 \url{https://www.postgresql.org/docs}
 
-\bibitem{owasp2024}
-OWASP. (2024). \textit{OWASP Top 10 for LLM Applications}. \\
-\url{https://genai.owasp.org}
+\bibitem{owasp2025}
+OWASP. (2025). \textit{OWASP Top 10 for LLM Applications v2.0}. \\
+\url{https://genai.owasp.org/llm-top-10/}
 
 \bibitem{kemkop2023}
-Kementerian Koperasi dan UKM. (2023). \textit{Perkembangan Data UMKM di Indonesia}. \\
-\url{https://www.kemenkopukm.go.id/data-umkm}
+Kementerian Koperasi dan UKM. (2023). \textit{Kontribusi UMKM terhadap PDB Indonesia}. \\
+\url{https://djpb.kemenkeu.go.id/kppn/lubuksikaping/id/data-publikasi/artikel/3134-kontribusi-umkm-dalam-perekonomianindonesia.html}
 
-\bibitem{katadata2022}
-Katadata Insight Center. (2022). \textit{Survei Adopsi Teknologi Digital UMKM}. \\
-\url{https://katadata.co.id}
+\bibitem{kemkop2022survei}
+Kementerian Koperasi dan UKM. (2022). Survei Adopsi Teknologi Digital UMKM. Dalam: Medcom.id. \\
+\url{https://www.medcom.id/ekonomi/ekonomi-digital/GbmM1zyb-adopsi-digital-perlu-dilakukan-pelaku-umkm}
 
 \bibitem{wearesocial2024}
-We Are Social. (2024). \textit{Digital Indonesia 2024}. \\
-\url{https://wearesocial.com}
+We Are Social. (2024). \textit{Digital 2024: Indonesia}. \\
+\url{https://wearesocial.com/id/blog/2024/01/digital-2024/}
 
 \end{thebibliography}
 

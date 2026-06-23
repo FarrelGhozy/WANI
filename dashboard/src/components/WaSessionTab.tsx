@@ -13,17 +13,17 @@ interface WaSessionTabProps {
 const statusConfig: Record<string, { dot: string; label: string; bg: string }> = {
   connected: {
     dot: 'bg-emerald-500',
-    label: 'Connected',
+    label: 'Terhubung',
     bg: 'bg-emerald-50',
   },
   disconnected: {
     dot: 'bg-stone-400',
-    label: 'Disconnected',
+    label: 'Terputus',
     bg: 'bg-stone-50',
   },
   connecting: {
     dot: 'bg-amber-500',
-    label: 'Connecting...',
+    label: 'Menghubungkan...',
     bg: 'bg-amber-50',
   },
 }
@@ -49,18 +49,18 @@ export default function WaSessionTab({ qr, connection, phone, onDisconnect, onCo
             </div>
           </div>
           <div className="rounded-lg bg-stone-50 p-4">
-            <p className="text-xs text-stone-500">Phone Number</p>
+            <p className="text-xs text-stone-500">Nomor Telepon</p>
             <p className="mt-1 text-sm font-medium text-stone-900">
               {phone || '-'}
             </p>
           </div>
           <div className="rounded-lg bg-stone-50 p-4">
-            <p className="text-xs text-stone-500">Action</p>
+            <p className="text-xs text-stone-500">Aksi</p>
             <div className="mt-1 flex gap-2">
               {canDisconnect ? (
-                <Button size="sm" variant="danger" onClick={onDisconnect}>
-                  Disconnect
-                </Button>
+                  <Button size="sm" variant="danger" onClick={onDisconnect}>
+                    Putuskan
+                  </Button>
               ) : (
                 <Button
                   size="sm"
@@ -68,7 +68,7 @@ export default function WaSessionTab({ qr, connection, phone, onDisconnect, onCo
                   disabled={!canConnect}
                   onClick={canConnect ? onConnect : undefined}
                 >
-                  {connection === 'connecting' ? 'Connecting...' : 'Connect'}
+                  {connection === 'connecting' ? 'Menghubungkan...' : 'Hubungkan'}
                 </Button>
               )}
             </div>
@@ -85,15 +85,15 @@ export default function WaSessionTab({ qr, connection, phone, onDisconnect, onCo
                 </svg>
               </div>
               <div>
-                <p className="text-sm font-semibold text-emerald-800">WhatsApp Connected</p>
+                <p className="text-sm font-semibold text-emerald-800">WhatsApp Terhubung</p>
                 <p className="text-xs text-emerald-600">Session aktif dan melayani pelanggan</p>
               </div>
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
-              <SessionInfo label="Phone" value={phone} />
+              <SessionInfo label="Telepon" value={phone} />
               <SessionInfo label="Platform" value="WhatsApp Web" />
-              <SessionInfo label="Connected Since" value="22 Jun 2026, 09:15" />
-              <SessionInfo label="Last Active" value="Now" />
+              <SessionInfo label="Terhubung Sejak" value="22 Jun 2026, 09:15" />
+              <SessionInfo label="Terakhir Aktif" value="Sekarang" />
             </div>
           </div>
         )}
@@ -112,11 +112,11 @@ export default function WaSessionTab({ qr, connection, phone, onDisconnect, onCo
                       <rect x="20" y="14" width="2" height="4" rx="0.5" />
                       <rect x="14" y="20" width="4" height="2" rx="0.5" />
                     </svg>
-                    <p className="mt-2 text-xs text-stone-400">Waiting for QR Code...</p>
+                    <p className="mt-2 text-xs text-stone-400">Menunggu QR Code...</p>
                   </div>
                 </div>
                 <p className="text-center text-xs font-medium text-stone-500">
-                  Hubungkan WhatsApp Anda dengan menekan tombol Connect di bawah.
+                  Hubungkan WhatsApp Anda dengan menekan tombol Hubungkan di bawah.
                   QR Code akan muncul secara otomatis saat bot mulai memproses koneksi.
                 </p>
                 <Button
@@ -126,7 +126,7 @@ export default function WaSessionTab({ qr, connection, phone, onDisconnect, onCo
                   disabled={!canConnect}
                   onClick={canConnect ? onConnect : undefined}
                 >
-                  {connection === 'connecting' ? 'Connecting...' : 'Connect'}
+                  {connection === 'connecting' ? 'Menghubungkan...' : 'Hubungkan'}
                 </Button>
               </>
             ) : (
@@ -145,7 +145,7 @@ export default function WaSessionTab({ qr, connection, phone, onDisconnect, onCo
                   disabled={!canConnect}
                   onClick={canConnect ? onConnect : undefined}
                 >
-                  Generate New QR
+                  Generate QR Baru
                 </Button>
               </>
             )}
@@ -166,11 +166,11 @@ export default function WaSessionTab({ qr, connection, phone, onDisconnect, onCo
           </li>
           <li className="flex gap-2">
             <span className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-teal-400" />
-            Session akan tetap aktif hingga Anda disconnect. Setelah disconnect, scan QR baru untuk menghubungkan ulang.
+            Session akan tetap aktif hingga Anda putuskan. Setelah diputuskan, scan QR baru untuk menghubungkan ulang.
           </li>
           <li className="flex gap-2">
             <span className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-teal-400" />
-            Klik <span className="font-medium text-stone-600">Disconnect</span> untuk memutuskan session kapan saja.
+            Klik <span className="font-medium text-stone-600">Putuskan</span> untuk memutuskan session kapan saja.
           </li>
         </ul>
       </Card>

@@ -3,12 +3,12 @@ import OrderListView from '../components/OrderListView.tsx'
 import Spinner from '../components/ui/Spinner.tsx'
 
 const statusOptions = [
-  { value: '', label: 'All Status' },
-  { value: 'PENDING', label: 'Pending' },
-  { value: 'CONFIRMED', label: 'Confirmed' },
-  { value: 'PROCESSING', label: 'Processing' },
-  { value: 'COMPLETED', label: 'Completed' },
-  { value: 'CANCELLED', label: 'Cancelled' },
+  { value: '', label: 'Semua Status' },
+  { value: 'PENDING', label: 'Tertunda' },
+  { value: 'CONFIRMED', label: 'Dikonfirmasi' },
+  { value: 'PROCESSING', label: 'Diproses' },
+  { value: 'COMPLETED', label: 'Selesai' },
+  { value: 'CANCELLED', label: 'Dibatalkan' },
 ]
 
 export default function Orders() {
@@ -23,19 +23,19 @@ export default function Orders() {
       {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-stone-900">Orders</h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-stone-900">Pesanan</h1>
           <p className="mt-1 text-sm text-stone-500">{orders.length} pesanan ditemukan</p>
         </div>
         <div className="flex flex-wrap items-center gap-2 text-xs text-stone-400">
-          <span className="inline-flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full bg-amber-400" /> Pending
-          </span>
-          <span className="inline-flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full bg-teal-400" /> Processing
-          </span>
-          <span className="inline-flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full bg-emerald-400" /> Done
-          </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span className="h-2 w-2 rounded-full bg-amber-400" /> Tertunda
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span className="h-2 w-2 rounded-full bg-teal-400" /> Diproses
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span className="h-2 w-2 rounded-full bg-emerald-400" /> Selesai
+            </span>
         </div>
       </div>
 
@@ -48,7 +48,7 @@ export default function Orders() {
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by customer name or order ID..."
+            placeholder="Cari nama pelanggan atau ID pesanan..."
             className="h-10 w-full rounded-lg border border-stone-300 bg-white pl-9 pr-3 text-sm text-stone-900 transition-all placeholder:text-stone-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
           />
         </div>
@@ -72,7 +72,7 @@ export default function Orders() {
             </svg>
           </div>
           <h3 className="text-sm font-semibold text-stone-900">
-            {search || statusFilter ? 'No orders match your search' : 'Belum ada pesanan'}
+            {search || statusFilter ? 'Tidak ada pesanan yang cocok' : 'Belum ada pesanan'}
           </h3>
         </div>
       )}

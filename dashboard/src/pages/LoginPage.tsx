@@ -32,7 +32,7 @@ export default function LoginPage() {
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       <div className="text-center">
-        <h2 className="text-lg font-semibold text-stone-900">Sign In</h2>
+        <h2 className="text-lg font-semibold text-stone-900">Masuk</h2>
         <p className="mt-1 text-sm text-stone-500">Masuk ke dashboard WANI Anda</p>
       </div>
 
@@ -92,7 +92,7 @@ export default function LoginPage() {
       </div>
 
       <Button type="submit" size="lg" className="w-full" loading={loading}>
-        Sign In
+        Masuk
       </Button>
 
       <p className="text-center text-sm text-stone-500">

@@ -38,7 +38,7 @@ export default function Products() {
       {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-stone-900">Products</h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-stone-900">Produk</h1>
           <p className="mt-1 text-sm text-stone-500">{products.length} produk UMKM Anda</p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
@@ -64,13 +64,13 @@ export default function Products() {
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
                 <rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" />
               </svg>
-              Card
+              Grid
             </button>
           </div>
           <Button icon={
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
           } onClick={() => navigate('/products/new')}>
-            Add Product
+            Tambah Produk
           </Button>
         </div>
       </div>
@@ -84,7 +84,7 @@ export default function Products() {
           <input
             value={search}
             onChange={(e) => { setSearch(e.target.value); if (view === 'card') setCardPage(1) }}
-            placeholder="Search products..."
+            placeholder="Cari produk..."
             className="h-10 w-full rounded-lg border border-stone-300 bg-white pl-9 pr-3 text-sm text-stone-900 transition-all placeholder:text-stone-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
           />
         </div>
@@ -93,7 +93,7 @@ export default function Products() {
           onChange={(e) => { setCategoryFilter(e.target.value); if (view === 'card') setCardPage(1) }}
           className="h-10 rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-700 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 sm:w-44"
         >
-          <option value="">All Categories</option>
+          <option value="">Semua Kategori</option>
           {categories.map((cat) => (
             <option key={cat.id} value={cat.id}>{cat.name}</option>
           ))}
@@ -109,10 +109,10 @@ export default function Products() {
             </svg>
           </div>
           <h3 className="text-sm font-semibold text-stone-900">
-            {search || categoryFilter ? 'No products match your search' : 'Belum ada produk'}
+            {search || categoryFilter ? 'Tidak ada produk yang cocok' : 'Belum ada produk'}
           </h3>
           <p className="mt-1 text-xs text-stone-500">
-            {search || categoryFilter ? 'Try different search terms or filters' : 'Klik "Add Product" untuk menambahkan produk pertama'}
+            {search || categoryFilter ? 'Coba ubah kata kunci atau filter' : 'Klik "Tambah Produk" untuk menambahkan produk pertama'}
           </p>
         </div>
       )}

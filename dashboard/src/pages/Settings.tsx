@@ -7,7 +7,7 @@ import WaSessionTab from '../components/WaSessionTab.tsx'
 import Spinner from '../components/ui/Spinner.tsx'
 
 const tabs = [
-  { id: 'store', label: 'Store' },
+  { id: 'store', label: 'Toko' },
   { id: 'ai', label: 'AI Agent' },
   { id: 'wa', label: 'WA Session' },
 ] as const
@@ -37,7 +37,7 @@ export default function Settings() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-semibold tracking-tight text-stone-900">Settings</h1>
+      <h1 className="text-2xl font-semibold tracking-tight text-stone-900">Pengaturan</h1>
 
       <div className="flex overflow-x-auto border-b border-stone-200">
         {tabs.map((tab) => (

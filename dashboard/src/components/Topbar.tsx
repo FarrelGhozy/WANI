@@ -4,7 +4,14 @@ function pathToLabel(path: string): string {
   if (path === '/') return 'Dashboard'
   const segment = path.split('/').filter(Boolean)[0]
   if (!segment) return 'Dashboard'
-  return segment
+  const map: Record<string, string> = {
+    products: 'Produk',
+    orders: 'Pesanan',
+    customers: 'Pelanggan',
+    website: 'Website',
+    settings: 'Pengaturan',
+  }
+  return map[segment] ?? segment
     .split('-')
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
     .join(' ')
@@ -30,7 +37,7 @@ export default function Topbar({ connection }: TopbarProps) {
   return (
     <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-stone-200 bg-white/80 px-4 backdrop-blur-sm sm:px-6 lg:px-8">
       <div className="flex items-center gap-2 text-sm">
-        <button onClick={() => navigate('/')} className="text-stone-400 transition-colors hover:text-stone-700">Home</button>
+        <button onClick={() => navigate('/')} className="text-stone-400 transition-colors hover:text-stone-700">Beranda</button>
         <span className="text-stone-300">/</span>
         <span className="font-medium text-stone-900">{currentPage}</span>
       </div>

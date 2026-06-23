@@ -9,7 +9,7 @@ interface CustomerListViewProps {
 const roleLabel: Record<MessageRole, string> = {
   CUSTOMER: 'Customer',
   BOT: 'Bot',
-  HUMAN: 'You',
+  HUMAN: 'Anda',
 }
 
 export default function CustomerListView({ customers, selectedId, onSelect }: CustomerListViewProps) {
@@ -63,7 +63,7 @@ export default function CustomerListView({ customers, selectedId, onSelect }: Cu
                     : ''}
                 </span>
                 {customer.totalOrders > 0 && (
-                  <span className="text-[11px] text-stone-400">{customer.totalOrders} orders</span>
+                  <span className="text-[11px] text-stone-400">{customer.totalOrders} pesanan</span>
                 )}
               </div>
             </div>

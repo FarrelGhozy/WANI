@@ -18,11 +18,11 @@ const statusBadge: Record<OrderStatus, 'amber' | 'teal' | 'green' | 'gray' | 're
 }
 
 const statusLabel: Record<OrderStatus, string> = {
-  PENDING: 'Pending',
-  CONFIRMED: 'Confirmed',
-  PROCESSING: 'Processing',
-  COMPLETED: 'Completed',
-  CANCELLED: 'Cancelled',
+  PENDING: 'Tertunda',
+  CONFIRMED: 'Dikonfirmasi',
+  PROCESSING: 'Diproses',
+  COMPLETED: 'Selesai',
+  CANCELLED: 'Dibatalkan',
 }
 
 function formatPrice(price: number) {
@@ -55,12 +55,12 @@ export default function OrderListView({ orders, sortField, sortDir, onSort }: Or
       <table className="w-full border-collapse text-left max-sm:text-xs sm:text-sm">
         <thead>
           <tr className="border-b border-stone-100 bg-stone-50">
-            <SortTh field="id" label="Order" current={sortField} dir={sortDir} onSort={onSort} />
-            <SortTh field="customerName" label="Customer" current={sortField} dir={sortDir} onSort={onSort} />
-            <SortTh field="items" label="Items" current={sortField} dir={sortDir} onSort={onSort} />
+            <SortTh field="id" label="Pesanan" current={sortField} dir={sortDir} onSort={onSort} />
+            <SortTh field="customerName" label="Pelanggan" current={sortField} dir={sortDir} onSort={onSort} />
+            <SortTh field="items" label="Item" current={sortField} dir={sortDir} onSort={onSort} />
             <SortTh field="totalAmount" label="Total" current={sortField} dir={sortDir} onSort={onSort} className="text-right" />
             <SortTh field="status" label="Status" current={sortField} dir={sortDir} onSort={onSort} />
-            <SortTh field="createdAt" label="Date" current={sortField} dir={sortDir} onSort={onSort} className="text-right" />
+            <SortTh field="createdAt" label="Tanggal" current={sortField} dir={sortDir} onSort={onSort} className="text-right" />
           </tr>
         </thead>
         <tbody className="divide-y divide-stone-50">
@@ -79,7 +79,7 @@ export default function OrderListView({ orders, sortField, sortDir, onSort }: Or
                   <p className="text-xs text-stone-400">{order.customerPhone}</p>
                 </div>
               </td>
-              <td className="max-sm:px-2 max-sm:py-2 sm:px-4 sm:py-3 text-xs text-stone-500">{order.items.length} item{order.items.length > 1 ? 's' : ''}</td>
+              <td className="max-sm:px-2 max-sm:py-2 sm:px-4 sm:py-3 text-xs text-stone-500">{order.items.length} item</td>
               <td className="max-sm:px-2 max-sm:py-2 sm:px-4 sm:py-3 text-right font-medium tabular-nums text-stone-900">{formatPrice(order.totalAmount)}</td>
               <td className="max-sm:px-2 max-sm:py-2 sm:px-4 sm:py-3">
                 <Badge variant={statusBadge[order.status]} dot>{statusLabel[order.status]}</Badge>

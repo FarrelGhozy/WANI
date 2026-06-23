@@ -41,7 +41,7 @@ export default function Modal({ open, onClose, title, children, actions }: Modal
         </div>
         {actions && (
           <div className="flex items-center justify-end gap-3 border-t border-stone-100 px-6 py-4">
-            <Button variant="secondary" size="sm" onClick={onClose}>Cancel</Button>
+            <Button variant="secondary" size="sm" onClick={onClose}>Batal</Button>
             {actions}
           </div>
         )}

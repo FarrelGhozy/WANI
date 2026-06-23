@@ -30,7 +30,7 @@ export default function Customers() {
   return (
     <div className="flex h-[calc(100dvh-12rem)] flex-col pb-16 lg:h-[calc(100vh-9rem)] lg:pb-0">
       <div className="mb-4">
-        <h1 className="text-2xl font-semibold tracking-tight text-stone-900">Customers</h1>
+        <h1 className="text-2xl font-semibold tracking-tight text-stone-900">Pelanggan</h1>
         <p className="mt-1 text-sm text-stone-500">{customers.length} pelanggan</p>
       </div>
 
@@ -43,7 +43,7 @@ export default function Customers() {
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by name or phone..."
+            placeholder="Cari nama atau telepon..."
             className="h-10 w-full max-w-md rounded-lg border border-stone-300 bg-white pl-9 pr-3 text-sm text-stone-900 transition-all placeholder:text-stone-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
           />
         </div>
@@ -55,7 +55,7 @@ export default function Customers() {
         <div className={`overflow-hidden rounded-xl border border-stone-200 bg-white ${selectedId ? 'hidden lg:flex lg:w-80' : 'flex-1 lg:w-80 lg:shrink-0'}`}>
           {customers.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <p className="text-sm text-stone-500">No customers found</p>
+              <p className="text-sm text-stone-500">Tidak ada pelanggan</p>
             </div>
           ) : (
             <CustomerListView

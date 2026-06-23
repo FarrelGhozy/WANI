@@ -5,11 +5,11 @@ import { GridIcon, BagIcon, ClipboardIcon, PeopleIcon, GlobeIcon, CogIcon, LogOu
 
 const navItems = [
   { to: '/', icon: GridIcon, label: 'Dashboard' },
-  { to: '/products', icon: BagIcon, label: 'Products' },
-  { to: '/orders', icon: ClipboardIcon, label: 'Orders' },
-  { to: '/customers', icon: PeopleIcon, label: 'Customers' },
+  { to: '/products', icon: BagIcon, label: 'Produk' },
+  { to: '/orders', icon: ClipboardIcon, label: 'Pesanan' },
+  { to: '/customers', icon: PeopleIcon, label: 'Pelanggan' },
   { to: '/website', icon: GlobeIcon, label: 'Website' },
-  { to: '/settings', icon: CogIcon, label: 'Settings' },
+  { to: '/settings', icon: CogIcon, label: 'Pengaturan' },
 ]
 
 interface SidebarProps {
@@ -28,9 +28,9 @@ function statusColor(status: string) {
 
 function statusLabel(status: string) {
   switch (status) {
-    case 'connected': return 'Connected'
-    case 'connecting': return 'Connecting'
-    default: return 'Disconnected'
+    case 'connected': return 'Terhubung'
+    case 'connecting': return 'Menghubungkan'
+    default: return 'Terputus'
   }
 }
 
@@ -94,7 +94,7 @@ export default function Sidebar({ connection, storeName, storeLogoUrl }: Sidebar
           <span className="shrink-0 text-red-300">
             <LogOutIcon />
           </span>
-          <span>Logout</span>
+          <span>Keluar</span>
         </button>
       </div>
 
@@ -124,7 +124,7 @@ export default function Sidebar({ connection, storeName, storeLogoUrl }: Sidebar
           </div>
           <div className="flex min-w-0 flex-col">
             <span className="truncate text-sm font-medium text-teal-50">{storeName}</span>
-            <span className="text-xs text-teal-300">Store Owner</span>
+            <span className="text-xs text-teal-300">Pemilik Toko</span>
           </div>
         </div>
       </div>
