@@ -7,10 +7,11 @@
 % ── Encoding & Font ──────────────────────────────────────────
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage{times}
+\usepackage{mathptmx}
 
 % ── Bahasa ───────────────────────────────────────────────────
-\usepackage[bahasa]{babel}
+\usepackage{babel}
+\babelprovide[import]{indonesian}
 \usepackage{indentfirst}
 \setlength{\parindent}{1.5cm}
 
@@ -35,6 +36,10 @@
 \usepackage{multicol}
 \usepackage{makecell}
 \usepackage{textcomp}
+\usepackage{tocloft}
+\usepackage{array}
+\usepackage{amsmath}
+\usepackage{calc}
 
 % ── Colors ───────────────────────────────────────────────────
 \definecolor{primary}{HTML}{0F766E}     % warm teal
@@ -60,9 +65,20 @@
 \renewcommand{\headrulewidth}{0.4pt}
 \renewcommand{\headrule}{\hbox to\headwidth{\color{primary}\leaders\hrule height 0.4pt\hfill}}
 
+% ── TOC formatting ───────────────────────────────────────────
+\renewcommand{\cfttoctitlefont}{\Large\bfseries\color{primary}}
+\renewcommand{\cftlottitlefont}{\Large\bfseries\color{primary}}
+\renewcommand{\cftloftitlefont}{\Large\bfseries\color{primary}}
+\renewcommand{\cftsecfont}{\color{dark}}
+\renewcommand{\cftsubsecfont}{\color{dark!70}}
+\renewcommand{\cftsecleader}{\cftdotfill{\cftsecdotsep}}
+\renewcommand{\cftsubsecleader}{\cftdotfill{\cftsubsecdotsep}}
+\setlength{\cftbeforetoctitleskip}{2em}
+\setlength{\cftaftertoctitleskip}{1.5em}
+
 % ── Section formatting ───────────────────────────────────────
 \titleformat{\section}
-  {\Large\bfseries\color{primary}}{}{0em}{}[\vspace{-0.5ex}\rule{\textwidth}{0.5pt}]
+  {\Large\bfseries\color{primary}}{}{0em}{}[{\vspace{-0.5ex}\color{primary}\rule{\textwidth}{0.5pt}}]
 \titleformat{\subsection}
   {\large\bfseries\color{dark}}{}{0em}{}
 \titleformat{\subsubsection}
@@ -117,6 +133,18 @@
 % ── References ───────────────────────────────────────────────
 \usepackage{cite}
 
+% ── Numbered BAB helper ──────────────────────────────────────
+\newcommand{\bab}[1]{%
+    \setcounter{section}{0}%
+    \renewcommand{\thesection}{\arabic{section}}%
+    \stepcounter{section}%
+    \section*{BAB \thesection\\[0.3em] #1}%
+    \addcontentsline{toc}{section}{BAB \thesection~~#1}%
+    \setcounter{section}{0}%
+}
+\renewcommand{\thesection}{\arabic{section}}
+\renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
+
 \begin{document}
 
 % ============================================================
@@ -124,9 +152,6 @@
 % ============================================================
 \begin{titlepage}
     \centering
-
-    % Logo placeholder
-    % \includegraphics[width=3.5cm]{logo-unida.png}\\[1.5cm]
 
     \vspace*{1cm}
 
@@ -141,7 +166,7 @@
     }
     {\color{primary}\rule{0.7\textwidth}{1.5pt}}\\[2em]
 
-    {\large\bfseries PROPOSAL}\\ [0.5em]
+    {\large\bfseries PROPOSAL}\\[0.5em]
     {\large Diajukan untuk Mengikuti \textbf{[Nama Lomba]}}\\[3em]
 
     \begin{center}
@@ -179,124 +204,213 @@ WANI menawarkan empat solusi inti:
 
 \begin{enumerate}[nosep]
     \item \textbf{AI Chatbot WhatsApp} -- Otomatisasi layanan pelanggan 24/7 dengan \textit{intent detection} berbasis \textit{large language model} (LLM) yang mampu memahami dan merespons 6 kategori intensi pelanggan (order, inquiry, greeting, complaint, unknown, escalate).
-    \item \textbf{Multi-Layer Security Pipeline} -- Sistem pertahanan injeksi 3-tier (regex $\rightarrow$ ML classifier $\rightarrow$ deep LLM judge) yang melindungi dari \textit{prompt injection}, kebocoran PII, dan eksfiltrasi data -- menjadikannya salah satu sistem chatbot AI paling aman untuk lingkungan UMKM.
-    \item \textbf{Dashboard Administrasi Terpusat} -- Manajemen produk, pesanan, pelanggan, dan konfigurasi sistem dalam satu antarmuka web modern (React 19, TypeScript 6, Tailwind CSS 4).
+    \item \textbf{Multi-Layer Security Pipeline} -- Sistem pertahanan injeksi 3-tier (regex $\rightarrow$ ML classifier $\rightarrow$ deep LLM judge) yang melindungi dari \textit{prompt injection}, kebocoran PII, dan eksfiltrasi data.
+    \item \textbf{Dashboard Administrasi Terpusat} -- Manajemen produk, pesanan, pelanggan, dan konfigurasi sistem dalam satu antarmuka web modern (React 19, TypeScript, Tailwind CSS 4).
     \item \textbf{Website Generator Otomatis} -- Pembuatan situs web statis UMKM dari data toko dan produk, lengkap dengan integrasi WhatsApp (\textit{click-to-order}), tanpa perlu keahlian teknis.
 \end{enumerate}
 
 \vspace{0.5em}
 \noindent
-Dibangun di atas \textit{stack} teknologi modern dan stabil (Bun, Express 5, Prisma 7, PostgreSQL, React 19, Astro 6.4) dengan metodologi Extreme Programming, WANI telah melalui tahap pengembangan yang matang dan siap untuk diimplementasikan sebagai solusi digitalisasi bagi pelaku UMKM Indonesia.
+Dibangun di atas \textit{stack} teknologi modern dan stabil (Bun, Express 5, Prisma 7, PostgreSQL, React 19, Astro) dengan metodologi Extreme Programming, WANI telah melalui tahap pengembangan yang matang dan siap untuk diimplementasikan sebagai solusi digitalisasi bagi pelaku UMKM Indonesia.
 
 \vfill
 
 % ============================================================
-%  TABLE OF CONTENTS
+%  DAFTAR ISI
 % ============================================================
 \newpage
 \tableofcontents
 \newpage
 
 % ============================================================
-%  1. PENDAHULUAN
+%  DAFTAR TABEL
 % ============================================================
-\section{Latar Belakang}
-
-\subsection{Darurat Digitalisasi UMKM Indonesia}
-
-Usaha Mikro, Kecil, dan Menengah (UMKM) merupakan pilar fundamental perekonomian Indonesia. Data Kementerian Koperasi dan UKM mencatat bahwa sektor UMKM menyumbang \textbf{61\%} terhadap Produk Domestik Bruto (PDB) nasional (setara Rp9.580 triliun) dan menyerap sekitar \textbf{97\%} dari total tenaga kerja \cite{kemkop2023}. Namun, kesenjangan digital masih menjadi hambatan serius.
-
-Berdasarkan survei Kementerian Koperasi dan UKM tahun 2022 \cite{kemkop2022survei}, hanya sekitar \textbf{20\%} UMKM yang telah mengadopsi teknologi digital secara aktif dalam operasional bisnis mereka. Sebagian besar masih mengelola komunikasi pelanggan, pencatatan pesanan, dan data produk secara manual -- menggunakan buku catatan, spreadsheet sederhana, atau bahkan hanya mengandalkan ingatan. Kondisi ini menyebabkan:
-
-\begin{itemize}
-    \item \textbf{Inefisiensi operasional} -- Waktu respons lambat, pesanan terlewat, dan kesalahan pencatatan.
-    \item \textbf{Hilangnya peluang bisnis} -- Pelanggan beralih ke kompetitor yang lebih responsif.
-    \item \textbf{Ketidakmampuan analisis} -- Tidak ada data historis untuk pengambilan keputusan bisnis.
-    \item \textbf{Ketiadaan \textit{web presence}} -- UMKM kesulitan membangun kehadiran \textit{online} karena keterbatasan biaya dan keahlian teknis.
-\end{itemize}
-
-\subsection{WhatsApp: Kanal Komunikasi Utama, Namun Terabaikan}
-
-WhatsApp telah menjadi infrastruktur komunikasi \textit{de facto} bagi UMKM Indonesia. Dengan \textbf{90,9\%} tingkat penetrasi sebagai platform media sosial paling banyak digunakan di Indonesia \cite{wearesocial2024}, WhatsApp digunakan secara luas untuk menerima pesanan, menjawab pertanyaan, dan membangun hubungan dengan pelanggan. Ironisnya, potensi besar ini belum dimanfaatkan secara optimal:
-
-\begin{itemize}
-    \item Percakapan bisnis bercampur dengan chat pribadi.
-    \item Tidak ada sistem \textit{ticketing} atau pelacakan pesanan.
-    \item Tidak ada integrasi dengan manajemen inventaris dan produk.
-    \item Bot WhatsApp yang ada di pasaran umumnya tidak memiliki keamanan AI yang memadai.
-\end{itemize}
-
-\subsection{Ancaman Prompt Injection pada Chatbot AI}
-
-Seiring dengan maraknya adopsi \textit{large language model} (LLM) untuk layanan pelanggan, muncul ancaman serius berupa \textit{prompt injection attack}. OWASP \cite{owasp2025} mengidentifikasikan \textit{prompt injection} (LLM01:2025) sebagai kerentanan nomor satu pada aplikasi LLM. Pelaku UMKM yang menggunakan chatbot AI tanpa lapisan keamanan yang memadai berisiko mengalami:
-
-\begin{itemize}
-    \item Kebocoran data sensitif (data pelanggan, informasi bisnis).
-    \item Manipulasi sistem untuk menjalankan perintah berbahaya.
-    \item Eksfiltrasi \textit{system prompt} dan konfigurasi internal.
-\end{itemize}
-
-\subsection{Solusi: WANI}
-
-Dari permasalahan di atas, lahirlah \textbf{WANI} (\textit{\textbf{W}h\textbf{A}tsapp \textbf{N}ative \textbf{I}ntegration} / \textit{WhatsApp Niaga}) -- sebuah platform omnichannel terintegrasi yang menghubungkan \textit{WhatsApp Bot} bertenaga AI, \textit{REST API server}, \textit{dashboard} administrasi, dan \textit{website generator} statis. WANI dirancang khusus untuk membantu UMKM Indonesia mengelola komunikasi pelanggan, manajemen produk dan pesanan, serta membangun \textit{web presence} secara otomatis -- dengan keamanan AI berlapis yang menjadi standar tertinggi di kelasnya.
+\listoftables
+\newpage
 
 % ============================================================
-%  2. KEUNGGULAN DAN INOVASI
+%  DAFTAR GAMBAR
 % ============================================================
-\section{Keunggulan dan Inovasi}
+\listoffigures
+\newpage
 
-WANI menawarkan sejumlah inovasi yang membedakannya dari solusi \textit{chatbot} dan \textit{point-of-sale} yang sudah ada di pasaran:
+% ============================================================
+%  BAB I — PENDAHULUAN
+% ============================================================
+\bab{PENDAHULUAN}
+
+\subsection{Latar Belakang}
+
+\textbf{Darurat Digitalisasi UMKM Indonesia}
+
+Usaha Mikro, Kecil, dan Menengah (UMKM) merupakan pilar fundamental perekonomian Indonesia. Data Kementerian Koperasi dan UKM mencatat bahwa sektor UMKM menyumbang \textbf{61\%} terhadap Produk Domestik Bruto (PDB) nasional (setara Rp9.580 triliun) dan menyerap sekitar \textbf{97\%} dari total tenaga kerja \cite{kemkop2023}. Namun, kesenjangan digital masih menjadi hambatan serius: berdasarkan survei Kementerian Koperasi dan UKM tahun 2022 \cite{kemkop2022survei}, hanya sekitar \textbf{20\%} UMKM yang telah mengadopsi teknologi digital secara aktif.
+
+Kondisi ini menyebabkan inefisiensi operasional (waktu respons lambat, pesanan terlewat), hilangnya peluang bisnis (pelanggan beralih ke kompetitor), ketidakmampuan analisis data historis untuk pengambilan keputusan, dan ketiadaan \textit{web presence} akibat keterbatasan biaya serta keahlian teknis.
+
+\textbf{WhatsApp: Infrastruktur yang Terabaikan}
+
+WhatsApp telah menjadi infrastruktur komunikasi \textit{de facto} bagi UMKM Indonesia. Dengan \textbf{90,9\%} tingkat penetrasi sebagai platform media sosial paling banyak digunakan \cite{wearesocial2024}, WhatsApp digunakan secara luas untuk menerima pesanan, menjawab pertanyaan, dan membangun hubungan dengan pelanggan. Ironisnya, potensi ini belum dimanfaatkan secara optimal: percakapan bisnis bercampur dengan \textit{chat} pribadi, tidak ada sistem \textit{ticketing} atau pelacakan pesanan, tidak ada integrasi dengan manajemen inventaris, dan bot WhatsApp yang ada di pasaran umumnya tidak memiliki keamanan AI yang memadai.
+
+\textbf{Ancaman Keamanan pada Chatbot AI}
+
+Seiring maraknya adopsi \textit{large language model} (LLM) untuk layanan pelanggan, muncul ancaman serius berupa \textit{prompt injection attack}. OWASP \cite{owasp2025} mengidentifikasikan \textit{prompt injection} (LLM01:2025) sebagai kerentanan nomor satu pada aplikasi LLM. Pelaku UMKM yang menggunakan \textit{chatbot} AI tanpa lapisan keamanan berisiko mengalami kebocoran data sensitif, manipulasi sistem, dan eksfiltrasi konfigurasi internal.
+
+Dari permasalahan di atas, lahirlah \textbf{WANI} -- sebuah platform omnichannel yang mengintegrasikan WhatsApp Bot bertenaga AI, REST API, dashboard administrasi, dan \textit{website generator} statis, dengan keamanan AI berlapis sebagai standar utama.
+
+\subsection{Rumusan Masalah}
+
+Berdasarkan latar belakang yang telah diuraikan, dirumuskan permasalahan sebagai berikut:
+
+\begin{enumerate}
+    \item Bagaimana merancang dan membangun sistem \textit{chatbot} WhatsApp bertenaga AI yang mampu memahami dan merespons berbagai intensi pelanggan UMKM secara akurat dan kontekstual?
+    \item Bagaimana mengimplementasikan sistem pertahanan keamanan berlapis (\textit{multi-layer defense}) yang mampu melindungi \textit{chatbot} AI dari serangan \textit{prompt injection}, kebocoran data pribadi (PII), dan eksfiltrasi sistem?
+    \item Bagaimana mengintegrasikan \textit{chatbot} WhatsApp dengan sistem manajemen produk, pesanan, dan pelanggan dalam satu platform yang kohesif?
+    \item Bagaimana menyediakan solusi pembuatan \textit{website} statis yang terotomatisasi bagi UMKM tanpa memerlukan keahlian teknis?
+    \item Bagaimana memastikan seluruh sistem dapat berjalan dengan biaya operasional yang terjangkau dan data tetap sepenuhnya dimiliki oleh pengguna (\textit{self-hosted})?
+\end{enumerate}
+
+\subsection{Tujuan dan Manfaat}
+
+\textbf{Tujuan}
+
+\begin{enumerate}
+    \item Mengembangkan \textit{chatbot} WhatsApp bertenaga AI dengan \textit{intent detection} multi-kategori yang mampu menangani pesanan, pertanyaan, sapaan, keluhan, dan eskalasi secara otomatis.
+    \item Membangun sistem keamanan AI 3-tier (regex $\rightarrow$ ML classifier $\rightarrow$ deep LLM judge) sebagai lapisan pertahanan terhadap serangan \textit{prompt injection}.
+    \item Merancang dashboard administrasi terpusat untuk manajemen produk, pesanan, pelanggan, dan konfigurasi sistem.
+    \item Mengimplementasikan \textit{website generator} otomatis yang menghasilkan situs web statis UMKM dari data toko dan produk.
+    \item Menyediakan solusi \textit{open-source} yang dapat di-\textit{host} sendiri (\textit{self-hosted}) dengan biaya operasional minimal.
+\end{enumerate}
+
+\textbf{Manfaat}
+
+\begin{itemize}
+    \item \textbf{Bagi UMKM}: Otomatisasi layanan pelanggan 24/7 tanpa perlu menyewa staf \textit{customer service}; peningkatan efisiensi operasional; \textit{web presence} gratis dan otomatis.
+    \item \textbf{Bagi Pelanggan}: Respons cepat dan akurat terhadap pertanyaan dan pesanan; kemudahan bertransaksi melalui WhatsApp tanpa perlu aplikasi tambahan.
+    \item \textbf{Bagi Pengembang}: Kode sumber terbuka yang dapat dipelajari, dikontribusikan, dan dikembangkan lebih lanjut oleh komunitas.
+    \item \textbf{Bagi Akademisi}: Studi kasus implementasi LLM untuk lingkungan nyata dengan keamanan berlapis; referensi pengembangan sistem \textit{chatbot} AI yang aman.
+\end{itemize}
+
+\subsection{Batasan Aplikasi}
+
+Batasan pengembangan WANI ditetapkan sebagai berikut:
+
+\begin{enumerate}
+    \item Platform berfokus pada kanal komunikasi WhatsApp (\textit{multi-device API}) sebagai saluran utama interaksi pelanggan.
+    \item Sistem dirancang untuk lingkungan \textit{self-hosted} di atas infrastruktur Linux (Ubuntu/Debian) dengan Docker sebagai opsi deployment.
+    \item Model LLM yang digunakan berasal dari penyedia pihak ketiga melalui OpenRouter API (DeepSeek V4 Flash sebagai model utama, Gemini 2.0 Flash sebagai model cadangan).
+    \item Dashboard dikembangkan sebagai \textit{single-page application} (SPA) berbasis web, bukan sebagai aplikasi \textit{mobile native}.
+    \item \textit{Website generator} menghasilkan situs statis (HTML/CSS/JS) tanpa \textit{backend} dinamis, cocok untuk dipublikasikan di \textit{platform hosting} statis (GitHub Pages, Netlify, Vercel).
+    \item Sistem belum mendukung \textit{multi-tenant} penuh; setiap instance WANI melayani satu bisnis UMKM.
+\end{enumerate}
+
+% ============================================================
+%  BAB II — METODOLOGI PENGEMBANGAN
+% ============================================================
+\bab{METODOLOGI PENGEMBANGAN}
+
+\subsection{Model Pengembangan Sistem}
+
+WANI dikembangkan menggunakan metodologi \textbf{Extreme Programming} (XP) dengan pertimbangan sebagai berikut:
+
+\begin{itemize}
+    \item Empat sub-proyek independen (\texttt{api/}, \texttt{dashboard/}, \texttt{wa-bot/}, \texttt{web-gen/}) memungkinkan pengembangan paralel dan iteratif, sejalan dengan praktik XP tentang \textit{collective ownership}.
+    \item \textit{Evolving requirements} yang khas dalam proyek inovasi membutuhkan respons cepat terhadap perubahan.
+    \item Fokus pada kualitas kode dan \textit{testing} yang ketat selaras dengan praktik XP seperti \textit{test-driven development} (TDD) dan \textit{continuous integration}.
+    \item Tim kecil (4 orang) ideal untuk \textit{pair programming} dan komunikasi tatap muka langsung.
+\end{itemize}
+
+\subsection{Alat dan Bahan Pengembangan}
+
+Seluruh teknologi yang digunakan dalam WANI adalah versi stabil terbaru dari masing-masing ekosistem:
 
 \begin{table}[H]
 \centering
-\caption{Perbandingan dengan Solusi Lain}
-\label{tab:perbandingan}
-\begin{tabularx}{\textwidth}{p{3cm}Xp{3.5cm}p{2.5cm}}
+\caption{Alat dan Bahan Pengembangan WANI}
+\label{tab:stack}
+\begin{tabularx}{\textwidth}{p{2.8cm}p{3cm}X}
 \toprule
-\textbf{Aspek} & \textbf{WANI} & \textit{Chatbot} \textbf{Konvensional} & \textbf{SaaS POS} \\
+\textbf{Kategori} & \textbf{Teknologi} & \textbf{Peran} \\
 \midrule
-AI Security & 3-tier guardrail (regex $\rightarrow$ ML $\rightarrow$ Judge) & Tidak ada / basic & Tidak relevan \\
-\textit{Intent Detection} & 6 kategori (Zod validated) & Rule-based terbatas & Tidak ada \\
-\textit{Omnichannel} & WhatsApp + Dashboard + Web & Chat only & POS only \\
-\textit{Source Code} & \textbf{Open Source} (\href{https://github.com/FarrelGhozy/WANI}{GitHub}) & Proprietary & Proprietary \\
-\textit{Data Ownership} & \textbf{100\% milik pengguna} (self-hosted) & Tersimpan di pihak ketiga & Tersimpan di pihak ketiga \\
-\textit{Web Presence} & Auto-generate website UMKM & Tidak ada & Tidak ada \\
-\textit{Biaya} & Gratis (self-hosted) + API LLM saja & Berlangganan bulanan & Berlangganan bulanan \\
-\textit{Latest Stack} & Bun, Express 5, React 19, Prisma 7 & Bervariasi, sering usang & Proprietary \\
+Runtime & Bun 1.3+ & Runtime JavaScript/TypeScript dengan \textit{built-in bundler}, test runner, package manager \\
+Bahasa & TypeScript 5\textasciitilde6 & \textit{Static typing} untuk keamanan dan ketertiban kode \\
+\hline
+Backend API & Express 5 & Web framework Node.js minimalis dengan \textit{middleware} \\
+ORM & Prisma 7 (+ \texttt{@prisma/adapter-pg}) & ORM \textit{type-safe} dengan database PostgreSQL \\
+Database & PostgreSQL 16+ & Basis data relasional \textit{open-source} \\
+Validasi & Zod & Validasi skema dengan inferensi tipe otomatis \\
+Keamanan HTTP & Helmet 8 & \textit{Middleware} keamanan Express \\
+Logging & Winston 3 + Morgan & Logging multi-transport JSON \\
+\hline
+Frontend & React 19 + React Compiler & UI deklaratif dengan kompilasi otomatis \\
+\textit{Build Tool} & Vite 8 (Rolldown) & \textit{Build} cepat dengan HMR \\
+Styling & Tailwind CSS 4 & Utility-first CSS framework \\
+Routing & React Router 8 & \textit{Client-side routing} dengan loader/action \\
+\hline
+WhatsApp Bot & Baileys 6 & WhatsApp Web API multi-device \\
+HTTP Client & Axios 1 & HTTP promise-based \\
+Logging Bot & Pino 9 & Logger berkinerja tinggi \\
+\hline
+Site Generator & Astro 7 & \textit{Static site generator} dengan \textit{island architecture} \\
+ZIP & Archiver 7 & Pembuatan arsip ZIP \\
+\hline
+AI Engine & OpenRouter API & Agregator LLM (DeepSeek V4, Gemini 2.0) \\
+Model Utama & DeepSeek V4 Flash & \textit{Chat completion} dan \textit{intent parsing} \\
+Model Cadangan & Gemini 2.0 Flash & \textit{Fallback}, classifier, judge, grounding \\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-\subsection{Inovasi Utama}
+\subsection{Tahapan Pengembangan}
+
+Tahapan pengembangan WANI mengikuti siklus XP yang terdiri dari:
 
 \begin{enumerate}
-    \item \textbf{18-Langkah AI Pipeline dengan Keamanan Berlapis} \\
-    Tidak seperti \textit{chatbot} konvensional yang hanya meneruskan pesan ke LLM, WANI memproses setiap pesan melalui 18 langkah terstruktur yang mencakup normalisasi input, deduplikasi, \textit{rate limiting}, pemindaian PII, pertahanan injeksi 3-tier, \textit{output grounding}, dan redaksi PII. Pipeline ini memastikan setiap respons AI aman, akurat, dan kontekstual.
-
-    \item \textbf{Sistem Pertahanan Injeksi 3-Tier Pertama di Kelasnya} \\
-    WANI mengimplementasikan tiga lapis pertahanan yang bekerja secara berjenjang:
-    \begin{itemize}
-        \item \textbf{Tier 1 (wajib, $\sim$0ms):} Deteksi berbasis 9 kelompok pola regex, termasuk deteksi homoglif Cyrillic/Greek dan normaliasi leetspeak.
-        \item \textbf{Tier 2 (kondisional, $\sim$500ms):} Klasifikasi ML melalui OpenRouter model cepat untuk kasus yang mencurigakan.
-        \item \textbf{Tier 3 (kondisional, $\sim$1500ms):} Analisis mendalam dengan konteks percakapan penuh untuk kasus batas (\textit{borderline}).
-    \end{itemize}
-
-    \item \textbf{Architecture Modular 4-in-1} \\
-    WANI terdiri dari empat sub-proyek independen yang dapat dikembangkan, diuji, dan di-\textit{deploy} secara terpisah: \texttt{api/} (Express 5 REST server), \texttt{dashboard/} (React 19 SPA), \texttt{wa-bot/} (Baileys 6 WhatsApp client), dan \texttt{web-gen/} (Astro 6.4 site generator). Setiap sub-proyek menggunakan TypeScript dengan \texttt{verbatimModuleSyntax} dan \texttt{erasableSyntaxOnly}.
-
-    \item \textbf{Open Source dan Data Ownership} \\
-    Seluruh kode sumber WANI tersedia secara \textit{open source} di \href{https://github.com/FarrelGhozy/WANI}{GitHub}. Data bisnis sepenuhnya berada di kendali pengguna (\textit{self-hosted} PostgreSQL), tanpa ketergantungan pada pihak ketiga.
-
-    \item \textbf{Website Generator untuk Web Presence} \\
-    WANI tidak hanya mengelola komunikasi dan transaksi, tetapi juga secara otomatis menghasilkan situs web statis UMKM dari data toko dan produk -- lengkap dengan tombol ``Pesan via WhatsApp'' yang terintegrasi.
+    \item \textbf{Planning} -- Penjabaran \textit{user stories} berdasarkan studi literatur dan observasi terhadap kebutuhan UMKM. Prioritas ditentukan berdasarkan nilai bisnis. Iterasi pengembangan berlangsung 1--2 minggu.
+    \item \textbf{Design} -- Prinsip YAGNI (\textit{You Ain't Gonna Need It}) diterapkan secara ketat untuk menghindari kompleksitas yang tidak perlu. Arsitektur modular dengan 13 entitas data utama: MERCHANT, CUSTOMER, CATEGORY, PRODUCT, ORDER, ORDER\_ITEM, PAYMENT, CONVERSATION, MESSAGE, WA\_SESSION, AI\_AGENT, SETTING, ACTIVITY\_LOG.
+    \item \textbf{Coding} -- \textit{Continuous integration} dengan pekerjaan paralel per sub-proyek:
+        \begin{itemize}
+            \item \textbf{API}: Arsitektur berlapis \textit{routes} $\rightarrow$ \textit{controllers} $\rightarrow$ \textit{models} $\rightarrow$ Prisma \textit{delegate}.
+            \item \textbf{Dashboard}: \textit{Single-page application} dengan React Router v8 dan state management berbasis hook.
+            \item \textbf{WA Bot}: Baileys 6 dengan autentikasi persisten melalui Prisma + PostgreSQL.
+            \item \textbf{Web-Gen}: Template Astro 7 dengan Tailwind CSS 4.
+        \end{itemize}
+    \item \textbf{Testing} -- TDD menggunakan \texttt{bun:test} dengan cakupan: unit test (Zod, utilitas, regex), \textit{integration test} (AI pipeline, circuit breaker, rate limiter), \textit{security test} (3-tier firewall, PII scanner, grounding checker), dan \textit{golden reply test} untuk konsistensi respons.
+    \item \textbf{Release} -- Siklus rilis pendek dengan dokumentasi \textit{changelog}. Setiap fitur stabil dirilis secara independen per sub-proyek.
 \end{enumerate}
 
 % ============================================================
-%  3. ARSITEKTUR DAN CARA KERJA
+%  BAB III — ANALISIS DAN DESAIN SOFTWARE
 % ============================================================
-\section{Arsitektur dan Cara Kerja}
+\bab{ANALISIS DAN DESAIN SOFTWARE}
 
-\subsection{Arsitektur Sistem}
+\subsection{Analisis Kebutuhan Sistem}
+
+\textbf{Kebutuhan Fungsional}
+
+\begin{enumerate}
+    \item Sistem mampu menerima dan merespons pesan WhatsApp secara otomatis menggunakan AI.
+    \item Sistem mampu mendeteksi 6 kategori intensi pelanggan: \texttt{order}, \texttt{inquiry}, \texttt{greeting}, \texttt{complaint}, \texttt{unknown}, dan \texttt{escalate}.
+    \item Sistem mampu membuat, membaca, memperbarui, dan menghapus data produk, pesanan, pelanggan, dan kategori.
+    \item Sistem mampu menghasilkan \textit{website} statis dari data toko dan produk yang tersimpan.
+    \item Sistem mampu memfilter dan mendeteksi serangan \textit{prompt injection} dalam 3 lapis keamanan.
+    \item Sistem mampu membatasi laju permintaan (\textit{rate limiting}) per pelanggan.
+    \item Sistem mampu mendeteksi dan meredaksi data pribadi (PII) sebelum dan sesudah pemrosesan AI.
+    \item Sistem menyediakan antarmuka \textit{dashboard} untuk administrasi data bisnis.
+\end{enumerate}
+
+\textbf{Kebutuhan Non-Fungsional}
+
+\begin{itemize}
+    \item \textbf{Kinerja}: Latensi respons chatbot $\le$ 5 detik untuk $\ge$ 95\% pesanan normal.
+    \item \textbf{Keamanan}: Sistem pertahanan injeksi Tier 1 bekerja dalam $\sim$0ms (sinkron); Tier 2 dalam $\sim$500ms; Tier 3 dalam $\sim$1500ms.
+    \item \textbf{Ketersediaan}: WA Bot memiliki \textit{auto-reconnect} dengan interval eksponensial \textit{backoff} jika koneksi terputus.
+    \item \textbf{Skalabilitas}: Arsitektur modular memungkinkan setiap sub-proyek di-\textit{scale} secara independen.
+    \item \textbf{Portabilitas}: Seluruh komponen berjalan di atas Bun runtime dan dapat di-\textit{containerize} dengan Docker.
+\end{itemize}
+
+\subsection{Perancangan Sistem}
+
+\textbf{Arsitektur Sistem}
 
 WANI mengadopsi arsitektur modular tiga-komponen yang saling terhubung melalui protokol HTTP dengan autentikasi Bearer token:
 
@@ -311,8 +425,6 @@ WANI mengadopsi arsitektur modular tiga-komponen yang saling terhubung melalui p
                                                     |
                                     +---------------+---------------+
                                     |  Bearer Auth  |  Bearer Auth  |
-                                    |  POST /api/qr | POST /api/chat|
-                                    |  GET /api/qr  | PUT /api/store|
                                     +---------------+---------------+
                                                     |
                                           +---------v----------+
@@ -324,7 +436,7 @@ WANI mengadopsi arsitektur modular tiga-komponen yang saling terhubung melalui p
 
           +------------------+
           |    Web-Gen       |
-          |   Astro 6.4      |
+          |   Astro 7        |
           |   Static Site    |
           +------------------+
 \end{lstlisting}
@@ -332,40 +444,74 @@ WANI mengadopsi arsitektur modular tiga-komponen yang saling terhubung melalui p
 \label{fig:arsitektur}
 \end{figure}
 
-\subsection{Alur Data Utama}
+Setiap sub-proyek bersifat independen dan dapat dikembangkan, diuji, serta di-\textit{deploy} secara terpisah. \textit{Database} menggunakan PostgreSQL 16+ dengan dua skema terpisah: \texttt{wani\_api} untuk data bisnis dan \texttt{wa\_bot} untuk data sesi WhatsApp.
+
+\textbf{Use Case Diagram}
+
+Sistem WANI memiliki tiga aktor utama:
+
+\begin{itemize}
+    \item \textbf{Pelanggan} -- Berinteraksi dengan sistem melalui pesan WhatsApp. Use case: melihat produk, melakukan pesanan, menanyakan informasi, menyampaikan keluhan.
+    \item \textbf{Admin (UMKM)} -- Mengelola sistem melalui dashboard web. Use case: mengelola produk, memproses pesanan, melihat laporan, mengelola pelanggan, mengatur konfigurasi AI dan WhatsApp.
+    \item \textbf{Sistem (AI Agent)} -- Bertindak secara otomatis merespons pelanggan, mendeteksi intensi, dan menjalankan aksi bisnis berdasarkan hasil pemrosesan LLM.
+\end{itemize}
+
+\textbf{Activity Diagram -- Alur Pesanan}
 
 \begin{enumerate}
-    \item \textbf{Pelanggan mengirim pesan} via WhatsApp $\rightarrow$ WA Bot menerima pesan.
-    \item WA Bot meneruskan pesan ke \texttt{POST /api/chat} pada API Server.
-    \item API Server menjalankan \textbf{AI Pipeline 18 langkah}: normalisasi $\rightarrow$ rate limit $\rightarrow$ PII scan $\rightarrow$ 3-tier injection defense $\rightarrow$ LLM completion $\rightarrow$ intent parsing $\rightarrow$ action execution $\rightarrow$ output sanitasi $\rightarrow$ grounding check.
-    \item API Server mengembalikan respons ke WA Bot.
-    \item WA Bot mengirimkan balasan ke pelanggan via WhatsApp.
-    \item Dashboard Admin mengambil data dari API untuk ditampilkan dan dimodifikasi.
-    \item Web-Gen membaca data toko dan produk dari API untuk menghasilkan website statis.
+    \item Pelanggan mengirim pesan berisi permintaan pemesanan produk.
+    \item WA Bot menerima pesan dan meneruskannya ke \texttt{POST /api/chat}.
+    \item API Server menjalankan AI Pipeline 18 langkah (normalisasi, PII scan, 3-tier defense, LLM completion, intent parsing).
+    \item Jika intent = \texttt{order}, API Server membuat entitas \texttt{Order} dan \texttt{OrderItem}, lalu mengembalikan konfirmasi ke WA Bot.
+    \item WA Bot mengirimkan konfirmasi pesanan ke pelanggan.
+    \item Admin melihat pesanan masuk di dashboard dan dapat memprosesnya (Confirm, Process, Complete, atau Cancel).
 \end{enumerate}
 
 \subsection{AI Pipeline (18 Langkah)}
 
+Inti dari kecerdasan WANI terletak pada \textit{AI pipeline} yang memproses setiap pesan melalui 18 langkah terstruktur:
+
 \begin{enumerate}[nosep]
-    \item \textbf{Normalisasi input} -- NFKC normalization, hapus karakter kontrol/zero-width, potong 4000 karakter.
+    \item \textbf{Normalisasi input} -- NFKC normalization, hapus karakter kontrol/\textit{zero-width}, potong 4000 karakter.
     \item \textbf{Upsert pelanggan \& percakapan} -- Cari/buat Customer dan Conversation aktif.
-    \item \textbf{Deduplikasi} -- Skip jika waMsgId sudah diproses.
+    \item \textbf{Deduplikasi} -- Skip jika \texttt{waMsgId} sudah diproses.
     \item \textbf{Persistensi} -- Simpan Message dengan role = CUSTOMER.
-    \item \textbf{Rate limit} -- Sliding window per pelanggan (8/30s + 60/jam).
-    \item \textbf{PII scan} -- Deteksi nomor telepon, email, NIK, alamat.
-    \item \textbf{3-tier injection defense} -- Lihat sub-bab terpisah.
-    \item \textbf{Budget check} -- Verifikasi batas harian panggilan LLM (UsageCounter).
-    \item \textbf{Load context} -- Store, Products, AiConfig.
-    \item \textbf{Build prompt} -- System prompt + 10 pesan terakhir + current message dengan delimiters + canary token.
-    \item \textbf{LLM completion} -- OpenRouter dengan circuit breaker, retry 2x, fallback model.
-    \item \textbf{Parsing output} -- Ekstrak JSON, validasi Zod discriminated union (6 intent).
-    \item \textbf{Handle intent} -- Eksekusi aksi: buat Order, eskalasi, dll.
-    \item \textbf{Sanitasi reply} -- Hapus code fences, potong 1500 karakter.
-    \item \textbf{Output scan} -- Deteksi kebocoran canary token, delimiter, system prompt, PII.
-    \item \textbf{PII redaction} -- Ganti data pribadi dengan [PHONE], [EMAIL], dll.
-    \item \textbf{Grounding check} -- Khusus inquiry/order: LLM judge verifikasi akurasi.
-    \item \textbf{Record \& persist} -- Catat usage, simpan outbound message, update conversation.
+    \item \textbf{Rate limit} -- \textit{Sliding window} per pelanggan (8 pesan/30 detik + 60/jam).
+    \item \textbf{PII scan} -- Deteksi nomor telepon, email, NIK, alamat dalam input.
+    \item \textbf{3-tier injection defense} -- Deteksi serangan \textit{prompt injection} dalam tiga lapisan.
+    \item \textbf{Budget check} -- Verifikasi batas harian panggilan LLM melalui UsageCounter.
+    \item \textbf{Load context} -- Ambil data Store, Products, AiConfig dari database.
+    \item \textbf{Build prompt} -- System prompt + 10 pesan terakhir + pesan saat ini dengan delimiter dan \textit{canary token}.
+    \item \textbf{LLM completion} -- OpenRouter dengan \textit{circuit breaker}, retry maksimal 2x, \textit{fallback model}.
+    \item \textbf{Parsing output} -- Ekstrak JSON, validasi menggunakan Zod \textit{discriminated union} (6 intent).
+    \item \textbf{Handle intent} -- Eksekusi aksi sesuai intent: buat Order, eskalasi, dll.
+    \item \textbf{Sanitasi reply} -- Hapus \textit{code fences}, potong maksimal 1500 karakter.
+    \item \textbf{Output scan} -- Deteksi kebocoran \textit{canary token}, delimiter, \textit{system prompt}, PII.
+    \item \textbf{PII redaction} -- Ganti data pribadi terdeteksi dengan placeholder [PHONE], [EMAIL], dll.
+    \item \textbf{Grounding check} -- Khusus intent \texttt{inquiry}/\texttt{order}: LLM judge verifikasi akurasi respons.
+    \item \textbf{Record \& persist} -- Catat usage, simpan \textit{outbound message}, perbarui status percakapan.
 \end{enumerate}
+
+\subsection{Sistem Pertahanan Injeksi 3-Tier}
+
+WANI mengimplementasikan tiga lapis pertahanan yang bekerja secara berjenjang, menjadikannya salah satu \textit{chatbot} AI paling aman untuk lingkungan UMKM:
+
+\begin{table}[H]
+\centering
+\caption{Detail 3-Tier Injection Defense}
+\label{tab:tier}
+\begin{tabularx}{\textwidth}{cp{1.8cm}p{1.8cm}X}
+\toprule
+\textbf{Tier} & \textbf{Metode} & \textbf{Latency} & \textbf{Cakupan} \\
+\midrule
+T1 & Regex patterns & $\sim$0ms & 9 \textit{attack classes}: delimiter escape, instruction override, prompt extraction, role hijack, authority claim, token injection, context overflow, crescendo marker, leet obfuscation. Dilengkapi homoglyph detector (Cyrillic, Greek, Letterlike Symbols) + leetspeak normalizer. \\
+\addlinespace
+T2 & ML Classifier & $\sim$500ms & OpenRouter \textit{fast model} untuk kasus UNCERTAIN dari T1. \\
+\addlinespace
+T3 & Deep Judge & $\sim$1500ms & Analisis konteks percakapan penuh untuk kasus SUSPICIOUS dari T2. \\
+\bottomrule
+\end{tabularx}
+\end{table}
 
 \subsection{Deteksi Intent}
 
@@ -389,181 +535,88 @@ Output LLM diparsing ke dalam enam kategori intent melalui Zod \textit{discrimin
 \end{tabularx}
 \end{table}
 
-\subsection{Pertahanan Injeksi 3-Tier}
+\subsection{Desain Antarmuka (UI/UX)}
 
-\begin{table}[H]
-\centering
-\caption{Detail 3-Tier Injection Defense}
-\label{tab:tier}
-\begin{tabularx}{\textwidth}{cp{1.8cm}p{1.8cm}X}
-\toprule
-\textbf{Tier} & \textbf{Metode} & \textbf{Latency} & \textbf{Cakupan} \\
-\midrule
-T1 & Regex patterns & $\sim$0ms & 9 attack classes: delimiter escape, instruction override, prompt extraction, role hijack, authority claim, token injection, context overflow, crescendo marker, leet obfuscation. Dilengkapi homoglyph detector (Cyrillic, Greek, Letterlike Symbols) + leetspeak normalizer. \\
-\addlinespace
-T2 & ML Classifier & $\sim$500ms & OpenRouter fast model untuk kasus UNCERTAIN dari T1. \\
-\addlinespace
-T3 & Deep Judge & $\sim$1500ms & Analisis konteks percakapan penuh untuk kasus SUSPICIOUS dari T2. \\
-\bottomrule
-\end{tabularx}
-\end{table}
+Dashboard WANI dibangun dengan React 19 dan Tailwind CSS 4 menggunakan pendekatan desain modern yang responsif, dengan palet warna teal (\#0F766E) sebagai warna utama dan amber (\#D97706) sebagai warna aksen.
 
-% ============================================================
-%  4. TEKNOLOGI YANG DIGUNAKAN
-% ============================================================
-\section{Teknologi yang Digunakan}
-
-Seluruh teknologi yang digunakan dalam WANI adalah versi stabil terbaru dari masing-masing ekosistem, tidak ada yang diturunkan versinya:
-
-\begin{table}[H]
-\centering
-\caption{Stack Teknologi WANI}
-\label{tab:stack}
-\begin{tabularx}{\textwidth}{p{2.8cm}p{3cm}X}
-\toprule
-\textbf{Kategori} & \textbf{Teknologi} & \textbf{Peran} \\
-\midrule
-Runtime & Bun 1.3+ & Runtime JavaScript/TypeScript cepat dengan \textit{built-in bundler}, test runner, package manager \\
-Bahasa & TypeScript 5\textasciitilde6 & Static typing untuk keamanan dan ketertiban kode \\
-\hline
-Backend API & Express 5 & Web framework Node.js minimalis dengan middleware \\
-ORM & Prisma 7 + \texttt{@prisma/adapter-pg} & ORM type-safe dengan database PostgreSQL \\
-Database & PostgreSQL 16+ & Basis data relasional open-source \\
-Validasi & Zod v4 & Validasi skema dengan inferensi tipe otomatis \\
-Keamanan HTTP & Helmet 8 & Middleware keamanan Express \\
-Logging & Winston 3 + Morgan & Logging multi-transport JSON \\
-\hline
-Frontend & React 19 + React Compiler & UI deklaratif dengan kompilasi otomatis \\
-Build Tool & Vite 8 (Rolldown) & Build cepat dengan HMR \\
-Styling & Tailwind CSS 4 & Utility-first CSS framework \\
-Routing & React Router 8 & Client-side routing dengan loader/action \\
-\hline
-WhatsApp Bot & Baileys 6 & WhatsApp Web API multi-device \\
-HTTP Client & Axios 1 & HTTP promise-based \\
-Logging & Pino 9 & Logger berkinerja tinggi \\
-\hline
-Site Generator & Astro 6.4 & Static site generator dengan island architecture \\
-ZIP & Archiver 7 & Pembuatan arsip ZIP \\
-\hline
-AI Engine & OpenRouter API & Agregator LLM (DeepSeek V4, Gemini 2.0) \\
-Model Utama & DeepSeek V4 Flash & Chat completion dan intent parsing \\
-Model Cadangan & Gemini 2.0 Flash & Fallback, classifier, judge, grounding \\
-\bottomrule
-\end{tabularx}
-\end{table}
-
-% ============================================================
-%  5. FITUR DASHBOARD
-% ============================================================
-\section{Fitur Dashboard dan Antarmuka}
-
-\subsection{Admin Dashboard}
-
-Dashboard WANI terdiri dari 5 halaman utama yang saling terintegrasi, dibangun dengan React 19 dan Tailwind CSS 4:
-
+Terdiri dari 5 halaman utama yang saling terintegrasi:
 \begin{enumerate}
-    \item \textbf{Dashboard} -- Ringkasan statistik real-time: total produk, pesanan pending (dengan status), pelanggan aktif, indikator koneksi WhatsApp, dan daftar pesanan terbaru.
-    \item \textbf{Products} -- Manajemen produk dengan dua mode tampilan (tabel dan kartu), pencarian, filter kategori, serta form tambah/edit produk dalam modal.
-    \item \textbf{Orders} -- Daftar pesanan dengan filter status (Pending/Confirmed/Processing/Completed/Cancelled), detail pesanan lengkap dengan timeline status dan informasi pembayaran.
-    \item \textbf{Customers} -- Panel ganda: daftar pelanggan di kiri dan percakapan \textit{inline chat} di kanan, memungkinkan admin untuk melihat riwayat dan membalas langsung.
-    \item \textbf{Settings} -- Tiga tab konfigurasi: Store (profil bisnis), AI Agent (model LLM, prompt, temperature), WA Session (status koneksi dan QR code).
+    \item \textbf{Beranda} -- Ringkasan statistik \textit{real-time}: total produk, pesanan pending (dengan status), pelanggan aktif, indikator koneksi WhatsApp, dan daftar pesanan terbaru.
+    \item \textbf{Produk} -- Manajemen produk dengan dua mode tampilan (tabel dan kartu), pencarian, filter kategori, serta form tambah/edit produk dalam modal.
+    \item \textbf{Pesanan} -- Daftar pesanan dengan filter status (Pending/Confirmed/Processing/Completed/Cancelled), detail pesanan lengkap dengan \textit{timeline} status dan informasi pembayaran.
+    \item \textbf{Pelanggan} -- Panel ganda: daftar pelanggan di kiri dan percakapan \textit{inline chat} di kanan, memungkinkan admin melihat riwayat dan membalas langsung.
+    \item \textbf{Pengaturan} -- Tiga tab konfigurasi: Toko (profil bisnis), AI Agent (model LLM, \textit{prompt}, temperature), WA Session (status koneksi dan QR code).
 \end{enumerate}
 
-\subsection{Generated Website}
+\subsection{Fitur dan Alur Kerja Sistem}
+
+\textbf{Alur Data Utama}
+
+\begin{enumerate}
+    \item Pelanggan mengirim pesan via WhatsApp $\rightarrow$ WA Bot menerima pesan.
+    \item WA Bot meneruskan pesan ke \texttt{POST /api/chat} pada API Server.
+    \item API Server menjalankan AI Pipeline 18 langkah: normalisasi $\rightarrow$ rate limit $\rightarrow$ PII scan $\rightarrow$ 3-tier injection defense $\rightarrow$ LLM completion $\rightarrow$ intent parsing $\rightarrow$ action execution $\rightarrow$ output sanitasi $\rightarrow$ grounding check.
+    \item API Server mengembalikan respons ke WA Bot.
+    \item WA Bot mengirimkan balasan ke pelanggan via WhatsApp.
+    \item Dashboard Admin mengambil data dari API untuk ditampilkan dan dimodifikasi.
+    \item Web-Gen membaca data toko dan produk dari API untuk menghasilkan \textit{website} statis.
+\end{enumerate}
+
+\textbf{Website Generator}
 
 Website yang dihasilkan oleh Web-Gen memiliki tiga halaman responsif dengan integrasi WhatsApp:
-
 \begin{itemize}
-    \item \textbf{Beranda} -- Hero section, tentang toko, dan produk unggulan.
-    \item \textbf{Produk} -- Grid katalog produk dengan kartu produk dan tombol ``Pesan via WhatsApp'' yang otomatis mengisi nomor toko dan template pesanan.
+    \item \textbf{Beranda} -- \textit{Hero section}, tentang toko, dan produk unggulan.
+    \item \textbf{Produk} -- Grid katalog produk dengan kartu produk dan tombol ``Pesan via WhatsApp'' yang otomatis mengisi nomor toko dan \textit{template} pesanan.
     \item \textbf{Kontak} -- Informasi kontak, alamat, jam operasional, dan tautan langsung WhatsApp.
 \end{itemize}
 
 % ============================================================
-%  6. METODOLOGI PENGEMBANGAN
+%  BAB IV — HASIL DAN PEMBAHASAN
 % ============================================================
-\section{Metodologi Pengembangan}
+\bab{HASIL DAN PEMBAHASAN}
 
-\subsection{Paradigma: Extreme Programming}
+\subsection{Hasil Implementasi}
 
-WANI dikembangkan menggunakan metodologi \textbf{Extreme Programming} (XP) dengan alasan:
+Seluruh fitur utama WANI telah berhasil diimplementasikan dengan capaian sebagai berikut:
+
 \begin{itemize}
-    \item Empat sub-proyek independen memungkinkan pengembangan paralel dan iteratif.
-    \item \textit{Evolving requirements} yang khas dalam proyek inovasi.
-    \item Fokus pada kualitas kode dan \textit{testing} yang ketat.
-    \item Tim kecil (4 orang) ideal untuk \textit{pair programming} dan \textit{collective ownership}.
+    \item \textbf{API Server}: 100\% -- 6 \textit{endpoint} REST, Zod validation, Winston logging, Prisma ORM, \textit{graceful shutdown}, Helmet 8 security.
+    \item \textbf{Dashboard}: 100\% UI -- 5 halaman, routing React Router v8, komponen UI reusable, \textit{custom hooks} dengan arsitektur terpisah (services $\rightarrow$ hooks $\rightarrow$ components).
+    \item \textbf{WA Bot}: 100\% -- Baileys 6, QR \textit{relay} via API, \textit{auto-reconnect} dengan eksponensial \textit{backoff}, autentikasi persisten via Prisma.
+    \item \textbf{AI Pipeline}: 100\% -- 18 langkah pemrosesan, 6 \textit{intent detection}, \textit{circuit breaker} dengan retry, \textit{grounding checker}.
+    \item \textbf{Sistem Keamanan}: 100\% -- 3-tier injection defense, PII scanner (\textit{input + output}), \textit{rate limiter}, \textit{budget tracker}, homoglyph/leetspeak detector.
+    \item \textbf{Web-Gen}: 100\% -- Template Astro 7, \textit{generator} dengan \textit{timeout} 120 detik, ZIP \textit{archiver} (stream + file dengan level 9 kompresi).
+    \item \textbf{Testing}: 4 file \textit{test} mencakup unit test guardrail, firewall, intent parser, dan \textit{golden reply} untuk konsistensi respons.
+    \item \textbf{Integrasi Bot $\rightarrow$ API}: \textit{End-to-end} terhubung dengan Bearer token authentication.
 \end{itemize}
 
-\subsection{Tahapan}
-
-\begin{enumerate}
-    \item \textbf{Planning} -- \textit{User stories} dari studi literatur dan observasi UMKM. Prioritas berdasarkan nilai bisnis. Iterasi 1--2 minggu.
-    \item \textbf{Design} -- Prinsip YAGNI (\textit{You Ain't Gonna Need It}). Arsitektur modular dengan 13 entitas data. \textit{Entity Relationship Diagram} mencakup: MERCHANT, CUSTOMER, CATEGORY, PRODUCT, ORDER, ORDER\_ITEM, PAYMENT, CONVERSATION, MESSAGE, WA\_SESSION, AI\_AGENT, SETTING, ACTIVITY\_LOG.
-    \item \textbf{Coding} -- \textit{Continuous integration}. Pekerjaan paralel per sub-proyek. API: arsitektur routes $\rightarrow$ controllers $\rightarrow$ models $\rightarrow$ Prisma delegate. Dashboard: SPA dengan React Router v8. Bot: Baileys 6 dengan auth persisten PostgreSQL. Web-Gen: Astro 6.4 dengan template Tailwind.
-    \item \textbf{Testing} -- TDD dengan bun:test. Cakupan: unit test (Zod, utilitas, regex), integration test (AI pipeline, circuit breaker, rate limiter), security test (3-tier firewall, PII, grounding), golden reply test.
-    \item \textbf{Release} -- Siklus pendek, rilis fitur stabil, dokumentasi changelog.
-\end{enumerate}
-
-% ============================================================
-%  7. PROFIL TIM
-% ============================================================
-\section{Profil Tim Pengembang}
-
-Tim WANI terdiri dari empat mahasiswa Program Studi Teknik Informatika Universitas Darussalam Gontor dengan pembagian peran sebagai berikut:
+\noindent
+Perbandingan dengan solusi \textit{chatbot} dan POS yang sudah ada di pasaran menunjukkan keunggulan WANI pada aspek keamanan AI, kepemilikan data, dan biaya:
 
 \begin{table}[H]
 \centering
-\caption{Profil Tim Pengembang}
-\label{tab:tim}
-\begin{tabularx}{\textwidth}{p{2.5cm}p{4cm}X}
+\caption{Perbandingan dengan Solusi Lain}
+\label{tab:perbandingan}
+\begin{tabularx}{\textwidth}{p{3cm}Xp{3.5cm}p{2.5cm}}
 \toprule
-\textbf{Peran} & \textbf{Nama} & \textbf{Kompetensi} \\
+\textbf{Aspek} & \textbf{WANI} & \textit{Chatbot} \textbf{Konvensional} & \textbf{SaaS POS} \\
 \midrule
-\textbf{Ketua Tim} / & Farrel Ghozy & Full-Stack Web Developer, \\
-\textit{Backend \& AI} & Affifudin & TypeScript, Node.js, Express, \\
- & & React, Prisma, PostgreSQL, \\
- & & Docker, Linux Server \\
-\hline
-Anggota 1 / & [Nama Anggota 1] & [Kompetensi] \\
-\textit{Frontend} & & \\
-\hline
-Anggota 2 / & [Nama Anggota 2] & [Kompetensi] \\
-\textit{WhatsApp Bot} & & \\
-\hline
-Anggota 3 / & [Nama Anggota 3] & [Kompetensi] \\
-\textit{Web-Gen} & & \\
-\hline
+AI Security & 3-tier guardrail & Tidak ada / basic & Tidak relevan \\
+\textit{Intent Detection} & 6 kategori (Zod validated) & Rule-based terbatas & Tidak ada \\
+\textit{Omnichannel} & WhatsApp + Dashboard + Web & Chat only & POS only \\
+\textit{Source Code} & \textbf{Open Source} (GitHub) & Proprietary & Proprietary \\
+\textit{Data Ownership} & \textbf{100\% milik pengguna} & Pihak ketiga & Pihak ketiga \\
+\textit{Web Presence} & Auto-generate website UMKM & Tidak ada & Tidak ada \\
+\textit{Biaya} & Gratis (self-host) + API LLM saja & Berlangganan bulanan & Berlangganan bulanan \\
+\textit{Latest Stack} & Bun, Express 5, React 19, Prisma 7 & Bervariasi, sering usang & Proprietary \\
+\bottomrule
 \end{tabularx}
 \end{table}
 
-\noindent
-\textbf{Profil Ketua Tim:}
-\begin{itemize}
-    \item Mahasiswa Teknik Informatika, Universitas Darussalam Gontor (Semester 5, IPK 3.79/4.00).
-    \item Berpengalaman dalam pengembangan \textit{full-stack} web, \textit{system administration} (Ubuntu, Docker, Nginx, Proxmox, K3s), dan \textit{machine learning} (TensorFlow, PyTorch).
-    \item Prestasi: Juara 2 Coding Day (2026), The Best Thematic Hackathon SRE ITB (2026).
-    \item Ketua Himpunan Mahasiswa Teknik Informatika (2025--sekarang).
-\end{itemize}
+\subsection{Rencana Jangka Panjang}
 
-% ============================================================
-%  8. RENCANA PENGEMBANGAN
-% ============================================================
-\section{Rencana Pengembangan}
-
-\subsection{Capaian Saat Ini}
-
-\begin{itemize}
-    \item \textbf{API Server}: 100\% -- 6 endpoint REST, Zod validation, Winston logging, Prisma ORM, graceful shutdown.
-    \item \textbf{Dashboard}: 100\% UI -- 5 halaman, routing, komponen UI, hooks dengan MOCK toggle.
-    \item \textbf{WA Bot}: 100\% -- Baileys 6, QR relay, auto-reconnect, auth persisten via Prisma.
-    \item \textbf{AI Pipeline}: 100\% -- 18 langkah, 3-tier fire wall, 6 intent detection, circuit breaker, grounding.
-    \item \textbf{Guardrails}: 100\% -- PII scanner, rate limiter, budget tracker, leetspeak/homoglyph detector.
-    \item \textbf{Web-Gen}: 100\% -- template Astro, generator, ZIP archiver.
-    \item \textbf{Testing}: 4 file test (guardrail, firewall, intent, golden reply).
-    \item \textbf{Bot $\rightarrow$ API integrasi}: End-to-end connected.
-\end{itemize}
-
-\subsection{Rencana ke Depan}
+Pengembangan WANI ke depan direncanakan dalam empat fase:
 
 \begin{table}[H]
 \centering
@@ -574,111 +627,48 @@ Anggota 3 / & [Nama Anggota 3] & [Kompetensi] \\
 \textbf{Fase} & \textbf{Fitur} & \textbf{Keterangan} \\
 \midrule
 Fase 1 & API Endpoints Produk, & REST CRUD untuk manajemen \\
-(Juli 2026) & Orders, Customers & data lengkap \\
+(Juli 2026) & Orders, Customers & data bisnis lengkap \\
 \hline
 Fase 2 & API Endpoints Web-Gen, & Preview ZIP, publish, \\
-(Agustus 2026) & Deployment & static serving \\
+(Agustus 2026) & Deployment & \textit{static serving} \\
 \hline
-Fase 3 & Multi-store support, & Tenant management, \\
+Fase 3 & Multi-store support, & \textit{Tenant management}, \\
 (September 2026) & Role-based access & autentikasi multi-level \\
 \hline
-Fase 4 & RAG / Vector database, & Embeddings untuk knowledge \\
-(Oktober 2026) & Evaluasi harness & retrieval, benchmark AI \\
-\hline
+Fase 4 & RAG / Vector database, & Embeddings untuk \textit{knowledge} \\
+(Oktober 2026) & Evaluasi harness & \textit{retrieval}, benchmark AI \\
+\bottomrule
 \end{tabularx}
 \end{table}
 
-% ============================================================
-%  9. PANDUAN INSTALASI
-% ============================================================
-\section{Panduan Instalasi}
-
-\subsection{Prasyarat Sistem}
-
+Selain itu, beberapa pengembangan lanjutan yang direncanakan meliputi:
 \begin{itemize}
-    \item \textbf{Bun 1.3+} -- Runtime JavaScript (\url{https://bun.sh})
-    \item \textbf{PostgreSQL 16+} -- Basis data relasional
-    \item \textbf{Git} -- Version control
-\end{itemize}
-
-\subsection{Langkah Instalasi}
-
-\begin{enumerate}
-    \item \textbf{Clone repositori}
-\begin{lstlisting}[style=bash]
-git clone https://github.com/FarrelGhozy/WANI.git
-cd WANI
-\end{lstlisting}
-
-    \item \textbf{Install dependencies}
-\begin{lstlisting}[style=bash]
-cd api && bun install
-cd ../dashboard && bun install
-cd ../web-gen && bun install
-cd ../wa-bot && bun install
-\end{lstlisting}
-
-    \item \textbf{Buat database PostgreSQL}
-\begin{lstlisting}[style=bash]
-createdb -U postgres wani_api
-createdb -U postgres wa_bot
-\end{lstlisting}
-
-    \item \textbf{Konfigurasi environment variable} \\
-    Salin \texttt{.env.example} jadi \texttt{.env} di \texttt{api/}, \texttt{wa-bot/}, \texttt{web-gen/}. \\
-    Variabel penting:
-    \begin{itemize}
-        \item \texttt{DATABASE\_*} -- koneksi PostgreSQL
-        \item \texttt{API\_TOKEN} -- shared secret autentikasi bot $\leftrightarrow$ API
-        \item \texttt{OPENROUTER\_API\_KEY} -- kunci API untuk LLM
-    \end{itemize}
-
-    \item \textbf{Jalankan migrasi database}
-\begin{lstlisting}[style=bash]
-cd api && bunx --bun prisma migrate dev
-cd ../wa-bot && bunx --bun prisma migrate dev
-\end{lstlisting}
-
-    \item \textbf{Jalankan service} (API harus sebelum Bot)
-\begin{lstlisting}[style=bash]
-# Terminal 1 -- API Server (port 3001)
-cd api && bun run src/index.ts
-
-# Terminal 2 -- WhatsApp Bot
-cd wa-bot && bun run src/index.ts
-
-# Terminal 3 -- Dashboard (port 5173)
-cd dashboard && bun run dev
-
-# Terminal 4 -- Web-Gen (testing)
-cd web-gen && bun run src/generator.ts --slug test \
-    --template default --data ./test-data.json
-\end{lstlisting}
-\end{enumerate}
-
-\subsection{Verifikasi}
-
-\begin{itemize}
-    \item Dashboard: \url{http://localhost:5173}
-    \item API Server: \url{http://localhost:3001}
-    \item Status WhatsApp: \texttt{GET /api/qr/status}
+    \item \textbf{Dukungan multi-bahasa} -- Kemampuan \textit{chatbot} merespons dalam bahasa daerah Indonesia.
+    \item \textbf{Integrasi pembayaran digital} -- Koneksi dengan \textit{payment gateway} untuk otomatisasi konfirmasi pembayaran.
+    \item \textbf{Analitik lanjutan} -- \textit{Dashboard} analitik dengan visualisasi tren penjualan, perilaku pelanggan, dan performa AI.
+    \item \textbf{Peningkatan keamanan} -- Implementasi \textit{fine-tuning} model untuk pengenalan pola serangan yang lebih akurat.
+    \item \textbf{Export data multi-format} -- Kemampuan ekspor data ke format CSV, Excel, dan PDF untuk kebutuhan pelaporan.
 \end{itemize}
 
 % ============================================================
-%  10. KESIMPULAN
+%  BAB V — KESIMPULAN
 % ============================================================
-\section{Kesimpulan}
+\bab{KESIMPULAN}
 
-WANI (\textit{WhatsApp AI Native Integration} / \textit{WhatsApp Niaga}) menawarkan solusi omnichannel yang komprehensif, aman, dan terjangkau bagi pelaku UMKM Indonesia. Dengan mengintegrasikan WhatsApp Bot bertenaga AI, REST API server, admin dashboard, dan website generator dalam satu platform open-source, WANI menjawab tiga masalah utama UMKM:
+\subsection{Kesimpulan}
+
+WANI (\textit{WhatsApp AI Native Integration}) telah berhasil dikembangkan sebagai platform omnichannel yang komprehensif, aman, dan terjangkau bagi pelaku UMKM Indonesia. Dengan mengintegrasikan WhatsApp Bot bertenaga AI, REST API server, admin dashboard, dan \textit{website generator} dalam satu platform \textit{open-source}, WANI menjawab tiga masalah utama UMKM:
 
 \begin{enumerate}
-    \item \textbf{Ketidakefisienan operasional} -- melalui otomatisasi layanan pelanggan 24/7 dengan AI chatbot yang mampu mendeteksi dan merespons 6 kategori intensi pelanggan.
-    \item \textbf{Kerentanan keamanan AI} -- melalui sistem pertahanan injeksi 3-tier yang menjadi standar keamanan tertinggi untuk chatbot AI di lingkungan UMKM.
-    \item \textbf{Ketiadaan web presence} -- melalui website generator otomatis yang menghasilkan situs web statis lengkap dengan integrasi WhatsApp.
+    \item \textbf{Ketidakefisienan operasional} -- melalui otomatisasi layanan pelanggan 24/7 dengan AI \textit{chatbot} yang mampu mendeteksi dan merespons 6 kategori intensi pelanggan secara akurat.
+    \item \textbf{Kerentanan keamanan AI} -- melalui sistem pertahanan injeksi 3-tier (regex $\rightarrow$ ML classifier $\rightarrow$ deep LLM judge) yang menjadi standar keamanan tertinggi untuk \textit{chatbot} AI di lingkungan UMKM.
+    \item \textbf{Ketiadaan \textit{web presence}} -- melalui \textit{website generator} otomatis yang menghasilkan situs web statis lengkap dengan integrasi WhatsApp (\textit{click-to-order}).
 \end{enumerate}
 
 \noindent
-Dibangun di atas teknologi modern dan stabil (Bun, Express 5, Prisma 7, React 19, Astro 6.4) dengan metodologi Extreme Programming, WANI telah siap untuk diimplementasikan dan dikembangkan lebih lanjut. Seluruh kode sumber tersedia secara \textit{open source} di \href{https://github.com/FarrelGhozy/WANI}{GitHub}, memungkinkan kontribusi dan adopsi yang luas oleh komunitas.
+Dibangun di atas teknologi modern dan stabil (Bun, Express 5, Prisma 7, React 19, Astro 7) dengan metodologi Extreme Programming, WANI telah melalui tahap pengembangan yang matang dengan capaian 100\% pada seluruh fitur inti. Seluruh kode sumber tersedia secara \textit{open source} di \href{https://github.com/FarrelGhozy/WANI}{GitHub}, memungkinkan kontribusi dan adopsi yang luas oleh komunitas.
+
+Ke depannya, WANI direncanakan untuk terus dikembangkan dengan penambahan fitur \textit{multi-tenant}, \textit{retrieval-augmented generation} (RAG), integrasi pembayaran digital, serta dukungan multi-bahasa daerah -- menjadikannya solusi digitalisasi UMKM yang semakin lengkap dan adaptif terhadap kebutuhan pasar Indonesia.
 
 % ============================================================
 %  DAFTAR PUSTAKA
@@ -792,7 +782,116 @@ We Are Social. (2024). \textit{Digital 2024: Indonesia}. \\
 \section*{Lampiran}
 \addcontentsline{toc}{section}{Lampiran}
 
-\subsection*{Lampiran 1: Tautan Repositori Kode}
+\subsection*{Lampiran A: Profil Tim Pengembang}
+
+Tim WANI terdiri dari empat mahasiswa Program Studi Teknik Informatika Universitas Darussalam Gontor dengan pembagian peran sebagai berikut:
+
+\begin{table}[H]
+\centering
+\caption{Profil Tim Pengembang}
+\label{tab:tim}
+\begin{tabularx}{\textwidth}{p{2.5cm}p{4cm}X}
+\toprule
+\textbf{Peran} & \textbf{Nama} & \textbf{Kompetensi} \\
+\midrule
+\textbf{Ketua Tim} / & Farrel Ghozy & Full-Stack Web Developer, \\
+\textit{Backend \& AI} & Affifudin & TypeScript, Node.js, Express, \\
+ & & React, Prisma, PostgreSQL, \\
+ & & Docker, Linux Server \\
+\hline
+Anggota 1 / & [Nama Anggota 1] & [Kompetensi] \\
+\textit{Frontend} & & \\
+\hline
+Anggota 2 / & [Nama Anggota 2] & [Kompetensi] \\
+\textit{WhatsApp Bot} & & \\
+\hline
+Anggota 3 / & [Nama Anggota 3] & [Kompetensi] \\
+\textit{Web-Gen} & & \\
+\hline
+\end{tabularx}
+\end{table}
+
+\noindent
+\textbf{Profil Ketua Tim:}
+\begin{itemize}
+    \item Mahasiswa Teknik Informatika, Universitas Darussalam Gontor (Semester 5, IPK 3.79/4.00).
+    \item Berpengalaman dalam pengembangan \textit{full-stack} web, \textit{system administration} (Ubuntu, Docker, Nginx, Proxmox, K3s), dan \textit{machine learning} (TensorFlow, PyTorch).
+    \item Prestasi: Juara 2 Coding Day (2026), The Best Thematic Hackathon SRE ITB (2026).
+    \item Ketua Himpunan Mahasiswa Teknik Informatika (2025--sekarang).
+\end{itemize}
+
+\subsection*{Lampiran B: Panduan Instalasi}
+
+\textbf{Prasyarat Sistem}
+\begin{itemize}
+    \item \textbf{Bun 1.3+} -- Runtime JavaScript (\url{https://bun.sh})
+    \item \textbf{PostgreSQL 16+} -- Basis data relasional
+    \item \textbf{Git} -- \textit{Version control}
+\end{itemize}
+
+\textbf{Langkah Instalasi}
+
+\begin{enumerate}
+    \item \textbf{Clone repositori}
+\begin{lstlisting}[style=bash]
+git clone https://github.com/FarrelGhozy/WANI.git
+cd WANI
+\end{lstlisting}
+
+    \item \textbf{Install dependencies}
+\begin{lstlisting}[style=bash]
+cd api && bun install
+cd ../dashboard && bun install
+cd ../web-gen && bun install
+cd ../wa-bot && bun install
+\end{lstlisting}
+
+    \item \textbf{Buat database PostgreSQL}
+\begin{lstlisting}[style=bash]
+createdb -U postgres wani_api
+createdb -U postgres wa_bot
+\end{lstlisting}
+
+    \item \textbf{Konfigurasi environment variable} \\
+    Salin \texttt{.env.example} menjadi \texttt{.env} di \texttt{api/}, \texttt{wa-bot/}, \texttt{web-gen/}. \\
+    Variabel penting:
+    \begin{itemize}
+        \item \texttt{DATABASE\_*} -- koneksi PostgreSQL
+        \item \texttt{API\_TOKEN} -- \textit{shared secret} autentikasi bot $\leftrightarrow$ API
+        \item \texttt{OPENROUTER\_API\_KEY} -- kunci API untuk LLM
+    \end{itemize}
+
+    \item \textbf{Jalankan migrasi database}
+\begin{lstlisting}[style=bash]
+cd api && bunx --bun prisma migrate dev
+cd ../wa-bot && bunx --bun prisma migrate dev
+\end{lstlisting}
+
+    \item \textbf{Jalankan service} (API harus sebelum Bot)
+\begin{lstlisting}[style=bash]
+# Terminal 1 -- API Server (port 3001)
+cd api && bun run src/index.ts
+
+# Terminal 2 -- WhatsApp Bot
+cd wa-bot && bun run src/index.ts
+
+# Terminal 3 -- Dashboard (port 5173)
+cd dashboard && bun run dev
+
+# Terminal 4 -- Web-Gen (testing)
+cd web-gen && bun run src/generator.ts --slug test \
+    --template default --data ./test-data.json
+\end{lstlisting}
+\end{enumerate}
+
+\textbf{Verifikasi}
+\begin{itemize}
+    \item Dashboard: \url{http://localhost:5173}
+    \item API Server: \url{http://localhost:3001}
+    \item Status WhatsApp: \texttt{GET /api/qr/status}
+\end{itemize}
+
+\subsection*{Lampiran C: Tautan Repositori Kode}
 
 \begin{itemize}
     \item \textbf{Repositori GitHub (Open Source):} \url{https://github.com/FarrelGhozy/WANI}
@@ -801,17 +900,17 @@ We Are Social. (2024). \textit{Digital 2024: Indonesia}. \\
 \noindent
 Repositori ini mencakup seluruh kode sumber WANI: \texttt{api/}, \texttt{dashboard/}, \texttt{wa-bot/}, \texttt{web-gen/}, beserta dokumentasi dan konfigurasi.
 
-\subsection*{Lampiran 2: Tautan Live Demo / Production Deployment}
+\subsection*{Lampiran D: Tautan Live Demo / Production Deployment}
 
 \begin{itemize}
     \item \textbf{Live Demo}: \texttt{[URL Live Demo -- belum tersedia]}
 \end{itemize}
 
-\subsection*{Lampiran 3: Tautan Unduhan Berkas Aplikasi}
+\subsection*{Lampiran E: Tautan Unduhan Berkas Aplikasi}
 
 Tidak berlaku. WANI merupakan platform berbasis \textit{website} yang berjalan di atas server, bukan aplikasi \textit{mobile}. Tidak ada berkas \texttt{.apk}.
 
-\subsection*{Lampiran 4: Tautan Prototipe Interaktif (Figma)}
+\subsection*{Lampiran F: Tautan Prototipe Interaktif (Figma)}
 
 Tidak ada. Desain antarmuka WANI dikembangkan langsung dalam bentuk kode (\textit{in-code design}) menggunakan React 19 dan Tailwind CSS 4, sejalan dengan metodologi Extreme Programming yang mengutamakan iterasi cepat.
 
