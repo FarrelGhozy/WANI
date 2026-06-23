@@ -1,16 +1,28 @@
 import type { Request, Response } from "express"
+import type { z } from "zod"
 import { sendResponse } from "@/src/utils/response"
 import { getTraces, getTraceById, clearTraces } from "@/src/debug/tracer"
 import { resetCircuit } from "@/src/ai/circuit-breaker"
+import { getTracesQuerySchema, getTraceDetailParamsSchema } from "@/src/schemas/debug"
 
-export function getRecentTraces(req: Request, res: Response): void {
-  const limit = Math.min(Number(req.query.limit) || 50, 200)
+type GetTracesQuery = z.infer<typeof getTracesQuerySchema>
+type GetTraceDetailParams = z.infer<typeof getTraceDetailParamsSchema>
+
+export function getRecentTraces(
+  req: Request<Record<string, string>, any, any, GetTracesQuery>,
+  res: Response,
+): void {
+  const limit = req.query.limit ?? 50
   const traces = getTraces(limit)
   sendResponse(res, 200, "ok", { traces })
 }
 
-export function getTraceDetail(req: Request, res: Response): void {
-  const trace = getTraceById(req.params.id)
+export function getTraceDetail(
+  req: Request<GetTraceDetailParams>,
+  res: Response,
+): void {
+  const { id } = req.params
+  const trace = getTraceById(id)
   if (!trace) {
     sendResponse(res, 404, "Trace not found")
     return

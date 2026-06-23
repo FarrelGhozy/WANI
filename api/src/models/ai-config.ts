@@ -19,7 +19,7 @@ export class AiConfigModel extends BaseModel {
     return normalize(row)
   }
 
-  static async upsert(data: Partial<AiConfig> & { temperature?: number }): Promise<AiConfig> {
+  static async upsert(data: Omit<Partial<AiConfig>, "temperature"> & { temperature?: number }): Promise<AiConfig> {
     const { id, createdAt, updatedAt, temperature, ...rest } = data as any
     const row = await this.db.aiConfig.upsert({
       where: { id: "default" },

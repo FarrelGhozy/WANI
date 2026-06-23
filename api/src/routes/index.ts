@@ -10,6 +10,10 @@ router.use("/qr", qrRoutes)
 router.use("/chat", chatRoutes)
 router.use("/store", storeRoutes)
 router.use("/ai-config", aiConfigRoutes)
-router.use("/debug", debugRoutes)
+
+// Dev-only: pipeline traces, circuit breaker status/reset
+if (process.env.NODE_ENV !== "production") {
+  router.use("/debug", debugRoutes)
+}
 
 export default router

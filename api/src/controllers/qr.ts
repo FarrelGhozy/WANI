@@ -1,6 +1,10 @@
 import type { Request, Response } from "express"
+import type { z } from "zod"
 import { WaSessionModel } from "@/src/models/wa-session"
 import { sendResponse } from "@/src/utils/response"
+import { upsertQrSchema } from "@/src/schemas/wa-session"
+
+type UpsertQrBody = z.infer<typeof upsertQrSchema>
 
 export async function getQr(_req: Request, res: Response): Promise<void> {
   const session = await WaSessionModel.find()
@@ -15,8 +19,11 @@ export async function getStatus(_req: Request, res: Response): Promise<void> {
   })
 }
 
-export async function upsertQr(req: Request, res: Response): Promise<void> {
-  const { qr, status, phone } = req.body as { qr?: string; status?: string; phone?: string }
+export async function upsertQr(
+  req: Request<Record<string, string>, any, UpsertQrBody>,
+  res: Response,
+): Promise<void> {
+  const { qr, status, phone } = req.body
   await WaSessionModel.upsert({ qr, status, phone })
   sendResponse(res, 200, "qr updated")
 }
