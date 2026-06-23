@@ -2,8 +2,8 @@
 
 > REST API untuk platform WANI. Base URL: `http://localhost:3001/api`
 >
-> **Status implementasi:** Saat ini hanya endpoint QR yang sudah ada di server.
-> Semua endpoint lain (Products, Orders, Customers, Settings, dll) **belum diimplementasikan**
+> **Status implementasi:** Endpoint QR, Chat, Store, dan AI Config **sudah ada** di server.
+> Endpoint Products, Orders, Customers, Website, dan Auth **belum diimplementasikan**
 > di backend — dashboard menggunakan **mock data inline** di tiap hook (`MOCK = true`).
 > Spesifikasi di bawah adalah **kontrak/rencana** untuk implementasi mendatang.
 
@@ -20,8 +20,10 @@
 7. [Endpoint Customers + Chats (Planned)](#7-endpoint-customers--chats-planned)
 8. [Endpoint Settings (Planned)](#8-endpoint-settings-planned)
 9. [Endpoint Activity Log & Usage (Planned)](#9-endpoint-activity-log--usage-planned)
-10. [Endpoint Debug (Existing)](#10-endpoint-debug-existing)
-11. [Error Codes](#11-error-codes)
+10. [Endpoint Website (Planned)](#10-endpoint-website-planned)
+11. [Endpoint Auth (Planned)](#11-endpoint-auth-planned)
+12. [Endpoint Debug (Existing)](#12-endpoint-debug-existing)
+13. [Error Codes](#13-error-codes)
 
 ---
 
@@ -192,7 +194,7 @@ Process incoming WhatsApp message through the 18-step AI pipeline and return a r
 17. `checkGrounding` — [inquiry/order only] factual accuracy via LLM-judge
 18. `record usage + persist outbound + touch conversation`
 
-> Setiap langkah di-trace oleh ring buffer debug tracer. Lihat [Debug Endpoints](#10-endpoint-debug-existing).
+> Setiap langkah di-trace oleh ring buffer debug tracer. Lihat [Debug Endpoints](#12-endpoint-debug-existing).
 
 ---
 
@@ -219,7 +221,7 @@ Overview stats untuk halaman utama dashboard.
 
 ---
 
-## 4. Endpoint Products (Planned)
+## 5. Endpoint Products (Planned)
 
 Database: `Product` + `Category`.
 
@@ -372,7 +374,7 @@ Daftar kategori.
 
 ---
 
-## 5. Endpoint Orders (Planned)
+## 6. Endpoint Orders (Planned)
 
 Database: `Order` + `OrderItem` + `Payment`.
 
@@ -490,7 +492,7 @@ Update / set payment untuk order.
 
 ---
 
-## 6. Endpoint Customers + Chats (Planned)
+## 7. Endpoint Customers + Chats (Planned)
 
 Database: `Customer` + `Conversation` + `Message`.
 
@@ -579,7 +581,7 @@ Update data customer.
 
 ---
 
-## 7. Endpoint Settings (Planned)
+## 8. Endpoint Settings (Planned)
 
 Gabungan: **Store Profile** + **AI Config** + **WA Session** — semuanya single-row (`id: "default"`).
 
@@ -689,7 +691,7 @@ Putuskan koneksi WA.
 
 ---
 
-## 8. Endpoint Activity Log & Usage (Planned)
+## 9. Endpoint Activity Log & Usage (Planned)
 
 ### GET /api/logs
 
@@ -731,7 +733,65 @@ Putuskan koneksi WA.
 
 ---
 
-## 9. Endpoint Auth (Planned)
+## 10. Endpoint Website (Planned)
+
+### POST /api/website/generate 🔒
+
+Generate website dari konfigurasi yang diberikan.
+
+```typescript
+// Request Body
+{
+  "heroHeadline": string,
+  "heroSubheadline": string,
+  "aboutText": string,
+  "primaryColor": string,
+  "secondaryColor": string,
+  "phone": string,
+  "selectedProductIds": string[],
+  "template": string
+}
+
+// Response 200
+{
+  "status": "success",
+  "message": "website generated",
+  "data": {
+    "id": string,
+    "timestamp": string,
+    "productCount": number
+  }
+}
+```
+
+### GET /api/website/download
+
+Download ZIP hasil generate.
+
+```typescript
+// Response 200 — file download (Content-Type: application/zip)
+```
+
+### POST /api/website/publish 🔒
+
+Publish website ke hosting.
+
+```typescript
+// Body
+{}
+
+// Response 200
+{
+  "status": "success",
+  "message": "website published"
+}
+```
+
+---
+
+## 11. Endpoint Auth (Planned)
+
+Database: `User`.
 
 ### POST /api/auth/register
 
@@ -852,7 +912,64 @@ Reset password dengan token dari email.
 
 ---
 
-## 10. Error Codes
+## 12. Endpoint Debug (Existing)
+
+Dev-only tooling. Hanya aktif ketika `NODE_ENV !== "production"`.
+
+### GET /api/debug/traces
+
+Ambil pipeline traces terbaru (in-memory ring buffer).
+
+```typescript
+// Query params
+?limit=50
+
+// Response 200
+{
+  "data": {
+    "traces": [{ "id": string, "phone": string, "intent": string, "stages": object[], "duration": number, "timestamp": string }]
+  }
+}
+```
+
+### GET /api/debug/traces/:id
+
+Detail satu trace by ID.
+
+```typescript
+// Response 200
+{
+  "data": { ...trace }
+}
+
+// Error 404 — trace not found
+```
+
+### DELETE /api/debug/traces
+
+Hapus semua traces.
+
+### GET /api/debug/status
+
+Status server + circuit breaker.
+
+```typescript
+{
+  "data": {
+    "uptime": number,
+    "memory": object,
+    "circuitBreaker": { "state": string, "failures": number }
+  }
+}
+```
+
+### POST /api/debug/circuit/reset
+
+Reset circuit breaker ke closed state.
+
+---
+
+## 13. Error Codes
 
 | Status | Class | Penyebab |
 |--------|-------|----------|
@@ -922,9 +1039,18 @@ Reset password dengan token dari email.
 | `POST` | `/api/qr/disconnect` | 🔒 | 📋 Planned | Settings tab: WA Session |
 | `GET` | `/api/logs` | — | 📋 Planned | |
 | `GET` | `/api/usage` | — | 📋 Planned | |
+| `POST` | `/api/website/generate` | 🔒 | 📋 Planned | Web-Gen integration |
+| `GET` | `/api/website/download` | — | 📋 Planned | Download ZIP |
+| `POST` | `/api/website/publish` | 🔒 | 📋 Planned | Web-Gen integration |
+| `POST` | `/api/auth/register` | — | 📋 Planned | |
+| `POST` | `/api/auth/login` | — | 📋 Planned | |
+| `GET` | `/api/auth/me` | 🔒 | 📋 Planned | |
+| `POST` | `/api/auth/logout` | 🔒 | 📋 Planned | |
+| `POST` | `/api/auth/forgot-password` | — | 📋 Planned | |
+| `POST` | `/api/auth/reset-password` | — | 📋 Planned | |
 
 ---
 
-> **Catatan Implementasi**: Semua endpoint bertanda ❌ sudah memiliki mock data di dashboard
+> **Catatan Implementasi**: Semua endpoint bertanda 📋 sudah memiliki mock data di dashboard
 > (`hooks/*.ts` dengan `MOCK = true`) tapi belum ada route/controller di backend API.
-> Prioritas implementasi sesuai roadmap: QR → Products → Orders → Customers → Settings.
+> Prioritas implementasi sesuai roadmap: Settings → Products → Orders → Customers → Website → Auth.

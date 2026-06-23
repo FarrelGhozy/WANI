@@ -3,6 +3,7 @@ import { z } from "zod"
 export const upsertStoreSchema = z.object({
   businessName: z.string().optional(),
   phone: z.string().optional(),
+  logoUrl: z.string().optional().nullable(),
   address: z.string().optional().nullable(),
   businessHours: z.string().optional().nullable(),
   paymentMethods: z.string().optional().nullable(),

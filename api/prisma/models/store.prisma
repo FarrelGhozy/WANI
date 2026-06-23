@@ -3,6 +3,7 @@ model Store {
   id             String   @id @default("default")
   businessName   String   @default("Toko")
   phone          String   @default("")
+  logoUrl        String?
   address        String?
   businessHours  String?
   paymentMethods String?
