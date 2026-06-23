@@ -1,0 +1,26 @@
+\babel@toc {nil}{}\relax 
+\contentsline {section}{Ringkasan Eksekutif}{1}{Doc-Start}%
+\contentsline {section}{BAB 1~~PENDAHULUAN}{5}{Item.4}%
+\contentsline {subsection}{\numberline {0.1}Latar Belakang}{5}{subsection.0.1}%
+\contentsline {subsection}{\numberline {0.2}Rumusan Masalah}{6}{subsection.0.2}%
+\contentsline {subsection}{\numberline {0.3}Tujuan dan Manfaat}{6}{subsection.0.3}%
+\contentsline {subsection}{\numberline {0.4}Batasan Aplikasi}{7}{subsection.0.4}%
+\contentsline {section}{BAB 1~~METODOLOGI PENGEMBANGAN}{7}{Item.20}%
+\contentsline {subsection}{\numberline {0.1}Model Pengembangan Sistem}{8}{subsection.0.1}%
+\contentsline {subsection}{\numberline {0.2}Alat dan Bahan Pengembangan}{8}{subsection.0.2}%
+\contentsline {subsection}{\numberline {0.3}Tahapan Pengembangan}{10}{subsection.0.3}%
+\contentsline {section}{BAB 1~~ANALISIS DAN DESAIN SOFTWARE}{10}{Item.25}%
+\contentsline {subsection}{\numberline {0.1}Analisis Kebutuhan Sistem}{10}{subsection.0.1}%
+\contentsline {subsection}{\numberline {0.2}Perancangan Sistem}{11}{subsection.0.2}%
+\contentsline {subsection}{\numberline {0.3}AI Pipeline (18 Langkah)}{13}{subsection.0.3}%
+\contentsline {subsection}{\numberline {0.4}Sistem Pertahanan Injeksi 3-Tier}{14}{subsection.0.4}%
+\contentsline {subsection}{\numberline {0.5}Deteksi Intent}{14}{subsection.0.5}%
+\contentsline {subsection}{\numberline {0.6}Desain Antarmuka (UI/UX)}{15}{subsection.0.6}%
+\contentsline {subsection}{\numberline {0.7}Fitur dan Alur Kerja Sistem}{15}{subsection.0.7}%
+\contentsline {section}{BAB 1~~HASIL DAN PEMBAHASAN}{16}{Item.69}%
+\contentsline {subsection}{\numberline {0.1}Hasil Implementasi}{16}{subsection.0.1}%
+\contentsline {subsection}{\numberline {0.2}Rencana Jangka Panjang}{18}{subsection.0.2}%
+\contentsline {section}{BAB 1~~KESIMPULAN}{19}{table.caption.6}%
+\contentsline {subsection}{\numberline {0.1}Kesimpulan}{19}{subsection.0.1}%
+\contentsline {section}{Daftar Pustaka}{20}{Item.72}%
+\contentsline {section}{Lampiran}{22}{Item.72}%
