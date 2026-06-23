@@ -416,30 +416,7 @@ WANI mengadopsi arsitektur modular tiga-komponen yang saling terhubung melalui p
 
 \begin{figure}[H]
 \centering
-\begin{lstlisting}[style=output,language={}]
-+------------------+      HTTP/JSON       +------------------+
-|    Dashboard     | <------------------> |   API Server     |
-|    React 19      |     port 5173        |   Express 5      |
-|    Vite 8        |   (Vite Proxy)       |   port 3001      |
-+------------------+                      +--------+---------+
-                                                    |
-                                    +---------------+---------------+
-                                    |  Bearer Auth  |  Bearer Auth  |
-                                    +---------------+---------------+
-                                                    |
-                                          +---------v----------+
-                                          |     WA Bot         |
-                                          |   Baileys 6        |
-                                          |   Prisma 7         |
-                                          |   PostgreSQL       |
-                                          +--------------------+
-
-          +------------------+
-          |    Web-Gen       |
-          |   Astro 7        |
-          |   Static Site    |
-          +------------------+
-\end{lstlisting}
+\includegraphics[width=\textwidth]{fig-arsitektur.png}
 \caption{Arsitektur Sistem WANI}
 \label{fig:arsitektur}
 \end{figure}
