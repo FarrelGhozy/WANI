@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.5.21)  23 JUN 2026 12:04
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.5.21)  23 JUN 2026 12:10
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -591,10 +591,10 @@ Package csquotes Info: Adjusting default style.
 
 
 Package csquotes Warning: No style for language 'nil'.
-(csquotes)                Using fallback style on input line 148.
+(csquotes)                Using fallback style on input line 149.
 
 Package csquotes Info: Redefining alias 'default' -> 'fallback'.
-LaTeX Font Info:    Trying to load font information for T1+ptm on input line 148.
+LaTeX Font Info:    Trying to load font information for T1+ptm on input line 149.
 (/usr/share/texlive/texmf-dist/tex/latex/psnfss/t1ptm.fd
 File: t1ptm.fd 2001/06/04 font definitions for T1/ptm.
 ) (/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
@@ -604,24 +604,24 @@ File: l3backend-pdftex.def 2024-01-04 L3 backend support: PDF output (pdfTeX)
 ) (./proposal.aux)
 \openout1 = `proposal.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 148.
-LaTeX Font Info:    ... okay on input line 148.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 148.
-LaTeX Font Info:    ... okay on input line 148.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 148.
-LaTeX Font Info:    ... okay on input line 148.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 148.
-LaTeX Font Info:    ... okay on input line 148.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 148.
-LaTeX Font Info:    ... okay on input line 148.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 148.
-LaTeX Font Info:    ... okay on input line 148.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 148.
-LaTeX Font Info:    ... okay on input line 148.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 148.
-LaTeX Font Info:    ... okay on input line 148.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 148.
-LaTeX Font Info:    ... okay on input line 148.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 149.
+LaTeX Font Info:    ... okay on input line 149.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 149.
+LaTeX Font Info:    ... okay on input line 149.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 149.
+LaTeX Font Info:    ... okay on input line 149.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 149.
+LaTeX Font Info:    ... okay on input line 149.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 149.
+LaTeX Font Info:    ... okay on input line 149.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 149.
+LaTeX Font Info:    ... okay on input line 149.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 149.
+LaTeX Font Info:    ... okay on input line 149.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 149.
+LaTeX Font Info:    ... okay on input line 149.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 149.
+LaTeX Font Info:    ... okay on input line 149.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -676,7 +676,7 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 48
  (/usr/share/texlive/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
 ))
-Package hyperref Info: Link coloring ON on input line 148.
+Package hyperref Info: Link coloring ON on input line 149.
  (./proposal.out) (./proposal.out)
 \@outlinefile=\write3
 \openout3 = `proposal.out'.
@@ -685,46 +685,46 @@ Package hyperref Info: Link coloring ON on input line 148.
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: float package is loaded.
 Package caption Info: End \AtBeginDocument code.
-LaTeX Font Info:    Trying to load font information for OT1+ztmcm on input line 173.
+LaTeX Font Info:    Trying to load font information for OT1+ztmcm on input line 174.
  (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1ztmcm.fd
 File: ot1ztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OT1/ztmcm.
 )
-LaTeX Font Info:    Trying to load font information for OML+ztmcm on input line 173.
+LaTeX Font Info:    Trying to load font information for OML+ztmcm on input line 174.
  (/usr/share/texlive/texmf-dist/tex/latex/psnfss/omlztmcm.fd
 File: omlztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OML/ztmcm.
 )
-LaTeX Font Info:    Trying to load font information for OMS+ztmcm on input line 173.
+LaTeX Font Info:    Trying to load font information for OMS+ztmcm on input line 174.
  (/usr/share/texlive/texmf-dist/tex/latex/psnfss/omsztmcm.fd
 File: omsztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OMS/ztmcm.
 )
-LaTeX Font Info:    Trying to load font information for OMX+ztmcm on input line 173.
+LaTeX Font Info:    Trying to load font information for OMX+ztmcm on input line 174.
  (/usr/share/texlive/texmf-dist/tex/latex/psnfss/omxztmcm.fd
 File: omxztmcm.fd 2000/01/03 Fontinst v1.801 font definitions for OMX/ztmcm.
 )
-LaTeX Font Info:    Trying to load font information for OT1+ptm on input line 173.
+LaTeX Font Info:    Trying to load font information for OT1+ptm on input line 174.
  (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1ptm.fd
 File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 )
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 173.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 174.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <9> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 173.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 174.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <7> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 173.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 174.
  [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}]
-Overfull \hbox (1.70688pt too wide) in paragraph at lines 198--200
+Overfull \hbox (1.70688pt too wide) in paragraph at lines 199--201
 \T1/ptm/b/n/12 WANI \T1/ptm/m/n/12 (\T1/ptm/b/it/12 W\T1/ptm/m/it/12 h\T1/ptm/b/it/12 A\T1/ptm/m/it/12 tsapp \T1/ptm/b/it/12 N\T1/ptm/m/it/12 ative \T1/ptm/b/it/12 I\T1/ptm/m/it/12 ntegration \T1/ptm/m/n/12 / \T1/ptm/m/it/12 WhatsApp Niaga\T1/ptm/m/n/12 ) adalah platform omnichannel
  []
 
 
-Overfull \hbox (20.7752pt too wide) in paragraph at lines 213--215
+Overfull \hbox (20.7752pt too wide) in paragraph at lines 214--216
 \T1/ptm/m/n/12 Dibangun di atas \T1/ptm/m/it/12 stack \T1/ptm/m/n/12 teknologi modern dan stabil (Bun, Express 5, Prisma 7, PostgreSQL,
  []
 
 
-Overfull \hbox (10.46667pt too wide) in paragraph at lines 213--215
+Overfull \hbox (10.46667pt too wide) in paragraph at lines 214--216
 \T1/ptm/m/n/12 pengembangan yang matang dan siap untuk diimplementasikan sebagai solusi digitalisasi
  []
 
@@ -739,7 +739,7 @@ Package fancyhdr Warning: \headheight is too small (14.0pt):
 pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.221 \newpage
+l.222 \newpage
                [1] (./proposal.toc)
 \tf@toc=\write4
 \openout4 = `proposal.toc'.
@@ -753,57 +753,57 @@ l.221 \newpage
 \openout6 = `proposal.lof'.
 
  [4]
-Overfull \hbox (4.53908pt too wide) in paragraph at lines 246--247
+Overfull \hbox (4.53908pt too wide) in paragraph at lines 247--248
 \T1/ptm/m/n/12 Koperasi dan UKM tahun 2022 [[][]23[][]], hanya sekitar \T1/ptm/b/n/12 20% \T1/ptm/m/n/12 UMKM yang telah mengadopsi
  []
 
 
-Overfull \hbox (13.39047pt too wide) in paragraph at lines 248--249
+Overfull \hbox (13.39047pt too wide) in paragraph at lines 249--250
 []\T1/ptm/m/n/12 Kondisi ini menyebabkan inefisiensi operasional (waktu respons lambat, pesanan
  []
 
 
-Overfull \hbox (4.20331pt too wide) in paragraph at lines 248--249
+Overfull \hbox (4.20331pt too wide) in paragraph at lines 249--250
 \T1/ptm/m/n/12 terlewat), hilangnya peluang bisnis (pelanggan beralih ke kompetitor), ketidakmampuan
  []
 
 
-Overfull \hbox (24.1297pt too wide) in paragraph at lines 252--253
+Overfull \hbox (24.1297pt too wide) in paragraph at lines 253--254
 []\T1/ptm/m/n/12 WhatsApp telah menjadi infrastruktur komunikasi \T1/ptm/m/it/12 de facto \T1/ptm/m/n/12 bagi UMKM Indonesia.
  []
 
 
-Overfull \hbox (5.53563pt too wide) in paragraph at lines 252--253
+Overfull \hbox (5.53563pt too wide) in paragraph at lines 253--254
 \T1/ptm/m/n/12 Dengan \T1/ptm/b/n/12 90,9% \T1/ptm/m/n/12 tingkat penetrasi sebagai platform media sosial paling banyak digunakan
  []
 
 
-Overfull \hbox (3.31589pt too wide) in paragraph at lines 252--253
+Overfull \hbox (3.31589pt too wide) in paragraph at lines 253--254
 \T1/ptm/m/n/12 [[][]24[][]], WhatsApp digunakan secara luas untuk menerima pesanan, menjawab pertanyaan,
  []
 
 
-Overfull \hbox (10.51651pt too wide) in paragraph at lines 252--253
+Overfull \hbox (10.51651pt too wide) in paragraph at lines 253--254
 \T1/ptm/m/n/12 dan membangun hubungan dengan pelanggan. Ironisnya, potensi ini belum dimanfaatkan
  []
 
 
-Overfull \hbox (12.53885pt too wide) in paragraph at lines 256--257
+Overfull \hbox (12.53885pt too wide) in paragraph at lines 257--258
 []\T1/ptm/m/n/12 Seiring maraknya adopsi \T1/ptm/m/it/12 large language model \T1/ptm/m/n/12 (LLM) untuk layanan pelanggan,
  []
 
 
-Overfull \hbox (14.12645pt too wide) in paragraph at lines 256--257
+Overfull \hbox (14.12645pt too wide) in paragraph at lines 257--258
 \T1/ptm/m/n/12 muncul ancaman serius berupa \T1/ptm/m/it/12 prompt injection attack\T1/ptm/m/n/12 . OWASP [[][]21[][]] mengidentifikasikan
  []
 
 
-Overfull \hbox (21.23012pt too wide) in paragraph at lines 256--257
+Overfull \hbox (21.23012pt too wide) in paragraph at lines 257--258
 \T1/ptm/m/n/12 Pelaku UMKM yang menggunakan \T1/ptm/m/it/12 chatbot \T1/ptm/m/n/12 AI tanpa lapisan keamanan berisiko mengalami
  []
 
 
-Overfull \hbox (9.9868pt too wide) in paragraph at lines 258--259
+Overfull \hbox (9.9868pt too wide) in paragraph at lines 259--260
 \T1/ptm/m/n/12 yang mengintegrasikan WhatsApp Bot bertenaga AI, REST API, dashboard administrasi,
  []
 
@@ -815,21 +815,21 @@ Package fancyhdr Warning: \headheight is too small (14.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-10.01996pt}.
 
 [5]
-Overfull \hbox (7.32162pt too wide) in paragraph at lines 266--267
+Overfull \hbox (7.32162pt too wide) in paragraph at lines 267--268
 \T1/ptm/m/it/12 layer defense\T1/ptm/m/n/12 ) yang mampu melindungi \T1/ptm/m/it/12 chatbot \T1/ptm/m/n/12 AI dari serangan \T1/ptm/m/it/12 prompt injection\T1/ptm/m/n/12 ,
  []
 
 
-Overfull \hbox (16.77834pt too wide) in paragraph at lines 267--268
+Overfull \hbox (16.77834pt too wide) in paragraph at lines 268--269
 []\T1/ptm/m/n/12 Bagaimana mengintegrasikan \T1/ptm/m/it/12 chatbot \T1/ptm/m/n/12 WhatsApp dengan sistem manajemen produk,
  []
 
 
-Overfull \hbox (0.22986pt too wide) in paragraph at lines 277--278
+Overfull \hbox (0.22986pt too wide) in paragraph at lines 278--279
 []\T1/ptm/m/n/12 Mengembangkan \T1/ptm/m/it/12 chatbot \T1/ptm/m/n/12 WhatsApp bertenaga AI dengan \T1/ptm/m/it/12 intent detection \T1/ptm/m/n/12 multi-
  []
 
-LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 287.
+LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 288.
 (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ts1ptm.fd
 File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
 )
@@ -841,38 +841,28 @@ Package fancyhdr Warning: \headheight is too small (14.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-10.01996pt}.
 
 [6]
-Overfull \hbox (0.9747pt too wide) in paragraph at lines 289--290
+Overfull \hbox (0.9747pt too wide) in paragraph at lines 290--291
 []\T1/ptm/b/n/12 Bagi Pengembang\T1/ptm/m/n/12 : Kode sumber terbuka yang dapat dipelajari, dikontribusikan,
  []
 
 
-Overfull \hbox (3.44572pt too wide) in paragraph at lines 290--291
+Overfull \hbox (3.44572pt too wide) in paragraph at lines 291--292
 []\T1/ptm/b/n/12 Bagi Akademisi\T1/ptm/m/n/12 : Studi kasus implementasi LLM untuk lingkungan nyata dengan
  []
 
 
-Overfull \hbox (49.30962pt too wide) in paragraph at lines 299--300
+Overfull \hbox (49.30962pt too wide) in paragraph at lines 300--301
 []\T1/ptm/m/n/12 Sistem dirancang untuk lingkungan \T1/ptm/m/it/12 self-hosted \T1/ptm/m/n/12 di atas infrastruktur Linux (Ubuntu/Debian)
  []
 
 
-Overfull \hbox (15.84192pt too wide) in paragraph at lines 300--301
+Overfull \hbox (15.84192pt too wide) in paragraph at lines 301--302
 []\T1/ptm/m/n/12 Model LLM yang digunakan berasal dari penyedia pihak ketiga melalui OpenRouter
  []
 
 
-Overfull \hbox (20.86836pt too wide) in paragraph at lines 302--303
+Overfull \hbox (20.86836pt too wide) in paragraph at lines 303--304
 []\T1/ptm/m/it/12 Website generator \T1/ptm/m/n/12 menghasilkan situs statis (HTML/CSS/JS) tanpa \T1/ptm/m/it/12 backend \T1/ptm/m/n/12 dinamis,
- []
-
-
-pdfTeX warning (ext4): destination with the same identifier (name{subsection.0.1}) has been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.311 \subsection{Model Pengembangan Sistem}
-                                            
-Overfull \hbox (6.39519pt too wide) in paragraph at lines 313--314
-[]\T1/ptm/m/n/12 WANI dikembangkan menggunakan metodologi \T1/ptm/b/n/12 Extreme Programming \T1/ptm/m/n/12 (XP)
  []
 
 
@@ -883,16 +873,25 @@ Package fancyhdr Warning: \headheight is too small (14.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-10.01996pt}.
 
 [7]
-LaTeX Font Info:    Trying to load font information for T1+cmtt on input line 316.
- (/usr/share/texlive/texmf-dist/tex/latex/base/t1cmtt.fd
+pdfTeX warning (ext4): destination with the same identifier (name{subsection.0.1}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.312 \subsection{Model Pengembangan Sistem}
+                                            
+Overfull \hbox (6.39519pt too wide) in paragraph at lines 314--315
+[]\T1/ptm/m/n/12 WANI dikembangkan menggunakan metodologi \T1/ptm/b/n/12 Extreme Programming \T1/ptm/m/n/12 (XP)
+ []
+
+LaTeX Font Info:    Trying to load font information for T1+cmtt on input line 317.
+(/usr/share/texlive/texmf-dist/tex/latex/base/t1cmtt.fd
 File: t1cmtt.fd 2023/04/13 v2.5m Standard LaTeX font definitions
 )
-Overfull \hbox (44.40765pt too wide) in paragraph at lines 316--317
+Overfull \hbox (44.40765pt too wide) in paragraph at lines 317--318
 []\T1/ptm/m/n/12 Empat sub-proyek independen (\T1/cmtt/m/n/12 api/\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 dashboard/\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 wa-bot/\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 web-gen/\T1/ptm/m/n/12 ) memungkinkan
  []
 
 
-Overfull \hbox (0.9616pt too wide) in paragraph at lines 318--319
+Overfull \hbox (0.9616pt too wide) in paragraph at lines 319--320
 []\T1/ptm/m/n/12 Fokus pada kualitas kode dan \T1/ptm/m/it/12 testing \T1/ptm/m/n/12 yang ketat selaras dengan praktik XP seperti
  []
 
@@ -900,64 +899,64 @@ Overfull \hbox (0.9616pt too wide) in paragraph at lines 318--319
 pdfTeX warning (ext4): destination with the same identifier (name{subsection.0.2}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.322 \subsection{Alat dan Bahan Pengembangan}
+l.323 \subsection{Alat dan Bahan Pengembangan}
                                               
-Underfull \hbox (badness 10000) in paragraph at lines 360--360
+Underfull \hbox (badness 10000) in paragraph at lines 361--361
 []|\T1/ptm/m/n/12 Runtime JavaScript/TypeScript dengan
  []
 
 
-Underfull \hbox (badness 7740) in paragraph at lines 360--360
+Underfull \hbox (badness 7740) in paragraph at lines 361--361
 \T1/ptm/m/it/12 built-in bundler\T1/ptm/m/n/12 , test runner, package
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 360--360
+Underfull \hbox (badness 10000) in paragraph at lines 361--361
 []|\T1/ptm/m/n/12 Prisma 7 (+
  []
 
 
-Overfull \hbox (29.76056pt too wide) in paragraph at lines 360--360
+Overfull \hbox (29.76056pt too wide) in paragraph at lines 361--361
 \T1/cmtt/m/n/12 @prisma/adapter-pg\T1/ptm/m/n/12 )| 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 360--360
+Underfull \hbox (badness 10000) in paragraph at lines 361--361
 []|\T1/ptm/m/n/12 ORM \T1/ptm/m/it/12 type-safe \T1/ptm/m/n/12 dengan database
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 360--360
+Underfull \hbox (badness 10000) in paragraph at lines 361--361
 []|\T1/ptm/m/n/12 Validasi skema dengan inferensi tipe
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 360--360
+Underfull \hbox (badness 10000) in paragraph at lines 361--361
 []|\T1/ptm/m/n/12 Keamanan
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 360--360
+Underfull \hbox (badness 10000) in paragraph at lines 361--361
 []|\T1/ptm/m/n/12 Winston 3 +
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 360--360
+Underfull \hbox (badness 10000) in paragraph at lines 361--361
 []|\T1/ptm/m/n/12 Vite 8
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 360--360
+Underfull \hbox (badness 10000) in paragraph at lines 361--361
 []|\T1/ptm/m/it/12 Static site generator \T1/ptm/m/n/12 dengan \T1/ptm/m/it/12 island
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 360--360
+Underfull \hbox (badness 10000) in paragraph at lines 361--361
 []|\T1/ptm/m/n/12 DeepSeek V4
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 360--360
+Underfull \hbox (badness 10000) in paragraph at lines 361--361
 []|\T1/ptm/m/n/12 Model
  []
 
@@ -972,7 +971,7 @@ Package fancyhdr Warning: \headheight is too small (14.0pt):
 pdfTeX warning (ext4): destination with the same identifier (name{subsection.0.3}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.363 \subsection{Tahapan Pengembangan}
+l.364 \subsection{Tahapan Pengembangan}
                                        
 
 Package fancyhdr Warning: \headheight is too small (14.0pt): 
@@ -982,43 +981,28 @@ Package fancyhdr Warning: \headheight is too small (14.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-10.01996pt}.
 
 [9]
-Overfull \hbox (0.4937pt too wide) in paragraph at lines 368--369
+Overfull \hbox (0.4937pt too wide) in paragraph at lines 369--370
 \T1/ptm/m/n/12 terhadap kebutuhan UMKM. Prioritas ditentukan berdasarkan nilai bisnis. Iterasi
  []
 
 
-Overfull \hbox (38.35556pt too wide) in paragraph at lines 369--370
+Overfull \hbox (38.35556pt too wide) in paragraph at lines 370--371
 \T1/ptm/m/n/12 ORDER, ORDER_ITEM, PAYMENT, CONVERSATION, MESSAGE, WA_SESSION,
  []
 
 
-Overfull \hbox (4.08365pt too wide) in paragraph at lines 372--373
+Overfull \hbox (4.08365pt too wide) in paragraph at lines 373--374
 []\T1/ptm/b/n/12 API\T1/ptm/m/n/12 : Arsitektur berlapis \T1/ptm/m/it/12 routes $\OMS/ztmcm/m/n/12 !$ \T1/ptm/m/it/12 controllers $\OMS/ztmcm/m/n/12 !$ \T1/ptm/m/it/12 models $\OMS/ztmcm/m/n/12 !$ \T1/ptm/m/n/12 Prisma \T1/ptm/m/it/12 delegate\T1/ptm/m/n/12 . 
  []
 
 
-Overfull \hbox (15.93869pt too wide) in paragraph at lines 374--375
+Overfull \hbox (15.93869pt too wide) in paragraph at lines 375--376
 []\T1/ptm/b/n/12 WA Bot\T1/ptm/m/n/12 : Baileys 6 dengan autentikasi persisten melalui Prisma + PostgreSQL. 
  []
 
 
-Overfull \hbox (0.35832pt too wide) in paragraph at lines 377--378
+Overfull \hbox (0.35832pt too wide) in paragraph at lines 378--379
 []\T1/ptm/b/n/12 Testing \T1/ptm/m/n/12 -- TDD menggunakan \T1/cmtt/m/n/12 bun:test \T1/ptm/m/n/12 dengan cakupan: unit test (Zod, utilitas,
- []
-
-
-pdfTeX warning (ext4): destination with the same identifier (name{subsection.0.1}) has been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.386 \subsection{Analisis Kebutuhan Sistem}
-                                            
-Overfull \hbox (39.92555pt too wide) in paragraph at lines 391--392
-[]\T1/ptm/m/n/12 Sistem mampu menerima dan merespons pesan WhatsApp secara otomatis menggunakan
- []
-
-
-Overfull \hbox (24.24483pt too wide) in paragraph at lines 392--393
-[]\T1/ptm/m/n/12 Sistem mampu mendeteksi 6 kategori intensi pelanggan: \T1/cmtt/m/n/12 order\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 inquiry\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 greeting\T1/ptm/m/n/12 ,
  []
 
 
@@ -1029,12 +1013,27 @@ Package fancyhdr Warning: \headheight is too small (14.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-10.01996pt}.
 
 [10]
-Overfull \hbox (1.54904pt too wide) in paragraph at lines 397--398
+pdfTeX warning (ext4): destination with the same identifier (name{subsection.0.1}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.387 \subsection{Analisis Kebutuhan Sistem}
+                                            
+Overfull \hbox (39.92555pt too wide) in paragraph at lines 392--393
+[]\T1/ptm/m/n/12 Sistem mampu menerima dan merespons pesan WhatsApp secara otomatis menggunakan
+ []
+
+
+Overfull \hbox (24.24483pt too wide) in paragraph at lines 393--394
+[]\T1/ptm/m/n/12 Sistem mampu mendeteksi 6 kategori intensi pelanggan: \T1/cmtt/m/n/12 order\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 inquiry\T1/ptm/m/n/12 , \T1/cmtt/m/n/12 greeting\T1/ptm/m/n/12 ,
+ []
+
+
+Overfull \hbox (1.54904pt too wide) in paragraph at lines 398--399
 []\T1/ptm/m/n/12 Sistem mampu mendeteksi dan meredaksi data pribadi (PII) sebelum dan sesudah
  []
 
 
-Overfull \hbox (10.35748pt too wide) in paragraph at lines 407--408
+Overfull \hbox (10.35748pt too wide) in paragraph at lines 408--409
 []\T1/ptm/b/n/12 Skalabilitas\T1/ptm/m/n/12 : Arsitektur modular memungkinkan setiap sub-proyek di-\T1/ptm/m/it/12 scale \T1/ptm/m/n/12 secara
  []
 
@@ -1042,14 +1041,8 @@ Overfull \hbox (10.35748pt too wide) in paragraph at lines 407--408
 pdfTeX warning (ext4): destination with the same identifier (name{subsection.0.2}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.411 \subsection{Perancangan Sistem}
+l.412 \subsection{Perancangan Sistem}
                                      
-<fig-arsitektur.png, id=213, 762.85pt x 717.68124pt>
-File: fig-arsitektur.png Graphic file (type png)
-<use fig-arsitektur.png>
-Package pdftex.def Info: fig-arsitektur.png  used on input line 419.
-(pdftex.def)             Requested size: 412.56497pt x 388.13345pt.
-
 
 Package fancyhdr Warning: \headheight is too small (14.0pt): 
 (fancyhdr)                Make it at least 24.01996pt, for example:
@@ -1058,13 +1051,14 @@ Package fancyhdr Warning: \headheight is too small (14.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-10.01996pt}.
 
 [11]
-Overfull \hbox (14.3409pt too wide) in paragraph at lines 432--433
+<fig-arsitektur.png, id=224, 762.85pt x 717.68124pt>
+File: fig-arsitektur.png Graphic file (type png)
+<use fig-arsitektur.png>
+Package pdftex.def Info: fig-arsitektur.png  used on input line 420.
+(pdftex.def)             Requested size: 412.56497pt x 388.13345pt.
+
+Overfull \hbox (14.3409pt too wide) in paragraph at lines 433--434
 []\T1/ptm/b/n/12 Admin (UMKM) \T1/ptm/m/n/12 -- Mengelola sistem melalui dashboard web. Use case: mengelola
- []
-
-
-Overfull \hbox (6.33707pt too wide) in paragraph at lines 433--434
-[]\T1/ptm/b/n/12 Sistem (AI Agent) \T1/ptm/m/n/12 -- Bertindak secara otomatis merespons pelanggan, mendeteksi
  []
 
 
@@ -1075,12 +1069,17 @@ Package fancyhdr Warning: \headheight is too small (14.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-10.01996pt}.
 
 [12 <./fig-arsitektur.png (PNG copy)>]
+Overfull \hbox (6.33707pt too wide) in paragraph at lines 434--435
+[]\T1/ptm/b/n/12 Sistem (AI Agent) \T1/ptm/m/n/12 -- Bertindak secara otomatis merespons pelanggan, mendeteksi
+ []
+
+
 pdfTeX warning (ext4): destination with the same identifier (name{subsection.0.3}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.447 \subsection{AI Pipeline (18 Langkah)}
+l.448 \subsection{AI Pipeline (18 Langkah)}
                                            
-Overfull \hbox (1.89854pt too wide) in paragraph at lines 463--464
+Overfull \hbox (1.89854pt too wide) in paragraph at lines 464--465
 []\T1/ptm/b/n/12 Parsing output \T1/ptm/m/n/12 -- Ekstrak JSON, validasi menggunakan Zod \T1/ptm/m/it/12 discriminated union
  []
 
@@ -1092,7 +1091,7 @@ Package fancyhdr Warning: \headheight is too small (14.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-10.01996pt}.
 
 [13]
-Overfull \hbox (5.4319pt too wide) in paragraph at lines 468--469
+Overfull \hbox (5.4319pt too wide) in paragraph at lines 469--470
 []\T1/ptm/b/n/12 Grounding check \T1/ptm/m/n/12 -- Khusus intent \T1/cmtt/m/n/12 inquiry\T1/ptm/m/n/12 /\T1/cmtt/m/n/12 order\T1/ptm/m/n/12 : LLM judge verifikasi akurasi
  []
 
@@ -1100,64 +1099,64 @@ Overfull \hbox (5.4319pt too wide) in paragraph at lines 468--469
 pdfTeX warning (ext4): destination with the same identifier (name{subsection.0.4}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.472 ...section{Sistem Pertahanan Injeksi 3-Tier}
+l.473 ...section{Sistem Pertahanan Injeksi 3-Tier}
                                                   
-Overfull \hbox (23.62561pt too wide) in paragraph at lines 474--475
+Overfull \hbox (23.62561pt too wide) in paragraph at lines 475--476
 []\T1/ptm/m/n/12 WANI mengimplementasikan tiga lapis pertahanan yang bekerja secara berjenjang,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 490--490
+Underfull \hbox (badness 10000) in paragraph at lines 491--491
 []|\T1/ptm/m/n/12 Regex
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 490--490
+Underfull \hbox (badness 10000) in paragraph at lines 491--491
 \T1/ptm/m/n/12 claim, token injection, context overflow,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 490--490
+Underfull \hbox (badness 10000) in paragraph at lines 491--491
 []|\T1/ptm/m/n/12 ML
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 490--490
+Underfull \hbox (badness 10000) in paragraph at lines 491--491
 []|\T1/ptm/m/n/12 Deep
  []
 
 
-Overfull \hbox (10.58173pt too wide) in paragraph at lines 495--496
+Overfull \hbox (10.58173pt too wide) in paragraph at lines 496--497
 []\T1/ptm/m/n/12 Output LLM diparsing ke dalam enam kategori intent melalui Zod \T1/ptm/m/it/12 discriminated
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 512--512
+Underfull \hbox (badness 10000) in paragraph at lines 513--513
 []|\T1/ptm/m/n/12 Buat entitas \T1/cmtt/m/n/12 Order \T1/ptm/m/n/12 +
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 512--512
+Underfull \hbox (badness 10000) in paragraph at lines 513--513
 []|\T1/ptm/m/n/12 Balas dengan data dari
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 512--512
+Underfull \hbox (badness 10000) in paragraph at lines 513--513
 []|\T1/ptm/m/n/12 Balas pesan sambutan
  []
 
 
-Underfull \hbox (badness 1661) in paragraph at lines 512--512
+Underfull \hbox (badness 1661) in paragraph at lines 513--513
 []|\T1/ptm/m/n/12 Balas empati, eskalasi jika
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 512--512
+Underfull \hbox (badness 10000) in paragraph at lines 513--513
 []|\T1/ptm/m/n/12 Balas umum, minta
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 512--512
+Underfull \hbox (badness 10000) in paragraph at lines 513--513
 []|\T1/ptm/m/n/12 Catat ke \T1/cmtt/m/n/12 ActivityLog\T1/ptm/m/n/12 ,
  []
 
@@ -1169,17 +1168,17 @@ Package fancyhdr Warning: \headheight is too small (14.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-10.01996pt}.
 
 [14]
-Overfull \hbox (8.93872pt too wide) in paragraph at lines 517--518
+Overfull \hbox (8.93872pt too wide) in paragraph at lines 518--519
 []\T1/ptm/m/n/12 Dashboard WANI dibangun dengan React 19 dan Tailwind CSS 4 menggunakan
  []
 
 
-Overfull \hbox (2.16238pt too wide) in paragraph at lines 521--522
+Overfull \hbox (2.16238pt too wide) in paragraph at lines 522--523
 \T1/ptm/m/n/12 status), pelanggan aktif, indikator koneksi WhatsApp, dan daftar pesanan terbaru. 
  []
 
 
-Overfull \hbox (102.75664pt too wide) in paragraph at lines 523--524
+Overfull \hbox (102.75664pt too wide) in paragraph at lines 524--525
 []\T1/ptm/b/n/12 Pesanan \T1/ptm/m/n/12 -- Daftar pesanan dengan filter status (Pending/Confirmed/Processing/Completed/Cancelled),
  []
 
@@ -1191,28 +1190,13 @@ Package fancyhdr Warning: \headheight is too small (14.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-10.01996pt}.
 
 [15]
-Overfull \hbox (8.53062pt too wide) in paragraph at lines 544--546
+Overfull \hbox (8.53062pt too wide) in paragraph at lines 545--547
 []\T1/ptm/m/n/12 Website yang dihasilkan oleh Web-Gen memiliki tiga halaman responsif dengan
  []
 
 
-Overfull \hbox (22.23816pt too wide) in paragraph at lines 548--549
+Overfull \hbox (22.23816pt too wide) in paragraph at lines 549--550
 []\T1/ptm/b/n/12 Kontak \T1/ptm/m/n/12 -- Informasi kontak, alamat, jam operasional, dan tautan langsung WhatsApp. 
- []
-
-
-pdfTeX warning (ext4): destination with the same identifier (name{subsection.0.1}) has been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.556 \subsection{Hasil Implementasi}
-                                     
-Overfull \hbox (22.94623pt too wide) in paragraph at lines 562--563
-\T1/ptm/m/n/12 reusable, \T1/ptm/m/it/12 custom hooks \T1/ptm/m/n/12 dengan arsitektur terpisah (services $\OMS/ztmcm/m/n/12 !$ \T1/ptm/m/n/12 hooks $\OMS/ztmcm/m/n/12 !$ \T1/ptm/m/n/12 components). 
- []
-
-
-Overfull \hbox (11.65334pt too wide) in paragraph at lines 563--564
-[]\T1/ptm/b/n/12 WA Bot\T1/ptm/m/n/12 : 100% -- Baileys 6, QR \T1/ptm/m/it/12 relay \T1/ptm/m/n/12 via API, \T1/ptm/m/it/12 auto-reconnect \T1/ptm/m/n/12 dengan eksponensial
  []
 
 
@@ -1223,83 +1207,73 @@ Package fancyhdr Warning: \headheight is too small (14.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-10.01996pt}.
 
 [16]
-Overfull \hbox (3.74556pt too wide) in paragraph at lines 565--566
+pdfTeX warning (ext4): destination with the same identifier (name{subsection.0.1}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.557 \subsection{Hasil Implementasi}
+                                     
+Overfull \hbox (22.94623pt too wide) in paragraph at lines 563--564
+\T1/ptm/m/n/12 reusable, \T1/ptm/m/it/12 custom hooks \T1/ptm/m/n/12 dengan arsitektur terpisah (services $\OMS/ztmcm/m/n/12 !$ \T1/ptm/m/n/12 hooks $\OMS/ztmcm/m/n/12 !$ \T1/ptm/m/n/12 components). 
+ []
+
+
+Overfull \hbox (11.65334pt too wide) in paragraph at lines 564--565
+[]\T1/ptm/b/n/12 WA Bot\T1/ptm/m/n/12 : 100% -- Baileys 6, QR \T1/ptm/m/it/12 relay \T1/ptm/m/n/12 via API, \T1/ptm/m/it/12 auto-reconnect \T1/ptm/m/n/12 dengan eksponensial
+ []
+
+
+Overfull \hbox (3.74556pt too wide) in paragraph at lines 566--567
 []\T1/ptm/b/n/12 Sistem Keamanan\T1/ptm/m/n/12 : 100% -- 3-tier injection defense, PII scanner (\T1/ptm/m/it/12 input + output\T1/ptm/m/n/12 ),
  []
 
 
-Overfull \hbox (4.16673pt too wide) in paragraph at lines 568--569
+Overfull \hbox (4.16673pt too wide) in paragraph at lines 569--570
 []\T1/ptm/b/n/12 Integrasi Bot $\OMS/ztmcm/m/n/12 !$ \T1/ptm/b/n/12 API\T1/ptm/m/n/12 : \T1/ptm/m/it/12 End-to-end \T1/ptm/m/n/12 terhubung dengan Bearer token authentication. 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 591--591
+Underfull \hbox (badness 10000) in paragraph at lines 592--592
 []|\T1/ptm/m/it/12 Chatbot
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 591--591
+Underfull \hbox (badness 10000) in paragraph at lines 592--592
 []|\T1/ptm/m/n/12 6 kategori (Zod
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 591--591
+Underfull \hbox (badness 10000) in paragraph at lines 592--592
 []|\T1/ptm/m/n/12 WhatsApp +
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 591--591
+Underfull \hbox (badness 10000) in paragraph at lines 592--592
 []|\T1/ptm/b/n/12 Open Source
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 591--591
+Underfull \hbox (badness 10000) in paragraph at lines 592--592
 []|\T1/ptm/b/n/12 100% milik
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 591--591
+Underfull \hbox (badness 10000) in paragraph at lines 592--592
 []|\T1/ptm/m/n/12 Gratis (self-host) +
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 591--591
+Underfull \hbox (badness 10000) in paragraph at lines 592--592
 []|\T1/ptm/m/n/12 Berlangganan
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 591--591
+Underfull \hbox (badness 10000) in paragraph at lines 592--592
 []|\T1/ptm/m/n/12 Berlangganan
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 591--591
+Underfull \hbox (badness 10000) in paragraph at lines 592--592
 []|\T1/ptm/m/n/12 Bervariasi, sering
- []
-
-
-pdfTeX warning (ext4): destination with the same identifier (name{subsection.0.2}) has been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.594 \subsection{Rencana Jangka Panjang}
-                                         
-Underfull \hbox (badness 6032) in paragraph at lines 618--618
-[]|\T1/ptm/m/n/12 API Endpoints Web-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 618--618
-[]|\T1/ptm/m/n/12 (Agustus
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 618--618
-[]|\T1/ptm/m/n/12 (September
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 618--618
-[]|\T1/ptm/m/n/12 (Oktober
  []
 
 
@@ -1310,26 +1284,30 @@ Package fancyhdr Warning: \headheight is too small (14.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-10.01996pt}.
 
 [17]
-Overfull \hbox (4.75441pt too wide) in paragraph at lines 623--624
-[]\T1/ptm/b/n/12 Dukungan multi-bahasa \T1/ptm/m/n/12 -- Kemampuan \T1/ptm/m/it/12 chatbot \T1/ptm/m/n/12 merespons dalam bahasa daerah
- []
-
-
-Overfull \hbox (23.31831pt too wide) in paragraph at lines 624--625
-[]\T1/ptm/b/n/12 Integrasi pembayaran digital \T1/ptm/m/n/12 -- Koneksi dengan \T1/ptm/m/it/12 payment gateway \T1/ptm/m/n/12 untuk otomatisasi
- []
-
-
-Overfull \hbox (10.94563pt too wide) in paragraph at lines 625--626
-[]\T1/ptm/b/n/12 Analitik lanjutan \T1/ptm/m/n/12 -- \T1/ptm/m/it/12 Dashboard \T1/ptm/m/n/12 analitik dengan visualisasi tren penjualan, perilaku
- []
-
-
-pdfTeX warning (ext4): destination with the same identifier (name{subsection.0.1}) has been already used, duplicate ignored
+pdfTeX warning (ext4): destination with the same identifier (name{subsection.0.2}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.635 \subsection{Kesimpulan}
-                             
+l.595 \subsection{Rencana Jangka Panjang}
+                                         
+Underfull \hbox (badness 6032) in paragraph at lines 619--619
+[]|\T1/ptm/m/n/12 API Endpoints Web-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 619--619
+[]|\T1/ptm/m/n/12 (Agustus
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 619--619
+[]|\T1/ptm/m/n/12 (September
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 619--619
+[]|\T1/ptm/m/n/12 (Oktober
+ []
+
 
 Package fancyhdr Warning: \headheight is too small (14.0pt): 
 (fancyhdr)                Make it at least 24.01996pt, for example:
@@ -1338,28 +1316,18 @@ Package fancyhdr Warning: \headheight is too small (14.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-10.01996pt}.
 
 [18]
-Overfull \hbox (0.6697pt too wide) in paragraph at lines 637--638
-[]\T1/ptm/m/n/12 WANI (\T1/ptm/m/it/12 WhatsApp AI Native Integration\T1/ptm/m/n/12 ) telah berhasil dikembangkan sebagai
+Overfull \hbox (4.75441pt too wide) in paragraph at lines 624--625
+[]\T1/ptm/b/n/12 Dukungan multi-bahasa \T1/ptm/m/n/12 -- Kemampuan \T1/ptm/m/it/12 chatbot \T1/ptm/m/n/12 merespons dalam bahasa daerah
  []
 
 
-Overfull \hbox (9.40958pt too wide) in paragraph at lines 642--643
-[]\T1/ptm/b/n/12 Ketiadaan \T1/ptm/b/it/12 web presence \T1/ptm/m/n/12 -- melalui \T1/ptm/m/it/12 website generator \T1/ptm/m/n/12 otomatis yang menghasilkan
+Overfull \hbox (23.31831pt too wide) in paragraph at lines 625--626
+[]\T1/ptm/b/n/12 Integrasi pembayaran digital \T1/ptm/m/n/12 -- Koneksi dengan \T1/ptm/m/it/12 payment gateway \T1/ptm/m/n/12 untuk otomatisasi
  []
 
 
-Overfull \hbox (35.07874pt too wide) in paragraph at lines 645--647
-\T1/ptm/m/n/12 Astro 7) dengan metodologi Extreme Programming, WANI telah melalui tahap pengembangan
- []
-
-
-Overfull \hbox (22.61934pt too wide) in paragraph at lines 648--649
-[]\T1/ptm/m/n/12 Ke depannya, WANI direncanakan untuk terus dikembangkan dengan penambahan
- []
-
-
-Overfull \hbox (3.56699pt too wide) in paragraph at lines 648--649
-\T1/ptm/m/n/12 fitur \T1/ptm/m/it/12 multi-tenant\T1/ptm/m/n/12 , \T1/ptm/m/it/12 retrieval-augmented generation \T1/ptm/m/n/12 (RAG), integrasi pembayaran digital,
+Overfull \hbox (10.94563pt too wide) in paragraph at lines 626--627
+[]\T1/ptm/b/n/12 Analitik lanjutan \T1/ptm/m/n/12 -- \T1/ptm/m/it/12 Dashboard \T1/ptm/m/n/12 analitik dengan visualisasi tren penjualan, perilaku
  []
 
 
@@ -1370,6 +1338,35 @@ Package fancyhdr Warning: \headheight is too small (14.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-10.01996pt}.
 
 [19]
+pdfTeX warning (ext4): destination with the same identifier (name{subsection.0.1}) has been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.636 \subsection{Kesimpulan}
+                             
+Overfull \hbox (0.6697pt too wide) in paragraph at lines 638--639
+[]\T1/ptm/m/n/12 WANI (\T1/ptm/m/it/12 WhatsApp AI Native Integration\T1/ptm/m/n/12 ) telah berhasil dikembangkan sebagai
+ []
+
+
+Overfull \hbox (9.40958pt too wide) in paragraph at lines 643--644
+[]\T1/ptm/b/n/12 Ketiadaan \T1/ptm/b/it/12 web presence \T1/ptm/m/n/12 -- melalui \T1/ptm/m/it/12 website generator \T1/ptm/m/n/12 otomatis yang menghasilkan
+ []
+
+
+Overfull \hbox (35.07874pt too wide) in paragraph at lines 646--648
+\T1/ptm/m/n/12 Astro 7) dengan metodologi Extreme Programming, WANI telah melalui tahap pengembangan
+ []
+
+
+Overfull \hbox (22.61934pt too wide) in paragraph at lines 649--650
+[]\T1/ptm/m/n/12 Ke depannya, WANI direncanakan untuk terus dikembangkan dengan penambahan
+ []
+
+
+Overfull \hbox (3.56699pt too wide) in paragraph at lines 649--650
+\T1/ptm/m/n/12 fitur \T1/ptm/m/it/12 multi-tenant\T1/ptm/m/n/12 , \T1/ptm/m/it/12 retrieval-augmented generation \T1/ptm/m/n/12 (RAG), integrasi pembayaran digital,
+ []
+
 
 Package fancyhdr Warning: \headheight is too small (14.0pt): 
 (fancyhdr)                Make it at least 24.01996pt, for example:
@@ -1378,17 +1375,25 @@ Package fancyhdr Warning: \headheight is too small (14.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-10.01996pt}.
 
 [20]
-Underfull \hbox (badness 10000) in paragraph at lines 742--744
+
+Package fancyhdr Warning: \headheight is too small (14.0pt): 
+(fancyhdr)                Make it at least 24.01996pt, for example:
+(fancyhdr)                \setlength{\headheight}{24.01996pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+(fancyhdr)                \addtolength{\topmargin}{-10.01996pt}.
+
+[21]
+Underfull \hbox (badness 10000) in paragraph at lines 743--745
 [][]$\T1/cmtt/m/n/12 https : / / djpb . kemenkeu . go . id / kppn / lubuksikaping / id /
  []
 
 
-Overfull \hbox (60.29333pt too wide) in paragraph at lines 742--744
+Overfull \hbox (60.29333pt too wide) in paragraph at lines 743--745
 \T1/cmtt/m/n/12 data-[]publikasi / artikel / 3134-[]kontribusi-[]umkm-[]dalam-[]perekonomianindonesia .
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 746--748
+Underfull \hbox (badness 10000) in paragraph at lines 747--749
 [][]$\T1/cmtt/m/n/12 https : / / www . medcom . id / ekonomi / ekonomi-[]digital /
  []
 
@@ -1399,8 +1404,8 @@ Package fancyhdr Warning: \headheight is too small (14.0pt):
 (fancyhdr)                You might also make \topmargin smaller to compensate:
 (fancyhdr)                \addtolength{\topmargin}{-10.01996pt}.
 
-[21]
-Overfull \hbox (22.94603pt too wide) in paragraph at lines 795--796
+[22]
+Overfull \hbox (22.94603pt too wide) in paragraph at lines 799--800
 []\T1/ptm/m/n/12 Berpengalaman dalam pengembangan \T1/ptm/m/it/12 full-stack \T1/ptm/m/n/12 web, \T1/ptm/m/it/12 system administration \T1/ptm/m/n/12 (Ubuntu,
  []
 
@@ -1411,19 +1416,19 @@ Package fancyhdr Warning: \headheight is too small (14.0pt):
 (fancyhdr)                You might also make \topmargin smaller to compensate:
 (fancyhdr)                \addtolength{\topmargin}{-10.01996pt}.
 
-[22] (/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
+[23] (/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
 File: lstlang1.sty 2023/02/27 1.9 listings language file
 ) (/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
 File: lstlang1.sty 2023/02/27 1.9 listings language file
 )
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 814.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 818.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <7.4> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 814.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 818.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <6> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 814.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 818.
 LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <10> not available
-(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 815.
+(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 819.
 
 
 Package fancyhdr Warning: \headheight is too small (14.0pt): 
@@ -1432,7 +1437,7 @@ Package fancyhdr Warning: \headheight is too small (14.0pt):
 (fancyhdr)                You might also make \topmargin smaller to compensate:
 (fancyhdr)                \addtolength{\topmargin}{-10.01996pt}.
 
-[23]
+[24]
 
 Package fancyhdr Warning: \headheight is too small (14.0pt): 
 (fancyhdr)                Make it at least 24.01996pt, for example:
@@ -1440,7 +1445,7 @@ Package fancyhdr Warning: \headheight is too small (14.0pt):
 (fancyhdr)                You might also make \topmargin smaller to compensate:
 (fancyhdr)                \addtolength{\topmargin}{-10.01996pt}.
 
-[24] (./proposal.aux)
+[25] (./proposal.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
@@ -1449,18 +1454,18 @@ Package rerunfilecheck Info: File `proposal.out' has not changed.
 (rerunfilecheck)             Checksum: 285F71906EB8EA4EE10B4E20F84C3074;4048.
  ) 
 Here is how much of TeX's memory you used:
- 17514 strings out of 474222
- 273570 string characters out of 5748733
- 2079975 words of memory out of 5000000
+ 17515 strings out of 474222
+ 273577 string characters out of 5748733
+ 2047975 words of memory out of 5000000
  39336 multiletter control sequences out of 15000+600000
  612895 words of font info for 106 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  75i,13n,79p,707b,2241s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf/fonts/type1/public/cm-super/sfit1000.pfb></usr/share/texmf/fonts/type1/public/cm-super/sftt1000.pfb></usr/share/texmf/fonts/type1/public/cm-super/sftt1200.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on proposal.pdf (25 pages, 291407 bytes).
+Output written on proposal.pdf (26 pages, 292053 bytes).
 PDF statistics:
- 481 PDF objects out of 1000 (max. 8388607)
- 432 compressed objects within 5 object streams
- 168 named destinations out of 1000 (max. 500000)
+ 486 PDF objects out of 1000 (max. 8388607)
+ 436 compressed objects within 5 object streams
+ 169 named destinations out of 1000 (max. 500000)
  206 words of extra memory for PDF output out of 10000 (max. 10000000)
 

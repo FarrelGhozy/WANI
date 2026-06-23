@@ -1,7 +1,7 @@
 # Fdb version 4
-["pdflatex"] 1782191071.87277 "/home/fazy/Documents/WANI/Docs/proposal.tex" "proposal.pdf" "proposal" 1782191072.51236 0
+["pdflatex"] 1782191420.07288 "/home/fazy/Documents/WANI/Docs/proposal.tex" "proposal.pdf" "proposal" 1782191420.69706 0
   "/etc/texmf/web2c/texmf.cnf" 1779374467.44115 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/fazy/Documents/WANI/Docs/proposal.tex" 1782191041.5204 46124 dd09296a1a8d5b264abbcf78ab7207f1 ""
+  "/home/fazy/Documents/WANI/Docs/proposal.tex" 1782191366.83526 46407 97cd2d33148dea7eb3d9b7a71f87bd2f ""
   "/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/adobe/symbol/psyr.tfm" 1136768653 1408 5937f58aa508ea2cea4901c07d10f5fe ""
@@ -138,13 +138,13 @@
   "/usr/share/texmf/web2c/texmf.cnf" 1707919699 40399 f2c302f7d2af602abb742093540a5834 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1779374518.67704 5472669 54eaf61a88b6b7896ebd0dac973cb29c ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1779374669 8212601 e9ab13ee7ba74f34f54b7e0d8d4fae53 ""
-  "fig-arsitektur.png" 1782191041.51913 72213 d3c0726b53782fd53f829bacf8fea5d4 ""
-  "proposal.aux" 1782191072.44483 5584 dfa3b298df40993a6318e45564f998c3 "pdflatex"
-  "proposal.lof" 1782191072.44583 127 b5024fa3270f840dbdf30135a6e92713 "pdflatex"
-  "proposal.lot" 1782191072.44583 652 4967e418236e808fa80cab6cc3be29fa "pdflatex"
-  "proposal.out" 1782191072.44583 4048 285f71906eb8ea4ee10b4e20f84c3074 "pdflatex"
-  "proposal.tex" 1782191041.5204 46124 dd09296a1a8d5b264abbcf78ab7207f1 ""
-  "proposal.toc" 1782191072.44583 2002 c76a8086473ef9b9a353adc7322778ae "pdflatex"
+  "fig-arsitektur.png" 1782191288.75556 72213 d3c0726b53782fd53f829bacf8fea5d4 ""
+  "proposal.aux" 1782191420.62271 5584 368db096c74ac062268551d88fbd5f2f "pdflatex"
+  "proposal.lof" 1782191420.62371 127 b5024fa3270f840dbdf30135a6e92713 "pdflatex"
+  "proposal.lot" 1782191420.62371 652 f37f707bc4f531f5d4cbd23ad28aca44 "pdflatex"
+  "proposal.out" 1782191420.62371 4048 285f71906eb8ea4ee10b4e20f84c3074 "pdflatex"
+  "proposal.tex" 1782191366.83526 46407 97cd2d33148dea7eb3d9b7a71f87bd2f ""
+  "proposal.toc" 1782191420.62371 2002 fbed6c3e27b2d988b0cfc64273712261 "pdflatex"
   (generated)
   "proposal.aux"
   "proposal.lof"
