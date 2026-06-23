@@ -3,6 +3,6 @@
   "type": "module",
   "private": true,
   "dependencies": {
-    "astro": "^6.4"
+    "astro": "^7"
   }
 }
