@@ -13,14 +13,15 @@
 
 1. [Format Respons & Auth](#1-format-respons--auth)
 2. [Endpoint WA Session (Existing)](#2-endpoint-wa-session-existing)
-3. [Endpoint Dashboard Stats (Planned)](#3-endpoint-dashboard-stats-planned)
-4. [Endpoint Products (Planned)](#4-endpoint-products-planned)
-5. [Endpoint Orders (Planned)](#5-endpoint-orders-planned)
-6. [Endpoint Customers + Chats (Planned)](#6-endpoint-customers--chats-planned)
-7. [Endpoint Settings (Planned)](#7-endpoint-settings-planned)
-8. [Endpoint Activity Log & Usage (Planned)](#8-endpoint-activity-log--usage-planned)
-9. [Endpoint Auth (Planned)](#9-endpoint-auth-planned)
-10. [Error Codes](#10-error-codes)
+3. [Endpoint AI Chat (Existing)](#3-endpoint-ai-chat-existing)
+4. [Endpoint Dashboard Stats (Planned)](#4-endpoint-dashboard-stats-planned)
+5. [Endpoint Products (Planned)](#5-endpoint-products-planned)
+6. [Endpoint Orders (Planned)](#6-endpoint-orders-planned)
+7. [Endpoint Customers + Chats (Planned)](#7-endpoint-customers--chats-planned)
+8. [Endpoint Settings (Planned)](#8-endpoint-settings-planned)
+9. [Endpoint Activity Log & Usage (Planned)](#9-endpoint-activity-log--usage-planned)
+10. [Endpoint Debug (Existing)](#10-endpoint-debug-existing)
+11. [Error Codes](#11-error-codes)
 
 ---
 
@@ -139,7 +140,63 @@ Clear QR setelah connect sukses.
 
 ---
 
-## 3. Endpoint Dashboard Stats (Planned)
+## 3. Endpoint AI Chat (Existing)
+
+Database: `Conversation` + `Message` + `Customer` + `ActivityLog` + `UsageCounter`.
+
+### POST /api/chat 🔒
+
+Process incoming WhatsApp message through the 18-step AI pipeline and return a reply.
+
+```typescript
+// Request Body
+{
+  "phone": string,        // required — customer phone number
+  "text": string,          // required — message text
+  "name"?: string,         // optional — customer name
+  "waMsgId"?: string       // optional — WhatsApp message ID for dedup
+}
+
+// Response 200
+{
+  "status": "success",
+  "message": "ok",
+  "data": {
+    "reply": string,       // AI-generated reply text
+    "intent": "order" | "inquiry" | "greeting" | "complaint" | "unknown" | "escalate"
+  }
+}
+```
+
+#### Pipeline (18 steps)
+
+1. `normalizeInput` — strip control chars + NFKC normalize + trim
+2. `upsert customer + conversation`
+3. `dedup by waMsgId`
+4. `persist inbound message`
+5. `checkRateLimit` — per-customer sliding window
+6. `scanPii` — log PII matches (phone, email, NIK, API key, address)
+7. `3-tier injection defense`
+   - **T1 regex** (always, ~0ms) — 9 attack-class groups → SAFE/BLOCK/UNCERTAIN
+   - **T2 classifier** (conditional) — OpenRouter fast model → SAFE/INJECTION/SUSPICIOUS
+   - **T3 deep judge** (conditional) — LLM-as-judge with history → SAFE/BLOCK
+8. `isBudgetExceeded` — daily LLM call budget
+9. `load context` — Store + Product + AiConfig → system prompt
+10. `build messages` — history (10) + current message
+11. `LLM call via circuit breaker` — OpenRouter, retry (2×), fallback model, 30s timeout
+12. `parse LLM output` — JSON extraction + Zod validation → 6 intents
+13. `handleIntent` — execute action (create order, log escalation, etc.)
+14. `sanitizeReply` — strip code fences, cap length
+15. `scanOutput` — canary, delimiter, system prompt, PII leak, exfiltration
+16. `redactPii` — replace leaked PII with type markers
+17. `checkGrounding` — [inquiry/order only] factual accuracy via LLM-judge
+18. `record usage + persist outbound + touch conversation`
+
+> Setiap langkah di-trace oleh ring buffer debug tracer. Lihat [Debug Endpoints](#10-endpoint-debug-existing).
+
+---
+
+## 4. Endpoint Dashboard Stats (Planned)
 
 ### GET /api/dashboard/stats
 
@@ -823,49 +880,48 @@ Reset password dengan token dari email.
 
 ## Ringkasan Endpoint
 
-| Method | Path | Auth | Status |
-|--------|------|------|--------|
-| `GET` | `/api/qr` | — | ✅ Implemented |
-| `GET` | `/api/qr/status` | — | ✅ Implemented |
-| `POST` | `/api/qr` | 🔒 | ✅ Implemented |
-| `DELETE` | `/api/qr` | 🔒 | ✅ Implemented |
-| `POST` | `/api/chat` | 🔒 | ✅ Implemented |
-| `GET` | `/api/dashboard/stats` | — | ❌ Belum di-backend |
-| `GET` | `/api/products` | — | ❌ Belum di-backend |
-| `GET` | `/api/products/:id` | — | ❌ Belum di-backend |
-| `POST` | `/api/products` | 🔒 | ❌ Belum di-backend |
-| `PUT` | `/api/products/:id` | 🔒 | ❌ Belum di-backend |
-| `DELETE` | `/api/products/:id` | 🔒 | ❌ Belum di-backend |
-| `GET` | `/api/products/categories` | — | ❌ Belum di-backend |
-| `POST` | `/api/products/categories` | 🔒 | ❌ Belum di-backend |
-| `PUT` | `/api/products/categories/:id` | 🔒 | ❌ Belum di-backend |
-| `DELETE` | `/api/products/categories/:id` | 🔒 | ❌ Belum di-backend |
-| `GET` | `/api/orders` | — | ❌ Belum di-backend |
-| `GET` | `/api/orders/:id` | — | ❌ Belum di-backend |
-| `PUT` | `/api/orders/:id/status` | 🔒 | ❌ Belum di-backend |
-| `PUT` | `/api/orders/:id/notes` | 🔒 | ❌ Belum di-backend |
-| `PUT` | `/api/orders/:id/payment` | 🔒 | ❌ Belum di-backend |
-| `GET` | `/api/customers` | — | ❌ Belum di-backend |
-| `GET` | `/api/customers/:id` | — | ❌ Belum di-backend |
-| `PUT` | `/api/customers/:id` | 🔒 | ❌ Belum di-backend |
-| `GET` | `/api/conversations` | — | ❌ Belum di-backend |
-| `GET` | `/api/conversations/:id` | — | ❌ Belum di-backend |
-| `PUT` | `/api/conversations/:id/status` | 🔒 | ❌ Belum di-backend |
-| `POST` | `/api/conversations/:id/messages` | 🔒 | ❌ Belum di-backend |
-| `GET` | `/api/store` | — | ❌ Belum di-backend |
-| `PUT` | `/api/store` | 🔒 | ❌ Belum di-backend |
-| `GET` | `/api/ai-config` | — | ❌ Belum di-backend |
-| `PUT` | `/api/ai-config` | 🔒 | ❌ Belum di-backend |
-| `GET` | `/api/qr/settings` | — | ❌ Belum di-backend |
-| `POST` | `/api/qr/disconnect` | 🔒 | ❌ Belum di-backend |
-| `POST` | `/api/auth/register` | — | ❌ Belum di-backend |
-| `POST` | `/api/auth/login` | — | ❌ Belum di-backend |
-| `GET` | `/api/auth/me` | 🔒 | ❌ Belum di-backend |
-| `POST` | `/api/auth/logout` | 🔒 | ❌ Belum di-backend |
-| `POST` | `/api/auth/forgot-password` | — | ❌ Belum di-backend |
-| `POST` | `/api/auth/reset-password` | — | ❌ Belum di-backend |
-| `GET` | `/api/logs` | — | ❌ Belum di-backend |
-| `GET` | `/api/usage` | — | ❌ Belum di-backend |
+| Method | Path | Auth | Status | Keterangan |
+|--------|------|------|--------|------------|
+| `GET` | `/api/qr` | — | ✅ Existing | |
+| `GET` | `/api/qr/status` | — | ✅ Existing | |
+| `POST` | `/api/qr` | 🔒 | ✅ Existing | |
+| `DELETE` | `/api/qr` | 🔒 | ✅ Existing | |
+| `POST` | `/api/chat` | 🔒 | ✅ Existing | 18-step AI pipeline |
+| `GET` | `/api/store` | — | ✅ Existing | Settings tab: Store |
+| `PUT` | `/api/store` | 🔒 | ✅ Existing | Settings tab: Store |
+| `GET` | `/api/ai-config` | — | ✅ Existing | Settings tab: AI Agent |
+| `PUT` | `/api/ai-config` | 🔒 | ✅ Existing | Settings tab: AI Agent |
+| `GET` | `/api/debug/traces` | — | ✅ Existing | |
+| `GET` | `/api/debug/traces/:id` | — | ✅ Existing | |
+| `DELETE` | `/api/debug/traces` | — | ✅ Existing | |
+| `GET` | `/api/debug/status` | — | ✅ Existing | |
+| `POST` | `/api/debug/circuit/reset` | — | ✅ Existing | |
+| `GET` | `/api/dashboard/stats` | — | 📋 Planned | |
+| `GET` | `/api/products` | — | 📋 Planned | |
+| `GET` | `/api/products/:id` | — | 📋 Planned | |
+| `POST` | `/api/products` | 🔒 | 📋 Planned | |
+| `PUT` | `/api/products/:id` | 🔒 | 📋 Planned | |
+| `DELETE` | `/api/products/:id` | 🔒 | 📋 Planned | |
+| `GET` | `/api/products/categories` | — | 📋 Planned | |
+| `POST` | `/api/products/categories` | 🔒 | 📋 Planned | |
+| `PUT` | `/api/products/categories/:id` | 🔒 | 📋 Planned | |
+| `DELETE` | `/api/products/categories/:id` | 🔒 | 📋 Planned | |
+| `GET` | `/api/orders` | — | 📋 Planned | |
+| `GET` | `/api/orders/:id` | — | 📋 Planned | |
+| `PUT` | `/api/orders/:id/status` | 🔒 | 📋 Planned | |
+| `PUT` | `/api/orders/:id/notes` | 🔒 | 📋 Planned | |
+| `PUT` | `/api/orders/:id/payment` | 🔒 | 📋 Planned | |
+| `GET` | `/api/customers` | — | 📋 Planned | |
+| `GET` | `/api/customers/:id` | — | 📋 Planned | |
+| `PUT` | `/api/customers/:id` | 🔒 | 📋 Planned | |
+| `GET` | `/api/conversations` | — | 📋 Planned | |
+| `GET` | `/api/conversations/:id` | — | 📋 Planned | |
+| `PUT` | `/api/conversations/:id/status` | 🔒 | 📋 Planned | |
+| `POST` | `/api/conversations/:id/messages` | 🔒 | 📋 Planned | |
+| `GET` | `/api/qr/settings` | — | 📋 Planned | Settings tab: WA Session |
+| `POST` | `/api/qr/disconnect` | 🔒 | 📋 Planned | Settings tab: WA Session |
+| `GET` | `/api/logs` | — | 📋 Planned | |
+| `GET` | `/api/usage` | — | 📋 Planned | |
 
 ---
 
