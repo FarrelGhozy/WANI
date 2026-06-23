@@ -3,11 +3,11 @@ import { GridIcon, BagIcon, ClipboardIcon, PeopleIcon, GlobeIcon, CogIcon } from
 
 const navItems = [
   { to: '/', icon: GridIcon, label: 'Dashboard' },
-  { to: '/products', icon: BagIcon, label: 'Products' },
-  { to: '/orders', icon: ClipboardIcon, label: 'Orders' },
-  { to: '/customers', icon: PeopleIcon, label: 'Customers' },
+  { to: '/products', icon: BagIcon, label: 'Produk' },
+  { to: '/orders', icon: ClipboardIcon, label: 'Pesanan' },
+  { to: '/customers', icon: PeopleIcon, label: 'Pelanggan' },
   { to: '/website', icon: GlobeIcon, label: 'Website' },
-  { to: '/settings', icon: CogIcon, label: 'Settings' },
+  { to: '/settings', icon: CogIcon, label: 'Pengaturan' },
 ]
 
 export default function BottomNav() {

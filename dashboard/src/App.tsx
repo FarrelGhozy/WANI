@@ -1,5 +1,10 @@
 import { createBrowserRouter, RouterProvider } from 'react-router'
+import AuthLayout from './components/AuthLayout.tsx'
 import Layout from './components/Layout.tsx'
+import ProtectedRoute from './components/ProtectedRoute.tsx'
+import LoginPage from './pages/LoginPage.tsx'
+import SignUpPage from './pages/SignUpPage.tsx'
+import ForgotPasswordPage from './pages/ForgotPasswordPage.tsx'
 import Dashboard from './pages/Dashboard.tsx'
 import Products from './pages/Products.tsx'
 import ProductForm from './pages/ProductForm.tsx'
@@ -11,7 +16,15 @@ import Website from './pages/Website.tsx'
 
 const router = createBrowserRouter([
   {
-    element: <Layout />,
+    element: <AuthLayout />,
+    children: [
+      { path: '/login',           element: <LoginPage /> },
+      { path: '/signup',          element: <SignUpPage /> },
+      { path: '/forgot-password', element: <ForgotPasswordPage /> },
+    ],
+  },
+  {
+    element: <ProtectedRoute><Layout /></ProtectedRoute>,
     children: [
       { index: true,           element: <Dashboard /> },
       { path: 'products',      element: <Products /> },

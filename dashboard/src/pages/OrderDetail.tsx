@@ -15,17 +15,17 @@ const statusBadge: Record<OrderStatus, 'teal' | 'amber' | 'green' | 'gray' | 're
 }
 
 const statusLabel: Record<OrderStatus, string> = {
-  PENDING: 'Pending',
-  CONFIRMED: 'Confirmed',
-  PROCESSING: 'Processing',
-  COMPLETED: 'Completed',
-  CANCELLED: 'Cancelled',
+  PENDING: 'Tertunda',
+  CONFIRMED: 'Dikonfirmasi',
+  PROCESSING: 'Diproses',
+  COMPLETED: 'Selesai',
+  CANCELLED: 'Dibatalkan',
 }
 
 const statusAction: Record<string, { label: string; variant: 'primary' | 'danger' | 'secondary'; next: OrderStatus }> = {
-  PENDING: { label: 'Confirm Order', variant: 'primary', next: 'CONFIRMED' },
-  CONFIRMED: { label: 'Start Processing', variant: 'primary', next: 'PROCESSING' },
-  PROCESSING: { label: 'Mark Completed', variant: 'primary', next: 'COMPLETED' },
+  PENDING: { label: 'Konfirmasi Pesanan', variant: 'primary', next: 'CONFIRMED' },
+  CONFIRMED: { label: 'Mulai Proses', variant: 'primary', next: 'PROCESSING' },
+  PROCESSING: { label: 'Tandai Selesai', variant: 'primary', next: 'COMPLETED' },
 }
 
 export default function OrderDetail() {
@@ -38,7 +38,7 @@ export default function OrderDetail() {
     return (
       <div className="flex flex-col items-center justify-center py-20">
         <Spinner size={24} />
-        <p className="mt-4 text-sm text-stone-500">Loading order...</p>
+        <p className="mt-4 text-sm text-stone-500">Memuat pesanan...</p>
       </div>
     )
   }
@@ -59,7 +59,7 @@ export default function OrderDetail() {
         className="inline-flex items-center gap-1.5 text-sm text-stone-500 transition-colors hover:text-stone-700"
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
-        Back to Orders
+        Kembali ke Pesanan
       </button>
 
       {/* Header */}
@@ -67,7 +67,7 @@ export default function OrderDetail() {
         <div>
           <div className="flex items-center gap-3">
             <h1 className="text-2xl font-semibold tracking-tight text-stone-900">
-              Order #{order.id.split('-')[1].toUpperCase().padStart(3, '0')}
+              Pesanan #{order.id.split('-')[1].toUpperCase().padStart(3, '0')}
             </h1>
             <Badge variant={statusBadge[order.status]} dot>{statusLabel[order.status]}</Badge>
           </div>
@@ -91,7 +91,7 @@ export default function OrderDetail() {
             )}
             {cancelable && (
               <Button size="sm" variant="danger" onClick={() => handleStatus('CANCELLED')}>
-                Cancel Order
+                Batalkan Pesanan
               </Button>
             )}
           </div>
@@ -103,14 +103,14 @@ export default function OrderDetail() {
         <div className="space-y-6 lg:col-span-2">
           {/* Items */}
           <Card accent="teal">
-            <h2 className="mb-4 text-xs font-medium uppercase tracking-wider text-stone-500">Order Items</h2>
+            <h2 className="mb-4 text-xs font-medium uppercase tracking-wider text-stone-500">Item Pesanan</h2>
             <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-stone-100 text-xs text-stone-400">
                   <th className="pb-2 text-left font-medium">Item</th>
                   <th className="pb-2 text-center font-medium">Qty</th>
-                  <th className="pb-2 text-right font-medium">Price</th>
+                  <th className="pb-2 text-right font-medium">Harga</th>
                   <th className="pb-2 text-right font-medium">Subtotal</th>
                 </tr>
               </thead>
@@ -136,15 +136,15 @@ export default function OrderDetail() {
 
           {/* Payment */}
           <Card accent={order.payment?.status === 'PAID' ? 'amber' : 'none'}>
-            <h2 className="mb-4 text-xs font-medium uppercase tracking-wider text-stone-500">Payment</h2>
+            <h2 className="mb-4 text-xs font-medium uppercase tracking-wider text-stone-500">Pembayaran</h2>
             {order.payment ? (
               <div className="grid gap-4 sm:grid-cols-3">
                 <div>
-                  <p className="text-xs text-stone-500">Method</p>
+                  <p className="text-xs text-stone-500">Metode</p>
                   <p className="text-sm font-medium text-stone-900">{order.payment.method ?? '-'}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-stone-500">Amount</p>
+                  <p className="text-xs text-stone-500">Jumlah</p>
                   <p className="text-sm font-medium text-stone-900">{formatPrice(order.payment.amount)}</p>
                 </div>
                 <div>
@@ -162,7 +162,7 @@ export default function OrderDetail() {
           {/* Notes */}
           {order.notes && (
             <Card>
-              <h2 className="mb-2 text-xs font-medium uppercase tracking-wider text-stone-500">Notes</h2>
+              <h2 className="mb-2 text-xs font-medium uppercase tracking-wider text-stone-500">Catatan</h2>
               <p className="text-sm text-stone-700">{order.notes}</p>
             </Card>
           )}
@@ -171,7 +171,7 @@ export default function OrderDetail() {
         {/* Right: Timeline */}
         <div>
           <Card>
-            <h2 className="mb-4 text-xs font-medium uppercase tracking-wider text-stone-500">Timeline</h2>
+            <h2 className="mb-4 text-xs font-medium uppercase tracking-wider text-stone-500">Riwayat</h2>
             <OrderTimeline
               status={order.status}
               createdAt={order.createdAt}

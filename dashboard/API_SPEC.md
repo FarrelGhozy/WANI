@@ -731,97 +731,128 @@ Putuskan koneksi WA.
 
 ---
 
-## 10. Endpoint Debug (Existing)
+## 9. Endpoint Auth (Planned)
 
-Ring buffer pipeline tracer — menyimpan 500 trace terakhir di memory.
+### POST /api/auth/register
 
-### GET /api/debug/traces
-
-Daftar trace pipeline (terbaru duluan).
+Daftar akun baru.
 
 ```typescript
-// Query params
-?limit=50     // max 200
+// Body
+{
+  "name": string,         // required
+  "email": string,         // required, valid email
+  "password": string       // required, min 8 chars
+}
+
+// Response 201
+{
+  "status": "success",
+  "data": {
+    "token": string,
+    "user": {
+      "id": string,
+      "name": string,
+      "email": string,
+      "role": "admin"
+    }
+  }
+}
+
+// Error 409 — email already registered
+```
+
+### POST /api/auth/login
+
+Masuk dengan email & password.
+
+```typescript
+// Body
+{
+  "email": string,         // required
+  "password": string       // required
+}
 
 // Response 200
 {
   "status": "success",
   "data": {
-    "traces": [{
-      "id": string,                    // 8-char hex
-      "phone": string,
-      "startedAt": string,             // ISO 8601
-      "finishedAt": string | null,
-      "totalDurationMs": number | null,
-      "steps": [{
-        "name": string,                // step name (e.g. "normalize", "firewall_tier1", "llm_call")
-        "durationMs": number,
-        "data": Record<string, unknown>
-      }],
-      "result": { "reply": string, "intent": string, "blocked": boolean } | null,
-      "error": string | null
-    }]
+    "token": string,
+    "user": {
+      "id": string,
+      "name": string,
+      "email": string,
+      "role": "admin"
+    }
   }
 }
+
+// Error 401 — email/password salah
 ```
 
-### GET /api/debug/traces/:id
+### GET /api/auth/me 🔒
 
-Detail trace by ID.
+Ambil data user dari token yang sedang aktif.
 
 ```typescript
+// Headers
+Authorization: Bearer {token}
+
 // Response 200
 {
   "status": "success",
   "data": {
-    "trace": { /* same shape as above */ }
+    "id": string,
+    "name": string,
+    "email": string,
+    "role": "admin"
   }
 }
 
-// Response 404
+// Error 401 — token invalid/expired
+```
+
+### POST /api/auth/logout 🔒
+
+Invalidasi token (opsional — bisa juga cukup clear token di client).
+
+```typescript
+// Response 200
+{ "status": "success", "message": "logged out" }
+```
+
+### POST /api/auth/forgot-password
+
+Kirim email reset password.
+
+```typescript
+// Body
+{ "email": string }
+
+// Response 200
+{ "status": "success", "message": "reset link sent" }
+```
+
+### POST /api/auth/reset-password
+
+Reset password dengan token dari email.
+
+```typescript
+// Body
 {
-  "status": "failure",
-  "message": "Trace not found"
+  "token": string,         // dari email
+  "password": string       // new password, min 8 chars
 }
-```
 
-### DELETE /api/debug/traces
-
-Hapus semua trace dari ring buffer.
-
-```typescript
 // Response 200
-{ "status": "success", "message": "ok" }
-```
+{ "status": "success", "message": "password reset" }
 
-### GET /api/debug/status
-
-Info runtime: uptime, memory usage, circuit breaker state.
-
-```typescript
-// Response 200
-{
-  "status": "success",
-  "data": {
-    "circuitBreaker": { "state": string, "resetCircuit": string },
-    "uptime": number,
-    "memory": { "rss": number, "heapTotal": number, "heapUsed": number }
-  }
-}
-```
-
-### POST /api/debug/circuit/reset
-
-Reset circuit breaker ke closed state.
-
-```typescript
-// Response 200
-{ "status": "success", "message": "ok", "data": { "message": "Circuit breaker reset" } }
+// Error 400 — token invalid/expired
 ```
 
 ---
 
-## 11. Error Codes
+## 10. Error Codes
 
 | Status | Class | Penyebab |
 |--------|-------|----------|

@@ -11,7 +11,7 @@ interface ChatViewProps {
 const roleLabel: Record<string, string> = {
   CUSTOMER: '',
   BOT: '🤖 Bot',
-  HUMAN: '👤 You',
+  HUMAN: '👤 Anda',
 }
 
 const roleBg: Record<string, string> = {
@@ -77,7 +77,7 @@ export default function ChatView({ customerName, conversation, onBack }: ChatVie
             </Badge>
           </div>
         </div>
-        <span className="text-xs text-stone-400">{conversation.messages.length} messages</span>
+        <span className="text-xs text-stone-400">{conversation.messages.length} pesan</span>
       </div>
 
       {/* Messages */}
@@ -97,7 +97,7 @@ export default function ChatView({ customerName, conversation, onBack }: ChatVie
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder={`Reply to ${customerName}...`}
+            placeholder={`Balas ${customerName}...`}
             className="h-10 flex-1 rounded-xl border border-stone-300 bg-white px-4 text-sm text-stone-900 transition-all placeholder:text-stone-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
           />
           <button

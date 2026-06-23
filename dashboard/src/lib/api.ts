@@ -4,8 +4,17 @@ interface ApiResponse<T> {
   data: T | null
 }
 
-export async function fetchApi<T>(path: string): Promise<ApiResponse<T>> {
-  const res = await fetch(path)
+export async function fetchApi<T>(path: string, options?: RequestInit): Promise<ApiResponse<T>> {
+  const token = localStorage.getItem('wani_auth_token')
+  const headers: Record<string, string> = {
+    ...(options?.headers as Record<string, string> ?? {}),
+  }
+
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`
+  }
+
+  const res = await fetch(path, { ...options, headers })
   const json = await res.json() as ApiResponse<T>
 
   if (json.status === 'failure') {

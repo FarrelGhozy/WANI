@@ -1,13 +1,15 @@
-import { NavLink } from 'react-router'
-import { GridIcon, BagIcon, ClipboardIcon, PeopleIcon, GlobeIcon, CogIcon } from './Icons.tsx'
+import { useCallback } from 'react'
+import { NavLink, useNavigate } from 'react-router'
+import { useAuth } from '../hooks/useAuth.ts'
+import { GridIcon, BagIcon, ClipboardIcon, PeopleIcon, GlobeIcon, CogIcon, LogOutIcon } from './Icons.tsx'
 
 const navItems = [
   { to: '/', icon: GridIcon, label: 'Dashboard' },
-  { to: '/products', icon: BagIcon, label: 'Products' },
-  { to: '/orders', icon: ClipboardIcon, label: 'Orders' },
-  { to: '/customers', icon: PeopleIcon, label: 'Customers' },
+  { to: '/products', icon: BagIcon, label: 'Produk' },
+  { to: '/orders', icon: ClipboardIcon, label: 'Pesanan' },
+  { to: '/customers', icon: PeopleIcon, label: 'Pelanggan' },
   { to: '/website', icon: GlobeIcon, label: 'Website' },
-  { to: '/settings', icon: CogIcon, label: 'Settings' },
+  { to: '/settings', icon: CogIcon, label: 'Pengaturan' },
 ]
 
 interface SidebarProps {
@@ -26,14 +28,21 @@ function statusColor(status: string) {
 
 function statusLabel(status: string) {
   switch (status) {
-    case 'connected': return 'Connected'
-    case 'connecting': return 'Connecting'
-    default: return 'Disconnected'
+    case 'connected': return 'Terhubung'
+    case 'connecting': return 'Menghubungkan'
+    default: return 'Terputus'
   }
 }
 
 export default function Sidebar({ connection, storeName, storeLogoUrl }: SidebarProps) {
+  const navigate = useNavigate()
+  const { logout } = useAuth()
   const initial = storeName.charAt(0).toUpperCase()
+
+  const handleLogout = useCallback(() => {
+    logout()
+    navigate('/login', { replace: true })
+  }, [logout, navigate])
 
   return (
     <aside className="fixed left-0 top-0 z-30 hidden h-screen w-64 flex-col bg-teal-800 lg:flex">
@@ -76,6 +85,19 @@ export default function Sidebar({ connection, storeName, storeLogoUrl }: Sidebar
         ))}
       </nav>
 
+      {/* Logout */}
+      <div className="border-t border-teal-700/50 px-3 py-2">
+        <button
+          onClick={handleLogout}
+          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-red-300 transition-all duration-200 hover:bg-white/5 hover:text-red-200"
+        >
+          <span className="shrink-0 text-red-300">
+            <LogOutIcon />
+          </span>
+          <span>Keluar</span>
+        </button>
+      </div>
+
       {/* Connection Status */}
       <div className="border-t border-teal-700/50 px-6 py-4">
         <div className="flex items-center gap-3">
@@ -102,7 +124,7 @@ export default function Sidebar({ connection, storeName, storeLogoUrl }: Sidebar
           </div>
           <div className="flex min-w-0 flex-col">
             <span className="truncate text-sm font-medium text-teal-50">{storeName}</span>
-            <span className="text-xs text-teal-300">Store Owner</span>
+            <span className="text-xs text-teal-300">Pemilik Toko</span>
           </div>
         </div>
       </div>

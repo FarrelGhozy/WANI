@@ -21,16 +21,16 @@ export default function Website() {
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
           <Card accent="teal">
-            <h2 className="mb-5 text-lg font-semibold text-stone-900">Content Config</h2>
+            <h2 className="mb-5 text-lg font-semibold text-stone-900">Konfigurasi Konten</h2>
             <div className="grid gap-5 sm:grid-cols-2">
-              <Field label="Hero Headline">
+              <Field label="Judul Hero">
                 <input
                   value={config.heroHeadline}
                   onChange={(e) => updateConfig({ heroHeadline: e.target.value })}
                   className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
                 />
               </Field>
-              <Field label="Hero Subheadline">
+              <Field label="Subjudul Hero">
                 <input
                   value={config.heroSubheadline}
                   onChange={(e) => updateConfig({ heroSubheadline: e.target.value })}
@@ -38,7 +38,7 @@ export default function Website() {
                 />
               </Field>
               <div className="sm:col-span-2">
-                <Field label="About Text">
+                <Field label="Teks Tentang">
                   <textarea
                     value={config.aboutText}
                     onChange={(e) => updateConfig({ aboutText: e.target.value })}
@@ -47,7 +47,7 @@ export default function Website() {
                   />
                 </Field>
               </div>
-              <Field label="Primary Color">
+              <Field label="Warna Utama">
                 <div className="flex items-center gap-3">
                   <input
                     type="color"
@@ -58,7 +58,7 @@ export default function Website() {
                   <span className="font-mono text-xs text-stone-500">{config.primaryColor}</span>
                 </div>
               </Field>
-              <Field label="Secondary Color">
+              <Field label="Warna Sekunder">
                 <div className="flex items-center gap-3">
                   <input
                     type="color"
@@ -69,7 +69,7 @@ export default function Website() {
                   <span className="font-mono text-xs text-stone-500">{config.secondaryColor}</span>
                 </div>
               </Field>
-              <Field label="WhatsApp Number">
+              <Field label="Nomor WhatsApp">
                 <input
                   value={config.phone}
                   onChange={(e) => updateConfig({ phone: e.target.value })}
@@ -124,14 +124,14 @@ export default function Website() {
 
           <Card accent="none" padding={false}>
             <div className="px-4 py-3 sm:px-6">
-              <h2 className="text-lg font-semibold text-stone-900">Activity Log</h2>
+              <h2 className="text-lg font-semibold text-stone-900">Log Aktivitas</h2>
             </div>
             <div className="divide-y divide-stone-100 border-t border-stone-200">
               {logs.map((log) => (
                 <div key={log.id} className="flex items-center justify-between px-4 py-3 sm:px-6">
                   <div className="flex items-center gap-3">
                     <Badge variant={log.status === 'success' ? 'green' : 'red'} dot>
-                      {log.status === 'success' ? 'Success' : 'Failed'}
+                      {log.status === 'success' ? 'Berhasil' : 'Gagal'}
                     </Badge>
                     <div>
                       <p className="text-sm text-stone-700">{log.message}</p>
@@ -152,7 +152,7 @@ export default function Website() {
 
         <div className="space-y-4">
           <Card accent="amber">
-            <h2 className="mb-4 text-lg font-semibold text-stone-900">Quick Actions</h2>
+            <h2 className="mb-4 text-lg font-semibold text-stone-900">Aksi Cepat</h2>
             <div className="space-y-3">
               <Button
                 size="md"
@@ -160,7 +160,7 @@ export default function Website() {
                 loading={generating}
                 onClick={generate}
               >
-                Generate Now
+                Generate Sekarang
               </Button>
               <Button
                 size="md"
@@ -168,7 +168,7 @@ export default function Website() {
                 className="w-full"
                 onClick={() => window.open('/s/preview/default/', '_blank')}
               >
-                Preview Website
+                Lihat Preview
               </Button>
               <Button
                 size="md"

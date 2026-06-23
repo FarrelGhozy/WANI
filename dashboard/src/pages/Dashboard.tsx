@@ -19,11 +19,11 @@ const statusBadgeVariant: Record<string, 'amber' | 'teal' | 'green' | 'gray' | '
 }
 
 const statusLabel: Record<string, string> = {
-  PENDING: 'Pending',
-  CONFIRMED: 'Confirmed',
-  PROCESSING: 'Processing',
-  COMPLETED: 'Completed',
-  CANCELLED: 'Cancelled',
+  PENDING: 'Tertunda',
+  CONFIRMED: 'Dikonfirmasi',
+  PROCESSING: 'Diproses',
+  COMPLETED: 'Selesai',
+  CANCELLED: 'Dibatalkan',
 }
 
 function formatPrice(price: number) {
@@ -40,9 +40,9 @@ function mapAccent(status: string): 'teal' | 'amber' | 'red' {
 
 function connectionLabel(status: string): string {
   switch (status) {
-    case 'connected': return 'Connected'
-    case 'connecting': return 'Connecting\u2026'
-    default: return 'Disconnected'
+    case 'connected': return 'Terhubung'
+    case 'connecting': return 'Menghubungkan\u2026'
+    default: return 'Terputus'
   }
 }
 
@@ -108,7 +108,7 @@ export default function Dashboard() {
       {/* Key Metrics */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatusCard
-          label="Total Revenue"
+          label="Total Pendapatan"
           value={formatPrice(totalRevenue)}
           accent="teal"
           icon={<BagIcon />}
@@ -119,7 +119,7 @@ export default function Dashboard() {
           value={String(pendingProcessOrders.length)}
           accent={pendingProcessOrders.length > 0 ? 'amber' : 'teal'}
           icon={<ClipboardIcon />}
-          subText={pendingProcessOrders.length > 0 ? 'Pending / Confirmed' : 'Semua sudah diproses'}
+          subText={pendingProcessOrders.length > 0 ? 'Menunggu konfirmasi' : 'Semua sudah diproses'}
         />
         <StatusCard
           label="Produk Aktif"

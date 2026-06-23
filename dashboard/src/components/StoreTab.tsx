@@ -34,7 +34,7 @@ export default function StoreTab({ store, onUpdate }: StoreTabProps) {
   return (
     <>
       <Card accent="teal">
-        <h2 className="mb-6 text-lg font-semibold text-stone-900">Store Profile</h2>
+        <h2 className="mb-6 text-lg font-semibold text-stone-900">Profil Toko</h2>
 
         {/* Photo */}
         <div className="mb-8 flex flex-col items-center gap-4 sm:flex-row">
@@ -48,13 +48,13 @@ export default function StoreTab({ store, onUpdate }: StoreTabProps) {
             </div>
           </div>
           <div className="text-center sm:text-left">
-            <p className="text-sm font-medium text-stone-900">Store Photo</p>
+            <p className="text-sm font-medium text-stone-900">Foto Toko</p>
             <p className="text-xs text-stone-500">Upload foto profil untuk toko Anda</p>
             <button
               onClick={() => fileRef.current?.click()}
               className="mt-2 text-xs font-medium text-teal-600 transition-colors hover:text-teal-700"
             >
-              Change Photo
+              Ganti Foto
             </button>
             <input
               ref={fileRef}
@@ -67,21 +67,21 @@ export default function StoreTab({ store, onUpdate }: StoreTabProps) {
         </div>
 
         <div className="grid gap-5 sm:grid-cols-2">
-          <Field label="Business Name">
+          <Field label="Nama Bisnis">
             <input
               value={store.businessName}
               onChange={(e) => onUpdate({ businessName: e.target.value })}
               className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
             />
           </Field>
-          <Field label="Phone">
+          <Field label="Telepon">
             <input
               value={store.phone}
               onChange={(e) => onUpdate({ phone: e.target.value })}
               className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
             />
           </Field>
-          <Field label="Address">
+          <Field label="Alamat">
             <textarea
               value={store.address ?? ''}
               onChange={(e) => onUpdate({ address: e.target.value || null })}
@@ -89,21 +89,21 @@ export default function StoreTab({ store, onUpdate }: StoreTabProps) {
               className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
             />
           </Field>
-          <Field label="Business Hours">
+          <Field label="Jam Operasional">
             <input
               value={store.businessHours ?? ''}
               onChange={(e) => onUpdate({ businessHours: e.target.value || null })}
               className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
             />
           </Field>
-          <Field label="Payment Methods">
+          <Field label="Metode Pembayaran">
             <input
               value={store.paymentMethods ?? ''}
               onChange={(e) => onUpdate({ paymentMethods: e.target.value || null })}
               className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
             />
           </Field>
-          <Field label="Shipping Info">
+          <Field label="Info Pengiriman">
             <input
               value={store.shippingInfo ?? ''}
               onChange={(e) => onUpdate({ shippingInfo: e.target.value || null })}
@@ -111,7 +111,7 @@ export default function StoreTab({ store, onUpdate }: StoreTabProps) {
             />
           </Field>
           <div className="sm:col-span-2">
-            <Field label="Return Policy">
+            <Field label="Kebijakan Retur">
               <textarea
                 value={store.returnPolicy ?? ''}
                 onChange={(e) => onUpdate({ returnPolicy: e.target.value || null })}
@@ -123,7 +123,7 @@ export default function StoreTab({ store, onUpdate }: StoreTabProps) {
         </div>
         <div className="mt-6 flex items-center justify-between rounded-lg bg-stone-50 px-4 py-3">
           <div>
-            <p className="text-sm font-medium text-stone-900">Store Active</p>
+            <p className="text-sm font-medium text-stone-900">Toko Aktif</p>
             <p className="text-xs text-stone-500">Nonaktifkan untuk menyembunyikan toko dari pelanggan</p>
           </div>
           <button
@@ -140,7 +140,7 @@ export default function StoreTab({ store, onUpdate }: StoreTabProps) {
           </button>
         </div>
         <div className="mt-4 flex justify-end gap-3">
-          <Button size="sm">Save Changes</Button>
+          <Button size="sm">Simpan Perubahan</Button>
         </div>
       </Card>
 
