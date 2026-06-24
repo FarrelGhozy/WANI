@@ -1,6 +1,6 @@
 import { Router } from "express"
 import * as customerController from "@/src/controllers/customer"
-import { requireAuth } from "@/src/middleware/auth"
+import { requireJwt } from "@/src/middleware/jwt"
 import { validate } from "@/src/middleware/validate"
 import {
   customerQuerySchema,
@@ -13,7 +13,7 @@ const router = Router()
 
 router.get("/", validate({ query: customerQuerySchema }), customerController.listCustomers)
 router.get("/:id", customerController.getCustomer)
-router.put("/:id", requireAuth, validate({ body: updateCustomerSchema }), customerController.updateCustomer)
+router.put("/:id", requireJwt, validate({ body: updateCustomerSchema }), customerController.updateCustomer)
 
 export default router
 
@@ -22,13 +22,13 @@ export const conversationRouter = Router()
 conversationRouter.get("/:id", customerController.getConversation)
 conversationRouter.put(
   "/:id/status",
-  requireAuth,
+  requireJwt,
   validate({ body: updateConversationStatusSchema }),
   customerController.updateConversationStatus,
 )
 conversationRouter.post(
   "/:id/messages",
-  requireAuth,
+  requireJwt,
   validate({ body: sendMessageSchema }),
   customerController.sendMessage,
 )

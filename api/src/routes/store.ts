@@ -1,12 +1,12 @@
 import { Router } from "express"
 import * as storeController from "@/src/controllers/store"
-import { requireAuth } from "@/src/middleware/auth"
+import { requireJwt } from "@/src/middleware/jwt"
 import { validate } from "@/src/middleware/validate"
 import { upsertStoreSchema } from "@/src/schemas/store"
 
 const router = Router()
 
 router.get("/", storeController.getStore)
-router.put("/", requireAuth, validate({ body: upsertStoreSchema }), storeController.upsertStore)
+router.put("/", requireJwt, validate({ body: upsertStoreSchema }), storeController.upsertStore)
 
 export default router

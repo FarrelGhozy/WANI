@@ -1,6 +1,7 @@
 import { Router } from "express"
 import * as productController from "@/src/controllers/product"
 import { requireAuth } from "@/src/middleware/auth"
+import { requireJwt } from "@/src/middleware/jwt"
 import { validate } from "@/src/middleware/validate"
 import {
   createProductSchema,
@@ -14,15 +15,15 @@ const router = Router()
 
 router.get("/", validate({ query: productQuerySchema }), productController.listProducts)
 router.get("/:id", productController.getProduct)
-router.post("/", requireAuth, validate({ body: createProductSchema }), productController.createProduct)
-router.put("/:id", requireAuth, validate({ body: updateProductSchema }), productController.updateProduct)
-router.delete("/:id", requireAuth, productController.deleteProduct)
+router.post("/", requireJwt, validate({ body: createProductSchema }), productController.createProduct)
+router.put("/:id", requireJwt, validate({ body: updateProductSchema }), productController.updateProduct)
+router.delete("/:id", requireJwt, productController.deleteProduct)
 
 export default router
 
 export const categoryRouter = Router()
 
 categoryRouter.get("/", productController.listCategories)
-categoryRouter.post("/", requireAuth, validate({ body: createCategorySchema }), productController.createCategory)
-categoryRouter.put("/:id", requireAuth, validate({ body: updateCategorySchema }), productController.updateCategory)
-categoryRouter.delete("/:id", requireAuth, productController.deleteCategory)
+categoryRouter.post("/", requireJwt, validate({ body: createCategorySchema }), productController.createCategory)
+categoryRouter.put("/:id", requireJwt, validate({ body: updateCategorySchema }), productController.updateCategory)
+categoryRouter.delete("/:id", requireJwt, productController.deleteCategory)
