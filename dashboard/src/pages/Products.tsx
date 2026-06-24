@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router'
 import { useProducts } from '../hooks/useProducts.ts'
 import ProductListView from '../components/ProductListView.tsx'
 import ProductCard from '../components/ProductCard.tsx'
+import CategoryModal from '../components/CategoryModal.tsx'
 import Button from '../components/ui/Button.tsx'
 import Pagination from '../components/ui/Pagination.tsx'
 import Modal from '../components/ui/Modal.tsx'
@@ -18,11 +19,13 @@ export default function Products() {
     categoryFilter, setCategoryFilter,
     sortField, sortDir, toggleSort,
     deleteProduct,
+    createCategory, updateCategory, deleteCategory,
   } = useProducts()
 
   const [view, setView] = useState<'list' | 'card'>('list')
   const [cardPage, setCardPage] = useState(1)
   const [deleteId, setDeleteId] = useState<string | null>(null)
+  const [categoryModalOpen, setCategoryModalOpen] = useState(false)
   const deleteTarget = deleteId ? products.find((p) => p.id === deleteId) : null
 
   const cardTotalPages = Math.max(1, Math.ceil(products.length / CARD_LIMIT))
@@ -67,6 +70,11 @@ export default function Products() {
               Grid
             </button>
           </div>
+          <Button variant="secondary" icon={
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M4 6h16M4 12h16M4 18h16" /></svg>
+          } onClick={() => setCategoryModalOpen(true)}>
+            Kelola Kategori
+          </Button>
           <Button icon={
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
           } onClick={() => navigate('/products/new')}>
@@ -150,6 +158,16 @@ export default function Products() {
           Tindakan ini tidak bisa dibatalkan.
         </p>
       </Modal>
+
+      {/* Category Modal */}
+      <CategoryModal
+        open={categoryModalOpen}
+        onClose={() => setCategoryModalOpen(false)}
+        categories={categories}
+        onCreate={createCategory}
+        onUpdate={updateCategory}
+        onDelete={deleteCategory}
+      />
     </div>
   )
 }

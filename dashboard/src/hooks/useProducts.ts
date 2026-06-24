@@ -149,6 +149,47 @@ export function useProducts() {
     }
   }, [])
 
+  const createCategory = useCallback(async (data: { name: string; description?: string | null }): Promise<Category | undefined> => {
+    try {
+      const res = await fetchApi<Category>('/api/products/categories', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      })
+      if (res.data) {
+        setAllCategories((prev) => [...prev, res.data!])
+        return res.data
+      }
+    } catch (e) {
+      setError((e as Error).message)
+    }
+  }, [])
+
+  const updateCategory = useCallback(async (id: string, data: { name?: string; description?: string | null }): Promise<Category | undefined> => {
+    try {
+      const res = await fetchApi<Category>(`/api/products/categories/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      })
+      if (res.data) {
+        setAllCategories((prev) => prev.map((c) => c.id === id ? res.data! : c))
+        return res.data
+      }
+    } catch (e) {
+      setError((e as Error).message)
+    }
+  }, [])
+
+  const deleteCategory = useCallback(async (id: string): Promise<void> => {
+    try {
+      await fetchApi(`/api/products/categories/${id}`, { method: 'DELETE' })
+      setAllCategories((prev) => prev.filter((c) => c.id !== id))
+    } catch (e) {
+      setError((e as Error).message)
+    }
+  }, [])
+
   return {
     products: filtered,
     categories: allCategories,
@@ -158,6 +199,7 @@ export function useProducts() {
     categoryFilter, setCategoryFilter,
     sortField, sortDir, toggleSort,
     getProduct, createProduct, updateProduct, deleteProduct,
+    createCategory, updateCategory, deleteCategory,
     reload: load,
   }
 }

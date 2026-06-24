@@ -19,7 +19,7 @@ function parsePrice(value: string) {
 export default function ProductForm() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { getProduct, categories, createProduct, updateProduct } = useProducts()
+  const { getProduct, categories, createProduct, updateProduct, createCategory } = useProducts()
   const isEdit = Boolean(id)
 
   const [form, setForm] = useState<ProductFormData>({
@@ -37,6 +37,10 @@ export default function ProductForm() {
   const [errors, setErrors] = useState<Partial<Record<keyof ProductFormData, string>>>({})
   const fileRef = useRef<HTMLInputElement>(null)
   const objectUrlRef = useRef<string | null>(null)
+  const [showNewCategory, setShowNewCategory] = useState(false)
+  const [newCategoryName, setNewCategoryName] = useState('')
+  const [newCategoryDesc, setNewCategoryDesc] = useState('')
+  const [creatingCategory, setCreatingCategory] = useState(false)
 
   useEffect(() => {
     return () => {
@@ -86,6 +90,19 @@ export default function ProductForm() {
     if (form.stock < 0) errs.stock = 'Stok tidak boleh negatif'
     setErrors(errs)
     return Object.keys(errs).length === 0
+  }
+
+  async function handleCreateCategory() {
+    if (!newCategoryName.trim()) return
+    setCreatingCategory(true)
+    const cat = await createCategory({ name: newCategoryName.trim(), description: newCategoryDesc.trim() || null })
+    if (cat) {
+      set('categoryId', cat.id)
+    }
+    setCreatingCategory(false)
+    setShowNewCategory(false)
+    setNewCategoryName('')
+    setNewCategoryDesc('')
   }
 
   function handleSubmit(e: React.FormEvent) {
@@ -198,6 +215,41 @@ export default function ProductForm() {
               value={form.categoryId ?? ''}
               onChange={(e) => set('categoryId', e.target.value)}
             />
+            {showNewCategory ? (
+              <div className="mt-2 space-y-2 rounded-lg border border-teal-200 bg-teal-50 p-3">
+                <input
+                  value={newCategoryName}
+                  onChange={(e) => setNewCategoryName(e.target.value)}
+                  placeholder="Nama kategori baru"
+                  className="h-9 w-full rounded-md border border-stone-300 bg-white px-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+                />
+                <input
+                  value={newCategoryDesc}
+                  onChange={(e) => setNewCategoryDesc(e.target.value)}
+                  placeholder="Deskripsi (opsional)"
+                  className="h-9 w-full rounded-md border border-stone-300 bg-white px-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+                />
+                <div className="flex gap-2">
+                  <Button size="sm" onClick={handleCreateCategory} loading={creatingCategory} disabled={!newCategoryName.trim()}>
+                    Simpan
+                  </Button>
+                  <Button size="sm" variant="secondary" onClick={() => { setShowNewCategory(false); setNewCategoryName(''); setNewCategoryDesc('') }}>
+                    Batal
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setShowNewCategory(true)}
+                className="mt-1.5 inline-flex items-center gap-1 text-xs font-medium text-teal-600 transition-colors hover:text-teal-700"
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                  <path d="M12 5v14M5 12h14" />
+                </svg>
+                Tambah Kategori Baru
+              </button>
+            )}
             <div className="space-y-1.5">
               <label className="text-xs font-medium uppercase tracking-wider text-stone-500">Deskripsi</label>
               <textarea

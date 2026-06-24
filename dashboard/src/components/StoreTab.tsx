@@ -1,9 +1,11 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import { Link } from 'react-router'
 import type { StoreProfile } from '../hooks/useSettings.ts'
+import { useProducts } from '../hooks/useProducts.ts'
 import Card from './ui/Card.tsx'
 import Button from './ui/Button.tsx'
+import CategoryModal from './CategoryModal.tsx'
 
 interface StoreTabProps {
   store: StoreProfile
@@ -21,6 +23,8 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
 
 export default function StoreTab({ store, onUpdate }: StoreTabProps) {
   const fileRef = useRef<HTMLInputElement>(null)
+  const { categories, createCategory, updateCategory, deleteCategory } = useProducts()
+  const [categoryModalOpen, setCategoryModalOpen] = useState(false)
 
   function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
@@ -144,6 +148,26 @@ export default function StoreTab({ store, onUpdate }: StoreTabProps) {
         </div>
       </Card>
 
+      {/* Categories */}
+      <Card accent="teal" className="mt-6">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-teal-100">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" className="text-teal-600">
+                <rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" />
+              </svg>
+            </div>
+            <div>
+              <p className="text-sm font-medium text-stone-900">Kategori Produk</p>
+              <p className="text-xs text-stone-500">{categories.length} kategori — atur pengelompokan produk Anda</p>
+            </div>
+          </div>
+          <Button size="sm" variant="secondary" onClick={() => setCategoryModalOpen(true)}>
+            Kelola Kategori
+          </Button>
+        </div>
+      </Card>
+
       <Card accent="amber" className="mt-6">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
@@ -169,6 +193,16 @@ export default function StoreTab({ store, onUpdate }: StoreTabProps) {
           </Link>
         </div>
       </Card>
+
+      {/* Category Modal */}
+      <CategoryModal
+        open={categoryModalOpen}
+        onClose={() => setCategoryModalOpen(false)}
+        categories={categories}
+        onCreate={createCategory}
+        onUpdate={updateCategory}
+        onDelete={deleteCategory}
+      />
     </>
   )
 }
