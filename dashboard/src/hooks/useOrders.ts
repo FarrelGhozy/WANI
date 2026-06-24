@@ -106,7 +106,7 @@ export function useOrders() {
     setLoading(true)
     setError(null)
     try {
-      const res = await fetchApi<{ items: ApiOrder[]; total: number }>('/api/orders?limit=999')
+      const res = await fetchApi<{ items: ApiOrder[]; total: number }>('/api/orders?limit=100')
       setOrders(res.data?.items.map(mapOrder) ?? [])
     } catch (e) {
       setError((e as Error).message)

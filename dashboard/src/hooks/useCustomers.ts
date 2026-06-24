@@ -49,7 +49,7 @@ export function useCustomers() {
     setLoading(true)
     setError(null)
     try {
-      const res = await fetchApi<{ items: ApiCustomer[]; total: number }>('/api/customers?limit=999')
+      const res = await fetchApi<{ items: ApiCustomer[]; total: number }>('/api/customers?limit=100')
       setCustomers(res.data?.items ?? [])
     } catch (e) {
       setError((e as Error).message)

@@ -47,7 +47,7 @@ export function useProducts() {
     setError(null)
     try {
       const [prodRes, catRes] = await Promise.all([
-        fetchApi<{ items: Product[]; total: number }>('/api/products?limit=999'),
+        fetchApi<{ items: Product[]; total: number }>('/api/products?limit=100'),
         fetchApi<{ items: Category[] }>('/api/products/categories'),
       ])
       setAllProducts(prodRes.data?.items ?? [])
