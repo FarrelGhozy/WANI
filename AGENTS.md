@@ -238,3 +238,62 @@ scanInput reasons mapped by confidence:
 
 - **`dashboard/ARCHITECTURE.md`** — Component tree, routing, design system (warm teal+amber palette), data flow, page spec, mock strategy
 - **`dashboard/API_SPEC.md`** — Full API contract spec for all 5 pages, request/response shapes, error codes
+
+## Workflow Step-by-Step
+
+Tiap pekerjaan backend dikerjakan dalam tahapan kecil (per fitur/endpoint/komponen), dan tiap tahap di-commit ke git lokal supaya histori jelas dan gampang rollback.
+
+### Aturan Dasar
+
+1. **Satu fitur = satu atau lebih tahap.** Contoh: Products CRUD dipecah jadi: route+schema → controller → model → test → commit.
+2. **Commit tiap tahap selesai.** Jangan nunggu semua fitur rampung baru commit.
+3. **Commit message yang jelas.** Format: `{emoji} {package}: {action} — {detail}`.
+   - `🔥 api: add products CRUD — route, schema, controller, model`
+   - `🧪 api: add products tests`
+   - `📝 api: add ARSITEKTUR.md`
+4. **Jangan commit sekaligus banyak perubahan.** Kalau terlanjur banyak berubah di satu sesi, commit terakhir boleh `squash` asal dikasih tahu.
+5. **Tanya dulu sebelum mulai tahap baru.** "Gw lanjut ke tahap X?" — jangan tiba-tiba ngoding tanpa konfirmasi.
+
+### Alur per Tahap
+
+```
+┌──────────────────────────────────────────┐
+│  1. Tanya: "Gw kerjain [fitur] ya?"     │
+│     → User: "gas" / "nanti"              │
+└──────────────────┬───────────────────────┘
+                   ▼
+┌──────────────────────────────────────────┐
+│  2. Coding — implementasi sesuai rencana│
+│     (biasanya: schema → route →         │
+│      controller → model)                │
+└──────────────────┬───────────────────────┘
+                   ▼
+┌──────────────────────────────────────────┐
+│  3. Verify — type check, lint, test     │
+│     (bun test / tsc --noEmit)            │
+└──────────────────┬───────────────────────┘
+                   ▼
+┌──────────────────────────────────────────┐
+│  4. Stage + commit lokal                 │
+│     (hanya file relevan, jangan commit  │
+│      node_modules atau generated/)      │
+└──────────────────┬───────────────────────┘
+                   ▼
+┌──────────────────────────────────────────┐
+│  5. Lapor: "Tahap X selesai — {commit}  │
+│     {ringkasan}. Lanjut ke tahap Y?"     │
+└──────────────────────────────────────────┘
+```
+
+### Commit Pattern
+
+```bash
+git add api/src/routes/products.ts api/src/controllers/products.ts ...
+git commit -m "🔥 api: add products CRUD — route, schema, controller, model"
+```
+
+### Catatan
+
+- Hanya commit file dari `api/` ketika kerja backend — jangan campur package lain.
+- Generated files (Prisma client, node_modules) masuk `.gitignore` — jangan di-stage.
+- Migrations file (`prisma/migrations/`) ikut di-commit — itu bagian dari schema versioning.
