@@ -7,6 +7,8 @@ import productRoutes, { categoryRouter } from "@/src/routes/product"
 import orderRoutes from "@/src/routes/order"
 import customerRoutes, { conversationRouter } from "@/src/routes/customer"
 import dashboardRoutes from "@/src/routes/dashboard"
+import logRoutes from "@/src/routes/log"
+import usageRoutes from "@/src/routes/usage"
 import debugRoutes from "@/src/routes/debug"
 
 const router = Router()
@@ -20,6 +22,8 @@ router.use("/orders", orderRoutes)
 router.use("/customers", customerRoutes)
 router.use("/conversations", conversationRouter)
 router.use("/dashboard", dashboardRoutes)
+router.use("/logs", logRoutes)
+router.use("/usage", usageRoutes)
 
 // Dev-only: pipeline traces, circuit breaker status/reset
 if (process.env.NODE_ENV !== "production") {
