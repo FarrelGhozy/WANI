@@ -17,7 +17,7 @@ export async function listCustomers(
   req: Request<Record<string, string>, any, any, CustomerQuery>,
   res: Response,
 ): Promise<void> {
-  const result = await CustomerModel.list(req.query)
+  const result = await CustomerModel.list((req as any).validatedQuery ?? req.query)
   sendResponse(res, 200, "customers retrieved", result)
 }
 

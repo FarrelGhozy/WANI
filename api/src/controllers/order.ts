@@ -34,7 +34,7 @@ export async function listOrders(
   req: Request<Record<string, string>, any, any, OrderQuery>,
   res: Response,
 ): Promise<void> {
-  const result = await OrderModel.list(req.query)
+  const result = await OrderModel.list((req as any).validatedQuery ?? req.query)
   sendResponse(res, 200, "orders retrieved", result)
 }
 

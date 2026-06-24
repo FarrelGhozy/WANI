@@ -15,7 +15,7 @@ export async function listProducts(
   req: Request<Record<string, string>, any, any, ProductQuery>,
   res: Response,
 ): Promise<void> {
-  const result = await ProductModel.list(req.query)
+  const result = await ProductModel.list((req as any).validatedQuery ?? req.query)
   sendResponse(res, 200, "products retrieved", result)
 }
 

@@ -18,12 +18,14 @@ export function validate(schemas: ValidationSchemas) {
     if (schemas.query) {
       const result = await schemas.query.safeParseAsync(req.query)
       if (!result.success) throw new BadRequestError("validation failed", result.error.issues)
-      req.query = result.data as any
+      ;(req as any).validatedQuery = result.data
+      Object.assign(req.query, result.data)
     }
     if (schemas.params) {
       const result = await schemas.params.safeParseAsync(req.params)
       if (!result.success) throw new BadRequestError("validation failed", result.error.issues)
-      req.params = result.data as any
+      ;(req as any).validatedParams = result.data
+      Object.assign(req.params, result.data)
     }
     next()
   }

@@ -1,10 +1,10 @@
 import { existsSync, cpSync, rmSync, mkdtempSync, mkdirSync, writeFileSync } from "node:fs"
-import { join, dirname } from "node:path"
+import { join } from "node:path"
 import { tmpdir } from "node:os"
 import { spawnSync } from "node:child_process"
 import type { GenerateParams, GenerateResult } from "./types.ts"
 
-const TEMPLATES_DIR = join(dirname(import.meta.dir), "templates")
+const TEMPLATES_DIR = join(import.meta.dir, "templates")
 
 export async function generate(params: GenerateParams): Promise<GenerateResult> {
   const templatePath = join(TEMPLATES_DIR, params.template)
@@ -50,7 +50,7 @@ export async function generate(params: GenerateParams): Promise<GenerateResult> 
       pending: params.stats.pending,
     })
 
-    const install = spawnSync("npm", ["install", "--silent"], {
+    const install = spawnSync("bun", ["install", "--silent"], {
       cwd: workingDir,
       stdio: ["ignore", "pipe", "pipe"],
       timeout: 120_000,
@@ -60,7 +60,7 @@ export async function generate(params: GenerateParams): Promise<GenerateResult> 
       return { success: false, outputPath: null, error: msg }
     }
 
-    const build = spawnSync("npx", ["astro", "build"], {
+    const build = spawnSync("bunx", ["astro", "build"], {
       cwd: workingDir,
       stdio: ["ignore", "pipe", "pipe"],
       timeout: 120_000,
