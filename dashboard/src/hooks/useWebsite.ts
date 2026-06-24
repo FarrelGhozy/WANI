@@ -1,4 +1,5 @@
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback, useMemo, useEffect } from 'react'
+import { fetchApi } from '../lib/api.ts'
 import { useProducts } from './useProducts.ts'
 
 export interface WebsiteConfig {
@@ -20,90 +21,97 @@ export interface GenerateLog {
   message: string
 }
 
-const MOCK = true
-
-const mockConfig: WebsiteConfig = {
-  heroHeadline: 'Selamat Datang di WANI Kitchen',
+const defaultConfig: WebsiteConfig = {
+  heroHeadline: 'Selamat Datang di Toko Kami',
   heroSubheadline: 'Temukan produk terbaik kami',
-  aboutText: 'WANI Kitchen adalah UMKM yang menyediakan makanan dan minuman berkualitas dengan cita rasa tradisional Indonesia.',
+  aboutText: '',
   primaryColor: '#059669',
   secondaryColor: '#f59e0b',
-  phone: '+6281234567890',
-  selectedProductIds: ['prod-1', 'prod-2', 'prod-3', 'prod-4', 'prod-5'],
+  phone: '',
+  selectedProductIds: [],
   template: 'default',
 }
 
-const mockLogs: GenerateLog[] = [
-  { id: 'log-1', timestamp: '2026-06-22 14:30', status: 'success', productCount: 5, message: 'Website berhasil di-generate' },
-  { id: 'log-2', timestamp: '2026-06-21 10:15', status: 'success', productCount: 5, message: 'Preview diperbarui' },
-  { id: 'log-3', timestamp: '2026-06-20 09:00', status: 'failed', productCount: 0, message: 'Gagal: template tidak ditemukan' },
-]
-
 export function useWebsite() {
   const { products } = useProducts()
-  const [config, setConfig] = useState<WebsiteConfig>(MOCK ? { ...mockConfig } : mockConfig)
-  const [logs, setLogs] = useState<GenerateLog[]>(MOCK ? [...mockLogs] : [])
+  const [config, setConfig] = useState<WebsiteConfig>(defaultConfig)
+  const [logs, setLogs] = useState<GenerateLog[]>([])
+  const [loading, setLoading] = useState(true)
   const [generating, setGenerating] = useState(false)
 
-  const updateConfig = useCallback((patch: Partial<WebsiteConfig>) => {
+  useEffect(() => {
+    const init = async () => {
+      setLoading(true)
+      try {
+        const res = await fetchApi<Record<string, unknown>>('/api/website')
+        if (res.data) {
+          setConfig((prev) => ({ ...prev, ...res.data as any }))
+        }
+      } catch {
+        // API not available — use defaults
+      } finally {
+        setLoading(false)
+      }
+    }
+    init()
+  }, [])
+
+  const updateConfig = useCallback(async (patch: Partial<WebsiteConfig>) => {
     setConfig((prev) => ({ ...prev, ...patch }))
+    try {
+      await fetchApi('/api/website', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(patch),
+      })
+    } catch {
+      // Silent save failure
+    }
   }, [])
 
   const availableProducts = useMemo(() => {
-    return MOCK ? products.filter((p) => p.isAvailable) : []
+    return products.filter((p) => p.isAvailable)
   }, [products])
 
   const generate = useCallback(async () => {
-    if (!MOCK) {
-      setGenerating(true)
-      try {
-        const res = await fetch('/api/website/generate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(config),
-        })
-        const data = await res.json()
-        if (data.status === 'success') {
-          setLogs((prev) => [{
-            id: `log-${Date.now()}`,
-            timestamp: new Date().toLocaleString('id-ID'),
-            status: 'success',
-            productCount: config.selectedProductIds.length,
-            message: 'Website berhasil di-generate',
-          }, ...prev])
-        }
-      } finally {
-        setGenerating(false)
-      }
-      return
-    }
-
     setGenerating(true)
-    await new Promise((r) => setTimeout(r, 1500))
-    setLogs((prev) => [{
-      id: `log-${Date.now()}`,
-      timestamp: new Date().toLocaleString('id-ID'),
-      status: 'success',
-      productCount: config.selectedProductIds.length,
-      message: 'Website berhasil di-generate',
-    }, ...prev])
-    setGenerating(false)
-  }, [config])
+    try {
+      const res = await fetchApi<Record<string, unknown>>('/api/website/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ template: config.template }),
+      })
+      setLogs((prev) => [{
+        id: `log-${Date.now()}`,
+        timestamp: new Date().toLocaleString('id-ID'),
+        status: res.status === 'success' ? 'success' : 'failed',
+        productCount: config.selectedProductIds.length,
+        message: res.status === 'success' ? 'Website berhasil di-generate' : (res.message ?? 'Gagal generate'),
+      }, ...prev])
+    } catch (e) {
+      setLogs((prev) => [{
+        id: `log-${Date.now()}`,
+        timestamp: new Date().toLocaleString('id-ID'),
+        status: 'failed',
+        productCount: 0,
+        message: (e as Error).message,
+      }, ...prev])
+    } finally {
+      setGenerating(false)
+    }
+  }, [config.template, config.selectedProductIds.length])
 
   const downloadZip = useCallback(async () => {
-    if (!MOCK) {
-      window.open('/api/website/download', '_blank')
+    const token = localStorage.getItem('wani_auth_token')
+    if (token) {
+      window.open(`/api/website/download?token=${token}`, '_blank')
       return
     }
-    alert('ZIP download akan tersedia setelah API terintegrasi')
+    window.open('/api/website/download', '_blank')
   }, [])
 
   const publish = useCallback(async () => {
-    if (!MOCK) {
-      await fetch('/api/website/publish', { method: 'POST' })
-      return
-    }
-    alert('Fitur publish akan tersedia setelah API terintegrasi')
+    await fetchApi('/api/website/publish', { method: 'POST' })
   }, [])
 
   return {
@@ -115,6 +123,6 @@ export function useWebsite() {
     generate,
     downloadZip,
     publish,
-    loading: false,
+    loading,
   }
 }

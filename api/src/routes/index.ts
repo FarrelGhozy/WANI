@@ -10,6 +10,7 @@ import dashboardRoutes from "@/src/routes/dashboard"
 import logRoutes from "@/src/routes/log"
 import usageRoutes from "@/src/routes/usage"
 import authRoutes from "@/src/routes/auth"
+import websiteRoutes from "@/src/routes/website"
 import debugRoutes from "@/src/routes/debug"
 
 const router = Router()
@@ -26,6 +27,7 @@ router.use("/dashboard", dashboardRoutes)
 router.use("/logs", logRoutes)
 router.use("/usage", usageRoutes)
 router.use("/auth", authRoutes)
+router.use("/website", websiteRoutes)
 
 // Dev-only: pipeline traces, circuit breaker status/reset
 if (process.env.NODE_ENV !== "production") {

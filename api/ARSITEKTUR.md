@@ -257,38 +257,48 @@ Authorization: Bearer {API_TOKEN}
 | `PUT` | `/api/store` | 🔒 | `upsertStore` | Update store profile |
 | `GET` | `/api/ai-config` | — | `getAiConfig` | AI config (model, prompt, etc.) |
 | `PUT` | `/api/ai-config` | 🔒 | `upsertAiConfig` | Update AI config |
+| `GET` | `/api/products` | — | `listProducts` | Product list (paginated, searchable, filterable) |
+| `GET` | `/api/products/:id` | — | `getProduct` | Product detail with category |
+| `POST` | `/api/products` | 🔒 | `createProduct` | Create product |
+| `PUT` | `/api/products/:id` | 🔒 | `updateProduct` | Update product |
+| `DELETE` | `/api/products/:id` | 🔒 | `deleteProduct` | Delete product |
+| `GET` | `/api/products/categories` | — | `listCategories` | Category list with product count |
+| `POST` | `/api/products/categories` | 🔒 | `createCategory` | Create category |
+| `PUT` | `/api/products/categories/:id` | 🔒 | `updateCategory` | Update category |
+| `DELETE` | `/api/products/categories/:id` | 🔒 | `deleteCategory` | Delete category |
+| `GET` | `/api/orders` | — | `listOrders` | Order list (paginated, filter by status/date) |
+| `GET` | `/api/orders/:id` | — | `getOrder` | Order detail + items + payment + customer |
+| `PUT` | `/api/orders/:id/status` | 🔒 | `updateOrderStatus` | Update status (with transition validation) |
+| `PUT` | `/api/orders/:id/notes` | 🔒 | `updateOrderNotes` | Update notes |
+| `PUT` | `/api/orders/:id/payment` | 🔒 | `updateOrderPayment` | Create or update payment |
+| `GET` | `/api/customers` | — | `listCustomers` | Customer list (paginated, search name/phone) |
+| `GET` | `/api/customers/:id` | — | `getCustomer` | Customer detail + orders + conversation + messages |
+| `PUT` | `/api/customers/:id` | 🔒 | `updateCustomer` | Update name/notes |
+| `GET` | `/api/conversations/:id` | — | `getConversation` | Conversation messages |
+| `PUT` | `/api/conversations/:id/status` | 🔒 | `updateConversationStatus` | Update conversation status |
+| `POST` | `/api/conversations/:id/messages` | 🔒 | `sendMessage` | Send HUMAN message |
+| `GET` | `/api/dashboard/stats` | — | `getStats` | Aggregated dashboard stats |
+| `GET` | `/api/logs` | — | `listLogs` | Activity log (paginated, filterable) |
+| `GET` | `/api/usage` | — | `getUsage` | LLM usage counters (today) |
+| `POST` | `/api/auth/register` | — | `register` | Register new account |
+| `POST` | `/api/auth/login` | — | `login` | Login (JWT token) |
+| `GET` | `/api/auth/me` | — | `me` | Current user (token auto-verify) |
+| `POST` | `/api/auth/logout` | — | `logout` | Logout |
+| `POST` | `/api/auth/forgot-password` | — | `forgotPassword` | Generate reset token |
+| `POST` | `/api/auth/reset-password` | — | `resetPassword` | Reset password with token |
 | `GET` | `/api/debug/traces` | — | `getRecentTraces` | Dev: recent pipeline traces |
 | `GET` | `/api/debug/traces/:id` | — | `getTraceDetail` | Dev: trace detail |
 | `DELETE` | `/api/debug/traces` | — | `deleteTraces` | Dev: clear trace buffer |
 | `GET` | `/api/debug/status` | — | `getStatus` | Dev: uptime + memory usage |
 | `POST` | `/api/debug/circuit/reset` | — | `postResetCircuit` | Dev: reset circuit breaker |
 
-### Planned Endpoints (belum diimplementasikan)
+### Website Endpoints (belum diimplementasikan — web-gen integration)
 
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
-| `GET` | `/api/dashboard/stats` | — | Overview stats (orders, products, customers) |
-| `GET` | `/api/products` | — | Product list (paginated, searchable) |
-| `GET` | `/api/products/:id` | — | Product detail |
-| `POST` | `/api/products` | 🔒 | Create product |
-| `PUT` | `/api/products/:id` | 🔒 | Update product |
-| `DELETE` | `/api/products/:id` | 🔒 | Delete product |
-| `GET` | `/api/categories` | — | Category list |
-| `POST` | `/api/categories` | 🔒 | Create category |
-| `GET` | `/api/orders` | — | Order list (paginated, filterable by status) |
-| `GET` | `/api/orders/:id` | — | Order detail + items + payment |
-| `PUT` | `/api/orders/:id/status` | 🔒 | Update order status |
-| `GET` | `/api/customers` | — | Customer list (paginated, searchable) |
-| `GET` | `/api/customers/:id` | — | Customer detail |
-| `GET` | `/api/customers/:id/conversations` | — | Customer conversation list |
-| `GET` | `/api/customers/:id/conversations/:convId/messages` | — | Conversation messages |
-| `POST` | `/api/customers/:id/conversations/:convId/messages` | 🔒 | Send message as human |
-| `GET` | `/api/activity-logs` | — | Activity log list (paginated, filterable) |
-| `POST` | `/api/auth/login` | — | Login (email + password → token) |
-| `POST` | `/api/auth/register` | — | Register new account |
-| `GET` | `/api/auth/me` | 🔒 | Current user profile |
-| `GET` | `/api/website` | — | Get website config |
-| `PUT` | `/api/website` | 🔒 | Update website config |
+| `POST` | `/api/website/generate` | 🔒 | Generate website from config |
+| `GET` | `/api/website/download` | — | Download generated ZIP |
+| `POST` | `/api/website/publish` | 🔒 | Publish website to hosting |
 
 Lihat `dashboard/API_SPEC.md` untuk kontrak lengkap request/response tiap endpoint.
 
@@ -790,10 +800,11 @@ bun test                     # Run all tests (bun:test)
 | **P3** | ✅ Selesai | Relational models (Product, Customer, Conversation, Message, Order, ActivityLog) |
 | **P4** | ✅ Selesai | AI pipeline 18-step + guardrails 3-tier + circuit breaker |
 | **P5** | ✅ Selesai | Unit + firewall + golden reply tests |
-| **P6** | ▶ Berikutnya | Products CRUD endpoints (GET list, GET/:id, POST, PUT/:id, DELETE/:id, GET categories) |
-| **P7** | ⬜ Rencana | Orders endpoints (GET list, GET/:id, PUT/:id/status) |
-| **P8** | ⬜ Rencana | Customers + Chats endpoints |
-| **P9** | ⬜ Rencana | Dashboard stats endpoint |
-| **P10** | ⬜ Rencana | Auth endpoints (login, register, me) |
-| **P11** | ⬜ Rencana | Website CRUD endpoints |
-| **P12** | ⬜ Rencana | Activity log endpoints |
+| **P6** | ✅ Selesai | Products CRUD endpoints (GET list, GET/:id, POST, PUT/:id, DELETE/:id, GET categories) |
+| **P7** | ✅ Selesai | Orders endpoints (GET list, GET/:id, PUT/:id/status, PUT/:id/notes, PUT/:id/payment) |
+| **P8** | ✅ Selesai | Customers + Chats endpoints (list, detail + orders + conversations, send message) |
+| **P9** | ✅ Selesai | Dashboard stats endpoint (aggregated overview) |
+| **P10** | ✅ Selesai | Auth endpoints (register, login, me, logout, forgot/reset password) |
+| **P11** | ✅ Selesai | Activity log + Usage endpoints |
+| **P12** | ✅ Selesai | Dashboard integrasi — semua hooks pakai real API |
+| **P13** | ⬜ Rencana | Website CRUD endpoints (generate, download, publish) |

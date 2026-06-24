@@ -2,10 +2,9 @@
 
 > REST API untuk platform WANI. Base URL: `http://localhost:3001/api`
 >
-> **Status implementasi:** Endpoint QR, Chat, Store, dan AI Config **sudah ada** di server.
-> Endpoint Products, Orders, Customers, Website, dan Auth **belum diimplementasikan**
-> di backend — dashboard menggunakan **mock data inline** di tiap hook (`MOCK = true`).
-> Spesifikasi di bawah adalah **kontrak/rencana** untuk implementasi mendatang.
+> **Status implementasi:** Semua endpoint **sudah ada** di server backend (`api/`) kecuali
+> Website (generate, download, publish) — lihat [ARSITEKTUR.md](../api/ARSITEKTUR.md) untuk detail.
+> Dashboard **sudah terintegrasi** dengan API nyata (semua hooks pakai fetchApi, `MOCK = false`).
 
 ---
 
