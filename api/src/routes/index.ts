@@ -6,6 +6,7 @@ import aiConfigRoutes from "@/src/routes/ai-config"
 import productRoutes, { categoryRouter } from "@/src/routes/product"
 import orderRoutes from "@/src/routes/order"
 import customerRoutes, { conversationRouter } from "@/src/routes/customer"
+import dashboardRoutes from "@/src/routes/dashboard"
 import debugRoutes from "@/src/routes/debug"
 
 const router = Router()
@@ -18,6 +19,7 @@ router.use("/products", productRoutes)
 router.use("/orders", orderRoutes)
 router.use("/customers", customerRoutes)
 router.use("/conversations", conversationRouter)
+router.use("/dashboard", dashboardRoutes)
 
 // Dev-only: pipeline traces, circuit breaker status/reset
 if (process.env.NODE_ENV !== "production") {
