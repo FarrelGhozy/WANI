@@ -9,13 +9,13 @@ export interface WaStatus {
   error: string | null
 }
 
-const MOCK = true
+const MOCK = false
 
 export function useWaStatus(pollInterval = 5000): WaStatus {
-  const [qr, setQr] = useState(MOCK ? 'mock-qr-data-for-development' : '')
-  const [connection, setConnection] = useState(MOCK ? 'connected' : 'disconnected')
-  const [phone, setPhone] = useState(MOCK ? '+6281234567890' : '')
-  const [loading, setLoading] = useState(!MOCK)
+  const [qr, setQr] = useState('')
+  const [connection, setConnection] = useState('disconnected')
+  const [phone, setPhone] = useState('')
+  const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   const poll = useCallback(async () => {

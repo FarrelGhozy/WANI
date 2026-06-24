@@ -20,8 +20,7 @@ function EmptyChatPanel() {
 }
 
 export default function Customers() {
-  const { customers, loading, search, setSearch, selectedId, setSelectedId, selected, getConversation } = useCustomers()
-  const conversation = selectedId ? getConversation(selectedId) : null
+  const { customers, loading, search, setSearch, selectedId, setSelectedId, selected, conversation, sendMessage, convLoading } = useCustomers()
 
   if (loading) {
     return <div className="flex items-center justify-center py-20"><Spinner size={24} /></div>
@@ -69,9 +68,21 @@ export default function Customers() {
         {/* Right: Chat + Detail */}
         <div className={`overflow-hidden rounded-xl border border-stone-200 bg-white ${!selectedId ? 'hidden lg:flex lg:flex-1' : 'flex-1'}`}>
           {selected && conversation ? (
-            <ChatView customerName={selected.name} conversation={conversation} onBack={() => setSelectedId(null)} />
+            <ChatView
+              customerName={selected.name}
+              conversation={conversation}
+              onBack={() => setSelectedId(null)}
+              onSendMessage={sendMessage}
+              sending={convLoading}
+            />
           ) : (
-            <EmptyChatPanel />
+            <div className="flex h-full items-center justify-center">
+              {selectedId && convLoading ? (
+                <Spinner size={24} />
+              ) : (
+                <EmptyChatPanel />
+              )}
+            </div>
           )}
         </div>
       </div>

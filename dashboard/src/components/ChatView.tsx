@@ -6,6 +6,8 @@ interface ChatViewProps {
   customerName: string
   conversation: Conversation
   onBack?: () => void
+  onSendMessage?: (text: string) => void
+  sending?: boolean
 }
 
 const roleLabel: Record<string, string> = {
@@ -45,7 +47,7 @@ const statusVariant: Record<string, 'teal' | 'green' | 'amber' | 'gray'> = {
   ESCALATED: 'amber',
 }
 
-export default function ChatView({ customerName, conversation, onBack }: ChatViewProps) {
+export default function ChatView({ customerName, conversation, onBack, onSendMessage, sending }: ChatViewProps) {
   const [input, setInput] = useState('')
   const bottomRef = useRef<HTMLDivElement>(null)
 
@@ -54,7 +56,8 @@ export default function ChatView({ customerName, conversation, onBack }: ChatVie
   }, [conversation.messages])
 
   function handleSend() {
-    if (!input.trim()) return
+    if (!input.trim() || !onSendMessage) return
+    onSendMessage(input.trim())
     setInput('')
   }
 
@@ -102,7 +105,7 @@ export default function ChatView({ customerName, conversation, onBack }: ChatVie
           />
           <button
             type="submit"
-            disabled={!input.trim()}
+            disabled={!input.trim() || sending}
             className="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-600 text-white transition-colors hover:bg-teal-700 disabled:cursor-not-allowed disabled:opacity-40"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">

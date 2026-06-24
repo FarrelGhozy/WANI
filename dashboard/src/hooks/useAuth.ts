@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 
 export interface User {
   id: string
@@ -7,14 +7,10 @@ export interface User {
   role: string
 }
 
-const MOCK = true
+const MOCK = false
 
 const AUTH_TOKEN_KEY = 'wani_auth_token'
 const AUTH_USER_KEY = 'wani_auth_user'
-
-function delay(ms: number) {
-  return new Promise((r) => setTimeout(r, ms))
-}
 
 export function useAuth() {
   const [user, setUser] = useState<User | null>(() => {
@@ -34,12 +30,6 @@ export function useAuth() {
     setError(null)
 
     if (MOCK) {
-      await delay(1500)
-      if (!email || !password) {
-        setError('Email dan password wajib diisi')
-        setLoading(false)
-        return
-      }
       const mockUser: User = { id: 'user-1', name: 'Admin WANI', email, role: 'admin' }
       localStorage.setItem(AUTH_TOKEN_KEY, 'mock-token-' + Date.now())
       localStorage.setItem(AUTH_USER_KEY, JSON.stringify(mockUser))
@@ -67,12 +57,42 @@ export function useAuth() {
     }
   }, [])
 
+  // Auto-load user from token on mount
+  useEffect(() => {
+    const token = localStorage.getItem(AUTH_TOKEN_KEY)
+    if (!token) return
+
+    const init = async () => {
+      setLoading(true)
+      try {
+        const res = await fetch('/api/auth/me', {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        const json = await res.json()
+        if (json.status === 'success' && json.data) {
+          localStorage.setItem(AUTH_USER_KEY, JSON.stringify(json.data))
+          setUser(json.data)
+        } else {
+          localStorage.removeItem(AUTH_TOKEN_KEY)
+          localStorage.removeItem(AUTH_USER_KEY)
+        }
+      } catch {
+        // Token might be expired, silently fail
+        localStorage.removeItem(AUTH_TOKEN_KEY)
+        localStorage.removeItem(AUTH_USER_KEY)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    init()
+  }, [])
+
   const register = useCallback(async (name: string, email: string, password: string) => {
     setLoading(true)
     setError(null)
 
     if (MOCK) {
-      await delay(1500)
       const mockUser: User = { id: 'user-1', name, email, role: 'admin' }
       localStorage.setItem(AUTH_TOKEN_KEY, 'mock-token-' + Date.now())
       localStorage.setItem(AUTH_USER_KEY, JSON.stringify(mockUser))

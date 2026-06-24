@@ -1,4 +1,5 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
+import { fetchApi } from '../lib/api'
 
 export interface StoreProfile {
   id: string
@@ -24,48 +25,56 @@ export interface AiConfig {
   temperature: number
 }
 
-const MOCK = true
-
-const mockStore: StoreProfile = {
-  id: 'default',
-  businessName: 'WANI Kitchen',
-  phone: '+6281234567890',
-  logoUrl: null,
-  address: 'Jl. Merdeka No. 123, Jakarta Pusat',
-  businessHours: 'Sen-Sab 08:00-20:00, Min 10:00-18:00',
-  paymentMethods: 'QRIS, Transfer Bank, Cash',
-  shippingInfo: 'Gojek, Grab, Shopee Express',
-  returnPolicy: 'Komplain maksimal 1x24 jam setelah pesanan diterima',
-  isActive: true,
-}
-
-const mockAiConfig: AiConfig = {
-  id: 'default',
-  isActive: true,
-  systemPrompt: 'Kamu adalah asisten penjualan untuk WANI Kitchen, sebuah UMKM makanan Indonesia. Balas dengan ramah, singkat, dan informatif. Gunakan bahasa Indonesia sehari-hari.',
-  model: 'gpt-4o-mini',
-  greetingMessage: 'Halo! Selamat datang di WANI Kitchen 😊 Ada yang bisa kami bantu?',
-  knowledgeBase: 'Menu: Nasi Goreng Spesial Rp25.000, Mie Ayam Bakso Rp20.000, Ayam Geprek Rp22.000, Kopi Susu Gula Aren Rp18.000, dll.',
-  maxTokens: 256,
-  temperature: 0.7,
-}
-
 export function useSettings() {
-  const [store, setStore] = useState(MOCK ? { ...mockStore } : mockStore)
-  const [aiConfig, setAiConfig] = useState(MOCK ? { ...mockAiConfig } : mockAiConfig)
-  const updateStore = useCallback((patch: Partial<StoreProfile>) => {
-    setStore((prev) => ({ ...prev, ...patch }))
+  const [store, setStore] = useState<StoreProfile | null>(null)
+  const [aiConfig, setAiConfig] = useState<AiConfig | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  const load = useCallback(async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      const [storeRes, aiRes] = await Promise.all([
+        fetchApi<StoreProfile>('/api/store'),
+        fetchApi<AiConfig>('/api/ai-config'),
+      ])
+      setStore(storeRes.data)
+      setAiConfig(aiRes.data)
+    } catch (e) {
+      setError((e as Error).message)
+    } finally {
+      setLoading(false)
+    }
   }, [])
 
-  const updateAiConfig = useCallback((patch: Partial<AiConfig>) => {
-    setAiConfig((prev) => ({ ...prev, ...patch }))
+  useEffect(() => { load() }, [load])
+
+  const updateStore = useCallback(async (patch: Partial<StoreProfile>) => {
+    try {
+      const res = await fetchApi<StoreProfile>('/api/store', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(patch),
+      })
+      if (res.data) setStore(res.data)
+    } catch (e) {
+      setError((e as Error).message)
+    }
   }, [])
 
-  return {
-    store,
-    aiConfig,
-    updateStore,
-    updateAiConfig,
-    loading: false,
-  }
+  const updateAiConfig = useCallback(async (patch: Partial<AiConfig>) => {
+    try {
+      const res = await fetchApi<AiConfig>('/api/ai-config', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(patch),
+      })
+      if (res.data) setAiConfig(res.data)
+    } catch (e) {
+      setError((e as Error).message)
+    }
+  }, [])
+
+  return { store, aiConfig, loading, error, updateStore, updateAiConfig, reload: load }
 }

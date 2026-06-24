@@ -35,6 +35,14 @@ export default function Settings() {
     return <div className="flex items-center justify-center py-20"><Spinner size={24} /></div>
   }
 
+  if (!store || !aiConfig) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-center">
+        <p className="text-sm text-stone-500">Gagal memuat pengaturan. Coba refresh halaman.</p>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-semibold tracking-tight text-stone-900">Pengaturan</h1>
