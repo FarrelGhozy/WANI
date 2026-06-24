@@ -2,3 +2,5 @@
 
 graphify-out
 erd*
+.env
+.env.*.local

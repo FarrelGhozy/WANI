@@ -807,4 +807,4 @@ bun test                     # Run all tests (bun:test)
 | **P10** | ✅ Selesai | Auth endpoints (register, login, me, logout, forgot/reset password) |
 | **P11** | ✅ Selesai | Activity log + Usage endpoints |
 | **P12** | ✅ Selesai | Dashboard integrasi — semua hooks pakai real API |
-| **P13** | ⬜ Rencana | Website CRUD endpoints (generate, download, publish) |
+| **P13** | ✅ Selesai | Website endpoints + web-gen integration (config, generate, download ZIP, publish) |
