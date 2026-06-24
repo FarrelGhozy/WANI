@@ -4,6 +4,7 @@ import chatRoutes from "@/src/routes/chat"
 import storeRoutes from "@/src/routes/store"
 import aiConfigRoutes from "@/src/routes/ai-config"
 import productRoutes, { categoryRouter } from "@/src/routes/product"
+import orderRoutes from "@/src/routes/order"
 import debugRoutes from "@/src/routes/debug"
 
 const router = Router()
@@ -13,6 +14,7 @@ router.use("/store", storeRoutes)
 router.use("/ai-config", aiConfigRoutes)
 router.use("/products/categories", categoryRouter)
 router.use("/products", productRoutes)
+router.use("/orders", orderRoutes)
 
 // Dev-only: pipeline traces, circuit breaker status/reset
 if (process.env.NODE_ENV !== "production") {
