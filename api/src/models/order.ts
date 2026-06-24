@@ -216,6 +216,19 @@ export class OrderModel {
     return toOrderResponse(row)
   }
 
+  static async getStats(): Promise<{ totalOrders: number }> {
+    const totalOrders = await prisma.order.count()
+    return { totalOrders }
+  }
+
+  static async getStatusCounts(): Promise<{ completed: number; pending: number }> {
+    const [completed, pending] = await Promise.all([
+      prisma.order.count({ where: { status: "COMPLETED" } }),
+      prisma.order.count({ where: { status: "PENDING" } }),
+    ])
+    return { completed, pending }
+  }
+
   static async updatePayment(
     id: string,
     data: {

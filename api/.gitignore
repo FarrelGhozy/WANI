@@ -1,5 +1,7 @@
 # generated
 generated/
+generated-sites/*
+!generated-sites/.gitkeep
 
 # dependencies (bun install)
 node_modules
