@@ -205,12 +205,14 @@ dashboard/
 │   ├── lib/                     # Core utilities
 │   │   └── api.ts               # Fetch wrapper (unified response parse)
 │   │
-│   ├── hooks/                   # Custom React hooks (mock-based, MOCK toggle)
+│   ├── hooks/                   # Custom React hooks (real API via fetchApi)
 │   │   ├── useWaStatus.ts       # WA connection status + QR polling
 │   │   ├── useProducts.ts       # Produk CRUD + sort/filter
 │   │   ├── useOrders.ts         # Order list + sort/filter/status
 │   │   ├── useCustomers.ts      # Customer list + conversations
-│   │   └── useSettings.ts       # Store profile + AI config
+│   │   ├── useSettings.ts       # Store profile + AI config
+│   │   ├── useAuth.ts           # Login/register/logout (MOCK=false)
+│   │   └── useWebsite.ts       # Website config + generate
 │   │
 │   ├── components/              # Shared UI components & feature components
 │   │   ├── ui/                  # Primitives
@@ -249,7 +251,8 @@ dashboard/
 │   │   ├── Orders.tsx           # Order list with sort & status filter
 │   │   ├── OrderDetail.tsx      # Order detail + status timeline
 │   │   ├── Customers.tsx        # Dual-panel: customer list + inline chat
-│   │   └── Settings.tsx         # Tabs: Store / AI Agent / WA Session
+│   │   ├── Settings.tsx         # Tabs: Store / AI Agent / WA Session
+│   │   └── Website.tsx          # Website config, generate, download
 │   │
 │   └── (no mocks/ — inline mock data in each hook)
 ```
@@ -391,7 +394,7 @@ const router = createBrowserRouter([
 |------|----------|----------|-------|
 | Dashboard | `/api/qr` + `/api/qr/status` | 5 detik | QR & status real-time |
 
-Hanya WA status yang di-polling. Semua data bisnis (products, orders, customers, settings) saat ini **mock-only** — tidak ada fetching API. Rencana polling untuk halaman lain akan ditambahkan setelah integrasi API.
+Hanya WA status yang di-polling (5 detik). Semua data bisnis (products, orders, customers, settings) di-fetch dari real API via `fetchApi()`.
 
 ### Response Format (konsisten dari API)
 
@@ -440,7 +443,7 @@ Hanya WA status yang di-polling. Semua data bisnis (products, orders, customers,
 └─────────────────────────────────────────────────────┘
 ```
 
-**Data:** 4 metrik (revenue, pending orders, active products, customers) + pending orders list + stock alerts + WA status. Semua dari mock hooks.
+**Data:** 4 metrik (revenue, pending orders, active products, customers) + pending orders list + stock alerts + WA status. Semua dari real API via `GET /api/dashboard/stats`.
 
 ### 2. Products (`/products`)
 
@@ -547,40 +550,12 @@ Jika polling data dibutuhkan di multiple pages, hook akan di-memoize dengan `use
 
 ---
 
-## Mock Strategy
+## Mock Strategy (Legacy — All Hooks Now Use Real API)
 
-### Inline Mock Data (Current)
+**Semua hooks sudah terintegrasi dengan API nyata.** Mock strategy digunakan saat development awal (setiap hook punya `MOCK = true` dengan data inline). Sekarang:
 
-Setiap hook memiliki konstanta `MOCK = true` dan data dummy inline:
-
-```typescript
-// hooks/useProducts.ts
-const MOCK = true
-
-const mockProducts: Product[] = [
-  { id: 'prod-1', name: 'Nasi Goreng Spesial', price: 25000, ... },
-  // ...
-]
-
-export function useProducts() {
-  const allProducts = useMemo(() => MOCK ? mockProducts : [], [])
-  // ...
-}
-```
-
-**Mekanisme:**
-- `MOCK = true` → return data inline (array/object di file yang sama)
-- `MOCK = false` → return empty/initial state (siap diisi fetching API)
-- Semua mutasi (create/update/delete) berjalan di memori lokal — tidak persist
-
-Setiap hook punya toggle sendiri, sehingga bisa progresif switch ke API per fitur.
-
-### Transisi ke API
-
-Untuk mengaktifkan API sungguhan:
-1. Set `MOCK = false` di hook terkait
-2. Implementasi fetching via `fetchApi<T>()` dari `lib/api.ts`
-3. Ganti operasi mutasi dengan POST/PUT/DELETE ke API server
+- `useProducts`, `useOrders`, `useCustomers`, `useSettings`, `useWebsite` — **no MOCK toggle**, real API via `fetchApi()`
+- `useWaStatus`, `useAuth` — retain `MOCK = false` toggle for legacy compatibility
 
 ---
 
@@ -696,4 +671,4 @@ bun run preview
 | **P3** | ✅ Selesai | Orders management (list, detail, status update, sort) |
 | **P4** | ✅ Selesai | Customers + Inline Chat (dual panel, mobile back) |
 | **P5** | ✅ Selesai | Settings (Store + AI + WA Session tabs with photo) |
-| **P6** | ▶ Selanjutnya | Integrasi API — ganti mock dengan fetch ke backend |
+| **P6** | ✅ Selesai | Integrasi API — semua hooks pakai real API

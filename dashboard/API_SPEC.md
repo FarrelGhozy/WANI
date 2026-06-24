@@ -2,8 +2,7 @@
 
 > REST API untuk platform WANI. Base URL: `http://localhost:3001/api`
 >
-> **Status implementasi:** Semua endpoint **sudah ada** di server backend (`api/`) kecuali
-> Website (generate, download, publish) — lihat [ARSITEKTUR.md](../api/ARSITEKTUR.md) untuk detail.
+> **Status implementasi:** Semua endpoint **sudah ada** di server backend (`api/`).
 > Dashboard **sudah terintegrasi** dengan API nyata (semua hooks pakai fetchApi, `MOCK = false`).
 
 ---
@@ -13,14 +12,14 @@
 1. [Format Respons & Auth](#1-format-respons--auth)
 2. [Endpoint WA Session (Existing)](#2-endpoint-wa-session-existing)
 3. [Endpoint AI Chat (Existing)](#3-endpoint-ai-chat-existing)
-4. [Endpoint Dashboard Stats (Planned)](#4-endpoint-dashboard-stats-planned)
-5. [Endpoint Products (Planned)](#5-endpoint-products-planned)
-6. [Endpoint Orders (Planned)](#6-endpoint-orders-planned)
-7. [Endpoint Customers + Chats (Planned)](#7-endpoint-customers--chats-planned)
-8. [Endpoint Settings (Planned)](#8-endpoint-settings-planned)
-9. [Endpoint Activity Log & Usage (Planned)](#9-endpoint-activity-log--usage-planned)
-10. [Endpoint Website (Planned)](#10-endpoint-website-planned)
-11. [Endpoint Auth (Planned)](#11-endpoint-auth-planned)
+4. [Endpoint Dashboard Stats (Implemented)](#4-endpoint-dashboard-stats-planned)
+5. [Endpoint Products (Implemented)](#5-endpoint-products-planned)
+6. [Endpoint Orders (Implemented)](#6-endpoint-orders-planned)
+7. [Endpoint Customers + Chats (Implemented)](#7-endpoint-customers--chats-planned)
+8. [Endpoint Settings (Implemented)](#8-endpoint-settings-planned)
+9. [Endpoint Activity Log & Usage (Implemented)](#9-endpoint-activity-log--usage-planned)
+10. [Endpoint Website (Implemented)](#10-endpoint-website-planned)
+11. [Endpoint Auth (Implemented)](#11-endpoint-auth-planned)
 12. [Endpoint Debug (Existing)](#12-endpoint-debug-existing)
 13. [Error Codes](#13-error-codes)
 
@@ -197,7 +196,7 @@ Process incoming WhatsApp message through the 18-step AI pipeline and return a r
 
 ---
 
-## 4. Endpoint Dashboard Stats (Planned)
+## 4. Endpoint Dashboard Stats (Implemented)
 
 ### GET /api/dashboard/stats
 
@@ -220,7 +219,7 @@ Overview stats untuk halaman utama dashboard.
 
 ---
 
-## 5. Endpoint Products (Planned)
+## 5. Endpoint Products (Implemented)
 
 Database: `Product` + `Category`.
 
@@ -373,7 +372,7 @@ Daftar kategori.
 
 ---
 
-## 6. Endpoint Orders (Planned)
+## 6. Endpoint Orders (Implemented)
 
 Database: `Order` + `OrderItem` + `Payment`.
 
@@ -491,7 +490,7 @@ Update / set payment untuk order.
 
 ---
 
-## 7. Endpoint Customers + Chats (Planned)
+## 7. Endpoint Customers + Chats (Implemented)
 
 Database: `Customer` + `Conversation` + `Message`.
 
@@ -580,7 +579,7 @@ Update data customer.
 
 ---
 
-## 8. Endpoint Settings (Planned)
+## 8. Endpoint Settings (Implemented)
 
 Gabungan: **Store Profile** + **AI Config** + **WA Session** — semuanya single-row (`id: "default"`).
 
@@ -690,7 +689,7 @@ Putuskan koneksi WA.
 
 ---
 
-## 9. Endpoint Activity Log & Usage (Planned)
+## 9. Endpoint Activity Log & Usage (Implemented)
 
 ### GET /api/logs
 
@@ -732,7 +731,7 @@ Putuskan koneksi WA.
 
 ---
 
-## 10. Endpoint Website (Planned)
+## 10. Endpoint Website (Implemented)
 
 ### POST /api/website/generate 🔒
 
@@ -788,7 +787,7 @@ Publish website ke hosting.
 
 ---
 
-## 11. Endpoint Auth (Planned)
+## 11. Endpoint Auth (Implemented)
 
 Database: `User`.
 
@@ -1012,44 +1011,44 @@ Reset circuit breaker ke closed state.
 | `DELETE` | `/api/debug/traces` | — | ✅ Existing | |
 | `GET` | `/api/debug/status` | — | ✅ Existing | |
 | `POST` | `/api/debug/circuit/reset` | — | ✅ Existing | |
-| `GET` | `/api/dashboard/stats` | — | 📋 Planned | |
-| `GET` | `/api/products` | — | 📋 Planned | |
-| `GET` | `/api/products/:id` | — | 📋 Planned | |
-| `POST` | `/api/products` | 🔒 | 📋 Planned | |
-| `PUT` | `/api/products/:id` | 🔒 | 📋 Planned | |
-| `DELETE` | `/api/products/:id` | 🔒 | 📋 Planned | |
-| `GET` | `/api/products/categories` | — | 📋 Planned | |
-| `POST` | `/api/products/categories` | 🔒 | 📋 Planned | |
-| `PUT` | `/api/products/categories/:id` | 🔒 | 📋 Planned | |
-| `DELETE` | `/api/products/categories/:id` | 🔒 | 📋 Planned | |
-| `GET` | `/api/orders` | — | 📋 Planned | |
-| `GET` | `/api/orders/:id` | — | 📋 Planned | |
-| `PUT` | `/api/orders/:id/status` | 🔒 | 📋 Planned | |
-| `PUT` | `/api/orders/:id/notes` | 🔒 | 📋 Planned | |
-| `PUT` | `/api/orders/:id/payment` | 🔒 | 📋 Planned | |
-| `GET` | `/api/customers` | — | 📋 Planned | |
-| `GET` | `/api/customers/:id` | — | 📋 Planned | |
-| `PUT` | `/api/customers/:id` | 🔒 | 📋 Planned | |
-| `GET` | `/api/conversations` | — | 📋 Planned | |
-| `GET` | `/api/conversations/:id` | — | 📋 Planned | |
-| `PUT` | `/api/conversations/:id/status` | 🔒 | 📋 Planned | |
-| `POST` | `/api/conversations/:id/messages` | 🔒 | 📋 Planned | |
-| `GET` | `/api/qr/settings` | — | 📋 Planned | Settings tab: WA Session |
-| `POST` | `/api/qr/disconnect` | 🔒 | 📋 Planned | Settings tab: WA Session |
-| `GET` | `/api/logs` | — | 📋 Planned | |
-| `GET` | `/api/usage` | — | 📋 Planned | |
-| `POST` | `/api/website/generate` | 🔒 | 📋 Planned | Web-Gen integration |
-| `GET` | `/api/website/download` | — | 📋 Planned | Download ZIP |
-| `POST` | `/api/website/publish` | 🔒 | 📋 Planned | Web-Gen integration |
-| `POST` | `/api/auth/register` | — | 📋 Planned | |
-| `POST` | `/api/auth/login` | — | 📋 Planned | |
-| `GET` | `/api/auth/me` | 🔒 | 📋 Planned | |
-| `POST` | `/api/auth/logout` | 🔒 | 📋 Planned | |
-| `POST` | `/api/auth/forgot-password` | — | 📋 Planned | |
-| `POST` | `/api/auth/reset-password` | — | 📋 Planned | |
+| `GET` | `/api/dashboard/stats` | — | ✅ Existing | |
+| `GET` | `/api/products` | — | ✅ Existing | |
+| `GET` | `/api/products/:id` | — | ✅ Existing | |
+| `POST` | `/api/products` | 🔒 | ✅ Existing | |
+| `PUT` | `/api/products/:id` | 🔒 | ✅ Existing | |
+| `DELETE` | `/api/products/:id` | 🔒 | ✅ Existing | |
+| `GET` | `/api/products/categories` | — | ✅ Existing | |
+| `POST` | `/api/products/categories` | 🔒 | ✅ Existing | |
+| `PUT` | `/api/products/categories/:id` | 🔒 | ✅ Existing | |
+| `DELETE` | `/api/products/categories/:id` | 🔒 | ✅ Existing | |
+| `GET` | `/api/orders` | — | ✅ Existing | Paginated, filterable |
+| `GET` | `/api/orders/:id` | — | ✅ Existing | Detail + items + payment |
+| `PUT` | `/api/orders/:id/status` | 🔒 | ✅ Existing | Status transition validation |
+| `PUT` | `/api/orders/:id/notes` | 🔒 | ✅ Existing | |
+| `PUT` | `/api/orders/:id/payment` | 🔒 | ✅ Existing | Create / update |
+| `GET` | `/api/customers` | — | ✅ Existing | Paginated, searchable |
+| `GET` | `/api/customers/:id` | — | ✅ Existing | Detail + orders + conversation |
+| `PUT` | `/api/customers/:id` | 🔒 | ✅ Existing | |
+| `GET` | `/api/conversations/:id` | — | ✅ Existing | Messages list |
+| `PUT` | `/api/conversations/:id/status` | 🔒 | ✅ Existing | |
+| `POST` | `/api/conversations/:id/messages` | 🔒 | ✅ Existing | Send HUMAN |
+| `GET` | `/api/logs` | — | ✅ Existing | Activity log |
+| `GET` | `/api/usage` | — | ✅ Existing | LLM counters |
+| `GET` | `/api/website` | — | ✅ Existing | Get config |
+| `PUT` | `/api/website` | 🔒 JWT | ✅ Existing | Update config |
+| `POST` | `/api/website/generate` | 🔒 JWT | ✅ Existing | Web-Gen integration |
+| `GET` | `/api/website/download` | 🔒 JWT | ✅ Existing | Download ZIP |
+| `POST` | `/api/website/publish` | 🔒 JWT | ✅ Existing | Mark published |
+| `POST` | `/api/auth/register` | — | ✅ Existing | |
+| `POST` | `/api/auth/login` | — | ✅ Existing | |
+| `GET` | `/api/auth/me` | — | ✅ Existing | |
+| `POST` | `/api/auth/logout` | — | ✅ Existing | |
+| `POST` | `/api/auth/forgot-password` | — | ✅ Existing | |
+| `POST` | `/api/auth/reset-password` | — | ✅ Existing | |
+| `GET` | `/s/:slug` | — | ✅ Existing | Serve generated static site |
 
 ---
 
-> **Catatan Implementasi**: Semua endpoint bertanda 📋 sudah memiliki mock data di dashboard
-> (`hooks/*.ts` dengan `MOCK = true`) tapi belum ada route/controller di backend API.
-> Prioritas implementasi sesuai roadmap: Settings → Products → Orders → Customers → Website → Auth.
+> **Catatan Implementasi**: Semua endpoint sudah diimplementasikan di backend (`api/`).
+> Dashboard hooks menggunakan `fetchApi()` dengan JWT auth dari localStorage.
+> Lihat [ARSITEKTUR.md](../api/ARSITEKTUR.md) untuk detail arsitektur API.

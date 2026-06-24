@@ -19,14 +19,14 @@ Bot pushes QR/status → API stores in WaSession DB → Dashboard polls GET /api
 - **api/src/controllers/** — Request handlers using `sendResponse()` unified JSON format
 - **api/src/models/** — `BaseModel<T>` abstract class with Prisma delegate pattern (getAll/getById/create/update/delete)
 - **api/src/schemas/** — Zod v4 schemas (upsertQrSchema, etc.)
-- **api/src/middleware/** — `requireAuth` (Bearer API_TOKEN), `validate` (safeParseAsync), `errorHandler` (AppError-aware)
+- **api/src/middleware/** — `requireAuth` (Bearer API_TOKEN), `requireJwt` (JWT-based), `validate` (safeParseAsync), `errorHandler` (AppError-aware)
 - **api/src/utils/** — `AppError` subclasses (BadRequest/Unauthorized/Forbidden/NotFound/InternalServer), `sendResponse()`
 - **api/src/config/** — PrismaClient singleton (driver adapter `@prisma/adapter-pg`), Winston logger
 - **api/src/ai/** — Orchestrated pipeline: `processMessage()` in `pipeline.ts`, intent action handlers in `actions.ts`, circuit breaker, OpenRouter LLM engine with retry+fallback, intent-based output schemas (order/inquiry/greeting/complaint/unknown/escalate), hardened system prompt builder with canary
 - **api/src/guardrails/** — Multi-layer defense: PII scanner/redactor, ML classifier (OpenRouter fast model), deep LLM-judge, output grounding check. Plus per-customer sliding-window rate limit, regex injection detection (EN+ID), daily LLM budget tracker, output sanitizer + leak detector. 3-tier injection defense (T1 regex → T2 classifier → T3 judge) with conditional slow path
 - **dashboard/vite.config.ts** — `@vitejs/plugin-react` + `@rolldown/plugin-babel` with `reactCompilerPreset`, Tailwind v4, **proxies `/api` → `http://localhost:3001`**
 - **dashboard/src/index.css** — `@import "tailwindcss"` (Tailwind v4 CSS-first config, no `tailwind.config.*`)
-- **dashboard/src/hooks/** — All hooks use `MOCK = true` toggle — no real API calls until toggled off
+- **dashboard/src/hooks/** — Hooks use real API via `fetchApi()` (JWT auth from localStorage). `useWaStatus` and `useAuth` retain `MOCK = false` toggle for legacy compatibility.
 - **wa-bot/src/index.ts** — Baileys `makeWASocket`, QR terminal print + API POST, auto-reconnect, **forwards messages to API's POST /api/chat** and sends the AI reply back
 - **wa-bot/src/config/db.ts** — PrismaClient singleton (driver adapter `@prisma/adapter-pg`)
 - **wa-bot/src/services/whatsapp-auth.ts** — `usePrismaAuthState()` implementing `SignalKeyStore` (Creds + SignalKey tables)
@@ -60,6 +60,8 @@ Bot pushes QR/status → API stores in WaSession DB → Dashboard polls GET /api
 
 ## API Endpoints
 
+Semua endpoint **sudah diimplementasikan**. See `api/ARSITEKTUR.md` for the full table (~40 endpoints).
+
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
 | `GET` | `/api/qr` | — | Get current QR code string |
@@ -71,20 +73,60 @@ Bot pushes QR/status → API stores in WaSession DB → Dashboard polls GET /api
 | `PUT` | `/api/store` | Bearer API_TOKEN | Update store profile |
 | `GET` | `/api/ai-config` | — | Get AI config |
 | `PUT` | `/api/ai-config` | Bearer API_TOKEN | Update AI config (model, prompt, etc.) |
+| `GET` | `/api/products` | — | Product list (paginated, searchable) |
+| `GET/POST/PUT/DELETE` | `/api/products/:id` | 🔒 | Product CRUD |
+| `GET/POST` | `/api/products/categories` | 🔒 | Category list / create |
+| `PUT/DELETE` | `/api/products/categories/:id` | 🔒 | Category update / delete |
+| `GET` | `/api/orders` | — | Order list (paginated, filterable) |
+| `GET` | `/api/orders/:id` | — | Order detail |
+| `PUT` | `/api/orders/:id/status` | 🔒 | Update order status |
+| `PUT` | `/api/orders/:id/notes` | 🔒 | Update order notes |
+| `PUT` | `/api/orders/:id/payment` | 🔒 | Create / update payment |
+| `GET` | `/api/customers` | — | Customer list |
+| `GET/PUT` | `/api/customers/:id` | —/🔒 | Customer detail / update |
+| `GET` | `/api/conversations/:id` | — | Conversation messages |
+| `PUT` | `/api/conversations/:id/status` | 🔒 | Update conversation status |
+| `POST` | `/api/conversations/:id/messages` | 🔒 | Send HUMAN message |
+| `GET` | `/api/dashboard/stats` | — | Aggregated dashboard stats |
+| `GET` | `/api/logs` | — | Activity log (paginated) |
+| `GET` | `/api/usage` | — | LLM usage counters (today) |
+| `POST` | `/api/auth/register` | — | Register account |
+| `POST` | `/api/auth/login` | — | Login (JWT token) |
+| `GET` | `/api/auth/me` | — | Current user (token auto-verify) |
+| `POST` | `/api/auth/logout` | — | Logout |
+| `POST` | `/api/auth/forgot-password` | — | Generate reset token |
+| `POST` | `/api/auth/reset-password` | — | Reset password |
+| `GET` | `/api/website` | — | Get website config |
+| `PUT` | `/api/website` | 🔒 JWT | Update website config |
+| `POST` | `/api/website/generate` | 🔒 JWT | Generate static site |
+| `GET` | `/api/website/download` | 🔒 JWT | Download ZIP |
+| `POST` | `/api/website/publish` | 🔒 JWT | Mark as published |
+| `GET` | `/s/:slug` | — | Serve generated static site |
+
+> 🔒 = `requireAuth` (Bearer API_TOKEN), 🔒 JWT = `requireJwt` (JWT), — = public
 
 Unified response: `{ status: "success"|"failure", message, data? }`
 
-Error classes: BadRequestError (400), UnauthorizedError (401), NotFoundError (404), InternalServerError (500)
-
-> `dashboard/API_SPEC.md` has the full planned API (Products, Orders, Customers, Settings, etc.) — Products, Orders, Customers endpoints are not yet implemented server-side.
+Error classes: BadRequestError (400), UnauthorizedError (401), ForbiddenError (403), NotFoundError (404), InternalServerError (500)
 
 ## Dashboard
 
 - **5 pages implemented**: Dashboard, Products (+ProductForm), Orders (+OrderDetail), Customers (dual-panel inline chat), Settings (Store + AI + WA tabs)
-- **All hooks mock-only**: `useProducts.ts`, `useOrders.ts`, `useCustomers.ts`, `useSettings.ts`, `useWaStatus.ts` each toggle `MOCK = true` — flip to `false` when API endpoints exist
+- **All hooks use real API**: `useProducts`, `useOrders`, `useCustomers`, `useSettings`, `useWebsite` — no MOCK toggle, fetch via `fetchApi()`. `useWaStatus` and `useAuth` retain `MOCK = false` toggle for legacy compatibility.
 - **UI primitives** in `components/ui/` (Button, Card, Badge, Table, Modal, Input, Select, Spinner, EmptyState, Pagination) — no external component library
 - **Layout**: `Layout.tsx` shell with `Sidebar.tsx` + `Topbar.tsx` + `<Outlet />`, `BottomNav.tsx` for mobile
 - **Routing**: React Router v8 `createBrowserRouter` in `App.tsx`
+
+## Docker Compose
+
+```bash
+cp .env.example .env        # edit: isi POSTGRES_PASSWORD, API_TOKEN, JWT_SECRET
+docker compose up --build   # build + start semua service
+```
+
+4 services: `db` (PostgreSQL 17), `api` (Express, port 3001), `dashboard` (Vite dev, port 5173), `wa-bot` (Baileys).
+
+Database `wani_api` + `wa_bot` dibuat otomatis via `init-dbs.sh`.
 
 ## Quirks
 
@@ -232,7 +274,7 @@ scanInput reasons mapped by confidence:
 ### What's missing
 
 - No embeddings / vector store / RAG (the `knowledgeBase` field is plain text)
-- No evaluation harness, no tests
+- 152 unit tests (guardrails + firewall + schemas + auth + middleware + errors)
 
 ## Referensi Dokumen
 

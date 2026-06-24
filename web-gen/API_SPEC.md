@@ -93,13 +93,13 @@ interface SiteConfig {
 
 ### Default Values (first create)
 
-Saat pertama kali `GET /api/site` dan belum ada data, endpoint akan return `data: null`. Dashboard bisa auto-create dengan `PUT /api/site` dengan body minimal.
+Saat pertama kali `GET /api/website` dan belum ada data, endpoint akan return `data: null`. Dashboard bisa auto-create dengan `PUT /api/website` dengan body minimal.
 
 ---
 
 ## 3. Endpoint Site Config
 
-### GET /api/site
+### GET /api/website
 
 Ambil konfigurasi website generator.
 
@@ -146,7 +146,7 @@ Ambil konfigurasi website generator.
 }
 ```
 
-### PUT /api/site 🔒
+### PUT /api/website 🔒
 
 Buat atau update konfigurasi website generator. **Idempotent** — panggil pertama = create, selanjutnya = update.
 
@@ -209,7 +209,7 @@ Buat atau update konfigurasi website generator. **Idempotent** — panggil perta
 
 ## 4. Endpoint Preview
 
-### POST /api/site/preview 🔒
+### POST /api/website/preview 🔒
 
 Generate website preview. Server akan:
 
@@ -237,7 +237,7 @@ Generate website preview. Server akan:
 // Response 400 — site belum dikonfigurasi
 {
   "status": "failure",
-  "message": "Configure site first via PUT /api/site"
+  "message": "Configure site first via PUT /api/website"
 }
 
 // Response 500 — build gagal
@@ -257,7 +257,7 @@ Generate website preview. Server akan:
 
 ## 5. Endpoint Download
 
-### GET /api/site/download 🔒
+### GET /api/website/download 🔒
 
 Download hasil preview terakhir sebagai file `.zip`.
 
@@ -269,7 +269,7 @@ Download hasil preview terakhir sebagai file `.zip`.
 // Response 400 — preview belum di-generate
 {
   "status": "failure",
-  "message": "Generate preview first via POST /api/site/preview"
+  "message": "Generate preview first via POST /api/website/preview"
 }
 ```
 
@@ -291,7 +291,7 @@ toko-ayu.zip
 
 ## 6. Endpoint Publish
 
-### POST /api/site/publish 🔒
+### POST /api/website/publish 🔒
 
 Generate dan publish website final. Beda dengan preview:
 
@@ -321,7 +321,7 @@ Generate dan publish website final. Beda dengan preview:
 // Response 400
 {
   "status": "failure",
-  "message": "Configure site first via PUT /api/site"
+  "message": "Configure site first via PUT /api/website"
 }
 ```
 
@@ -386,14 +386,15 @@ server: {
 
 | Method | Path | Auth | Status | Deskripsi |
 |--------|------|------|--------|-----------|
-| `GET` | `/api/site` | — | ❌ Belum di-backend | Ambil config website |
-| `PUT` | `/api/site` | 🔒 | ❌ Belum di-backend | Simpan config website |
-| `POST` | `/api/site/preview` | 🔒 | ❌ Belum di-backend | Generate preview site |
-| `GET` | `/api/site/download` | 🔒 | ❌ Belum di-backend | Download ZIP preview |
-| `POST` | `/api/site/publish` | 🔒 | ❌ Belum di-backend | Publish site final |
-| `GET` | `/s/{slug}/*` | — | ❌ Belum di-backend | Static file serving (preview) |
+| `GET` | `/api/website` | — | ✅ Existing | Ambil config website |
+| `PUT` | `/api/website` | 🔒 JWT | ✅ Existing | Simpan config website |
+| `POST` | `/api/website/generate` | 🔒 JWT | ✅ Existing | Generate static site via web-gen |
+| `GET` | `/api/website/download` | 🔒 JWT | ✅ Existing | Download ZIP hasil generate |
+| `POST` | `/api/website/publish` | 🔒 JWT | ✅ Existing | Tandai sebagai published |
+| `GET` | `/s/:slug` | — | ✅ Existing | Serve generated static site |
 
 ---
 
-> **Catatan Implementasi**: Semua endpoint di atas perlu diimplementasikan di `api/` bersamaan
-> dengan pembuatan model `WebSite`, migration database, dan integrasi dengan `web-gen/` package.
+> **Catatan Implementasi**: Semua endpoint sudah diimplementasikan di `api/`.
+> Endpoint menggunakan prefix `/api/website` (bukan `/api/website`).
+> Static file diserve dari `api/generated-sites/` via Express `express.static`.
