@@ -9,40 +9,88 @@
 - **Debug Tracer** — Ring buffer (500 cap), per-request TraceContext, duration tracking
 - **Debug Routes** — GET /api/debug/traces, GET /api/debug/traces/:id, DELETE /api/debug/traces, GET /api/debug/status, POST /api/debug/circuit/reset
 - **API Spec** — Lengkap dengan request/response shapes
-- **Frontend (Dashboard)** — 5 pages (Dashboard, Products, Orders, Customers, Settings), mock-only hooks, React 19 + Vite 8 + Tailwind v4
-- **Bot** — Baileys connect, QR terminal + API POST, forward messages to API, send reply back
+- **Frontend (Dashboard)** — 5 pages (Dashboard, Products, Orders, Customers, Settings), **semua hooks panggil API real** (via `fetchApi()`), React 19 + Vite 8 + Tailwind v4
+- **Bot (wa-bot/)** — Baileys connect, QR terminal + API POST, forward messages to API, send reply back
+- **API Endpoints** — Semua ~40 endpoint sudah diimplementasikan (routes, controllers, models, schemas, Zod validation)
+- **Tests** — 152 test, 0 failures (firewall, guardrails, auth, middleware, errors, schemas, intent, golden-reply)
+- **Prisma Migrations** — 3 migrations applied (core tables + users/website + store logo)
+- **Docker Compose** — 4 service definitions (db, api, dashboard, wa-bot)
+- **Dockerfile** — Ada untuk api, dashboard, wa-bot
 
-## Belum / Sedang Dikerjakan 🔄
+## 🔴 Critical — Harus Dibenerin
 
-### Backend (API)
+| # | Item | Package | Detail |
+|---|------|---------|--------|
+| 1 | **`OPENROUTER_API_KEY` kosong** | api/, root `.env` | Semua LLM call bakal gagal. Isi key valid di `api/.env` dan root `.env` |
+| 2 | **`wa-bot/` node_modules tidak ada** | wa-bot/ | `bun install` belum pernah dijalankan — bot ga bisa jalan lokal |
+| 3 | **`wa-bot/` Prisma client tidak ada** | wa-bot/ | `generated/prisma/` tidak ditemukan — jalanin `bun run prisma:generate` setelah instalasi |
+| 4 | **Template web-gen dependencies belum diinstall** | web-gen/ | `web-gen/src/templates/default/node_modules/` kosong — jalanin `bun install` di direktori template |
+
+## 🟡 Medium — Perlu Diperbaiki
+
+| # | Item | Package | Detail |
+|---|------|---------|--------|
+| 5 | **5 TypeScript error di API** | api/ | `activity-log.ts:69` (SortOrder type), `customer.ts:14`, `log.ts:8`, `order.ts:14`, `product.ts:16` (ParsedQs mismatch). Runtime OK karena pake `req.validatedQuery`, tapi perlu dibenerin biar type-safe |
+| 6 | **`wa-bot/.env` tidak ada** | wa-bot/ | Hanya ada `.env.example` — bot ga bisa jalan lokal tanpa env |
+| 7 | **`dashboard/` punya `package-lock.json` + `bun.lock`** | dashboard/ | Inconsistent — pake bun aja, hapus `package-lock.json` |
+| 8 | **`dashboard/.env` tidak ada** | dashboard/ | Minor — proxy fallback ke `localhost:3001`, tapi best practice pake env |
+| 9 | **`web-gen/.env` tidak ada** | web-gen/ | Minor — cuma telemetry disable |
+
+## 🔄 Pending Improvements
+
+### AI / Guardrails
 
 | # | Item | Prioritas | Catatan |
 |---|------|-----------|---------|
-| 1 | **Products CRUD** | High | Endpoints sudah di-spec, controller/model perlu dibuat |
-| 2 | **Orders CRUD** + Payment | High | Endpoints sudah di-spec, perlu model + controller |
-| 3 | **Customers CRUD** | High | Endpoints sudah di-spec, perlu model + controller |
-| 4 | **Dashboard Stats** | Medium | Endpoint `/api/dashboard/stats` |
-| 5 | **Conversations** | Medium | List, detail, update status, send human message |
-| 6 | **Activity Log** | Medium | GET /api/logs (sudah ada ActivityLogModel) |
-| 7 | **Usage Stats** | Low | GET /api/usage dari UsageCounter |
-| 8 | **WA Settings** | Low | GET /api/qr/settings, POST /api/qr/disconnect |
-| 9 | **Tests** (full coverage) | Medium | Unit test untuk pipeline, guardrails (67 tests exist) |
-| 10 | **Embeddings / RAG** | Low | knowledgeBase masih plain text |
+| 1 | **Grounding check** | Medium | `checkGrounding()` udah diimplementasi tapi butuh validasi end-to-end dengan real LLM |
+| 2 | **T2/T3 classifier tuning** | Low | Threshold confidence bisa di-tuning berdasarkan production data |
+| 3 | **Embeddings / RAG** | Low | `knowledgeBase` masih plain text — belum ada vector store |
+| 4 | **Multilingual defense** | Low | Regex injection detection baru EN+ID |
 
-### Frontend (Dashboard)
+### Dashboard
 
-Setelah API endpoint jadi, flip `MOCK = false` di tiap hook:
-- `useProducts.ts` → Products CRUD
-- `useOrders.ts` → Orders CRUD
-- `useCustomers.ts` → Customers + Chat
-- `useSettings.ts` → Store, AI Config, WA Session
-- `useWaStatus.ts` → QR + status
+| # | Item | Prioritas | Catatan |
+|---|------|-----------|---------|
+| 5 | **Final MOCK toggle cleanup** | Low | `useAuth.ts` dan `useWaStatus.ts` masih punya `MOCK = false` — ga dipake, tapi bisa dihapus |
+| 6 | **Error handling UI** | Medium | Belum ada unified error toast / notification system |
+| 7 | **Loading states** | Medium | Beberapa page belum punya skeleton loading |
 
-### Deploy / Infra
+### Infra / DevOps
 
-| # | Item | Catatan |
-|---|------|---------|
-| 1 | Docker setup | 3 services (api, dashboard, bot) |
-| 2 | PG migrations | prisma:migrate untuk production |
-| 3 | CI/CD | Lint + test + build |
-| 4 | Monitoring | Pipeline trace viewer di UI |
+| # | Item | Prioritas | Catatan |
+|---|------|-----------|---------|
+| 8 | **PostgreSQL lokal** | High | Untuk development lokal butuh PG running — bisa pake `docker compose up db` |
+| 9 | **CI/CD pipeline** | Medium | Lint + typecheck + test + build |
+| 10 | **Health check endpoint** | Low | `GET /api/health` untuk monitoring |
+| 11 | **Production build dashboard** | Medium | Pastiin `vite build` output siap serve production |
+
+### Bot
+
+| # | Item | Prioritas | Catatan |
+|---|------|-----------|---------|
+| 12 | **Bot auto-start documentation** | Low | Cara jalanin bot setelah API siap |
+| 13 | **Multi-device session backup** | Low | Belum ada mekanisme backup creds |
+
+## Evaluasi — Jalan Normal
+
+### Syarat Minimal (Urutan Setup)
+
+```
+1. PostgreSQL running          → docker compose up db
+2. API env lengkap             → isi OPENROUTER_API_KEY + DB_URL di api/.env
+3. API dependencies            → cd api && bun install && bun run prisma:generate && bun run prisma:migrate
+4. API start                   → cd api && bun run src/index.ts (port 3001)
+5. Bot dependencies            → cd wa-bot && bun install && bun run prisma:generate
+6. Bot env                     → cd wa-bot && cp .env.example .env (isi API_TOKEN)
+7. Bot start                   → cd wa-bot && bun run src/index.ts
+8. Dashboard dependencies      → cd dashboard && bun install
+9. Dashboard start             → cd dashboard && bun run dev (port 5173)
+```
+
+### Catatan Penting
+
+- **AI pipeline TIDAK akan jalan** tanpa `OPENROUTER_API_KEY` — semua LLM call timeout/fail
+- **Bot ga bisa QR-generate** tanpa API endpoint `POST /api/qr` (wait, ini udah jalan sih)
+- **Database harus PostgreSQL 17** — Prisma pake `@prisma/adapter-pg` yang spesifik PG
+- **Port conflict**: API (3001), Dashboard (5173), PostgreSQL (5432)
+- **wa-bot dan API** harus jalan bareng biar chat flow lengkap
