@@ -67,7 +67,7 @@ jobs:
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v6
         with:
-          context: ./dashboard
+          context: .
           file: ./dashboard/Dockerfile
           push: true
           tags: ${{ steps.docker_meta.outputs.tags }}
