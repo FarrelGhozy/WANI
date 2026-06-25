@@ -2,10 +2,10 @@ import type { PrismaClient } from "@db/client"
 import { initAuthCreds, BufferJSON, type AuthenticationState } from "@whiskeysockets/baileys"
 import type { SignalKeyStore } from "@whiskeysockets/baileys"
 
-export function usePrismaAuthState(db: PrismaClient): {
+export async function usePrismaAuthState(db: PrismaClient): Promise<{
   state: AuthenticationState
   saveCreds: () => Promise<void>
-} {
+}> {
   const writeCreds = async (creds: AuthenticationState["creds"]) => {
     await db.creds.upsert({
       where: { id: "pairing" },
@@ -51,8 +51,10 @@ export function usePrismaAuthState(db: PrismaClient): {
     },
   }
 
+  const creds = await readCreds()
+
   const state: AuthenticationState = {
-    creds: undefined as unknown as AuthenticationState["creds"],
+    creds,
     keys,
   }
 
@@ -60,17 +62,8 @@ export function usePrismaAuthState(db: PrismaClient): {
     await writeCreds(state.creds)
   }
 
-  const init = async () => {
-    state.creds = await readCreds()
-  }
-
-  const promise = init()
-
   return {
     state,
-    saveCreds: async () => {
-      await promise
-      await saveCreds()
-    },
+    saveCreds,
   }
 }

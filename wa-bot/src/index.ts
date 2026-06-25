@@ -13,7 +13,7 @@ const api = axios.create({
 })
 
 async function main() {
-  const { state, saveCreds } = usePrismaAuthState(prisma)
+  const { state, saveCreds } = await usePrismaAuthState(prisma)
 
   const sock = makeWASocket({
     auth: state,

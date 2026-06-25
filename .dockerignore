@@ -11,6 +11,4 @@ build/
 .env.local
 .env.*.local
 *.tsbuildinfo
-bun.lock
-bun.lockb
 coverage/

@@ -9,5 +9,5 @@ RUN bun install
 
 EXPOSE 5173
 
-# VITE_API_URL defaults to http://api:3001 in Compose
+# Development only — production build handled by nginx/Dockerfile
 CMD ["bun", "run", "dev"]
