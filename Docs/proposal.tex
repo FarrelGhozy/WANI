@@ -13,7 +13,7 @@
 \usepackage{babel}
 \babelprovide[import]{indonesian}
 \usepackage{indentfirst}
-\setlength{\parindent}{1.5cm}
+\setlength{\parindent}{0.5cm}
 
 % ── Geometry ─────────────────────────────────────────────────
 \usepackage[top=3cm, bottom=3cm, left=3.5cm, right=3cm]{geometry}
@@ -146,6 +146,10 @@
     \subsection*{#1}%
     \addcontentsline{toc}{subsection}{#1}%
 }
+\newcommand{\subsub}[1]{%
+    \subsubsection*{#1}%
+    \addcontentsline{toc}{subsubsection}{\hspace{1.5em}#1}%
+}
 \renewcommand{\thesection}{\arabic{section}}
 
 
@@ -245,7 +249,7 @@ Dibangun di atas \textit{stack} teknologi modern dan stabil (Bun, Express 5, Pri
 
 \sub{Latar Belakang}
 
-\textbf{Darurat Digitalisasi UMKM Indonesia}
+\subsub{Darurat Digitalisasi UMKM Indonesia}
 
 Usaha Mikro, Kecil, dan Menengah (UMKM) merupakan pilar fundamental perekonomian Indonesia. Data Kementerian Koperasi dan UKM mencatat bahwa sektor UMKM menyumbang \textbf{61\%} terhadap Produk Domestik Bruto (PDB) nasional (setara Rp9.580 triliun) dan menyerap sekitar \textbf{97\%} dari total tenaga kerja \cite{kemkop2023}. Namun, kesenjangan digital masih menjadi hambatan serius: berdasarkan survei Kementerian Koperasi dan UKM tahun 2022 \cite{kemkop2022survei}, hanya sekitar \textbf{20\%} UMKM yang telah mengadopsi teknologi digital secara aktif.
 
@@ -275,7 +279,7 @@ Berdasarkan latar belakang yang telah diuraikan, dirumuskan permasalahan sebagai
 
 \sub{Tujuan dan Manfaat}
 
-\textbf{Tujuan}
+\subsub{Tujuan}
 
 \begin{enumerate}
 	\item Mengembangkan \textit{chatbot} WhatsApp bertenaga AI dengan \textit{intent detection} multi-kategori yang mampu menangani pesanan, pertanyaan, sapaan, keluhan, dan eskalasi secara otomatis.
@@ -389,7 +393,7 @@ Tahapan pengembangan WANI mengikuti siklus XP yang terdiri dari:
 
 \sub{Analisis Kebutuhan Sistem}
 
-\textbf{Kebutuhan Fungsional}
+\subsub{Kebutuhan Fungsional}
 
 \begin{enumerate}
 	\item Sistem mampu menerima dan merespons pesan WhatsApp secara otomatis menggunakan AI.
