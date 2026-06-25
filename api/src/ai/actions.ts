@@ -4,12 +4,10 @@ import { OrderModel } from "@/src/models/order"
 import { CustomerModel } from "@/src/models/customer"
 import { ConversationModel } from "@/src/models/conversation"
 import { ActivityLogModel } from "@/src/models/activity-log"
-import type { AiConfig } from "@db/client"
 
 export interface ActionCtx {
   customerId: string
   conversationId: string
-  aiConfig: AiConfig
   greetingMessage?: string | null
 }
 

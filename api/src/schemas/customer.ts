@@ -3,8 +3,8 @@ import { z } from "zod"
 const convStatuses = ["ACTIVE", "RESOLVED", "ARCHIVED", "ESCALATED"] as const
 
 export const customerQuerySchema = z.object({
-  page: z.coerce.number().int().min(1).optional().default(1),
-  limit: z.coerce.number().int().min(1).max(100).optional().default(20),
+  page: z.string().regex(/^\d+$/).optional().default("1"),
+  limit: z.string().regex(/^\d+$/).optional().default("20"),
   search: z.string().optional(),
   sort: z.enum(["createdAt", "updatedAt", "name", "totalOrders"]).optional().default("createdAt"),
   order: z.enum(["asc", "desc"]).optional().default("desc"),

@@ -11,7 +11,7 @@ export async function listLogs(
   req: Request<Record<string, string>, any, any, LogQuery>,
   res: Response,
 ): Promise<void> {
-  const result = await ActivityLogModel.list((req as any).validatedQuery ?? req.query)
+  const result = await ActivityLogModel.list(req.validatedQuery! as LogQuery)
   sendResponse(res, 200, "logs retrieved", result)
 }
 

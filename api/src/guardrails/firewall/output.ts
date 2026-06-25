@@ -1,6 +1,6 @@
 // ─── Layer 4: Output safety scanning ────────────────────────────────────
 
-import type { OutputScanResult } from "./types"
+import type { OutputScanResult } from "@/src/guardrails/firewall/types"
 import { PROMPT_CANARY, MSG_OPEN, MSG_CLOSE } from "@/src/ai/prompts"
 
 const PII_PATTERNS = [

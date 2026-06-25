@@ -1,7 +1,7 @@
 import { z } from "zod"
 
 export const getTracesQuerySchema = z.object({
-  limit: z.coerce.number().int().positive().max(200).optional(),
+  limit: z.string().regex(/^\d+$/).optional().default("50"),
 })
 
 export const getTraceDetailParamsSchema = z.object({

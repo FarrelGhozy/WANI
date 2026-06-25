@@ -1,5 +1,15 @@
 import { z } from "zod"
 
+export const productQuerySchema = z.object({
+  page: z.string().regex(/^\d+$/).optional().default("1"),
+  limit: z.string().regex(/^\d+$/).optional().default("20"),
+  search: z.string().optional(),
+  categoryId: z.string().optional(),
+  isAvailable: z.enum(["true", "false"]).optional(),
+  sort: z.enum(["name", "price", "stock", "createdAt", "updatedAt"]).optional().default("createdAt"),
+  order: z.enum(["asc", "desc"]).optional().default("desc"),
+})
+
 export const createProductSchema = z.object({
   name: z.string().min(1),
   categoryId: z.string().optional().nullable(),
@@ -18,19 +28,6 @@ export const updateProductSchema = z.object({
   stock: z.number().int().min(0).optional(),
   isAvailable: z.boolean().optional(),
   imageUrl: z.string().optional().nullable(),
-})
-
-export const productQuerySchema = z.object({
-  page: z.coerce.number().int().min(1).optional().default(1),
-  limit: z.coerce.number().int().min(1).max(100).optional().default(20),
-  search: z.string().optional(),
-  categoryId: z.string().optional(),
-  isAvailable: z
-    .string()
-    .optional()
-    .transform((v) => (v === undefined ? undefined : v === "true")),
-  sort: z.enum(["name", "price", "stock", "createdAt", "updatedAt"]).optional().default("createdAt"),
-  order: z.enum(["asc", "desc"]).optional().default("desc"),
 })
 
 export const createCategorySchema = z.object({

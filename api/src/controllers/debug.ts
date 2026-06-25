@@ -12,8 +12,8 @@ export function getRecentTraces(
   req: Request<Record<string, string>, any, any, GetTracesQuery>,
   res: Response,
 ): void {
-  const q = (req as any).validatedQuery ?? req.query
-  const limit = q.limit ?? 50
+  const q = req.validatedQuery! as GetTracesQuery
+  const limit = Number(q.limit)
   const traces = getTraces(limit)
   sendResponse(res, 200, "ok", { traces })
 }

@@ -9,12 +9,12 @@ export const paymentMethodSchema = z.enum(paymentMethods)
 export const paymentStatusSchema = z.enum(paymentStatuses)
 
 export const orderQuerySchema = z.object({
-  page: z.coerce.number().int().min(1).optional().default(1),
-  limit: z.coerce.number().int().min(1).max(100).optional().default(20),
+  page: z.string().regex(/^\d+$/).optional().default("1"),
+  limit: z.string().regex(/^\d+$/).optional().default("20"),
   status: orderStatusSchema.optional(),
   customerId: z.string().optional(),
-  dateFrom: z.coerce.string().optional(),
-  dateTo: z.coerce.string().optional(),
+  dateFrom: z.string().optional(),
+  dateTo: z.string().optional(),
   sort: z.enum(["createdAt", "updatedAt", "totalAmount", "status"]).optional().default("createdAt"),
   order: z.enum(["asc", "desc"]).optional().default("desc"),
 })

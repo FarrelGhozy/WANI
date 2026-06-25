@@ -1,6 +1,6 @@
 import { prisma } from "@/src/config/db"
 import { BaseModel } from "@/src/models/base"
-import type { Customer } from "@db/client"
+import type { Customer, Prisma } from "@db/client"
 
 export type CustomerListItem = {
   id: string
@@ -76,12 +76,13 @@ export class CustomerModel extends BaseModel {
   }
 
   static async list(params: {
-    page: number
-    limit: number
+    page: number | string
+    limit: number | string
     search?: string
     sort: string
     order: string
   }): Promise<CustomerListResult> {
+    const { page, limit, skip } = this.paginate(params.page, params.limit)
     const where: Record<string, unknown> = {}
 
     if (params.search) {
@@ -91,16 +92,10 @@ export class CustomerModel extends BaseModel {
       ]
     }
 
-    const skip = (params.page - 1) * params.limit
-
+    const w = where as Prisma.CustomerWhereInput
     const [customers, total] = await Promise.all([
-      this.delegate.findMany({
-        where: where as any,
-        skip,
-        take: params.limit,
-        orderBy: { [params.sort]: params.order },
-      }),
-      this.delegate.count({ where: where as any }),
+      this.delegate.findMany({ where: w, skip, take: limit, orderBy: { [params.sort]: params.order } }),
+      this.delegate.count({ where: w }),
     ])
 
     const customerIds = customers.map((c: Customer) => c.id)
@@ -139,13 +134,7 @@ export class CustomerModel extends BaseModel {
       }
     })
 
-    return {
-      items,
-      total,
-      page: params.page,
-      limit: params.limit,
-      totalPages: Math.ceil(total / params.limit),
-    }
+    return this.listResult(items, total, page, limit)
   }
 
   static async getByIdWithDetail(id: string): Promise<CustomerDetail | null> {

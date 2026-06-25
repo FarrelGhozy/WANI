@@ -22,6 +22,15 @@ export class UserModel extends BaseModel {
     } | null>
   }
 
+  static async findByResetToken(token: string) {
+    return this.delegate.findFirst({
+      where: {
+        resetPasswordToken: token,
+        resetPasswordExpires: { gt: new Date() },
+      },
+    }) as Promise<{ id: string; resetPasswordToken: string | null; resetPasswordExpires: Date | null } | null>
+  }
+
   static async createUser(data: {
     name: string
     email: string

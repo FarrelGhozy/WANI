@@ -1,5 +1,5 @@
 import { BaseModel } from "@/src/models/base"
-import type { WebSite } from "@db/client"
+import type { Prisma, WebSite } from "@db/client"
 
 export class WebSiteModel extends BaseModel {
   protected static override get delegate() {
@@ -16,14 +16,14 @@ export class WebSiteModel extends BaseModel {
       return this.db.webSite.create({
         data: {
           id: "default",
-          config: config as any,
+          config: config as Prisma.InputJsonValue,
         },
       })
     }
-    const merged = { ...(row.config as any), ...config }
+    const merged = { ...(row.config as Record<string, unknown>), ...config }
     return this.db.webSite.update({
       where: { id: "default" },
-      data: { config: merged as any },
+      data: { config: merged as Prisma.InputJsonValue },
     })
   }
 

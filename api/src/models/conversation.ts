@@ -1,5 +1,5 @@
 import { BaseModel } from "@/src/models/base"
-import type { Conversation } from "@db/client"
+import type { Conversation, $Enums } from "@db/client"
 
 export class ConversationModel extends BaseModel {
   protected static override get delegate() {
@@ -27,7 +27,7 @@ export class ConversationModel extends BaseModel {
   static async setStatus(id: string, status: string): Promise<void> {
     await this.delegate.update({
       where: { id },
-      data: { status: status as any },
+      data: { status: status as $Enums.ConversationStatus },
     })
   }
 }

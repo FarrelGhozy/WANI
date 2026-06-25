@@ -24,8 +24,9 @@
 
     "paths": {
       "@db/*": ["./generated/prisma/*"],
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@web-gen/*": ["../web-gen/src/*"]
     }
   },
-  "include": ["src", "prisma.config.ts"]
+  "include": ["src", "test", "prisma.config.ts"]
 }

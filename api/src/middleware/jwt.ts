@@ -19,7 +19,7 @@ export function requireJwt(req: Request, _res: Response, next: NextFunction): vo
   const token = header.slice(7)
   try {
     const payload = jwt.verify(token, JWT_SECRET) as JwtPayload
-    ;(req as any).user = payload
+    req.user = payload
     next()
   } catch {
     throw new UnauthorizedError("invalid or expired token")

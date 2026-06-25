@@ -1,4 +1,5 @@
 import { BaseModel } from "@/src/models/base"
+import type { Prisma } from "@db/client"
 
 export type LogEntry = {
   id: string
@@ -33,21 +34,22 @@ export class ActivityLogModel extends BaseModel {
         type,
         description,
         referenceId: referenceId ?? null,
-        metadata: (metadata ?? undefined) as any,
+        metadata: metadata as Prisma.InputJsonValue,
       },
     })
   }
 
   static async list(params: {
-    page: number
-    limit: number
+    page: number | string
+    limit: number | string
     type?: string
     referenceId?: string
     dateFrom?: string
     dateTo?: string
     sort: string
-    order: string
+    order: "asc" | "desc"
   }): Promise<LogListResult> {
+    const { page, limit, skip } = this.paginate(params.page, params.limit)
     const where: Record<string, unknown> = {}
 
     if (params.type) where.type = params.type
@@ -59,20 +61,14 @@ export class ActivityLogModel extends BaseModel {
       where.createdAt = createdAt
     }
 
-    const skip = (params.page - 1) * params.limit
-
+    const w = where as Prisma.ActivityLogWhereInput
     const [rows, total] = await Promise.all([
-      this.delegate.findMany({
-        where: where as any,
-        skip,
-        take: params.limit,
-        orderBy: { createdAt: params.order },
-      }),
-      this.delegate.count({ where: where as any }),
+      this.delegate.findMany({ where: w, skip, take: limit, orderBy: { createdAt: params.order } }),
+      this.delegate.count({ where: w }),
     ])
 
-    return {
-      items: rows.map((r: any) => ({
+    return this.listResult(
+      rows.map((r: any) => ({
         id: r.id,
         type: r.type,
         referenceId: r.referenceId ?? null,
@@ -81,9 +77,8 @@ export class ActivityLogModel extends BaseModel {
         createdAt: r.createdAt.toISOString(),
       })),
       total,
-      page: params.page,
-      limit: params.limit,
-      totalPages: Math.ceil(total / params.limit),
-    }
+      page,
+      limit,
+    )
   }
 }

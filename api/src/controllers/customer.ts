@@ -17,7 +17,7 @@ export async function listCustomers(
   req: Request<Record<string, string>, any, any, CustomerQuery>,
   res: Response,
 ): Promise<void> {
-  const result = await CustomerModel.list((req as any).validatedQuery ?? req.query)
+  const result = await CustomerModel.list(req.validatedQuery! as CustomerQuery)
   sendResponse(res, 200, "customers retrieved", result)
 }
 
@@ -36,10 +36,7 @@ export async function updateCustomer(
   req: Request<{ id: string }, any, UpdateCustomerBody>,
   res: Response,
 ): Promise<void> {
-  const existing = await CustomerModel.getById(req.params.id)
-  if (!existing) {
-    throw new NotFoundError("customer not found")
-  }
+  await CustomerModel.getOrThrow(req.params.id, "customer")
   const customer = await CustomerModel.update(req.params.id, req.body)
   sendResponse(res, 200, "customer updated", customer)
 }

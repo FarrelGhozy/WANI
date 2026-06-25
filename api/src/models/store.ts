@@ -11,7 +11,7 @@ export class StoreModel extends BaseModel {
   }
 
   static async upsert(data: Partial<Store>): Promise<Store> {
-    const { id, createdAt, updatedAt, ...rest } = data as any
+    const { id, createdAt, updatedAt, ...rest } = data
     return this.db.store.upsert({
       where: { id: "default" },
       create: { id: "default", businessName: "Toko", phone: "", ...rest },
