@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { fetchApi } from '../lib/api.ts'
+import { fetchApi } from '@/lib/api.ts'
 
 export interface WaStatus {
   qr: string
@@ -8,8 +8,6 @@ export interface WaStatus {
   loading: boolean
   error: string | null
 }
-
-const MOCK = false
 
 export function useWaStatus(pollInterval = 5000): WaStatus {
   const [qr, setQr] = useState('')
@@ -36,7 +34,6 @@ export function useWaStatus(pollInterval = 5000): WaStatus {
   }, [])
 
   useEffect(() => {
-    if (MOCK) return
     const id = setInterval(poll, pollInterval)
     const initId = setTimeout(poll)
     return () => {
