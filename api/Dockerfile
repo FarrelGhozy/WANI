@@ -2,7 +2,7 @@ FROM oven/bun:1-alpine AS build
 WORKDIR /app/api
 
 COPY api/package.json api/bun.lock ./
-RUN bun install
+RUN bun ci
 
 COPY api/prisma/ ./prisma/
 RUN bunx prisma generate
