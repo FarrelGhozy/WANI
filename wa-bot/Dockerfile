@@ -14,11 +14,6 @@ RUN bun run build
 FROM oven/bun:1-alpine
 WORKDIR /app
 
-# COPY --from=build /app/wa-bot/dist ./dist
-# COPY --from=build /app/wa-bot/prisma ./prisma
-# COPY --from=build /app/wa-bot/prisma.config.ts ./
-# COPY --from=build /app/wa-bot/docker-entrypoint.sh /
-
 COPY --from=build /app/api/dist ./dist
 COPY --from=build /app/api/prisma ./prisma
 COPY --from=build /app/api/prisma.config.ts ./
