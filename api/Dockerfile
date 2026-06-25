@@ -1,4 +1,4 @@
-FROM oven/bun:1 AS build
+FROM oven/bun:1-alpine AS build
 WORKDIR /app/api
 
 COPY api/package.json api/bun.lock ./
@@ -14,7 +14,7 @@ RUN bun run build
 
 COPY web-gen/src/templates ./dist/templates
 
-FROM oven/bun:1
+FROM oven/bun:1-alpine
 WORKDIR /app
 
 COPY --from=build /app/api/dist ./dist

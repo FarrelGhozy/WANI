@@ -1,4 +1,4 @@
-FROM oven/bun:1 AS build
+FROM oven/bun:1-alpine AS build
 WORKDIR /app/wa-bot
 
 COPY wa-bot/package.json wa-bot/bun.lock ./
@@ -11,7 +11,7 @@ COPY wa-bot/ ./
 
 RUN bun run build
 
-FROM oven/bun:1
+FROM oven/bun:1-alpine
 WORKDIR /app
 
 # COPY --from=build /app/wa-bot/dist ./dist
