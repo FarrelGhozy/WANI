@@ -10,7 +10,7 @@ RUN bunx prisma generate
 COPY api/ ./
 COPY web-gen/ ../web-gen/
 
-RUN bun run build
+RUN bun build --outdir /app/api/dist --target bun /app/api/src/index.ts
 
 COPY web-gen/src/templates ./dist/templates
 
