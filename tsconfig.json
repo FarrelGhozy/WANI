@@ -1,0 +1,9 @@
+{
+  "files": [],
+  "references": [
+    { "path": "api" },
+    { "path": "dashboard" },
+    { "path": "wa-bot" },
+    { "path": "web-gen" }
+  ]
+}
