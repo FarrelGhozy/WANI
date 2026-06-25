@@ -1,13 +1,14 @@
-FROM oven/bun:1 AS base
+FROM oven/bun:1 AS build
 WORKDIR /app
 
-COPY dashboard/ ./dashboard/
-
-WORKDIR /app/dashboard
-
+COPY dashboard/package.json dashboard/bun.lock ./
 RUN bun install
 
-EXPOSE 5173
+COPY dashboard/ ./
 
-# Development only — production build handled by nginx/Dockerfile
-CMD ["bun", "run", "dev"]
+RUN bun run build
+
+FROM nginx:alpine
+COPY --from=build /app/dist /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
