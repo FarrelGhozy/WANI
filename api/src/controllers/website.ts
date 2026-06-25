@@ -2,21 +2,17 @@ import type { Request, Response } from "express"
 import type { z } from "zod"
 import path from "node:path"
 import { existsSync } from "node:fs"
-import jwt from "jsonwebtoken"
 import { WebSiteModel } from "@/src/models/website"
 import { StoreModel } from "@/src/models/store"
 import { ProductModel } from "@/src/models/catalog"
 import { OrderModel } from "@/src/models/order"
 import { sendResponse } from "@/src/utils/response"
-import { BadRequestError, InternalServerError, NotFoundError, UnauthorizedError } from "@/src/utils/errors"
+import { BadRequestError, InternalServerError, NotFoundError } from "@/src/utils/errors"
 import { updateWebsiteSchema, generateWebsiteSchema } from "@/src/schemas/website"
-import { generate } from "../../../web-gen/src/index.ts"
-import { createZipStream } from "../../../web-gen/src/index.ts"
+import { generate, createZipStream } from "@web-gen/index.ts"
 
 type UpdateWebsiteBody = z.infer<typeof updateWebsiteSchema>
 type GenerateWebsiteBody = z.infer<typeof generateWebsiteSchema>
-
-const JWT_SECRET = process.env.JWT_SECRET ?? "wani-dev-secret-change-in-production"
 
 const GENERATED_DIR = path.resolve(import.meta.dir, "..", "..", "generated-sites")
 
@@ -121,16 +117,6 @@ export async function generateWebsite(
 
 export async function downloadWebsite(req: Request, res: Response): Promise<void> {
   const slug = "default"
-
-  const token = (req.query.token as string) ?? req.headers.authorization?.slice(7)
-  if (!token) {
-    throw new UnauthorizedError()
-  }
-  try {
-    jwt.verify(token, JWT_SECRET)
-  } catch {
-    throw new UnauthorizedError("invalid or expired token")
-  }
 
   const sourceDir = path.join(GENERATED_DIR, slug)
   if (!existsSync(sourceDir)) {

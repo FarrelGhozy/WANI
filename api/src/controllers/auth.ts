@@ -76,30 +76,10 @@ export async function me(
   req: Request,
   res: Response,
 ): Promise<void> {
-  const authHeader = req.headers.authorization
-  if (!authHeader?.startsWith("Bearer ")) {
-    throw new UnauthorizedError()
-  }
-
-  const token = authHeader.slice(7)
-  let payload: { id: string }
-  try {
-    payload = jwt.verify(token, JWT_SECRET) as { id: string }
-  } catch {
-    throw new UnauthorizedError("invalid or expired token")
-  }
-
-  const user = await UserModel.getById(payload.id) as {
-    id: string
-    name: string
-    email: string
-    role: string
-  } | null
-
+  const user = await UserModel.getById(req.user!.id)
   if (!user) {
     throw new UnauthorizedError("user not found")
   }
-
   sendResponse(res, 200, "user retrieved", UserModel.toPublic(user))
 }
 
@@ -123,7 +103,7 @@ export async function forgotPassword(
     await UserModel.update(user.id, {
       resetPasswordToken: resetToken,
       resetPasswordExpires: expires,
-    } as any)
+    })
 
     // TODO: send email with reset link
     // For now, just return the token in response for testing
@@ -139,18 +119,8 @@ export async function resetPassword(
   req: Request<Record<string, string>, any, ResetPasswordBody>,
   res: Response,
 ): Promise<void> {
-  const users = await (UserModel as any).delegate.findMany({
-    where: {
-      resetPasswordToken: req.body.token,
-      resetPasswordExpires: { gt: new Date() },
-    },
-  }) as Array<{
-    id: string
-    resetPasswordToken: string | null
-    resetPasswordExpires: Date | null
-  }>
-
-  if (users.length === 0) {
+  const user = await UserModel.findByResetToken(req.body.token)
+  if (!user) {
     throw new BadRequestError("invalid or expired reset token")
   }
 
@@ -159,11 +129,11 @@ export async function resetPassword(
     cost: 10,
   })
 
-  await UserModel.update(users[0]!.id, {
+  await UserModel.update(user.id, {
     password: hashed,
     resetPasswordToken: null,
     resetPasswordExpires: null,
-  } as any)
+  })
 
   sendResponse(res, 200, "password reset successful")
 }
