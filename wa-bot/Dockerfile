@@ -14,6 +14,7 @@ RUN bun run build
 FROM oven/bun:1-alpine
 WORKDIR /app
 
+# Copy the built app files from the build stage to the final image
 COPY --from=build /app/api/dist ./dist
 COPY --from=build /app/api/prisma ./prisma
 COPY --from=build /app/api/prisma.config.ts ./
