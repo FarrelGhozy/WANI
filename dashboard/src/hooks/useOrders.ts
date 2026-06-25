@@ -88,9 +88,7 @@ const statusFlow: Record<OrderStatus, OrderStatus[]> = {
   CANCELLED: [],
 }
 
-export function formatPrice(price: number) {
-  return `Rp${price.toLocaleString('id-ID')}`
-}
+export { formatPrice } from '@/utils/format'
 
 export function useOrders() {
   const [orders, setOrders] = useState<Order[]>([])

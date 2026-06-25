@@ -1,14 +1,11 @@
 import { useNavigate } from 'react-router'
 import type { Product } from '@/hooks/useProducts.ts'
 import Badge from '@/components/ui/Badge.tsx'
+import { formatPrice } from '@/utils/format'
 
 interface ProductCardProps {
   product: Product
   onDelete: (id: string) => void
-}
-
-function formatPrice(price: number) {
-  return `Rp${price.toLocaleString('id-ID')}`
 }
 
 export default function ProductCard({ product: item, onDelete }: ProductCardProps) {

@@ -9,6 +9,7 @@ import Card from '@/components/ui/Card.tsx'
 import Badge from '@/components/ui/Badge.tsx'
 import QRCode from '@/components/QRCode.tsx'
 import { SignalIcon, BagIcon, ClipboardIcon, PeopleIcon } from '@/components/Icons.tsx'
+import { formatPrice } from '@/utils/format'
 
 const statusBadgeVariant: Record<string, 'amber' | 'teal' | 'green' | 'gray' | 'red'> = {
   PENDING: 'amber',
@@ -24,10 +25,6 @@ const statusLabel: Record<string, string> = {
   PROCESSING: 'Diproses',
   COMPLETED: 'Selesai',
   CANCELLED: 'Dibatalkan',
-}
-
-function formatPrice(price: number) {
-  return `Rp${price.toLocaleString('id-ID')}`
 }
 
 function mapAccent(status: string): 'teal' | 'amber' | 'red' {

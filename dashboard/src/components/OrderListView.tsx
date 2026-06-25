@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router'
 import type { Order, OrderStatus, OrderSortField } from '@/hooks/useOrders.ts'
 import Badge from '@/components/ui/Badge.tsx'
+import { formatPrice } from '@/utils/format'
 
 interface OrderListViewProps {
   orders: Order[]
@@ -23,10 +24,6 @@ const statusLabel: Record<OrderStatus, string> = {
   PROCESSING: 'Diproses',
   COMPLETED: 'Selesai',
   CANCELLED: 'Dibatalkan',
-}
-
-function formatPrice(price: number) {
-  return `Rp${price.toLocaleString('id-ID')}`
 }
 
 function SortArrow({ field, current, dir }: { field: string; current: string; dir: 'asc' | 'desc' }) {

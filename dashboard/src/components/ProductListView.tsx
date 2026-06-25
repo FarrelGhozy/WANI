@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router'
 import type { Product } from '@/hooks/useProducts.ts'
 import Badge from '@/components/ui/Badge.tsx'
+import { formatPrice } from '@/utils/format'
 
 interface ProductListViewProps {
   products: Product[]
@@ -8,10 +9,6 @@ interface ProductListViewProps {
   sortField: string
   sortDir: 'asc' | 'desc'
   onSort: (field: 'name' | 'category' | 'price' | 'stock' | 'isAvailable') => void
-}
-
-function formatPrice(price: number) {
-  return `Rp${price.toLocaleString('id-ID')}`
 }
 
 function SortArrow({ field, current, dir }: { field: string; current: string; dir: 'asc' | 'desc' }) {
