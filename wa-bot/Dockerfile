@@ -15,14 +15,14 @@ FROM oven/bun:1-alpine
 WORKDIR /app
 
 # Copy the built app files from the build stage to the final image
-COPY --from=build /app/api/dist ./dist
-COPY --from=build /app/api/prisma ./prisma
-COPY --from=build /app/api/prisma.config.ts ./
-COPY --from=build /app/api/docker-entrypoint.sh /
-COPY --from=build /app/api/package.json ./package.json
+COPY --from=build /app/wa-bot/dist ./dist
+COPY --from=build /app/wa-bot/prisma ./prisma
+COPY --from=build /app/wa-bot/prisma.config.ts ./
+COPY --from=build /app/wa-bot/docker-entrypoint.sh /
+COPY --from=build /app/wa-bot/package.json ./package.json
 
 # Copy the generated prisma client files from the build stage to the final image
-COPY --from=build /app/api/generated ./generated
+COPY --from=build /app/wa-bot/generated ./generated
 
 RUN chmod +x /docker-entrypoint.sh
 
