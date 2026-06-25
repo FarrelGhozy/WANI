@@ -10,7 +10,12 @@ RUN bunx prisma generate
 COPY api/ ./
 COPY web-gen/ ../web-gen/
 
-RUN bun build --outdir /app/api/dist --target bun /app/api/src/index.ts
+# Install package for the web-gen project first
+# To ensure that the dependencies for the web-gen project are installed before building the api project
+RUN bun install --cwd ../web-gen
+
+# Build the api project
+RUN bun run build
 
 COPY web-gen/src/templates ./dist/templates
 
