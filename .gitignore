@@ -4,3 +4,12 @@ graphify-out
 erd*
 .env
 .env.*.local
+Docs/*.aux
+Docs/*.toc
+Docs/*.lof
+Docs/*.fdb_latexmk
+Docs/*.fls
+Docs/*.synctex.gz
+Docs/*.lot
+Docs/*.log
+Docs/*.out
