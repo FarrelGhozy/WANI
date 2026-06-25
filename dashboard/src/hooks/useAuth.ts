@@ -43,26 +43,29 @@ export function useAuth() {
     const token = localStorage.getItem(AUTH_TOKEN_KEY)
     if (!token) return
 
-    const init = async () => {
-      setLoading(true)
+    let cancelled = false
+
+    ;(async () => {
       try {
         const json = await fetchApi<User>('/api/auth/me')
-        if (json.data) {
-          localStorage.setItem(AUTH_USER_KEY, JSON.stringify(json.data))
-          setUser(json.data)
-        } else {
+        if (!cancelled) {
+          if (json.data) {
+            localStorage.setItem(AUTH_USER_KEY, JSON.stringify(json.data))
+            setUser(json.data)
+          } else {
+            localStorage.removeItem(AUTH_TOKEN_KEY)
+            localStorage.removeItem(AUTH_USER_KEY)
+          }
+        }
+      } catch {
+        if (!cancelled) {
           localStorage.removeItem(AUTH_TOKEN_KEY)
           localStorage.removeItem(AUTH_USER_KEY)
         }
-      } catch {
-        localStorage.removeItem(AUTH_TOKEN_KEY)
-        localStorage.removeItem(AUTH_USER_KEY)
-      } finally {
-        setLoading(false)
       }
-    }
+    })()
 
-    init()
+    return () => { cancelled = true }
   }, [])
 
   const register = useCallback(async (name: string, email: string, password: string) => {

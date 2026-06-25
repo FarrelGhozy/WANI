@@ -40,20 +40,19 @@ export function useWebsite() {
   const [generating, setGenerating] = useState(false)
 
   useEffect(() => {
-    const init = async () => {
-      setLoading(true)
+    let cancelled = false
+    ;(async () => {
       try {
         const res = await fetchApi<Record<string, unknown>>('/api/website')
-        if (res.data) {
+        if (!cancelled && res.data) {
           setConfig((prev) => ({ ...prev, ...res.data as Partial<WebsiteConfig> }))
         }
       } catch {
         // API not available — use defaults
-      } finally {
-        setLoading(false)
       }
-    }
-    init()
+      if (!cancelled) setLoading(false)
+    })()
+    return () => { cancelled = true }
   }, [])
 
   const updateConfig = useCallback(async (patch: Partial<WebsiteConfig>) => {

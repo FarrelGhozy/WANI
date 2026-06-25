@@ -31,24 +31,30 @@ export function useSettings() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  const load = useCallback(async () => {
-    setLoading(true)
-    setError(null)
-    try {
-      const [storeRes, aiRes] = await Promise.all([
-        fetchApi<StoreProfile>('/api/store'),
-        fetchApi<AiConfig>('/api/ai-config'),
-      ])
-      setStore(storeRes.data)
-      setAiConfig(aiRes.data)
-    } catch (e) {
-      setError((e as Error).message)
-    } finally {
-      setLoading(false)
-    }
+  const fetchConfigs = useCallback(async () => {
+    const [storeRes, aiRes] = await Promise.all([
+      fetchApi<StoreProfile>('/api/store'),
+      fetchApi<AiConfig>('/api/ai-config'),
+    ])
+    return { store: storeRes.data, aiConfig: aiRes.data }
   }, [])
 
-  useEffect(() => { load() }, [load])
+  useEffect(() => {
+    let cancelled = false
+    ;(async () => {
+      try {
+        const data = await fetchConfigs()
+        if (!cancelled) {
+          setStore(data.store)
+          setAiConfig(data.aiConfig)
+        }
+      } catch (e) {
+        if (!cancelled) setError((e as Error).message)
+      }
+      if (!cancelled) setLoading(false)
+    })()
+    return () => { cancelled = true }
+  }, [fetchConfigs])
 
   const updateStore = useCallback(async (patch: Partial<StoreProfile>) => {
     try {
@@ -76,5 +82,17 @@ export function useSettings() {
     }
   }, [])
 
-  return { store, aiConfig, loading, error, updateStore, updateAiConfig, reload: load }
+  return { store, aiConfig, loading, error, updateStore, updateAiConfig, reload: useCallback(async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      const data = await fetchConfigs()
+      setStore(data.store)
+      setAiConfig(data.aiConfig)
+    } catch (e) {
+      setError((e as Error).message)
+    } finally {
+      setLoading(false)
+    }
+  }, [fetchConfigs]) }
 }

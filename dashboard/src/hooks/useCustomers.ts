@@ -34,8 +34,6 @@ export interface Customer {
   updatedAt: string
 }
 
-interface ApiCustomer extends Customer {} // API matches Customer interface
-
 export function useCustomers() {
   const [customers, setCustomers] = useState<Customer[]>([])
   const [loading, setLoading] = useState(true)
@@ -43,75 +41,86 @@ export function useCustomers() {
   const [search, setSearch] = useState('')
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [conversation, setConversation] = useState<Conversation | null>(null)
-  const [convLoading, setConvLoading] = useState(false)
+  const [convLoading] = useState(false)
 
-  const load = useCallback(async () => {
-    setLoading(true)
-    setError(null)
-    try {
-      const res = await fetchApi<{ items: ApiCustomer[]; total: number }>('/api/customers?limit=100')
-      setCustomers(res.data?.items ?? [])
-    } catch (e) {
-      setError((e as Error).message)
-    } finally {
-      setLoading(false)
-    }
+  const fetchCustomers = useCallback(async () => {
+    const res = await fetchApi<{ items: Customer[]; total: number }>('/api/customers?limit=100')
+    return res.data?.items ?? []
   }, [])
 
-  useEffect(() => { load() }, [load])
-
-  const fetchConversation = useCallback(async (customerId: string) => {
-    setConvLoading(true)
-    try {
-      const res = await fetchApi<{
-        id: string
-        phone: string
-        name: string
-        notes: string | null
-        totalOrders: number
-        orders: Array<{ id: string; status: string; totalAmount: number; createdAt: string }>
-        conversation: {
-          id: string
-          status: string
-          messages: Array<{
-            id: string
-            role: string
-            content: string
-            msgType: string
-            waMsgId: string | null
-            metadata: Record<string, unknown> | null
-            createdAt: string
-          }>
-        } | null
-        createdAt: string
-        updatedAt: string
-      }>(`/api/customers/${customerId}`)
-
-      const conv = res.data?.conversation
-      if (conv) {
-        setConversation({
-          id: conv.id,
-          customerId,
-          status: conv.status as ConversationStatus,
-          messages: conv.messages.map((m) => ({
-            id: m.id,
-            role: m.role as MessageRole,
-            content: m.content,
-            msgType: m.msgType,
-            waMsgId: m.waMsgId,
-            metadata: m.metadata,
-            createdAt: m.createdAt,
-          })),
-        })
-      } else {
-        setConversation(null)
+  useEffect(() => {
+    let cancelled = false
+    ;(async () => {
+      try {
+        const items = await fetchCustomers()
+        if (!cancelled) setCustomers(items)
+      } catch (e) {
+        if (!cancelled) setError((e as Error).message)
       }
-    } catch {
-      setConversation(null)
-    } finally {
-      setConvLoading(false)
-    }
-  }, [])
+      if (!cancelled) setLoading(false)
+    })()
+    return () => { cancelled = true }
+  }, [fetchCustomers])
+
+  // Auto-load conversation when selected customer changes
+  useEffect(() => {
+    let cancelled = false
+    ;(async () => {
+      if (!selectedId) {
+        if (!cancelled) setConversation(null)
+        return
+      }
+      try {
+        const res = await fetchApi<{
+          id: string
+          phone: string
+          name: string
+          notes: string | null
+          totalOrders: number
+          orders: Array<{ id: string; status: string; totalAmount: number; createdAt: string }>
+          conversation: {
+            id: string
+            status: string
+            messages: Array<{
+              id: string
+              role: string
+              content: string
+              msgType: string
+              waMsgId: string | null
+              metadata: Record<string, unknown> | null
+              createdAt: string
+            }>
+          } | null
+          createdAt: string
+          updatedAt: string
+        }>(`/api/customers/${selectedId}`)
+        if (!cancelled) {
+          const conv = res.data?.conversation
+          if (conv) {
+            setConversation({
+              id: conv.id,
+              customerId: selectedId,
+              status: conv.status as ConversationStatus,
+              messages: conv.messages.map((m) => ({
+                id: m.id,
+                role: m.role as MessageRole,
+                content: m.content,
+                msgType: m.msgType,
+                waMsgId: m.waMsgId,
+                metadata: m.metadata,
+                createdAt: m.createdAt,
+              })),
+            })
+          } else {
+            setConversation(null)
+          }
+        }
+      } catch {
+        if (!cancelled) setConversation(null)
+      }
+    })()
+    return () => { cancelled = true }
+  }, [selectedId])
 
   const sendMessage = useCallback(async (text: string) => {
     if (!conversation || !selectedId) return
@@ -143,15 +152,6 @@ export function useCustomers() {
     }
   }, [conversation, selectedId])
 
-  // Auto-load conversation when selected customer changes
-  useEffect(() => {
-    if (selectedId) {
-      fetchConversation(selectedId)
-    } else {
-      setConversation(null)
-    }
-  }, [selectedId, fetchConversation])
-
   const filtered = useMemo(() =>
     customers.filter((c) => {
       if (!search) return true
@@ -175,6 +175,17 @@ export function useCustomers() {
     conversation,
     convLoading,
     sendMessage,
-    reload: load,
+    reload: useCallback(async () => {
+      setLoading(true)
+      setError(null)
+      try {
+        const items = await fetchCustomers()
+        setCustomers(items)
+      } catch (e) {
+        setError((e as Error).message)
+      } finally {
+        setLoading(false)
+      }
+    }, [fetchCustomers]),
   }
 }

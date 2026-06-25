@@ -100,20 +100,24 @@ export function useOrders() {
   const [sortField, setSortField] = useState<OrderSortField>('status')
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
 
-  const load = useCallback(async () => {
-    setLoading(true)
-    setError(null)
-    try {
-      const res = await fetchApi<{ items: ApiOrder[]; total: number }>('/api/orders?limit=100')
-      setOrders(res.data?.items.map(mapOrder) ?? [])
-    } catch (e) {
-      setError((e as Error).message)
-    } finally {
-      setLoading(false)
-    }
+  const fetchOrders = useCallback(async () => {
+    const res = await fetchApi<{ items: ApiOrder[]; total: number }>('/api/orders?limit=100')
+    return res.data?.items.map(mapOrder) ?? []
   }, [])
 
-  useEffect(() => { load() }, [load])
+  useEffect(() => {
+    let cancelled = false
+    ;(async () => {
+      try {
+        const items = await fetchOrders()
+        if (!cancelled) setOrders(items)
+      } catch (e) {
+        if (!cancelled) setError((e as Error).message)
+      }
+      if (!cancelled) setLoading(false)
+    })()
+    return () => { cancelled = true }
+  }, [fetchOrders])
 
   const filtered = useMemo(() => {
     const result = orders.filter((o) => {
@@ -203,6 +207,17 @@ export function useOrders() {
     statusFilter, setStatusFilter,
     sortField, sortDir, toggleSort,
     getOrder, updateStatus, nextStatuses,
-    reload: load,
+    reload: useCallback(async () => {
+      setLoading(true)
+      setError(null)
+      try {
+        const items = await fetchOrders()
+        setOrders(items)
+      } catch (e) {
+        setError((e as Error).message)
+      } finally {
+        setLoading(false)
+      }
+    }, [fetchOrders]),
   }
 }

@@ -42,24 +42,30 @@ export function useProducts() {
   const [sortField, setSortField] = useState<'name' | 'category' | 'price' | 'stock' | 'isAvailable'>('name')
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
 
-  const load = useCallback(async () => {
-    setLoading(true)
-    setError(null)
-    try {
-      const [prodRes, catRes] = await Promise.all([
-        fetchApi<{ items: Product[]; total: number }>('/api/products?limit=100'),
-        fetchApi<{ items: Category[] }>('/api/products/categories'),
-      ])
-      setAllProducts(prodRes.data?.items ?? [])
-      setAllCategories(catRes.data?.items ?? [])
-    } catch (e) {
-      setError((e as Error).message)
-    } finally {
-      setLoading(false)
-    }
+  const fetchData = useCallback(async () => {
+    const [prodRes, catRes] = await Promise.all([
+      fetchApi<{ items: Product[]; total: number }>('/api/products?limit=100'),
+      fetchApi<{ items: Category[] }>('/api/products/categories'),
+    ])
+    return { products: prodRes.data?.items ?? [], categories: catRes.data?.items ?? [] }
   }, [])
 
-  useEffect(() => { load() }, [load])
+  useEffect(() => {
+    let cancelled = false
+    ;(async () => {
+      try {
+        const { products, categories } = await fetchData()
+        if (!cancelled) {
+          setAllProducts(products)
+          setAllCategories(categories)
+        }
+      } catch (e) {
+        if (!cancelled) setError((e as Error).message)
+      }
+      if (!cancelled) setLoading(false)
+    })()
+    return () => { cancelled = true }
+  }, [fetchData])
 
   const filtered = useMemo(() => {
     const result = allProducts.filter((p) => {
@@ -200,6 +206,18 @@ export function useProducts() {
     sortField, sortDir, toggleSort,
     getProduct, createProduct, updateProduct, deleteProduct,
     createCategory, updateCategory, deleteCategory,
-    reload: load,
+    reload: useCallback(async () => {
+      setLoading(true)
+      setError(null)
+      try {
+        const { products, categories } = await fetchData()
+        setAllProducts(products)
+        setAllCategories(categories)
+      } catch (e) {
+        setError((e as Error).message)
+      } finally {
+        setLoading(false)
+      }
+    }, [fetchData]),
   }
 }
