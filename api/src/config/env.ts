@@ -1,14 +1,14 @@
 function num(key: string, fallback: number): number {
-  const raw = process.env[key]
-  if (raw === undefined || raw === "") return fallback
-  const parsed = Number(raw)
-  return Number.isFinite(parsed) ? parsed : fallback
+  const raw = process.env[key];
+  if (raw === undefined || raw === "") return fallback;
+  const parsed = Number(raw);
+  return Number.isFinite(parsed) ? parsed : fallback;
 }
 
 function bool(key: string, fallback: boolean): boolean {
-  const raw = process.env[key]
-  if (raw === undefined || raw === "") return fallback
-  return raw === "1" || raw.toLowerCase() === "true"
+  const raw = process.env[key];
+  if (raw === undefined || raw === "") return fallback;
+  return raw === "1" || raw.toLowerCase() === "true";
 }
 
 export const env = {
@@ -16,10 +16,10 @@ export const env = {
 
   ai: {
     openrouterApiKey: process.env.OPENROUTER_API_KEY ?? "",
-    defaultModel: process.env.LLM_MODEL ?? "opencode/deepseek-v4-flash-free",
+    defaultModel: process.env.LLM_MODEL ?? "deepseek/deepseek-v4-flash:free",
     fallbackModel: process.env.LLM_FALLBACK_MODEL ?? "google/gemini-2.0-flash-exp:free",
     maxTokens: num("LLM_MAX_TOKENS", 2048),
-    temperature: num("LLM_TEMPERATURE", 0.7),
+    temperature: num("LLM_TEMPERATURE", 0.7)
   },
 
   guardrails: {
@@ -39,6 +39,6 @@ export const env = {
     judgeModel: process.env.JUDGE_MODEL ?? "google/gemini-2.0-flash-lite",
     // Grounding check on output
     groundingEnabled: bool("GROUNDING_CHECK_ENABLED", true),
-    groundingModel: process.env.GROUNDING_MODEL ?? "google/gemini-2.0-flash-lite",
-  },
-} as const
+    groundingModel: process.env.GROUNDING_MODEL ?? "google/gemini-2.0-flash-lite"
+  }
+} as const;
