@@ -1,5 +1,48 @@
 # WANI — Project TODO
 
+## ⚡ Optimasi — Segera
+
+### ✅ Tier 1 — Selesai
+
+| # | Item | Package | Commit |
+|---|------|---------|--------|
+| 1 | **`findByNames()` → `where: { name: { in } }`** | api | ✅ |
+| 2 | **`OrderModel` extend `BaseModel` + `createMany` + `upsert`** | api | ✅ |
+| 3 | **`getOrThrow()` di BaseModel** | api | ✅ |
+| 4 | **Hapus duplicate `VALID_TRANSITIONS` controller** | api | ✅ |
+| 5 | **`requireJwt` di `auth.me` + `website.download`** | api | ✅ |
+| 6 | **`Promise.all()` 3 DB queries pipeline** | api | ✅ |
+| 7 | **Hapus `hasPii()` double scan** | api | ✅ |
+| 8 | **Hapus `MOCK = false` code** | dashboard | ✅ |
+| 9 | **`useAuth` → `fetchApi()`** | dashboard | ✅ |
+
+Catatan: #7 (NFKC) dipertahankan di `scanInput()` karena public API — pipeline tetap hanya normalize sekali.
+
+### 🟡 Tier 2 — Type Safety & Dead Code
+
+| # | Item | Package | File | Detail |
+|---|------|---------|------|--------|
+| 11 | **`$Enums.*` conversions** | api | `message.ts:5`, `order.ts:85-91`, `website.ts` | Hardcoded strings → `$Enums.MessageRole`, `$Enums.OrderStatus.*`, typed params |
+| 12 | **Dead exports guardrails** | api | 6 files | `detectInjection()`, `normalizeUnicode()`, `resetConversationState()`, `hasLeak()`, `VALID_INTENTS`, `redactPii()` — only used in tests or never imported |
+| 13 | **`formatPrice` 6× duplication** | dashboard | 5 files | Extract to `src/utils/format.ts` |
+| 14 | **Generic `useApiData<T>` hook** | dashboard | 5 hooks | Eliminates ~20 lines of loading/error boilerplate per hook |
+| 15 | **Circuit breaker gap** | api | `classifier.ts:75,117,160` | T2/T3/grounding bypass circuit breaker. Fix: wrap in `withCircuit()` |
+| 16 | **Regex hoisting + `[].concat()`** | api | `injection.ts:78,144` | Regex recompiled per call; array alloc per call |
+
+### 🟢 Tier 3 — Polish
+
+| # | Item | Package | Detail |
+|---|------|---------|--------|
+| 17 | `(r: any)` → Prisma type | api | `activity-log.ts:71` |
+| 18 | `debug.ts` inconsistencies | api | Manual 404, hardcoded circuit state |
+| 19 | `hashPassword()` helper | api | `auth.ts` duplicate `Bun.password.hash()` |
+| 20 | Rate limiter Map leak | api | `ratelimit.ts:10` — periodic cleanup |
+| 21 | `todayKey()` double call | api | `budget.ts` — cache date string |
+| 22 | `useRef` callback stabilization | dashboard | `getProduct`, `getOrder`, `updateStatus` |
+| 23 | Shared `types.ts` | dashboard | Centralize type definitions |
+
+---
+
 ## Terimplementasi ✅
 
 - **WA Session** — QR push/pull/clear/status, auto-reconnect
