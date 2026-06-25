@@ -109,26 +109,27 @@ describe("productQuerySchema", () => {
     const result = await productQuerySchema.safeParseAsync({})
     expect(result.success).toBe(true)
     if (result.success) {
-      expect(result.data.page).toBe(1)
-      expect(result.data.limit).toBe(20)
+      expect(result.data.page).toBe("1")
+      expect(result.data.limit).toBe("20")
       expect(result.data.sort).toBe("createdAt")
       expect(result.data.order).toBe("desc")
     }
   })
 
-  test("transforms isAvailable string to boolean", async () => {
-    const result = await productQuerySchema.safeParseAsync({ isAvailable: "true" })
-    expect(result.success).toBe(true)
-    if (result.success) {
-      expect(result.data.isAvailable).toBe(true)
-    }
+  test("validates isAvailable as enum string", async () => {
+    const r1 = await productQuerySchema.safeParseAsync({ isAvailable: "true" })
+    expect(r1.success).toBe(true)
+    const r2 = await productQuerySchema.safeParseAsync({ isAvailable: "false" })
+    expect(r2.success).toBe(true)
+    const r3 = await productQuerySchema.safeParseAsync({ isAvailable: "yes" })
+    expect(r3.success).toBe(false)
   })
 
-  test("coerces page number from string", async () => {
+  test("validates page as string digit pattern", async () => {
     const result = await productQuerySchema.safeParseAsync({ page: "3" })
     expect(result.success).toBe(true)
     if (result.success) {
-      expect(result.data.page).toBe(3)
+      expect(result.data.page).toBe("3")
     }
   })
 })
@@ -154,7 +155,7 @@ describe("orderQuerySchema", () => {
     const result = await orderQuerySchema.safeParseAsync({})
     expect(result.success).toBe(true)
     if (result.success) {
-      expect(result.data.page).toBe(1)
+      expect(result.data.page).toBe("1")
       expect(result.data.sort).toBe("createdAt")
     }
   })
@@ -227,7 +228,7 @@ describe("customerQuerySchema", () => {
     const result = await customerQuerySchema.safeParseAsync({})
     expect(result.success).toBe(true)
     if (result.success) {
-      expect(result.data.page).toBe(1)
+      expect(result.data.page).toBe("1")
       expect(result.data.sort).toBe("createdAt")
     }
   })

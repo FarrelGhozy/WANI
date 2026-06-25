@@ -205,25 +205,25 @@ describe("scanPii", () => {
   test("detects Indonesian phone numbers", () => {
     const matches = scanPii("Hubungi 081234567890 atau 6281234567890")
     expect(matches.length).toBe(2)
-    expect(matches[0].type).toBe("phone")
+    expect(matches[0]!.type).toBe("phone")
   })
 
   test("detects email addresses", () => {
     const matches = scanPii("Email: customer@example.com")
     expect(matches.length).toBe(1)
-    expect(matches[0].type).toBe("email")
+    expect(matches[0]!.type).toBe("email")
   })
 
   test("detects API keys", () => {
     const matches = scanPii("sk-ant-abc123def456ghi789jkl012")
     expect(matches.length).toBe(1)
-    expect(matches[0].type).toBe("api_key")
+    expect(matches[0]!.type).toBe("api_key")
   })
 
   test("detects NIK (16-digit ID number)", () => {
     const matches = scanPii("NIK saya 3173051408950003")
     expect(matches.length).toBe(1)
-    expect(matches[0].type).toBe("nik")
+    expect(matches[0]!.type).toBe("nik")
   })
 
   test("allows clean text", () => {
