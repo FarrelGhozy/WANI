@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo, useEffect } from 'react'
-import { fetchApi } from '../lib/api.ts'
-import { useProducts } from './useProducts.ts'
+import { fetchApi } from '@/lib/api.ts'
+import { useProducts } from '@/hooks/useProducts.ts'
 
 export interface WebsiteConfig {
   heroHeadline: string
@@ -45,7 +45,7 @@ export function useWebsite() {
       try {
         const res = await fetchApi<Record<string, unknown>>('/api/website')
         if (res.data) {
-          setConfig((prev) => ({ ...prev, ...res.data as any }))
+          setConfig((prev) => ({ ...prev, ...res.data as Partial<WebsiteConfig> }))
         }
       } catch {
         // API not available — use defaults

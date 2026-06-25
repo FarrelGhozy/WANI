@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router'
-import type { Order, OrderStatus, OrderSortField } from '../hooks/useOrders.ts'
-import Badge from './ui/Badge.tsx'
+import type { Order, OrderStatus, OrderSortField } from '@/hooks/useOrders.ts'
+import Badge from '@/components/ui/Badge.tsx'
 
 interface OrderListViewProps {
   orders: Order[]

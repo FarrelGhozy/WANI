@@ -1,4 +1,4 @@
-import type { Customer, MessageRole } from '../hooks/useCustomers.ts'
+import type { Customer, MessageRole } from '@/hooks/useCustomers.ts'
 
 interface CustomerListViewProps {
   customers: Customer[]

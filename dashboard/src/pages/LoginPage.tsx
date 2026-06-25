@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router'
-import { useAuth } from '../hooks/useAuth.ts'
-import { MailIcon, LockIcon, EyeIcon, EyeOffIcon } from '../components/Icons.tsx'
-import Button from '../components/ui/Button.tsx'
+import { useAuth } from '@/hooks/useAuth.ts'
+import { MailIcon, LockIcon, EyeIcon, EyeOffIcon } from '@/components/Icons.tsx'
+import Button from '@/components/ui/Button.tsx'
 
 export default function LoginPage() {
   const navigate = useNavigate()

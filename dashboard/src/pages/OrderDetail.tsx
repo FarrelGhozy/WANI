@@ -1,10 +1,10 @@
 import { useNavigate, useParams } from 'react-router'
-import { useOrders, formatPrice, type OrderStatus } from '../hooks/useOrders.ts'
-import Card from '../components/ui/Card.tsx'
-import Badge from '../components/ui/Badge.tsx'
-import Button from '../components/ui/Button.tsx'
-import OrderTimeline from '../components/OrderTimeline.tsx'
-import Spinner from '../components/ui/Spinner.tsx'
+import { useOrders, formatPrice, type OrderStatus } from '@/hooks/useOrders.ts'
+import Card from '@/components/ui/Card.tsx'
+import Badge from '@/components/ui/Badge.tsx'
+import Button from '@/components/ui/Button.tsx'
+import OrderTimeline from '@/components/OrderTimeline.tsx'
+import Spinner from '@/components/ui/Spinner.tsx'
 
 const statusBadge: Record<OrderStatus, 'teal' | 'amber' | 'green' | 'gray' | 'red'> = {
   PENDING: 'amber',

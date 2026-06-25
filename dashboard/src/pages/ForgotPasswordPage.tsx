@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router'
-import { MailIcon } from '../components/Icons.tsx'
-import Button from '../components/ui/Button.tsx'
+import { MailIcon } from '@/components/Icons.tsx'
+import Button from '@/components/ui/Button.tsx'
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')

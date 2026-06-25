@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router'
-import { useProducts, type ProductFormData } from '../hooks/useProducts.ts'
-import Button from '../components/ui/Button.tsx'
-import Input from '../components/ui/Input.tsx'
-import Select from '../components/ui/Select.tsx'
-import Card from '../components/ui/Card.tsx'
+import { useProducts, type ProductFormData } from '@/hooks/useProducts.ts'
+import Button from '@/components/ui/Button.tsx'
+import Input from '@/components/ui/Input.tsx'
+import Select from '@/components/ui/Select.tsx'
+import Card from '@/components/ui/Card.tsx'
 
 function formatPriceInput(value: string) {
   const num = value.replace(/[^\d]/g, '')

@@ -1,9 +1,9 @@
 import { Outlet } from 'react-router'
-import Sidebar from './Sidebar.tsx'
-import BottomNav from './BottomNav.tsx'
-import Topbar from './Topbar.tsx'
-import { useWaStatus } from '../hooks/useWaStatus.ts'
-import { useSettings } from '../hooks/useSettings.ts'
+import Sidebar from '@/components/Sidebar.tsx'
+import BottomNav from '@/components/BottomNav.tsx'
+import Topbar from '@/components/Topbar.tsx'
+import { useWaStatus } from '@/hooks/useWaStatus.ts'
+import { useSettings } from '@/hooks/useSettings.ts'
 
 export default function Layout() {
   const { connection } = useWaStatus()

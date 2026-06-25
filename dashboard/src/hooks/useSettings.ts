@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react'
-import { fetchApi } from '../lib/api'
+import { fetchApi } from '@/lib/api'
 
 export interface StoreProfile {
   id: string

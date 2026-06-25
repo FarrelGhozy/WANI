@@ -1,7 +1,7 @@
-import { useCustomers } from '../hooks/useCustomers.ts'
-import CustomerListView from '../components/CustomerListView.tsx'
-import ChatView from '../components/ChatView.tsx'
-import Spinner from '../components/ui/Spinner.tsx'
+import { useCustomers } from '@/hooks/useCustomers.ts'
+import CustomerListView from '@/components/CustomerListView.tsx'
+import ChatView from '@/components/ChatView.tsx'
+import Spinner from '@/components/ui/Spinner.tsx'
 
 function EmptyChatPanel() {
   return (

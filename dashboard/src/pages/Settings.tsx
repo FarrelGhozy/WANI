@@ -1,10 +1,10 @@
 import { useState, useCallback } from 'react'
-import { useSettings } from '../hooks/useSettings.ts'
-import { useWaStatus } from '../hooks/useWaStatus.ts'
-import StoreTab from '../components/StoreTab.tsx'
-import AiTab from '../components/AiTab.tsx'
-import WaSessionTab from '../components/WaSessionTab.tsx'
-import Spinner from '../components/ui/Spinner.tsx'
+import { useSettings } from '@/hooks/useSettings.ts'
+import { useWaStatus } from '@/hooks/useWaStatus.ts'
+import StoreTab from '@/components/StoreTab.tsx'
+import AiTab from '@/components/AiTab.tsx'
+import WaSessionTab from '@/components/WaSessionTab.tsx'
+import Spinner from '@/components/ui/Spinner.tsx'
 
 const tabs = [
   { id: 'store', label: 'Toko' },

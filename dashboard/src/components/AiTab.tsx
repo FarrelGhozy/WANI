@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
-import type { AiConfig } from '../hooks/useSettings.ts'
-import Card from './ui/Card.tsx'
-import Button from './ui/Button.tsx'
+import type { AiConfig } from '@/hooks/useSettings.ts'
+import Card from '@/components/ui/Card.tsx'
+import Button from '@/components/ui/Button.tsx'
 
 interface AiTabProps {
   config: AiConfig

@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import type { Category } from '../hooks/useProducts.ts'
-import Modal from './ui/Modal.tsx'
-import Button from './ui/Button.tsx'
-import Input from './ui/Input.tsx'
+import type { Category } from '@/hooks/useProducts.ts'
+import Modal from '@/components/ui/Modal.tsx'
+import Button from '@/components/ui/Button.tsx'
+import Input from '@/components/ui/Input.tsx'
 
 interface CategoryItem extends Category {
   productCount?: number

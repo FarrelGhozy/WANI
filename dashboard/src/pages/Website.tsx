@@ -1,8 +1,8 @@
-import { useWebsite } from '../hooks/useWebsite.ts'
-import Card from '../components/ui/Card.tsx'
-import Button from '../components/ui/Button.tsx'
-import Badge from '../components/ui/Badge.tsx'
-import Spinner from '../components/ui/Spinner.tsx'
+import { useWebsite } from '@/hooks/useWebsite.ts'
+import Card from '@/components/ui/Card.tsx'
+import Button from '@/components/ui/Button.tsx'
+import Badge from '@/components/ui/Badge.tsx'
+import Spinner from '@/components/ui/Spinner.tsx'
 
 export default function Website() {
   const { config, logs, generating, availableProducts, updateConfig, generate, downloadZip, publish, loading } = useWebsite()

@@ -1,14 +1,14 @@
 import { useMemo } from 'react'
 import { useNavigate } from 'react-router'
-import { useWaStatus } from '../hooks/useWaStatus.ts'
-import { useOrders } from '../hooks/useOrders.ts'
-import { useProducts } from '../hooks/useProducts.ts'
-import { useCustomers } from '../hooks/useCustomers.ts'
-import StatusCard from '../components/StatusCard.tsx'
-import Card from '../components/ui/Card.tsx'
-import Badge from '../components/ui/Badge.tsx'
-import QRCode from '../components/QRCode.tsx'
-import { SignalIcon, BagIcon, ClipboardIcon, PeopleIcon } from '../components/Icons.tsx'
+import { useWaStatus } from '@/hooks/useWaStatus.ts'
+import { useOrders } from '@/hooks/useOrders.ts'
+import { useProducts } from '@/hooks/useProducts.ts'
+import { useCustomers } from '@/hooks/useCustomers.ts'
+import StatusCard from '@/components/StatusCard.tsx'
+import Card from '@/components/ui/Card.tsx'
+import Badge from '@/components/ui/Badge.tsx'
+import QRCode from '@/components/QRCode.tsx'
+import { SignalIcon, BagIcon, ClipboardIcon, PeopleIcon } from '@/components/Icons.tsx'
 
 const statusBadgeVariant: Record<string, 'amber' | 'teal' | 'green' | 'gray' | 'red'> = {
   PENDING: 'amber',

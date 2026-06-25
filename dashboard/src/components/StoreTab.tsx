@@ -1,11 +1,11 @@
 import { useRef, useState } from 'react'
 import type { ReactNode } from 'react'
 import { Link } from 'react-router'
-import type { StoreProfile } from '../hooks/useSettings.ts'
-import { useProducts } from '../hooks/useProducts.ts'
-import Card from './ui/Card.tsx'
-import Button from './ui/Button.tsx'
-import CategoryModal from './CategoryModal.tsx'
+import type { StoreProfile } from '@/hooks/useSettings.ts'
+import { useProducts } from '@/hooks/useProducts.ts'
+import Card from '@/components/ui/Card.tsx'
+import Button from '@/components/ui/Button.tsx'
+import CategoryModal from '@/components/CategoryModal.tsx'
 
 interface StoreTabProps {
   store: StoreProfile

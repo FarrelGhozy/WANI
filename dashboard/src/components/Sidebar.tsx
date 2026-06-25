@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 import { NavLink, useNavigate } from 'react-router'
-import { useAuth } from '../hooks/useAuth.ts'
-import { GridIcon, BagIcon, ClipboardIcon, PeopleIcon, GlobeIcon, CogIcon, LogOutIcon } from './Icons.tsx'
+import { useAuth } from '@/hooks/useAuth.ts'
+import { GridIcon, BagIcon, ClipboardIcon, PeopleIcon, GlobeIcon, CogIcon, LogOutIcon } from '@/components/Icons.tsx'
 
 const navItems = [
   { to: '/', icon: GridIcon, label: 'Dashboard' },

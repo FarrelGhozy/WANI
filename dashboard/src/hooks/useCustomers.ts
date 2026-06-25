@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback, useEffect } from 'react'
-import { fetchApi } from '../lib/api'
+import { fetchApi } from '@/lib/api'
 
 export type MessageRole = 'CUSTOMER' | 'BOT' | 'HUMAN'
 export type ConversationStatus = 'ACTIVE' | 'RESOLVED' | 'ARCHIVED' | 'ESCALATED'

@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import Card from './ui/Card.tsx'
+import Card from '@/components/ui/Card.tsx'
 
 interface StatusCardProps {
   label: string

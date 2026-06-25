@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
-import type { Conversation, Message } from '../hooks/useCustomers.ts'
-import Badge from './ui/Badge.tsx'
+import type { Conversation, Message } from '@/hooks/useCustomers.ts'
+import Badge from '@/components/ui/Badge.tsx'
 
 interface ChatViewProps {
   customerName: string

@@ -1,4 +1,4 @@
-import type { OrderStatus } from '../hooks/useOrders.ts'
+import type { OrderStatus } from '@/hooks/useOrders.ts'
 
 interface TimelineStep {
   status: OrderStatus

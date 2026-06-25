@@ -1,6 +1,6 @@
-import Card from './ui/Card.tsx'
-import Button from './ui/Button.tsx'
-import QRCode from './QRCode.tsx'
+import Card from '@/components/ui/Card.tsx'
+import Button from '@/components/ui/Button.tsx'
+import QRCode from '@/components/QRCode.tsx'
 
 interface WaSessionTabProps {
   qr: string

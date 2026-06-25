@@ -1,6 +1,6 @@
-import { useOrders } from '../hooks/useOrders.ts'
-import OrderListView from '../components/OrderListView.tsx'
-import Spinner from '../components/ui/Spinner.tsx'
+import { useOrders } from '@/hooks/useOrders.ts'
+import OrderListView from '@/components/OrderListView.tsx'
+import Spinner from '@/components/ui/Spinner.tsx'
 
 const statusOptions = [
   { value: '', label: 'Semua Status' },

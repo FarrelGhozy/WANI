@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router'
-import type { Product } from '../hooks/useProducts.ts'
-import Badge from './ui/Badge.tsx'
+import type { Product } from '@/hooks/useProducts.ts'
+import Badge from '@/components/ui/Badge.tsx'
 
 interface ProductListViewProps {
   products: Product[]

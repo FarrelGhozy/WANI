@@ -1,5 +1,5 @@
 import { useEffect, useRef, type ReactNode } from 'react'
-import Button from './Button.tsx'
+import Button from '@/components/ui/Button.tsx'
 
 interface ModalProps {
   open: boolean

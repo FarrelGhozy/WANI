@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback, useEffect } from 'react'
-import { fetchApi } from '../lib/api'
+import { fetchApi } from '@/lib/api'
 
 export type OrderStatus = 'PENDING' | 'CONFIRMED' | 'PROCESSING' | 'COMPLETED' | 'CANCELLED'
 export type OrderSortField = 'id' | 'customerName' | 'items' | 'totalAmount' | 'status' | 'createdAt'

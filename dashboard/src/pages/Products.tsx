@@ -1,13 +1,13 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
-import { useProducts } from '../hooks/useProducts.ts'
-import ProductListView from '../components/ProductListView.tsx'
-import ProductCard from '../components/ProductCard.tsx'
-import CategoryModal from '../components/CategoryModal.tsx'
-import Button from '../components/ui/Button.tsx'
-import Pagination from '../components/ui/Pagination.tsx'
-import Modal from '../components/ui/Modal.tsx'
-import Spinner from '../components/ui/Spinner.tsx'
+import { useProducts } from '@/hooks/useProducts.ts'
+import ProductListView from '@/components/ProductListView.tsx'
+import ProductCard from '@/components/ProductCard.tsx'
+import CategoryModal from '@/components/CategoryModal.tsx'
+import Button from '@/components/ui/Button.tsx'
+import Pagination from '@/components/ui/Pagination.tsx'
+import Modal from '@/components/ui/Modal.tsx'
+import Spinner from '@/components/ui/Spinner.tsx'
 
 const CARD_LIMIT = 20
 

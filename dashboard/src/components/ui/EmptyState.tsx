@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import Button from './Button.tsx'
+import Button from '@/components/ui/Button.tsx'
 
 interface EmptyStateProps {
   icon: ReactNode
