@@ -6,6 +6,9 @@ on:
       - main
     paths:
       - "wa-bot/**"
+    # For production deployment using semantic versioning
+    tags:
+      - "wa-bot-v*.*.*"
   pull_request:
     branches:
       - main
@@ -31,17 +34,27 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Convert Repo Name to Lowercase
+      - name: Determine Docker Tags
+        id: docker_meta
         run: |
-          echo "IMAGE_NAME=ghcr.io/${GITHUB_REPOSITORY,,}/wa-bot" >> $GITHUB_ENV
+          # Image base name for the Docker image
+          IMAGE_BASE="ghcr.io/farrelghozy/wani-wa-bot"
+
+          # Cek trigger event
+          # kalau push ke tag, ambil versi dari tag
+          # kalau push biasa ke main, pake commit SHA
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            VERSION=$(echo "${{ github.ref_name }}" | sed 's/wa-bot-v//')
+            echo "tags=${IMAGE_BASE}:${VERSION}, ${IMAGE_BASE}:latest" >> $GITHUB_OUTPUT
+          else
+            # Kalau push biasa ke main, tag-nya pake commit SHA ama latest
+            echo "tags=${IMAGE_BASE}:${{ github.sha }}, ${IMAGE_BASE}:latest" >> $GITHUB_OUTPUT
+          fi
 
       - name: Build and Push Docker Image
-        if: github.event_name != 'pull_request'
         uses: docker/build-push-action@v6
         with:
           context: ./wa-bot
           file: ./wa-bot/Dockerfile
           push: true
-          tags: |
-            ${{ env.IMAGE_NAME }}:latest
-            ${{ env.IMAGE_NAME }}:${{ github.sha }}
+          tags: ${{ steps.docker_meta.outputs.tags }}

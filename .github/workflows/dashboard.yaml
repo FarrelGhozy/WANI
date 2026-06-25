@@ -6,6 +6,9 @@ on:
       - main
     paths:
       - "dashboard/**"
+    # For production deployment using semantic versioning
+    tags:
+      - "dashboard-v*.*.*"
   pull_request:
     branches:
       - main
@@ -36,7 +39,6 @@ jobs:
         run: bun run lint
         working-directory: dashboard
 
-      # --- TAHAP DOCKER ---
       - name: Log in to GHCR
         if: github.event_name != 'pull_request'
         uses: docker/login-action@v3
@@ -45,17 +47,27 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Convert Repo Name to Lowercase
+      - name: Determine Docker Tags
+        id: docker_meta
         run: |
-          echo "IMAGE_NAME=ghcr.io/${GITHUB_REPOSITORY,,}/dashboard" >> $GITHUB_ENV
+          # Image base name for the Docker image
+          IMAGE_BASE="ghcr.io/farrelghozy/wani-dashboard"
+
+          # Cek trigger event
+          # kalau push ke tag, ambil versi dari tag
+          # kalau push biasa ke main, pake commit SHA
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            VERSION=$(echo "${{ github.ref_name }}" | sed 's/dashboard-v//')
+            echo "tags=${IMAGE_BASE}:${VERSION}, ${IMAGE_BASE}:latest" >> $GITHUB_OUTPUT
+          else
+            # Kalau push biasa ke main, tag-nya pake commit SHA ama latest
+            echo "tags=${IMAGE_BASE}:${{ github.sha }}, ${IMAGE_BASE}:latest" >> $GITHUB_OUTPUT
+          fi
 
       - name: Build and Push Docker Image
-        if: github.event_name != 'pull_request'
         uses: docker/build-push-action@v6
         with:
           context: ./dashboard
           file: ./dashboard/Dockerfile
           push: true
-          tags: |
-            ${{ env.IMAGE_NAME }}:latest
-            ${{ env.IMAGE_NAME }}:${{ github.sha }}
+          tags: ${{ steps.docker_meta.outputs.tags }}
