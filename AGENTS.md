@@ -128,6 +128,26 @@ docker compose up --build   # build + start semua service
 
 Database `wani_api` + `wa_bot` dibuat otomatis via `init-dbs.sh`.
 
+## Type Casting Rules
+
+- **No `as any` casts unless unavoidable.** Never cast with `as any` if a narrower alternative exists:
+  - Express `Request` properties → use the augmented type declaration (`req.validatedQuery!`, `req.user`)
+  - Prisma enum fields → use the generated type (`as $Enums.OrderStatus`, `as $Enums.PaymentMethod`)
+  - Prisma JSON fields → `as Prisma.InputJsonValue`
+  - Dynamic data objects → `as Record<string, unknown>`
+  - Repeating patterns → add a static helper to `BaseModel` (`paginate()`, `listResult()`, typed `where()`)
+
+## Path Aliases
+
+- **Use path aliases, not relative paths.** Never use `../../` or `./` to import across package boundaries. Each package defines its own aliases in `tsconfig.json` `paths`:
+  - Within-package `./` imports for sibling files in the same directory are acceptable (standard TypeScript pattern).
+  - `api/` → `@/*` (project root), `@db/*` (Prisma client), `@web-gen/*` (web-gen source, under `web-gen/src/`)
+  - `dashboard/` → `@/*` (project root, under `src/`)
+  - `wa-bot/` → `@/*` (project root), `@db/*` (Prisma client)
+  - `web-gen/` → `@/*` (project root)
+
+  Vite/Rolldown projects (dashboard) also need `resolve.alias` in `vite.config.ts` to match the tsconfig paths.
+
 ## Quirks
 
 - `verbatimModuleSyntax` is on everywhere — use `import type` for type-only imports
