@@ -18,18 +18,19 @@
 
 Catatan: #7 (NFKC) dipertahankan di `scanInput()` karena public API — pipeline tetap hanya normalize sekali.
 
-### 🟡 Tier 2 — Type Safety & Dead Code
+### ✅ Tier 2 — Selesai
 
-| # | Item | Package | File | Detail |
-|---|------|---------|------|--------|
-| 11 | **`$Enums.*` conversions** | api | `message.ts:5`, `order.ts:85-91`, `website.ts` | Hardcoded strings → `$Enums.MessageRole`, `$Enums.OrderStatus.*`, typed params |
-| 12 | **Dead exports guardrails** | api | 6 files | `detectInjection()`, `normalizeUnicode()`, `resetConversationState()`, `hasLeak()`, `VALID_INTENTS`, `redactPii()` — only used in tests or never imported |
-| 13 | **`formatPrice` 6× duplication** | dashboard | 5 files | Extract to `src/utils/format.ts` |
-| 14 | **Generic `useApiData<T>` hook** | dashboard | 5 hooks | Eliminates ~20 lines of loading/error boilerplate per hook |
-| 15 | **Circuit breaker gap** | api | `classifier.ts:75,117,160` | T2/T3/grounding bypass circuit breaker. Fix: wrap in `withCircuit()` |
-| 16 | **Regex hoisting + `[].concat()`** | api | `injection.ts:78,144` | Regex recompiled per call; array alloc per call |
+| # | Item | Package | Commit |
+|---|------|---------|--------|
+| 11 | **`$Enums.MessageRole` di message.ts** | api | ✅ |
+| 12 | **Hapus dead exports guardrails** | api | ✅ |
+| 13 | **Extract `formatPrice` to utils** | dashboard | ✅ |
+| 15 | **Circuit breaker di classifier/judge/grounding** | api | ✅ |
+| 16 | **Hoist regex + pre-compute LEET_PATTERNS** | api | ✅ |
 
-### 🟢 Tier 3 — Polish
+Catatan: #14 (useApiData hook) ditunda — refactor 5 hooks sekaligus perlu pertimbangan lebih lanjut. Bisa dikerjain kapan aja sebagai optimasi mandiri.
+
+### 🟡 Tier 3 — Polish
 
 | # | Item | Package | Detail |
 |---|------|---------|--------|
