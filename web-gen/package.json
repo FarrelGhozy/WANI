@@ -4,6 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
+    "build": "bun run build:template",
     "generate": "bun run src/index.ts",
     "build:template": "cd src/templates/default && npm install && npx astro build"
   },
