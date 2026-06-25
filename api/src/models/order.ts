@@ -1,5 +1,6 @@
-import { prisma } from "@/src/config/db"
-import type { Prisma } from "@db/client"
+import { BaseModel } from "@/src/models/base"
+import type { Prisma, $Enums } from "@db/client"
+import { BadRequestError, NotFoundError } from "@/src/utils/errors"
 
 export interface CreateItemInput {
   productId: string
@@ -50,7 +51,9 @@ const orderInclude = {
   payment: true,
 } satisfies Prisma.OrderInclude
 
-function toOrderResponse(row: any): OrderResponse {
+type OrderRow = Prisma.OrderGetPayload<{ include: typeof orderInclude }>
+
+function toOrderResponse(row: OrderRow): OrderResponse {
   return {
     id: row.id,
     customerId: row.customerId,
@@ -59,7 +62,7 @@ function toOrderResponse(row: any): OrderResponse {
     totalAmount: Number(row.totalAmount),
     source: row.source,
     notes: row.notes ?? null,
-    items: (row.items ?? []).map((i: any) => ({
+    items: (row.items ?? []).map((i) => ({
       id: i.id,
       productId: i.productId,
       product: i.product,
@@ -80,7 +83,7 @@ function toOrderResponse(row: any): OrderResponse {
   }
 }
 
-const VALID_TRANSITIONS: Record<string, string[]> = {
+const VALID_TRANSITIONS: Record<$Enums.OrderStatus, $Enums.OrderStatus[]> = {
   PENDING: ["CONFIRMED", "CANCELLED"],
   CONFIRMED: ["PROCESSING", "CANCELLED"],
   PROCESSING: ["COMPLETED", "CANCELLED"],
@@ -88,7 +91,11 @@ const VALID_TRANSITIONS: Record<string, string[]> = {
   CANCELLED: [],
 }
 
-export class OrderModel {
+export class OrderModel extends BaseModel {
+  protected static override get delegate() {
+    return this.db.order
+  }
+
   static async createFromItems(
     customerId: string,
     items: CreateItemInput[],
@@ -106,7 +113,7 @@ export class OrderModel {
 
     const totalAmount = orderItems.reduce((sum, oi) => sum + oi.subtotal, 0)
 
-    const order = await prisma.$transaction(async (tx) => {
+    const order = await this.db.$transaction(async (tx) => {
       const o = await tx.order.create({
         data: {
           id: orderId,
@@ -117,9 +124,7 @@ export class OrderModel {
         },
       })
 
-      for (const oi of orderItems) {
-        await tx.orderItem.create({ data: oi })
-      }
+      await tx.orderItem.createMany({ data: orderItems })
 
       return o
     })
@@ -128,8 +133,8 @@ export class OrderModel {
   }
 
   static async list(params: {
-    page: number
-    limit: number
+    page: number | string
+    limit: number | string
     status?: string
     customerId?: string
     dateFrom?: string
@@ -137,14 +142,11 @@ export class OrderModel {
     sort: string
     order: string
   }): Promise<OrderListResult> {
+    const { page, limit, skip } = this.paginate(params.page, params.limit)
     const where: Record<string, unknown> = {}
 
-    if (params.status) {
-      where.status = params.status
-    }
-    if (params.customerId) {
-      where.customerId = params.customerId
-    }
+    if (params.status) where.status = params.status
+    if (params.customerId) where.customerId = params.customerId
     if (params.dateFrom || params.dateTo) {
       const createdAt: Record<string, string> = {}
       if (params.dateFrom) createdAt.gte = params.dateFrom
@@ -152,63 +154,47 @@ export class OrderModel {
       where.createdAt = createdAt
     }
 
-    const skip = (params.page - 1) * params.limit
-
+    const w = where as Prisma.OrderWhereInput
     const [rows, total] = await Promise.all([
-      prisma.order.findMany({
-        where: where as any,
-        include: orderInclude,
-        skip,
-        take: params.limit,
-        orderBy: { [params.sort]: params.order },
-      }),
-      prisma.order.count({ where: where as any }),
+      this.delegate.findMany({ where: w, include: orderInclude, skip, take: limit, orderBy: { [params.sort]: params.order } }),
+      this.delegate.count({ where: w }),
     ])
 
-    return {
-      items: rows.map(toOrderResponse),
-      total,
-      page: params.page,
-      limit: params.limit,
-      totalPages: Math.ceil(total / params.limit),
-    }
+    return this.listResult(rows.map(toOrderResponse), total, page, limit)
   }
 
   static async getByIdWithRelations(id: string): Promise<OrderResponse | null> {
-    const row = await prisma.order.findUnique({
+    const row = await this.delegate.findUnique({
       where: { id },
       include: orderInclude,
     })
     return row ? toOrderResponse(row) : null
   }
 
-  static async updateStatus(id: string, newStatus: string): Promise<OrderResponse> {
-    const current = await prisma.order.findUnique({
+  static async updateStatus(id: string, newStatus: $Enums.OrderStatus): Promise<OrderResponse> {
+    const current = await this.delegate.findUnique({
       where: { id },
       select: { status: true },
     })
     if (!current) {
-      throw Object.assign(new Error("order not found"), { statusCode: 404 })
+      throw new NotFoundError("order not found")
     }
 
-    const allowed = VALID_TRANSITIONS[current.status]
+    const allowed = VALID_TRANSITIONS[current.status as $Enums.OrderStatus]
     if (!allowed || !allowed.includes(newStatus)) {
-      throw Object.assign(
-        new Error(`invalid status transition: ${current.status} → ${newStatus}`),
-        { statusCode: 400 },
-      )
+      throw new BadRequestError(`invalid status transition: ${current.status} → ${newStatus}`)
     }
 
-    const row = await prisma.order.update({
+    const row = await this.delegate.update({
       where: { id },
-      data: { status: newStatus as any },
+      data: { status: newStatus },
       include: orderInclude,
     })
     return toOrderResponse(row)
   }
 
   static async updateNotes(id: string, notes: string): Promise<OrderResponse> {
-    const row = await prisma.order.update({
+    const row = await this.delegate.update({
       where: { id },
       data: { notes },
       include: orderInclude,
@@ -217,14 +203,14 @@ export class OrderModel {
   }
 
   static async getStats(): Promise<{ totalOrders: number }> {
-    const totalOrders = await prisma.order.count()
+    const totalOrders = await this.delegate.count()
     return { totalOrders }
   }
 
   static async getStatusCounts(): Promise<{ completed: number; pending: number }> {
     const [completed, pending] = await Promise.all([
-      prisma.order.count({ where: { status: "COMPLETED" } }),
-      prisma.order.count({ where: { status: "PENDING" } }),
+      this.delegate.count({ where: { status: "COMPLETED" } }),
+      this.delegate.count({ where: { status: "PENDING" } }),
     ])
     return { completed, pending }
   }
@@ -232,39 +218,30 @@ export class OrderModel {
   static async updatePayment(
     id: string,
     data: {
-      method: string
+      method: $Enums.PaymentMethod
       amount: number
-      status: string
+      status: $Enums.PaymentStatus
       paidAt?: string | null
     },
   ): Promise<OrderResponse> {
-    const existingPayment = await prisma.payment.findUnique({
+    await this.db.payment.upsert({
       where: { orderId: id },
+      create: {
+        orderId: id,
+        method: data.method,
+        amount: data.amount,
+        status: data.status,
+        paidAt: data.paidAt ? new Date(data.paidAt) : null,
+      },
+      update: {
+        method: data.method,
+        amount: data.amount,
+        status: data.status,
+        paidAt: data.paidAt ? new Date(data.paidAt) : null,
+      },
     })
 
-    if (existingPayment) {
-      await prisma.payment.update({
-        where: { orderId: id },
-        data: {
-          method: data.method as any,
-          amount: data.amount,
-          status: data.status as any,
-          paidAt: data.paidAt ? new Date(data.paidAt) : null,
-        },
-      })
-    } else {
-      await prisma.payment.create({
-        data: {
-          orderId: id,
-          method: data.method as any,
-          amount: data.amount,
-          status: data.status as any,
-          paidAt: data.paidAt ? new Date(data.paidAt) : null,
-        },
-      })
-    }
-
-    const row = await prisma.order.findUnique({
+    const row = await this.delegate.findUnique({
       where: { id },
       include: orderInclude,
     })

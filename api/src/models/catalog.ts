@@ -74,16 +74,13 @@ export class ProductModel extends BaseModel {
   }
 
   static async findByNames(names: string[]): Promise<Map<string, Product & { category?: Category | null }>> {
-    const lower = names.map((n) => n.toLowerCase())
     const rows = await this.delegate.findMany({
+      where: { name: { in: names, mode: "insensitive" } },
       include: { category: true },
     })
     const map = new Map<string, Product & { category?: Category | null }>()
     for (const row of rows) {
-      const key = row.name.toLowerCase()
-      if (lower.includes(key)) {
-        map.set(key, row)
-      }
+      map.set(row.name.toLowerCase(), row)
     }
     return map
   }
@@ -97,14 +94,15 @@ export class ProductModel extends BaseModel {
   }
 
   static async list(params: {
-    page: number
-    limit: number
+    page: number | string
+    limit: number | string
     search?: string
     categoryId?: string
-    isAvailable?: boolean
+    isAvailable?: boolean | string
     sort: string
     order: string
   }): Promise<ProductListResult> {
+    const { page, limit, skip } = this.paginate(params.page, params.limit)
     const where: Record<string, unknown> = {}
 
     if (params.search) {
@@ -114,29 +112,21 @@ export class ProductModel extends BaseModel {
       where.categoryId = params.categoryId
     }
     if (params.isAvailable !== undefined) {
-      where.isAvailable = params.isAvailable
+      where.isAvailable = params.isAvailable === "true" || params.isAvailable === true
     }
-
-    const skip = (params.page - 1) * params.limit
 
     const [rows, total] = await Promise.all([
       this.delegate.findMany({
         where,
         include: { category: true },
         skip,
-        take: params.limit,
+        take: limit,
         orderBy: { [params.sort]: params.order },
       }),
       this.delegate.count({ where }),
     ])
 
-    return {
-      items: rows.map(toProductResponse),
-      total,
-      page: params.page,
-      limit: params.limit,
-      totalPages: Math.ceil(total / params.limit),
-    }
+    return this.listResult(rows.map(toProductResponse), total, page, limit)
   }
 
   static async getByIdWithCategory(id: string): Promise<ProductResponse | null> {

@@ -1,5 +1,6 @@
 import { prisma } from "@/src/config/db"
 import type { PrismaClient } from "@db/client"
+import { NotFoundError } from "@/src/utils/errors"
 
 export abstract class BaseModel {
   protected static get db(): PrismaClient {
@@ -18,6 +19,12 @@ export abstract class BaseModel {
     return this.delegate.findUnique({ where: { id } })
   }
 
+  static async getOrThrow<T = any>(id: string, label = "item"): Promise<T> {
+    const item = await this.getById<T>(id)
+    if (!item) throw new NotFoundError(`${label} not found`)
+    return item
+  }
+
   static async create<T = any>(data: Record<string, unknown>): Promise<T> {
     return this.delegate.create({ data })
   }
@@ -31,5 +38,15 @@ export abstract class BaseModel {
 
   static async delete(id: string): Promise<void> {
     await this.delegate.delete({ where: { id } })
+  }
+
+  protected static paginate(page: number | string, limit: number | string) {
+    const p = Number(page)
+    const l = Number(limit)
+    return { page: p, limit: l, skip: (p - 1) * l }
+  }
+
+  protected static listResult<T>(items: T[], total: number, page: number, limit: number) {
+    return { items, total, page, limit, totalPages: Math.ceil(total / limit) }
   }
 }

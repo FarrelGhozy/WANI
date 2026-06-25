@@ -1,7 +1,7 @@
 // ─── Layer 2: Injection / jailbreak pattern detection ────────────────────
 
-import { normalizeLeet } from "./encoding"
-import type { ScanResult, ScanVerdict } from "./types"
+import { normalizeLeet } from "@/src/guardrails/firewall/encoding"
+import type { ScanResult, ScanVerdict } from "@/src/guardrails/firewall/types"
 import { MSG_CLOSE } from "@/src/ai/prompts"
 
 // DELIMITER ESCAPE — attempts to close our <customer_message> fence early
@@ -112,7 +112,6 @@ export function classifyVerdict(reasons: string[]): ScanVerdict {
 /** Comprehensive injection scan — returns list of triggered rule names.
  *  NFKC-normalizes input first to defeat fullwidth/math-alphanumeric bypass. */
 export function scanInput(text: string): ScanResult {
-  // NFKC normalize before all regex matching — kills fullwidth, math bold, etc.
   const normalized = text.normalize("NFKC")
   const reasons: string[] = []
 

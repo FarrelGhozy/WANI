@@ -3,7 +3,7 @@ import { checkRateLimit } from "@/src/guardrails/ratelimit"
 import { isBudgetExceeded, recordLlmUsage } from "@/src/guardrails/budget"
 import { sanitizeReply } from "@/src/guardrails/output"
 import { analyzeTurn, classifyVerdict, scanOutput } from "@/src/guardrails/firewall"
-import { scanPii, hasPii } from "@/src/guardrails/pii"
+import { scanPii } from "@/src/guardrails/pii"
 import { classifyInput, judgeInput, checkGrounding } from "@/src/guardrails/classifier"
 import { buildSystemPrompt, wrapCustomerMessage } from "@/src/ai/prompts"
 import { chat } from "@/src/ai/engine"
@@ -158,9 +158,11 @@ export async function processMessage(input: PipelineInput): Promise<PipelineResu
 
   // ── 9. Load context ─────────────────────────────────────────────────
   trace.begin("load_context")
-  const store = await StoreModel.find()
-  const products = await ProductModel.listAvailable()
-  const aiConfig = await AiConfigModel.find()
+  const [store, products, aiConfig] = await Promise.all([
+    StoreModel.find(),
+    ProductModel.listAvailable(),
+    AiConfigModel.find(),
+  ])
 
   const isActive = aiConfig?.isActive ?? true
   if (!isActive) {
@@ -250,7 +252,6 @@ export async function processMessage(input: PipelineInput): Promise<PipelineResu
   const ctx = {
     customerId: customer.id,
     conversationId: conv.id,
-    aiConfig: aiConfig ?? {} as any,
     greetingMessage: aiConfig?.greetingMessage,
   }
 
@@ -271,8 +272,8 @@ export async function processMessage(input: PipelineInput): Promise<PipelineResu
 
   // ── 15. PII scan on output — redact if any leaked ───────────────────
   trace.begin("output_pii")
-  if (!outputResult.blocked && hasPii(finalReply)) {
-    const piiFound = scanPii(finalReply)
+  const piiFound = !outputResult.blocked ? scanPii(finalReply) : []
+  if (piiFound.length > 0) {
     trace.set("pii_redacted", piiFound.map((m) => m.type))
     await ActivityLogModel.log("pii_output", `PII in outbound reply: ${piiFound.map((m) => m.type).join(", ")}`, conv.id, {
       piiTypes: piiFound.map((m) => m.type), intent: llmOutput.intent,
