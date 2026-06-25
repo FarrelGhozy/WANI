@@ -33,11 +33,6 @@ const HOMOGLYPH_RANGES: ReadonlyArray<readonly [number, number]> = [
   [0xab30, 0xab6f], // Latin Extended-E
 ]
 
-/** Normalize via NFKC to defeat fullwidth/math-alphanumeric Unicode attacks. */
-export function normalizeUnicode(text: string): string {
-  return text.normalize("NFKC")
-}
-
 /** Check if text contains obfuscated / encoded payloads. */
 export function detectObfuscation(text: string): boolean {
   if (BASE64_RE.test(text)) return true

@@ -73,11 +73,11 @@ const TOKEN_INJECTION_PATTERNS = [
 ]
 
 // MANY-SHOT / CONTEXT OVERFLOW
+const MANY_SHOT_RE = /^(?:Q:|A:|User:|Assistant:|Human:|AI:|Example|Question|Answer|\d+\.)/i
+
 function detectContextOverflow(text: string): boolean {
   const lines = text.split("\n").filter((l) => l.trim().length > 0)
-  const instructionLines = lines.filter((l) =>
-    /^(?:Q:|A:|User:|Assistant:|Human:|AI:|Example|Question|Answer|\d+\.)/i.test(l.trim()),
-  )
+  const instructionLines = lines.filter((l) => MANY_SHOT_RE.test(l.trim()))
   return lines.length > 20 && instructionLines.length / lines.length > 0.6
 }
 
@@ -95,6 +95,12 @@ const CRESCENDO_PATTERNS = [
 function escapeRe(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
 }
+
+const LEET_PATTERNS: readonly RegExp[] = [
+  ...OVERRIDE_PATTERNS,
+  ...EXTRACTION_PATTERNS,
+  ...ROLE_HIJACK_PATTERNS,
+]
 
 // ─── Verdict tiers ──────────────────────────────────────────────────────
 
@@ -140,7 +146,7 @@ export function scanInput(text: string): ScanResult {
   }
 
   const leet = normalizeLeet(normalized)
-  for (const re of ([] as RegExp[]).concat(OVERRIDE_PATTERNS, EXTRACTION_PATTERNS, ROLE_HIJACK_PATTERNS)) {
+  for (const re of LEET_PATTERNS) {
     if (re.test(leet)) { reasons.push("leet_obfuscated"); break }
   }
 

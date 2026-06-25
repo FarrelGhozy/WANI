@@ -1,9 +1,9 @@
 import { BaseModel } from "@/src/models/base"
-import type { Message } from "@db/client"
+import type { Message, $Enums } from "@db/client"
 
 export interface AppendData {
   conversationId: string
-  role: "CUSTOMER" | "BOT" | "HUMAN"
+  role: $Enums.MessageRole
   content: string
   waMsgId?: string | null
   msgType?: string

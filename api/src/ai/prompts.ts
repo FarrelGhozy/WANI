@@ -1,5 +1,3 @@
-import type { LLMIntent } from "@/src/ai/types"
-
 export interface StoreInfo {
   businessName: string
   address?: string | null
@@ -26,15 +24,6 @@ export const PROMPT_CANARY = "WANI-CANARY-7Q2F8X"
 // Delimiters that fence untrusted customer text inside the user turn.
 export const MSG_OPEN = "<customer_message>"
 export const MSG_CLOSE = "</customer_message>"
-
-export const VALID_INTENTS: readonly LLMIntent[] = [
-  "order",
-  "inquiry",
-  "greeting",
-  "complaint",
-  "unknown",
-  "escalate",
-]
 
 function formatProductCatalog(products: ProductEntry[]): string {
   const available = products.filter((p) => p.isAvailable)

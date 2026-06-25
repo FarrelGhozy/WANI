@@ -4,6 +4,7 @@
 // uncertain. Three-tier verdict: SAFE / SUSPICIOUS / INJECTION.
 
 import { complete } from "@/src/ai/engine"
+import { withCircuit } from "@/src/ai/circuit-breaker"
 import { logger } from "@/src/config/logger"
 import { env } from "@/src/config/env"
 
@@ -71,30 +72,35 @@ export async function classifyInput(text: string): Promise<ClassifierResult> {
     return { verdict: "SAFE", confidence: 1, reasons: ["classifier_disabled"] }
   }
 
-  try {
-    const result = await complete(
-      [
-        { role: "system", content: CLASSIFIER_PROMPT },
-        { role: "user", content: text },
-      ],
-      {
-        model: env.guardrails.classifierModel,
-        maxTokens: 256,
-        temperature: 0,
-        timeout: 10_000,
-        retries: 1,
-      },
-    )
+  const cbResult = await withCircuit(async () => complete(
+    [
+      { role: "system", content: CLASSIFIER_PROMPT },
+      { role: "user", content: text },
+    ],
+    {
+      model: env.guardrails.classifierModel,
+      maxTokens: 256,
+      temperature: 0,
+      timeout: 10_000,
+      retries: 1,
+    },
+  ), "classifier")
 
-    const parsed = JSON.parse(result.content.trim())
+  if (!cbResult.allowed) {
+    logger.warn("Classifier circuit open, defaulting to SAFE")
+    return { verdict: "SAFE", confidence: 0, reasons: ["classifier_circuit_open"] }
+  }
+
+  try {
+    const parsed = JSON.parse(cbResult.result!.content.trim())
     const verdict = parsed.verdict ?? "SAFE"
     const confidence = typeof parsed.confidence === "number" ? parsed.confidence : 0.5
     const reasons: string[] = Array.isArray(parsed.reasons) ? parsed.reasons : []
 
     return { verdict, confidence, reasons }
   } catch (err) {
-    logger.warn("Classifier call failed, defaulting to SAFE", { error: err instanceof Error ? err.message : String(err) })
-    return { verdict: "SAFE", confidence: 0, reasons: ["classifier_error"] }
+    logger.warn("Classifier parse failed, defaulting to SAFE", { error: err instanceof Error ? err.message : String(err) })
+    return { verdict: "SAFE", confidence: 0, reasons: ["classifier_parse_error"] }
   }
 }
 
@@ -113,29 +119,34 @@ export async function judgeInput(
     .replace("{reasons}", scanReasons.join(", "))
     .replace("{history}", historyStr)
 
-  try {
-    const result = await complete(
-      [
-        { role: "system", content: prompt },
-        { role: "user", content: text },
-      ],
-      {
-        model: env.guardrails.judgeModel,
-        maxTokens: 512,
-        temperature: 0,
-        timeout: 15_000,
-        retries: 1,
-      },
-    )
+  const cbResult = await withCircuit(async () => complete(
+    [
+      { role: "system", content: prompt },
+      { role: "user", content: text },
+    ],
+    {
+      model: env.guardrails.judgeModel,
+      maxTokens: 512,
+      temperature: 0,
+      timeout: 15_000,
+      retries: 1,
+    },
+  ), "judge")
 
-    const parsed = JSON.parse(result.content.trim())
+  if (!cbResult.allowed) {
+    logger.warn("Judge circuit open, defaulting to SAFE")
+    return { verdict: "SAFE", reasons: ["judge_circuit_open"] }
+  }
+
+  try {
+    const parsed = JSON.parse(cbResult.result!.content.trim())
     return {
       verdict: parsed.verdict === "BLOCK" ? "BLOCK" : "SAFE",
       reasons: Array.isArray(parsed.reasons) ? parsed.reasons : [],
     }
   } catch (err) {
-    logger.warn("Judge call failed, defaulting to SAFE", { error: err instanceof Error ? err.message : String(err) })
-    return { verdict: "SAFE", reasons: ["judge_error"] }
+    logger.warn("Judge parse failed, defaulting to SAFE", { error: err instanceof Error ? err.message : String(err) })
+    return { verdict: "SAFE", reasons: ["judge_parse_error"] }
   }
 }
 
@@ -156,28 +167,33 @@ export async function checkGrounding(
     .replace("{customerMessage}", customerMessage)
     .replace("{botReply}", reply)
 
-  try {
-    const result = await complete(
-      [
-        { role: "system", content: prompt },
-        { role: "user", content: "Check the bot reply for unsupported claims." },
-      ],
-      {
-        model: env.guardrails.groundingModel,
-        maxTokens: 512,
-        temperature: 0,
-        timeout: 15_000,
-        retries: 1,
-      },
-    )
+  const cbResult = await withCircuit(async () => complete(
+    [
+      { role: "system", content: prompt },
+      { role: "user", content: "Check the bot reply for unsupported claims." },
+    ],
+    {
+      model: env.guardrails.groundingModel,
+      maxTokens: 512,
+      temperature: 0,
+      timeout: 15_000,
+      retries: 1,
+    },
+  ), "grounding")
 
-    const parsed = JSON.parse(result.content.trim())
+  if (!cbResult.allowed) {
+    logger.warn("Grounding circuit open, defaulting to grounded")
+    return { grounded: true, unsupportedClaims: [] }
+  }
+
+  try {
+    const parsed = JSON.parse(cbResult.result!.content.trim())
     return {
       grounded: parsed.grounded !== false,
       unsupportedClaims: Array.isArray(parsed.unsupported_claims) ? parsed.unsupported_claims : [],
     }
   } catch (err) {
-    logger.warn("Grounding check failed, defaulting to grounded", { error: err instanceof Error ? err.message : String(err) })
+    logger.warn("Grounding parse failed, defaulting to grounded", { error: err instanceof Error ? err.message : String(err) })
     return { grounded: true, unsupportedClaims: [] }
   }
 }
