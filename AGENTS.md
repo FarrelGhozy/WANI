@@ -359,3 +359,26 @@ git commit -m "🔥 api: add products CRUD — route, schema, controller, model"
 - Hanya commit file dari `api/` ketika kerja backend — jangan campur package lain.
 - Generated files (Prisma client, node_modules) masuk `.gitignore` — jangan di-stage.
 - Migrations file (`prisma/migrations/`) ikut di-commit — itu bagian dari schema versioning.
+
+## Progress — Manual Payment Flow
+
+**Tujuan:** Ganti payment gateway (Midtrans/Xendit) dengan manual payment flow. Store owner input QRIS/bank/e-wallet sendiri, konfirmasi bayar manual via dashboard.
+
+### Done
+
+| Tahap | Commit | Deskripsi |
+|-------|--------|-----------|
+| 1 | `0dddfe0` | API: Prisma model, Zod schema, CRUD, upload, auto-CONFIRMED on PAID |
+| 2 | `38cdbbe` | Dashboard: PaymentTab, dynamic form per type, QRIS upload, 4th tab |
+| 3 | `8250ba7` | Dashboard: warning banner, confirm payment modal, URL-driven tab |
+| 4 | `df0c17e` | AI integration: buildSystemPrompt loads payment methods, handleOrder includes payment info, bot sends QRIS as image |
+
+### Key Decisions
+
+- **QRIS upload via file upload** (not URL) — WA bot kirim gambar langsung ke customer
+- **StorePaymentMethod model terpisah** — bukan JSON field, cleaner CRUD + type safety
+- **Multi-part upload via multer** (2.2.0) with Express 5
+- **Auto-CONFIRMED** ketika payment marked PAID
+- **Warning banner only** — no feature blocking if no payment method
+- **No payment gateway** — all manual verification
+- **Port 5432 di docker-compose dihapus** — conflict dengan `facegate-db`, cukup internal Docker network
