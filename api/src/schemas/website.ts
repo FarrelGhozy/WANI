@@ -9,6 +9,7 @@ export const updateWebsiteSchema = z.object({
   phone: z.string().optional(),
   selectedProductIds: z.array(z.string()).optional(),
   template: z.string().optional(),
+  theme: z.enum(["classic", "modern", "vibrant", "elegant"]).optional(),
 })
 
 export const generateWebsiteSchema = z.object({

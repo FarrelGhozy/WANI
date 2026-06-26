@@ -58,9 +58,12 @@ export async function generateWebsite(
   const { totalOrders } = await OrderModel.getStats()
   const stats = await OrderModel.getStatusCounts()
 
+  const theme = getConfigValue(config, "theme", "classic")
+
   const result = await generate({
     slug,
     template: req.body.template,
+    theme,
     store: {
       businessName: store.businessName,
       phone: store.phone,

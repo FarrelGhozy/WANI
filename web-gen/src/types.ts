@@ -49,6 +49,7 @@ export interface SiteConfig {
 export interface GenerateParams {
   slug: string
   template: string
+  theme?: string
   store: StoreData
   products: ProductData[]
   config: SiteConfig
