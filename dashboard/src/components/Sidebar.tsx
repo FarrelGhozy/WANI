@@ -48,9 +48,11 @@ export default function Sidebar({ connection, storeName, storeLogoUrl }: Sidebar
     <aside className="fixed left-0 top-0 z-30 hidden h-screen w-64 flex-col bg-teal-800 lg:flex">
       {/* Logo */}
       <div className="flex h-16 items-center gap-3 border-b border-teal-700/50 px-6">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-teal-600 ring-1 ring-white/10">
-          <span className="text-sm font-bold tracking-tight text-white">W</span>
-        </div>
+        <svg viewBox="0 0 48 48" className="h-8 w-8 shrink-0" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="4" width="38" height="38" rx="10" fill="#059669" />
+          <path d="M 37 15 L 44 18 L 37 23 Z" fill="#059669" />
+          <path d="M 13 19 L 17 34 L 22.5 23 L 28 34 L 32 19" stroke="white" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
         <div>
           <span className="text-lg font-semibold tracking-tight text-teal-50">WANI</span>
           <span className="ml-2 rounded bg-teal-700/50 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-teal-200">Dashboard</span>
