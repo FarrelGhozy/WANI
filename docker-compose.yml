@@ -77,6 +77,9 @@ services:
     depends_on:
       api:
         condition: service_healthy
+    environment:
+      API_HOST: api
+      API_PORT: 3001
     ports:
       - "5173:80"
     restart: unless-stopped
