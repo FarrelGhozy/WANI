@@ -9,6 +9,17 @@ interface Bucket {
 
 const buckets = new Map<string, Bucket>()
 
+// Periodic cleanup to prevent Map leak — runs every 5 minutes.
+const CLEANUP_INTERVAL_MS = 300_000
+setInterval(() => {
+  const now = Date.now()
+  const longWindow = env.guardrails.rateLongWindowMs
+  for (const [key, b] of buckets) {
+    const recent = b.long.length > 0 && now - b.long[b.long.length - 1]! < longWindow
+    if (!recent) buckets.delete(key)
+  }
+}, CLEANUP_INTERVAL_MS).unref()
+
 export interface RateLimitResult {
   allowed: boolean
   // True only on the transition into a blocked state, so the caller sends the

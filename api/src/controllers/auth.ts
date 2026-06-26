@@ -3,6 +3,7 @@ import type { z } from "zod"
 import jwt from "jsonwebtoken"
 import { UserModel } from "@/src/models/user"
 import { sendResponse } from "@/src/utils/response"
+import { hashPassword, verifyPassword } from "@/src/utils/auth"
 import { BadRequestError, UnauthorizedError } from "@/src/utils/errors"
 import {
   registerSchema,
@@ -34,10 +35,7 @@ export async function register(
     throw new BadRequestError("email already registered")
   }
 
-  const hashed = await Bun.password.hash(req.body.password, {
-    algorithm: "bcrypt",
-    cost: 10,
-  })
+  const hashed = await hashPassword(req.body.password)
 
   const user = await UserModel.createUser({
     name: req.body.name,
@@ -59,7 +57,7 @@ export async function login(
     throw new UnauthorizedError("invalid email or password")
   }
 
-  const valid = await Bun.password.verify(req.body.password, user.password)
+  const valid = await verifyPassword(req.body.password, user.password)
   if (!valid) {
     throw new UnauthorizedError("invalid email or password")
   }
@@ -124,10 +122,7 @@ export async function resetPassword(
     throw new BadRequestError("invalid or expired reset token")
   }
 
-  const hashed = await Bun.password.hash(req.body.password, {
-    algorithm: "bcrypt",
-    cost: 10,
-  })
+  const hashed = await hashPassword(req.body.password)
 
   await UserModel.update(user.id, {
     password: hashed,

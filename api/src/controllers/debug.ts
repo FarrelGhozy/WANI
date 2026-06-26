@@ -1,15 +1,16 @@
 import type { Request, Response } from "express"
 import type { z } from "zod"
 import { sendResponse } from "@/src/utils/response"
+import { NotFoundError } from "@/src/utils/errors"
 import { getTraces, getTraceById, clearTraces } from "@/src/debug/tracer"
-import { resetCircuit } from "@/src/ai/circuit-breaker"
+import { getCircuitState, resetCircuit } from "@/src/ai/circuit-breaker"
 import { getTracesQuerySchema, getTraceDetailParamsSchema } from "@/src/schemas/debug"
 
 type GetTracesQuery = z.infer<typeof getTracesQuerySchema>
 type GetTraceDetailParams = z.infer<typeof getTraceDetailParamsSchema>
 
 export function getRecentTraces(
-  req: Request<Record<string, string>, any, any, GetTracesQuery>,
+  req: Request<Record<string, string>, unknown, unknown, GetTracesQuery>,
   res: Response,
 ): void {
   const q = req.validatedQuery! as GetTracesQuery
@@ -25,8 +26,7 @@ export function getTraceDetail(
   const { id } = req.params
   const trace = getTraceById(id)
   if (!trace) {
-    sendResponse(res, 404, "Trace not found")
-    return
+    throw new NotFoundError("Trace not found")
   }
   sendResponse(res, 200, "ok", { trace })
 }
@@ -38,8 +38,9 @@ export function deleteTraces(_req: Request, res: Response): void {
 
 export function getStatus(_req: Request, res: Response): void {
   const uptime = process.uptime()
+  const circuit = getCircuitState()
   sendResponse(res, 200, "ok", {
-    circuitBreaker: { state: "available", resetCircuit: "POST /api/debug/circuit/reset" },
+    circuitBreaker: { state: circuit.state, failures: circuit.failures, resetCircuit: "POST /api/debug/circuit/reset" },
     uptime,
     memory: process.memoryUsage(),
   })

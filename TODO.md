@@ -9,18 +9,17 @@
 | 26 | **Login error UX** | dashboard | Shake animation, "Email atau password tidak cocok", red border kedua field, fix stale closure navigation |
 | 27 | **Final MOCK cleanup** | dashboard | `useAuth.ts` + `useWaStatus.ts` — MOCK toggle sudah dihapus sepenuhnya |
 | 28 | **TypeScript cleanup** | api | `tsc --noEmit` lulus 0 error — semua ParsedQs mismatch sudah dibenerin |
-
-### 🟡 Tier 3 — Polish
-
-| # | Item | Package | Detail |
-|---|------|---------|--------|
-| 17 | `(r: any)` → Prisma type | api | `activity-log.ts:71` |
-| 18 | `debug.ts` inconsistencies | api | Manual 404, hardcoded circuit state |
-| 19 | `hashPassword()` helper | api | `auth.ts` duplicate `Bun.password.hash()` |
-| 20 | Rate limiter Map leak | api | `ratelimit.ts:10` — periodic cleanup |
-| 21 | `todayKey()` double call | api | `budget.ts` — cache date string |
-| 22 | `useRef` callback stabilization | dashboard | `getProduct`, `getOrder`, `updateStatus` |
-| 23 | Shared `types.ts` | dashboard | Centralize type definitions |
+| 29 | **wa-bot `.env`** | wa-bot | Sudah ada (sebelumnya: "tidak ada") |
+| 30 | **web-gen `.env`** | web-gen | Sudah ada (sebelumnya: "tidak ada") |
+| 31 | **`useRef` cleanup** | dashboard | ✅ Resolved — no `useRef` ditemukan di hooks |
+| 32 | **🔴 Critical deps** | wa-bot/web-gen | `bun install` + Prisma generate + template deps — semua beres |
+| 33 | **🧹 Cleanup** | dashboard | Hapus `package-lock.json`, buat `.env` |
+| 34 | **`(r: any)` → Prisma type** | api | `activity-log.ts:71` — pake `Prisma.ActivityLogModel` |
+| 35 | **`debug.ts` fix** | api | `any` → `unknown`, manual 404 → NotFoundError, hardcoded circuit → `getCircuitState()` |
+| 36 | **`hashPassword()` helper** | api | Ekstrak ke `utils/auth.ts`, pake di register + resetPassword |
+| 37 | **Rate limiter Map cleanup** | api | `setInterval` tiap 5 menit bersihin stale entries |
+| 38 | **`todayKey()` cache** | api | Cache date string, refresh tiap 10 menit |
+| 39 | **Shared `types.ts`** | dashboard | Centralize semua domain type di `src/types.ts`, hooks import + re-export |
 
 ---
 
@@ -41,22 +40,7 @@
 - **Docker Compose** — 4 service definitions (db, api, dashboard, wa-bot)
 - **Dockerfile** — Ada untuk api, dashboard, wa-bot
 
-## 🔴 Critical — Harus Dibenerin
-
-| # | Item | Package | Detail |
-|---|------|---------|--------|
-| 1 | **`wa-bot/` node_modules tidak ada** | wa-bot/ | `bun install` belum pernah dijalankan — bot ga bisa jalan lokal |
-| 2 | **`wa-bot/` Prisma client tidak ada** | wa-bot/ | `generated/prisma/` tidak ditemukan — jalanin `bun run prisma:generate` setelah instalasi |
-| 3 | **Template web-gen dependencies belum diinstall** | web-gen/ | `web-gen/src/templates/default/node_modules/` kosong — jalanin `bun install` di direktori template |
-
-## 🟡 Medium — Perlu Diperbaiki
-
-| # | Item | Package | Detail |
-|---|------|---------|--------|
-| 4 | **`wa-bot/.env` tidak ada** | wa-bot/ | Hanya ada `.env.example` — bot ga bisa jalan lokal tanpa env |
-| 5 | **`dashboard/` punya `package-lock.json`** | dashboard/ | Inconsistent — pake bun aja, hapus `package-lock.json` |
-| 6 | **`dashboard/.env` tidak ada** | dashboard/ | Minor — proxy fallback ke `localhost:3001`, tapi best practice pake env |
-| 7 | **`web-gen/.env` tidak ada** | web-gen/ | Minor — cuma telemetry disable |
+~~Semua item di 🔴 Critical dan 🟡 Medium sudah diresolve.~~
 
 ## 🔄 Pending Improvements
 

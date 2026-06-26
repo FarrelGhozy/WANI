@@ -1,35 +1,8 @@
 import { useState, useMemo, useCallback, useEffect } from 'react'
 import { fetchApi } from '@/lib/api'
+import type { Category, Product, ProductFormData } from '@/types.ts'
 
-export interface Category {
-  id: string
-  name: string
-  description: string | null
-}
-
-export interface Product {
-  id: string
-  categoryId: string | null
-  category: Category | null
-  name: string
-  description: string | null
-  price: number
-  stock: number
-  isAvailable: boolean
-  imageUrl: string | null
-  createdAt: string
-  updatedAt: string
-}
-
-export interface ProductFormData {
-  name: string
-  price: number
-  stock: number
-  categoryId: string | null
-  description: string | null
-  isAvailable: boolean
-  imageUrl: string | null
-}
+export type { Category, Product, ProductFormData }
 
 export function useProducts() {
   const [allProducts, setAllProducts] = useState<Product[]>([])

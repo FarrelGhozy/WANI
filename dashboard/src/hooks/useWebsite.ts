@@ -1,25 +1,9 @@
 import { useState, useCallback, useMemo, useEffect } from 'react'
 import { fetchApi } from '@/lib/api.ts'
 import { useProducts } from '@/hooks/useProducts.ts'
+import type { WebsiteConfig, GenerateLog } from '@/types.ts'
 
-export interface WebsiteConfig {
-  heroHeadline: string
-  heroSubheadline: string
-  aboutText: string
-  primaryColor: string
-  secondaryColor: string
-  phone: string
-  selectedProductIds: string[]
-  template: string
-}
-
-export interface GenerateLog {
-  id: string
-  timestamp: string
-  status: 'success' | 'failed'
-  productCount: number
-  message: string
-}
+export type { WebsiteConfig, GenerateLog }
 
 const defaultConfig: WebsiteConfig = {
   heroHeadline: 'Selamat Datang di Toko Kami',
