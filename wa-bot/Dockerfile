@@ -24,6 +24,9 @@ COPY --from=build /app/wa-bot/package.json ./package.json
 # Copy the generated prisma client files from the build stage to the final image
 COPY --from=build /app/wa-bot/generated ./generated
 
+# Prisma runtime library
+COPY --from=build /app/wa-bot/node_modules/@prisma/client ./node_modules/@prisma/client
+
 RUN chmod +x /docker-entrypoint.sh
 
 EXPOSE 3001
