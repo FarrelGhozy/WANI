@@ -1,6 +1,8 @@
 #!/bin/sh
 set -e
 
+cd /app/api
+
 echo "Running migrations..."
 until bunx prisma migrate deploy; do
   echo "Waiting for database..."
@@ -8,4 +10,4 @@ until bunx prisma migrate deploy; do
 done
 echo "Migrations done."
 
-exec bun run --cwd /app/api src/index.ts
+exec bun run src/index.ts
