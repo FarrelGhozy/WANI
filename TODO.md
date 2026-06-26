@@ -1,34 +1,14 @@
 # WANI — Project TODO
 
-## ⚡ Optimasi — Segera
+## ✅ Baru Selesai
 
-### ✅ Tier 1 — Selesai
-
-| # | Item | Package | Commit |
+| # | Item | Package | Detail |
 |---|------|---------|--------|
-| 1 | **`findByNames()` → `where: { name: { in } }`** | api | ✅ |
-| 2 | **`OrderModel` extend `BaseModel` + `createMany` + `upsert`** | api | ✅ |
-| 3 | **`getOrThrow()` di BaseModel** | api | ✅ |
-| 4 | **Hapus duplicate `VALID_TRANSITIONS` controller** | api | ✅ |
-| 5 | **`requireJwt` di `auth.me` + `website.download`** | api | ✅ |
-| 6 | **`Promise.all()` 3 DB queries pipeline** | api | ✅ |
-| 7 | **Hapus `hasPii()` double scan** | api | ✅ |
-| 8 | **Hapus `MOCK = false` code** | dashboard | ✅ |
-| 9 | **`useAuth` → `fetchApi()`** | dashboard | ✅ |
-
-Catatan: #7 (NFKC) dipertahankan di `scanInput()` karena public API — pipeline tetap hanya normalize sekali.
-
-### ✅ Tier 2 — Selesai
-
-| # | Item | Package | Commit |
-|---|------|---------|--------|
-| 11 | **`$Enums.MessageRole` di message.ts** | api | ✅ |
-| 12 | **Hapus dead exports guardrails** | api | ✅ |
-| 13 | **Extract `formatPrice` to utils** | dashboard | ✅ |
-| 15 | **Circuit breaker di classifier/judge/grounding** | api | ✅ |
-| 16 | **Hoist regex + pre-compute LEET_PATTERNS** | api | ✅ |
-
-Catatan: #14 (useApiData hook) ditunda — refactor 5 hooks sekaligus perlu pertimbangan lebih lanjut. Bisa dikerjain kapan aja sebagai optimasi mandiri.
+| 24 | **Logo WANI** — desain + implementasi | dashboard | Chat bubble + W icon, wordmark (teal + amber), PNG conversion via sharp |
+| 25 | **Login page redesign** | dashboard | Teal gradient bg, logo center di atas card, hilangin subtitle "Dashboard" |
+| 26 | **Login error UX** | dashboard | Shake animation, "Email atau password tidak cocok", red border kedua field, fix stale closure navigation |
+| 27 | **Final MOCK cleanup** | dashboard | `useAuth.ts` + `useWaStatus.ts` — MOCK toggle sudah dihapus sepenuhnya |
+| 28 | **TypeScript cleanup** | api | `tsc --noEmit` lulus 0 error — semua ParsedQs mismatch sudah dibenerin |
 
 ### 🟡 Tier 3 — Polish
 
@@ -65,20 +45,18 @@ Catatan: #14 (useApiData hook) ditunda — refactor 5 hooks sekaligus perlu pert
 
 | # | Item | Package | Detail |
 |---|------|---------|--------|
-| 1 | **`OPENROUTER_API_KEY` kosong** | api/, root `.env` | Semua LLM call bakal gagal. Isi key valid di `api/.env` dan root `.env` |
-| 2 | **`wa-bot/` node_modules tidak ada** | wa-bot/ | `bun install` belum pernah dijalankan — bot ga bisa jalan lokal |
-| 3 | **`wa-bot/` Prisma client tidak ada** | wa-bot/ | `generated/prisma/` tidak ditemukan — jalanin `bun run prisma:generate` setelah instalasi |
-| 4 | **Template web-gen dependencies belum diinstall** | web-gen/ | `web-gen/src/templates/default/node_modules/` kosong — jalanin `bun install` di direktori template |
+| 1 | **`wa-bot/` node_modules tidak ada** | wa-bot/ | `bun install` belum pernah dijalankan — bot ga bisa jalan lokal |
+| 2 | **`wa-bot/` Prisma client tidak ada** | wa-bot/ | `generated/prisma/` tidak ditemukan — jalanin `bun run prisma:generate` setelah instalasi |
+| 3 | **Template web-gen dependencies belum diinstall** | web-gen/ | `web-gen/src/templates/default/node_modules/` kosong — jalanin `bun install` di direktori template |
 
 ## 🟡 Medium — Perlu Diperbaiki
 
 | # | Item | Package | Detail |
 |---|------|---------|--------|
-| 5 | **5 TypeScript error di API** | api/ | `activity-log.ts:69` (SortOrder type), `customer.ts:14`, `log.ts:8`, `order.ts:14`, `product.ts:16` (ParsedQs mismatch). Runtime OK karena pake `req.validatedQuery`, tapi perlu dibenerin biar type-safe |
-| 6 | **`wa-bot/.env` tidak ada** | wa-bot/ | Hanya ada `.env.example` — bot ga bisa jalan lokal tanpa env |
-| 7 | **`dashboard/` punya `package-lock.json` + `bun.lock`** | dashboard/ | Inconsistent — pake bun aja, hapus `package-lock.json` |
-| 8 | **`dashboard/.env` tidak ada** | dashboard/ | Minor — proxy fallback ke `localhost:3001`, tapi best practice pake env |
-| 9 | **`web-gen/.env` tidak ada** | web-gen/ | Minor — cuma telemetry disable |
+| 4 | **`wa-bot/.env` tidak ada** | wa-bot/ | Hanya ada `.env.example` — bot ga bisa jalan lokal tanpa env |
+| 5 | **`dashboard/` punya `package-lock.json`** | dashboard/ | Inconsistent — pake bun aja, hapus `package-lock.json` |
+| 6 | **`dashboard/.env` tidak ada** | dashboard/ | Minor — proxy fallback ke `localhost:3001`, tapi best practice pake env |
+| 7 | **`web-gen/.env` tidak ada** | web-gen/ | Minor — cuma telemetry disable |
 
 ## 🔄 Pending Improvements
 
@@ -95,9 +73,9 @@ Catatan: #14 (useApiData hook) ditunda — refactor 5 hooks sekaligus perlu pert
 
 | # | Item | Prioritas | Catatan |
 |---|------|-----------|---------|
-| 5 | **Final MOCK toggle cleanup** | Low | `useAuth.ts` dan `useWaStatus.ts` masih punya `MOCK = false` — ga dipake, tapi bisa dihapus |
-| 6 | **Error handling UI** | Medium | Belum ada unified error toast / notification system |
-| 7 | **Loading states** | Medium | Beberapa page belum punya skeleton loading |
+| 5 | **Error handling UI** | Medium | Belum ada unified error toast / notification system |
+| 6 | **Loading states** | Medium | Beberapa page belum punya skeleton loading |
+| 7 | **Login auto-redirect** | Low | User yang sudah login seharusnya langsung redirect ke dashboard dari `/login` |
 
 ### Infra / DevOps
 

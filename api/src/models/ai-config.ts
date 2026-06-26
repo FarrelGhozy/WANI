@@ -11,9 +11,20 @@ export class AiConfigModel extends BaseModel {
     return this.db.aiConfig
   }
 
-  static async find(): Promise<AiConfig | null> {
-    const row = await this.getById<AiConfig>("default")
-    return normalize(row)
+  static async find(): Promise<AiConfig> {
+    let row = await this.getById<AiConfig>("default")
+    if (!row) {
+      row = await this.db.aiConfig.create({
+        data: {
+          id: "default",
+          systemPrompt: "",
+          model: "opencode/deepseek-v4-flash-free",
+          maxTokens: 2048,
+          temperature: 0.7,
+        },
+      })
+    }
+    return normalize(row)!
   }
 
   static async upsert(data: Omit<Partial<AiConfig>, "temperature"> & { temperature?: number }): Promise<AiConfig> {

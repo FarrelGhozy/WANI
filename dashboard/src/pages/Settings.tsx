@@ -14,7 +14,7 @@ const tabs = [
 
 export default function Settings() {
   const [activeTab, setActiveTab] = useState<string>('store')
-  const { store, aiConfig, updateStore, updateAiConfig, loading } = useSettings()
+  const { store, aiConfig, error, updateStore, updateAiConfig, loading, reload } = useSettings()
   const { qr: liveQr, connection: liveConn, phone: livePhone } = useWaStatus()
 
   const [override, setOverride] = useState<{ connection: string; qr: string; phone: string } | null>(null)
@@ -37,8 +37,16 @@ export default function Settings() {
 
   if (!store || !aiConfig) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-center">
-        <p className="text-sm text-stone-500">Gagal memuat pengaturan. Coba refresh halaman.</p>
+      <div className="flex flex-col items-center justify-center gap-4 py-20 text-center">
+        <p className="text-sm text-stone-500">
+          {error || 'Gagal memuat pengaturan.'}
+        </p>
+        <button
+          onClick={reload}
+          className="rounded-lg bg-teal-600 px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-teal-700"
+        >
+          Coba lagi
+        </button>
       </div>
     )
   }
