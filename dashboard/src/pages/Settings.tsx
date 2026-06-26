@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react'
+import { useSearchParams } from 'react-router'
 import { useSettings } from '@/hooks/useSettings.ts'
 import { useWaStatus } from '@/hooks/useWaStatus.ts'
 import StoreTab from '@/components/StoreTab.tsx'
@@ -15,7 +16,12 @@ const tabs = [
 ] as const
 
 export default function Settings() {
-  const [activeTab, setActiveTab] = useState<string>('store')
+  const [searchParams, setSearchParams] = useSearchParams()
+  const activeTab = searchParams.get('tab') || 'store'
+
+  function handleTabChange(tab: string) {
+    setSearchParams(tab === 'store' ? {} : { tab }, { replace: true })
+  }
   const { store, aiConfig, error, updateStore, updateAiConfig, loading, reload } = useSettings()
   const { qr: liveQr, connection: liveConn, phone: livePhone } = useWaStatus()
 
@@ -61,7 +67,7 @@ export default function Settings() {
         {tabs.map((tab) => (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
+            onClick={() => handleTabChange(tab.id)}
             className={`px-5 py-3 text-sm font-medium transition-all ${
               activeTab === tab.id
                 ? 'border-b-2 border-teal-600 text-teal-700'

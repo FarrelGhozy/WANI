@@ -1,8 +1,12 @@
+import { useState, useCallback } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { useOrders, formatPrice, type OrderStatus } from '@/hooks/useOrders.ts'
+import { fetchApi } from '@/lib/api'
+import type { StorePaymentMethod } from '@/types'
 import Card from '@/components/ui/Card.tsx'
 import Badge from '@/components/ui/Badge.tsx'
 import Button from '@/components/ui/Button.tsx'
+import Modal from '@/components/ui/Modal.tsx'
 import OrderTimeline from '@/components/OrderTimeline.tsx'
 import Spinner from '@/components/ui/Spinner.tsx'
 
@@ -31,8 +35,37 @@ const statusAction: Record<string, { label: string; variant: 'primary' | 'danger
 export default function OrderDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { getOrder, updateStatus } = useOrders()
+  const { getOrder, updateStatus, confirmPayment } = useOrders()
   const order = id ? getOrder(id) : undefined
+
+  const [paymentModal, setPaymentModal] = useState(false)
+  const [paymentMethods, setPaymentMethods] = useState<StorePaymentMethod[]>([])
+  const [selectedMethod, setSelectedMethod] = useState('')
+  const [paymentAmount, setPaymentAmount] = useState(0)
+  const [confirmingPayment, setConfirmingPayment] = useState(false)
+
+  const openPaymentModal = useCallback(async () => {
+    setSelectedMethod('')
+    setPaymentAmount(order?.totalAmount ?? 0)
+    try {
+      const res = await fetchApi<StorePaymentMethod[]>('/api/store/payment-methods')
+      setPaymentMethods(res.data ?? [])
+    } catch {
+      setPaymentMethods([])
+    }
+    setPaymentModal(true)
+  }, [order])
+
+  async function handleConfirmPayment() {
+    if (!id || !selectedMethod || paymentAmount <= 0) return
+    setConfirmingPayment(true)
+    try {
+      await confirmPayment(id, { method: selectedMethod, amount: paymentAmount })
+      setPaymentModal(false)
+    } finally {
+      setConfirmingPayment(false)
+    }
+  }
 
   if (!order) {
     return (
@@ -45,6 +78,7 @@ export default function OrderDetail() {
 
   const action = statusAction[order.status]
   const cancelable = order.status !== 'COMPLETED' && order.status !== 'CANCELLED'
+  const paymentPending = !order.payment || order.payment.status === 'PENDING'
 
   function handleStatus(next: OrderStatus) {
     if (!id) return
@@ -84,6 +118,11 @@ export default function OrderDetail() {
         {/* Actions */}
         {order.status !== 'CANCELLED' && (
           <div className="flex items-center gap-2">
+            {paymentPending && (
+              <Button size="sm" variant="secondary" onClick={openPaymentModal}>
+                Konfirmasi Pembayaran
+              </Button>
+            )}
             {action && (
               <Button size="sm" onClick={() => handleStatus(action.next)}>
                 {action.label}
@@ -181,6 +220,75 @@ export default function OrderDetail() {
           </Card>
         </div>
       </div>
+
+      {/* Confirm Payment Modal */}
+      <Modal
+        open={paymentModal}
+        onClose={() => setPaymentModal(false)}
+        title="Konfirmasi Pembayaran"
+        actions={
+          <Button
+            size="sm"
+            onClick={handleConfirmPayment}
+            loading={confirmingPayment}
+            disabled={!selectedMethod || paymentAmount <= 0}
+          >
+            Konfirmasi
+          </Button>
+        }
+      >
+        <div className="space-y-4">
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-stone-500">Metode Pembayaran</label>
+            {paymentMethods.length === 0 ? (
+              <p className="text-sm text-stone-400">Tidak ada metode pembayaran tersedia</p>
+            ) : (
+              <div className="space-y-2">
+                {paymentMethods
+                  .filter((m) => m.isActive)
+                  .map((m) => {
+                    let meta = ''
+                    if (m.type === 'BANK_TRANSFER') meta = `${m.bankName} — ${m.accountNumber}`
+                    else if (m.type === 'E_WALLET') meta = m.phoneNumber ?? ''
+                    else if (m.type === 'QRIS') meta = 'QRIS'
+                    else if (m.type === 'COD') meta = 'Bayar di Tempat'
+                    return (
+                      <button
+                        key={m.id}
+                        onClick={() => setSelectedMethod(m.type)}
+                        className={`w-full rounded-lg border p-3 text-left text-sm transition-all ${
+                          selectedMethod === m.type
+                            ? 'border-teal-500 bg-teal-50 ring-1 ring-teal-500'
+                            : 'border-stone-200 hover:border-stone-300'
+                        }`}
+                      >
+                        <span className="font-medium text-stone-900">{m.label}</span>
+                        {meta && <span className="ml-2 text-stone-400">{meta}</span>}
+                      </button>
+                    )
+                  })}
+              </div>
+            )}
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-stone-500">Jumlah Dibayar</label>
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-stone-400">Rp</span>
+              <input
+                type="number"
+                value={paymentAmount}
+                onChange={(e) => setPaymentAmount(Number(e.target.value))}
+                className="h-10 w-full rounded-lg border border-stone-300 bg-white pl-9 pr-3 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+              />
+            </div>
+          </div>
+
+          <div className="rounded-lg bg-amber-50 p-3 text-xs text-amber-800">
+            Setelah dikonfirmasi: Status pembayaran menjadi <strong>LUNAS</strong> dan pesanan otomatis <strong>DIKONFIRMASI</strong>
+          </div>
+        </div>
+      </Modal>
     </div>
   )
 }

@@ -166,6 +166,33 @@ export function useOrders() {
     return order ? statusFlow[order.status] : []
   }, [orders])
 
+  const confirmPayment = useCallback(async (
+    id: string,
+    data: { method: string; amount: number },
+  ): Promise<Order | undefined> => {
+    const idx = orders.findIndex((o) => o.id === id)
+    if (idx === -1) return undefined
+    try {
+      const res = await fetchApi<ApiOrder>(`/api/orders/${id}/payment`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          method: data.method,
+          amount: data.amount,
+          status: 'PAID',
+          paidAt: new Date().toISOString(),
+        }),
+      })
+      if (res.data) {
+        const mapped = mapOrder(res.data)
+        setOrders((prev) => prev.map((o) => o.id === id ? mapped : o))
+        return mapped
+      }
+    } catch (e) {
+      setError((e as Error).message)
+    }
+  }, [orders])
+
   return {
     orders: filtered,
     allOrders: orders,
@@ -175,6 +202,7 @@ export function useOrders() {
     statusFilter, setStatusFilter,
     sortField, sortDir, toggleSort,
     getOrder, updateStatus, nextStatuses,
+    confirmPayment,
     reload: useCallback(async () => {
       setLoading(true)
       setError(null)

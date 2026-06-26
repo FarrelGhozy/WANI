@@ -1,9 +1,10 @@
-import { useMemo } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router'
 import { useWaStatus } from '@/hooks/useWaStatus.ts'
 import { useOrders } from '@/hooks/useOrders.ts'
 import { useProducts } from '@/hooks/useProducts.ts'
 import { useCustomers } from '@/hooks/useCustomers.ts'
+import { fetchApi } from '@/lib/api'
 import StatusCard from '@/components/StatusCard.tsx'
 import Card from '@/components/ui/Card.tsx'
 import Badge from '@/components/ui/Badge.tsx'
@@ -49,6 +50,20 @@ export default function Dashboard() {
   const { allOrders, loading: ordersLoading } = useOrders()
   const { products, loading: prodLoading } = useProducts()
   const { allCustomers, loading: custLoading } = useCustomers()
+  const [needsPaymentMethod, setNeedsPaymentMethod] = useState(false)
+
+  useEffect(() => {
+    let cancelled = false
+    ;(async () => {
+      try {
+        const res = await fetchApi<{ hasPaymentMethods: boolean }>('/api/store')
+        if (!cancelled) setNeedsPaymentMethod(!res.data?.hasPaymentMethods)
+      } catch {
+        // silent
+      }
+    })()
+    return () => { cancelled = true }
+  }, [])
 
   const loading = waLoading || ordersLoading || prodLoading || custLoading
 
@@ -101,6 +116,32 @@ export default function Dashboard() {
         <h1 className="text-2xl font-semibold tracking-tight text-stone-900">Dashboard</h1>
         <p className="mt-1 text-sm text-stone-500">Ringkasan bisnis dan status penting</p>
       </div>
+
+      {/* Payment Method Warning */}
+      {needsPaymentMethod && (
+        <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
+          <div className="flex items-start gap-3">
+            <div className="mt-0.5 shrink-0 text-amber-500">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                <line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" />
+              </svg>
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-medium text-amber-900">Belum ada metode pembayaran</p>
+              <p className="mt-0.5 text-xs text-amber-700">
+                Pelanggan belum bisa melihat informasi pembayaran.{' '}
+                <button
+                  onClick={() => navigate('/settings?tab=payment')}
+                  className="font-medium underline underline-offset-2 transition-colors hover:text-amber-900"
+                >
+                  Atur metode pembayaran
+                </button>
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Key Metrics */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
