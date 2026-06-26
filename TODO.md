@@ -42,6 +42,51 @@
 
 ~~Semua item di 🔴 Critical dan 🟡 Medium sudah diresolve.~~
 
+## 🔄 Current Sprint — Manual Payment Flow
+
+> **Docs:** `Docs/MANUAL_PAYMENT_FLOW.md`
+> **Alasan:** Midtrans/Xendit butuh NIK+NPWP — tidak feasible untuk lomba.
+
+### Tahap 1: Database & API Core
+
+| # | Item | Package | Detail |
+|---|------|---------|--------|
+| P1 | **Prisma migration** — model `StorePaymentMethod` + enum `E_WALLET` | api | Model baru, ganti field `paymentMethods` free-text |
+| P2 | **Zod schema** — `createPaymentMethodSchema` (discriminated union) | api | Validasi per tipe (QRIS/BANK_TRANSFER/E_WALLET/COD) |
+| P3 | **StorePaymentMethod model** — CRUD | api | Extend BaseModel pattern |
+| P4 | **Upload endpoint** — `POST /api/upload` | api | Multer + static serve `uploads/` |
+| P5 | **Payment method CRUD endpoints** | api | GET/POST/PUT/DELETE `/api/store/payment-methods` |
+| P6 | **Update `GET /api/store`** — tambah `hasPaymentMethods` | api | Flag buat dashboard warning |
+| P7 | **Update `PUT /api/orders/:id/payment`** | api | Support method dari StorePaymentMethod + auto-paidAt |
+
+### Tahap 2: Dashboard — Pembayaran Tab
+
+| # | Item | Package | Detail |
+|---|------|---------|--------|
+| P8 | **`usePaymentMethods` hook** | dashboard | CRUD via fetchApi |
+| P9 | **`PaymentTab` component** — list + toggle + edit + delete | dashboard | Cards per metode + modal form dinamis |
+| P10 | **Upload file component** untuk QRIS | dashboard | Preview + upload via `POST /api/upload` |
+| P11 | **Integrasi tab ke Settings** | dashboard | Tab ke-4: Pembayaran |
+
+### Tahap 3: Dashboard — Konfirmasi & Warning
+
+| # | Item | Package | Detail |
+|---|------|---------|--------|
+| P12 | **Warning banner** di Dashboard page | dashboard | Warning jika `hasPaymentMethods === false` |
+| P13 | **Tombol "Konfirmasi Pembayaran"** di OrderDetail | dashboard | Modal: pilih metode + amount + confirm |
+| P14 | **`confirmPayment()`** di `useOrders` hook | dashboard | PUT `/api/orders/:id/payment` + auto-refetch |
+| P15 | **Auto-update order status** ke CONFIRMED | api | Saat payment di-set ke PAID |
+
+### Tahap 4: AI & Bot Integration
+
+| # | Item | Package | Detail |
+|---|------|---------|--------|
+| P16 | **Update `buildSystemPrompt()`** | api | Load payment methods dari StorePaymentMethod |
+| P17 | **Update `handleOrder()`** — payment info di reply | api | Include metode bayar aktif |
+| P18 | **Bot send QRIS image** | wa-bot | Detect `/uploads/` URL → kirim sebagai image message |
+
+---
+
 ## 🔄 Pending Improvements
 
 ### AI / Guardrails
