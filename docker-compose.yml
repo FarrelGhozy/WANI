@@ -22,9 +22,7 @@ services:
         max-file: "3"
 
   api:
-    build:
-      context: .
-      dockerfile: api/Dockerfile
+    image: ghcr.io/farrelghozy/wani-api:latest
     depends_on:
       db:
         condition: service_healthy
@@ -74,15 +72,13 @@ services:
         max-size: "10m"
         max-file: "3"
 
-  nginx:
-    build:
-      context: .
-      dockerfile: nginx/Dockerfile
+  dashboard:
+    image: ghcr.io/farrelghozy/wani-dashboard:latest
     depends_on:
       api:
         condition: service_healthy
     ports:
-      - "8080:80"
+      - "5173:80"
     restart: unless-stopped
     networks: [wani]
     logging:
@@ -92,9 +88,7 @@ services:
         max-file: "3"
 
   wa-bot:
-    build:
-      context: .
-      dockerfile: wa-bot/Dockerfile
+    image: ghcr.io/farrelghozy/wani-wa-bot:latest
     depends_on:
       db:
         condition: service_healthy
