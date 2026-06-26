@@ -14,18 +14,19 @@ RUN bun run build
 FROM oven/bun:1-alpine
 WORKDIR /app
 
+# Install production dependencies
+COPY --from=build /app/wa-bot/package.json ./package.json
+COPY --from=build /app/wa-bot/bun.lock ./bun.lock
+RUN bun install --production
+
 # Copy the built app files from the build stage to the final image
 COPY --from=build /app/wa-bot/dist ./dist
 COPY --from=build /app/wa-bot/prisma ./prisma
 COPY --from=build /app/wa-bot/prisma.config.ts ./
 COPY --from=build /app/wa-bot/docker-entrypoint.sh /
-COPY --from=build /app/wa-bot/package.json ./package.json
 
 # Copy the generated prisma client files from the build stage to the final image
 COPY --from=build /app/wa-bot/generated ./generated
-
-# Prisma runtime library
-COPY --from=build /app/wa-bot/node_modules/@prisma/client ./node_modules/@prisma/client
 
 RUN chmod +x /docker-entrypoint.sh
 
