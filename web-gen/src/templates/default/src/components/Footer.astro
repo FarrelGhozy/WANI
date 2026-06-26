@@ -4,30 +4,30 @@ const store = JSON.parse(fs.readFileSync("src/data/store.json", "utf-8"))
 const siteConfig = JSON.parse(fs.readFileSync("src/data/site-config.json", "utf-8"))
 ---
 
-<footer class="bg-stone-900 text-stone-300 mt-16">
-  <div class="max-w-6xl mx-auto px-4 py-10 grid grid-cols-1 sm:grid-cols-3 gap-8">
+<footer class="site-footer">
+  <div class="footer-grid">
     <div>
-      <h3 class="text-white font-semibold mb-3">{store.businessName}</h3>
-      <p class="text-sm leading-relaxed">{siteConfig.about.description}</p>
+      <h3 class="footer-heading">{store.businessName}</h3>
+      <p class="footer-text">{siteConfig.about.description}</p>
     </div>
     <div>
-      <h3 class="text-white font-semibold mb-3">Menu</h3>
-      <ul class="space-y-2 text-sm">
-        <li><a href="/" class="text-stone-400 hover:text-white no-underline transition-colors">Beranda</a></li>
-        <li><a href="/produk/" class="text-stone-400 hover:text-white no-underline transition-colors">Produk</a></li>
-        <li><a href="/kontak/" class="text-stone-400 hover:text-white no-underline transition-colors">Kontak</a></li>
+      <h3 class="footer-heading">Menu</h3>
+      <ul class="footer-links">
+        <li><a href="/">Beranda</a></li>
+        <li><a href="/produk/">Produk</a></li>
+        <li><a href="/kontak/">Kontak</a></li>
       </ul>
     </div>
     <div>
-      <h3 class="text-white font-semibold mb-3">Kontak</h3>
-      <ul class="space-y-2 text-sm">
+      <h3 class="footer-heading">Kontak</h3>
+      <ul class="footer-links">
         <li>{store.phone}</li>
         <li>{store.address}</li>
         <li>{store.businessHours}</li>
       </ul>
     </div>
   </div>
-  <div class="border-t border-stone-700 text-center text-sm text-stone-500 py-4">
+  <div class="footer-bottom">
     &copy; {new Date().getFullYear()} {store.businessName}. All rights reserved.
   </div>
 </footer>

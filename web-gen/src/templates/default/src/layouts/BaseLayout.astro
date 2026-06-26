@@ -12,6 +12,14 @@ const { title, description } = Astro.props as {
 const pageTitle = title
   ? `${title} | ${store.businessName}`
   : store.businessName
+
+const { primary, secondary } = siteConfig.colors ?? {}
+const cssVars = `
+:root {
+  --color-primary: ${primary ?? "#059669"};
+  --color-secondary: ${secondary ?? "#f59e0b"};
+}
+`
 ---
 
 <!doctype html>
@@ -21,26 +29,15 @@ const pageTitle = title
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{pageTitle}</title>
     <meta name="description" content={description ?? `Official website ${store.businessName}`} />
-    <meta name="theme-color" content={siteConfig.colors.primary} />
+    <meta name="theme-color" content={primary ?? "#059669"} />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description ?? `Official website ${store.businessName}`} />
     <meta property="og:type" content="website" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
-    <style>
-      :root {
-        --color-primary: {siteConfig.colors.primary};
-        --color-secondary: {siteConfig.colors.secondary};
-      }
-      .text-primary { color: var(--color-primary); }
-      .bg-primary { background-color: var(--color-primary); }
-      .hover\:bg-primary-dark:hover { background-color: color-mix(in srgb, var(--color-primary) 85%, black); }
-      .bg-secondary { background-color: var(--color-secondary); }
-      .hover\:bg-secondary-dark:hover { background-color: color-mix(in srgb, var(--color-secondary) 85%, black); }
-      .border-primary { border-color: var(--color-primary); }
-    </style>
+    <link rel="stylesheet" href="/theme.css" />
+    <style>{cssVars}</style>
   </head>
-  <body class="bg-stone-50 text-stone-900 font-sans antialiased">
+  <body>
     <slot />
   </body>
 </html>

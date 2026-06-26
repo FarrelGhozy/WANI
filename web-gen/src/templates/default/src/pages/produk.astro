@@ -11,25 +11,29 @@ const products = JSON.parse(fs.readFileSync("src/data/products.json", "utf-8"))
 const availableProducts = products.filter((p: { isAvailable: boolean }) => p.isAvailable)
 ---
 
-<BaseLayout title="Produk" description="Katalog produk {store.businessName}">
+<BaseLayout title="Produk" description={`Katalog produk ${store.businessName}`}>
   <Header />
-  <main class="max-w-6xl mx-auto px-4 py-12">
-    <h1 class="text-3xl font-bold text-stone-900 mb-2">Produk Kami</h1>
-    <p class="text-stone-500 mb-8">Menampilkan {availableProducts.length} produk tersedia</p>
+  <section class="section">
+    <div class="container">
+      <h1 class="section-title" style="margin-bottom: .5rem;">Produk Kami</h1>
+      <p class="text-muted text-center" style="margin-bottom: 2rem;">
+        Menampilkan {availableProducts.length} produk tersedia
+      </p>
 
-    {availableProducts.length > 0
-      ? (
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {availableProducts.map((product) => <ProductCard product={product} />)}
-        </div>
-      )
-      : (
-        <div class="text-center py-16">
-          <p class="text-stone-400 text-lg">Belum ada produk tersedia saat ini.</p>
-        </div>
-      )
-    }
-  </main>
+      {availableProducts.length > 0
+        ? (
+          <div class="product-grid">
+            {availableProducts.map((product) => <ProductCard product={product} />)}
+          </div>
+        )
+        : (
+          <div style="text-align:center; padding: 4rem 0;">
+            <p class="text-muted" style="font-size: 1.125rem;">Belum ada produk tersedia saat ini.</p>
+          </div>
+        )
+      }
+    </div>
+  </section>
   <Footer />
   <WaButton />
 </BaseLayout>

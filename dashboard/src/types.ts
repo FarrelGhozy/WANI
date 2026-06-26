@@ -143,6 +143,7 @@ export interface WebsiteConfig {
   phone: string
   selectedProductIds: string[]
   template: string
+  theme: string
 }
 
 export interface GenerateLog {

@@ -3,27 +3,29 @@ import * as fs from "node:fs"
 const store = JSON.parse(fs.readFileSync("src/data/store.json", "utf-8"))
 ---
 
-<header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-stone-200">
-  <nav class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-    <a href="/" class="text-xl font-bold text-stone-900 no-underline hover:text-primary transition-colors">
-      {store.businessName}
-    </a>
-    <div class="hidden sm:flex items-center gap-6">
-      <a href="/" class="text-stone-600 hover:text-primary no-underline transition-colors font-medium">Beranda</a>
-      <a href="/produk/" class="text-stone-600 hover:text-primary no-underline transition-colors font-medium">Produk</a>
-      <a href="/kontak/" class="text-stone-600 hover:text-primary no-underline transition-colors font-medium">Kontak</a>
+<header class="site-header">
+  <nav class="site-nav">
+    <a href="/" class="site-logo">{store.businessName}</a>
+    <div class="nav-links">
+      <a href="/" class="nav-link">Beranda</a>
+      <a href="/produk/" class="nav-link">Produk</a>
+      <a href="/kontak/" class="nav-link">Kontak</a>
     </div>
-    <details class="sm:hidden">
-      <summary class="list-none cursor-pointer p-2 text-stone-600">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
-      </summary>
-      <div class="absolute top-16 left-0 right-0 bg-white border-b border-stone-200 shadow-lg p-4 flex flex-col gap-3">
-        <a href="/" class="text-stone-600 hover:text-primary no-underline font-medium">Beranda</a>
-        <a href="/produk/" class="text-stone-600 hover:text-primary no-underline font-medium">Produk</a>
-        <a href="/kontak/" class="text-stone-600 hover:text-primary no-underline font-medium">Kontak</a>
-      </div>
-    </details>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+    </button>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="/" class="nav-link">Beranda</a>
+      <a href="/produk/" class="nav-link">Produk</a>
+      <a href="/kontak/" class="nav-link">Kontak</a>
+    </div>
   </nav>
 </header>
+
+<script>
+  document.getElementById("navToggle")?.addEventListener("click", () => {
+    document.getElementById("mobileMenu")?.classList.toggle("open")
+  })
+</script>

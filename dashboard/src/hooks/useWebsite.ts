@@ -14,6 +14,7 @@ const defaultConfig: WebsiteConfig = {
   phone: '',
   selectedProductIds: [],
   template: 'default',
+  theme: 'classic',
 }
 
 export function useWebsite() {

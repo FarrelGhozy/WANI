@@ -9,11 +9,9 @@ import WaButton from "../components/WaButton.astro"
 const store = JSON.parse(fs.readFileSync("src/data/store.json", "utf-8"))
 ---
 
-<BaseLayout title="Kontak" description="Hubungi {store.businessName}">
+<BaseLayout title="Kontak" description={`Hubungi ${store.businessName}`}>
   <Header />
-  <main class="min-h-[60vh] flex items-center">
-    <ContactInfo />
-  </main>
+  <ContactInfo />
   <Footer />
   <WaButton />
 </BaseLayout>
