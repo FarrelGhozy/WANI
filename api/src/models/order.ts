@@ -224,6 +224,11 @@ export class OrderModel extends BaseModel {
       paidAt?: string | null
     },
   ): Promise<OrderResponse> {
+    const payment = await this.db.payment.findUnique({ where: { orderId: id } })
+    if (payment?.status === "PAID") {
+      throw new BadRequestError("pembayaran sudah dikonfirmasi sebelumnya")
+    }
+
     await this.db.payment.upsert({
       where: { orderId: id },
       create: {
@@ -241,10 +246,16 @@ export class OrderModel extends BaseModel {
       },
     })
 
-    const row = await this.delegate.findUnique({
+    const updateData: Record<string, unknown> = {}
+    if (data.status === "PAID") {
+      updateData.status = "CONFIRMED"
+    }
+
+    const row = await this.delegate.update({
       where: { id },
+      data: updateData,
       include: orderInclude,
     })
-    return toOrderResponse(row!)
+    return toOrderResponse(row)
   }
 }

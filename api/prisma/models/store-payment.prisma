@@ -1,0 +1,20 @@
+// Structured payment methods for store (QRIS, Bank Transfer, E-Wallet, COD)
+model StorePaymentMethod {
+  id            String   @id @default(uuid())
+  storeId       String   @default("default")
+  type          String   // QRIS | BANK_TRANSFER | E_WALLET | COD
+  label         String
+  accountName   String?
+  accountNumber String?
+  bankName      String?
+  providerName  String?
+  phoneNumber   String?
+  qrImageUrl    String?
+  instructions  String?
+  isActive      Boolean  @default(true)
+  sortOrder     Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([storeId])
+}

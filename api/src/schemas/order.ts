@@ -1,7 +1,7 @@
 import { z } from "zod"
 
 const orderStatuses = ["PENDING", "CONFIRMED", "PROCESSING", "COMPLETED", "CANCELLED"] as const
-const paymentMethods = ["CASH", "TRANSFER", "QRIS"] as const
+const paymentMethods = ["CASH", "TRANSFER", "QRIS", "E_WALLET"] as const
 const paymentStatuses = ["PENDING", "PAID", "FAILED", "REFUNDED"] as const
 
 export const orderStatusSchema = z.enum(orderStatuses)

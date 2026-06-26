@@ -22,6 +22,9 @@ app.use("/api", routes)
 const generatedDir = path.resolve(import.meta.dir, "..", "generated-sites")
 app.use("/s", express.static(generatedDir))
 
+const uploadsDir = path.resolve(import.meta.dir, "..", "uploads")
+app.use("/uploads", express.static(uploadsDir))
+
 app.use((_req, res) => {
   sendResponse(res, 404, "not found")
 })

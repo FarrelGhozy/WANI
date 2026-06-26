@@ -10,6 +10,7 @@ enum PaymentMethod {
   CASH
   TRANSFER
   QRIS
+  E_WALLET
 }
 
 enum PaymentStatus {
