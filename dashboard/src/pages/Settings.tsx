@@ -4,12 +4,14 @@ import { useWaStatus } from '@/hooks/useWaStatus.ts'
 import StoreTab from '@/components/StoreTab.tsx'
 import AiTab from '@/components/AiTab.tsx'
 import WaSessionTab from '@/components/WaSessionTab.tsx'
+import PaymentTab from '@/components/PaymentTab.tsx'
 import Spinner from '@/components/ui/Spinner.tsx'
 
 const tabs = [
   { id: 'store', label: 'Toko' },
   { id: 'ai', label: 'AI Agent' },
   { id: 'wa', label: 'WA Session' },
+  { id: 'payment', label: 'Pembayaran' },
 ] as const
 
 export default function Settings() {
@@ -82,6 +84,7 @@ export default function Settings() {
           onConnect={handleConnect}
         />
       )}
+      {activeTab === 'payment' && <PaymentTab />}
     </div>
   )
 }

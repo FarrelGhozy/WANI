@@ -113,6 +113,27 @@ export interface StoreProfile {
   shippingInfo: string | null
   returnPolicy: string | null
   isActive: boolean
+  hasPaymentMethods?: boolean
+}
+
+export type PaymentMethodType = 'QRIS' | 'BANK_TRANSFER' | 'E_WALLET' | 'COD'
+
+export interface StorePaymentMethod {
+  id: string
+  storeId: string
+  type: PaymentMethodType
+  label: string
+  accountName: string | null
+  accountNumber: string | null
+  bankName: string | null
+  providerName: string | null
+  phoneNumber: string | null
+  qrImageUrl: string | null
+  instructions: string | null
+  isActive: boolean
+  sortOrder: number
+  createdAt: string
+  updatedAt: string
 }
 
 export interface AiConfig {
