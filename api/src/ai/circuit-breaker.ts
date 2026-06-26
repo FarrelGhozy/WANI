@@ -52,6 +52,12 @@ export async function withCircuit<T>(
   }
 }
 
+export function getCircuitState(): { state: "closed" | "open" | "half-open"; failures: number } {
+  if (state.halfOpen) return { state: "half-open", failures: state.failures }
+  if (state.failures >= THRESHOLD) return { state: "open", failures: state.failures }
+  return { state: "closed", failures: state.failures }
+}
+
 export function resetCircuit(): void {
   state.failures = 0
   state.lastFailure = 0

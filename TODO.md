@@ -1,46 +1,25 @@
 # WANI — Project TODO
 
-## ⚡ Optimasi — Segera
-
-### ✅ Tier 1 — Selesai
-
-| # | Item | Package | Commit |
-|---|------|---------|--------|
-| 1 | **`findByNames()` → `where: { name: { in } }`** | api | ✅ |
-| 2 | **`OrderModel` extend `BaseModel` + `createMany` + `upsert`** | api | ✅ |
-| 3 | **`getOrThrow()` di BaseModel** | api | ✅ |
-| 4 | **Hapus duplicate `VALID_TRANSITIONS` controller** | api | ✅ |
-| 5 | **`requireJwt` di `auth.me` + `website.download`** | api | ✅ |
-| 6 | **`Promise.all()` 3 DB queries pipeline** | api | ✅ |
-| 7 | **Hapus `hasPii()` double scan** | api | ✅ |
-| 8 | **Hapus `MOCK = false` code** | dashboard | ✅ |
-| 9 | **`useAuth` → `fetchApi()`** | dashboard | ✅ |
-
-Catatan: #7 (NFKC) dipertahankan di `scanInput()` karena public API — pipeline tetap hanya normalize sekali.
-
-### ✅ Tier 2 — Selesai
-
-| # | Item | Package | Commit |
-|---|------|---------|--------|
-| 11 | **`$Enums.MessageRole` di message.ts** | api | ✅ |
-| 12 | **Hapus dead exports guardrails** | api | ✅ |
-| 13 | **Extract `formatPrice` to utils** | dashboard | ✅ |
-| 15 | **Circuit breaker di classifier/judge/grounding** | api | ✅ |
-| 16 | **Hoist regex + pre-compute LEET_PATTERNS** | api | ✅ |
-
-Catatan: #14 (useApiData hook) ditunda — refactor 5 hooks sekaligus perlu pertimbangan lebih lanjut. Bisa dikerjain kapan aja sebagai optimasi mandiri.
-
-### 🟡 Tier 3 — Polish
+## ✅ Baru Selesai
 
 | # | Item | Package | Detail |
 |---|------|---------|--------|
-| 17 | `(r: any)` → Prisma type | api | `activity-log.ts:71` |
-| 18 | `debug.ts` inconsistencies | api | Manual 404, hardcoded circuit state |
-| 19 | `hashPassword()` helper | api | `auth.ts` duplicate `Bun.password.hash()` |
-| 20 | Rate limiter Map leak | api | `ratelimit.ts:10` — periodic cleanup |
-| 21 | `todayKey()` double call | api | `budget.ts` — cache date string |
-| 22 | `useRef` callback stabilization | dashboard | `getProduct`, `getOrder`, `updateStatus` |
-| 23 | Shared `types.ts` | dashboard | Centralize type definitions |
+| 24 | **Logo WANI** — desain + implementasi | dashboard | Chat bubble + W icon, wordmark (teal + amber), PNG conversion via sharp |
+| 25 | **Login page redesign** | dashboard | Teal gradient bg, logo center di atas card, hilangin subtitle "Dashboard" |
+| 26 | **Login error UX** | dashboard | Shake animation, "Email atau password tidak cocok", red border kedua field, fix stale closure navigation |
+| 27 | **Final MOCK cleanup** | dashboard | `useAuth.ts` + `useWaStatus.ts` — MOCK toggle sudah dihapus sepenuhnya |
+| 28 | **TypeScript cleanup** | api | `tsc --noEmit` lulus 0 error — semua ParsedQs mismatch sudah dibenerin |
+| 29 | **wa-bot `.env`** | wa-bot | Sudah ada (sebelumnya: "tidak ada") |
+| 30 | **web-gen `.env`** | web-gen | Sudah ada (sebelumnya: "tidak ada") |
+| 31 | **`useRef` cleanup** | dashboard | ✅ Resolved — no `useRef` ditemukan di hooks |
+| 32 | **🔴 Critical deps** | wa-bot/web-gen | `bun install` + Prisma generate + template deps — semua beres |
+| 33 | **🧹 Cleanup** | dashboard | Hapus `package-lock.json`, buat `.env` |
+| 34 | **`(r: any)` → Prisma type** | api | `activity-log.ts:71` — pake `Prisma.ActivityLogModel` |
+| 35 | **`debug.ts` fix** | api | `any` → `unknown`, manual 404 → NotFoundError, hardcoded circuit → `getCircuitState()` |
+| 36 | **`hashPassword()` helper** | api | Ekstrak ke `utils/auth.ts`, pake di register + resetPassword |
+| 37 | **Rate limiter Map cleanup** | api | `setInterval` tiap 5 menit bersihin stale entries |
+| 38 | **`todayKey()` cache** | api | Cache date string, refresh tiap 10 menit |
+| 39 | **Shared `types.ts`** | dashboard | Centralize semua domain type di `src/types.ts`, hooks import + re-export |
 
 ---
 
@@ -61,24 +40,52 @@ Catatan: #14 (useApiData hook) ditunda — refactor 5 hooks sekaligus perlu pert
 - **Docker Compose** — 4 service definitions (db, api, dashboard, wa-bot)
 - **Dockerfile** — Ada untuk api, dashboard, wa-bot
 
-## 🔴 Critical — Harus Dibenerin
+~~Semua item di 🔴 Critical dan 🟡 Medium sudah diresolve.~~
+
+## 🔄 Current Sprint — Manual Payment Flow
+
+> **Docs:** `Docs/MANUAL_PAYMENT_FLOW.md`
+> **Alasan:** Midtrans/Xendit butuh NIK+NPWP — tidak feasible untuk lomba.
+
+### Tahap 1: Database & API Core
 
 | # | Item | Package | Detail |
 |---|------|---------|--------|
-| 1 | **`OPENROUTER_API_KEY` kosong** | api/, root `.env` | Semua LLM call bakal gagal. Isi key valid di `api/.env` dan root `.env` |
-| 2 | **`wa-bot/` node_modules tidak ada** | wa-bot/ | `bun install` belum pernah dijalankan — bot ga bisa jalan lokal |
-| 3 | **`wa-bot/` Prisma client tidak ada** | wa-bot/ | `generated/prisma/` tidak ditemukan — jalanin `bun run prisma:generate` setelah instalasi |
-| 4 | **Template web-gen dependencies belum diinstall** | web-gen/ | `web-gen/src/templates/default/node_modules/` kosong — jalanin `bun install` di direktori template |
+| P1 | **Prisma migration** — model `StorePaymentMethod` + enum `E_WALLET` | api | Model baru, ganti field `paymentMethods` free-text |
+| P2 | **Zod schema** — `createPaymentMethodSchema` (discriminated union) | api | Validasi per tipe (QRIS/BANK_TRANSFER/E_WALLET/COD) |
+| P3 | **StorePaymentMethod model** — CRUD | api | Extend BaseModel pattern |
+| P4 | **Upload endpoint** — `POST /api/upload` | api | Multer + static serve `uploads/` |
+| P5 | **Payment method CRUD endpoints** | api | GET/POST/PUT/DELETE `/api/store/payment-methods` |
+| P6 | **Update `GET /api/store`** — tambah `hasPaymentMethods` | api | Flag buat dashboard warning |
+| P7 | **Update `PUT /api/orders/:id/payment`** | api | Support method dari StorePaymentMethod + auto-paidAt |
 
-## 🟡 Medium — Perlu Diperbaiki
+### Tahap 2: Dashboard — Pembayaran Tab
 
 | # | Item | Package | Detail |
 |---|------|---------|--------|
-| 5 | **5 TypeScript error di API** | api/ | `activity-log.ts:69` (SortOrder type), `customer.ts:14`, `log.ts:8`, `order.ts:14`, `product.ts:16` (ParsedQs mismatch). Runtime OK karena pake `req.validatedQuery`, tapi perlu dibenerin biar type-safe |
-| 6 | **`wa-bot/.env` tidak ada** | wa-bot/ | Hanya ada `.env.example` — bot ga bisa jalan lokal tanpa env |
-| 7 | **`dashboard/` punya `package-lock.json` + `bun.lock`** | dashboard/ | Inconsistent — pake bun aja, hapus `package-lock.json` |
-| 8 | **`dashboard/.env` tidak ada** | dashboard/ | Minor — proxy fallback ke `localhost:3001`, tapi best practice pake env |
-| 9 | **`web-gen/.env` tidak ada** | web-gen/ | Minor — cuma telemetry disable |
+| P8 | **`usePaymentMethods` hook** | dashboard | CRUD via fetchApi |
+| P9 | **`PaymentTab` component** — list + toggle + edit + delete | dashboard | Cards per metode + modal form dinamis |
+| P10 | **Upload file component** untuk QRIS | dashboard | Preview + upload via `POST /api/upload` |
+| P11 | **Integrasi tab ke Settings** | dashboard | Tab ke-4: Pembayaran |
+
+### Tahap 3: Dashboard — Konfirmasi & Warning
+
+| # | Item | Package | Detail |
+|---|------|---------|--------|
+| P12 | **Warning banner** di Dashboard page | dashboard | Warning jika `hasPaymentMethods === false` |
+| P13 | **Tombol "Konfirmasi Pembayaran"** di OrderDetail | dashboard | Modal: pilih metode + amount + confirm |
+| P14 | **`confirmPayment()`** di `useOrders` hook | dashboard | PUT `/api/orders/:id/payment` + auto-refetch |
+| P15 | **Auto-update order status** ke CONFIRMED | api | Saat payment di-set ke PAID |
+
+### Tahap 4: AI & Bot Integration
+
+| # | Item | Package | Detail |
+|---|------|---------|--------|
+| P16 | **Update `buildSystemPrompt()`** | api | Load payment methods dari StorePaymentMethod |
+| P17 | **Update `handleOrder()`** — payment info di reply | api | Include metode bayar aktif |
+| P18 | **Bot send QRIS image** | wa-bot | Detect `/uploads/` URL → kirim sebagai image message |
+
+---
 
 ## 🔄 Pending Improvements
 
@@ -95,9 +102,9 @@ Catatan: #14 (useApiData hook) ditunda — refactor 5 hooks sekaligus perlu pert
 
 | # | Item | Prioritas | Catatan |
 |---|------|-----------|---------|
-| 5 | **Final MOCK toggle cleanup** | Low | `useAuth.ts` dan `useWaStatus.ts` masih punya `MOCK = false` — ga dipake, tapi bisa dihapus |
-| 6 | **Error handling UI** | Medium | Belum ada unified error toast / notification system |
-| 7 | **Loading states** | Medium | Beberapa page belum punya skeleton loading |
+| 5 | **Error handling UI** | Medium | Belum ada unified error toast / notification system |
+| 6 | **Loading states** | Medium | Beberapa page belum punya skeleton loading |
+| 7 | **Login auto-redirect** | Low | User yang sudah login seharusnya langsung redirect ke dashboard dari `/login` |
 
 ### Infra / DevOps
 

@@ -1,39 +1,7 @@
 import { useState, useMemo, useCallback, useEffect } from 'react'
 import { fetchApi } from '@/lib/api'
-
-export type OrderStatus = 'PENDING' | 'CONFIRMED' | 'PROCESSING' | 'COMPLETED' | 'CANCELLED'
-export type OrderSortField = 'id' | 'customerName' | 'items' | 'totalAmount' | 'status' | 'createdAt'
-
-export interface OrderItem {
-  id: string
-  productId: string
-  productName: string
-  qty: number
-  unitPrice: number
-  subtotal: number
-}
-
-export interface Payment {
-  method: string | null
-  amount: number
-  status: string
-  paidAt: string | null
-}
-
-export interface Order {
-  id: string
-  customerId: string
-  customerName: string
-  customerPhone: string
-  status: OrderStatus
-  totalAmount: number
-  source: string
-  notes: string | null
-  items: OrderItem[]
-  payment: Payment | null
-  createdAt: string
-  updatedAt: string
-}
+import type { OrderStatus, OrderSortField, OrderItem, Payment, Order } from '@/types.ts'
+export type { OrderStatus, OrderSortField, OrderItem, Payment, Order }
 
 interface ApiOrder {
   id: string

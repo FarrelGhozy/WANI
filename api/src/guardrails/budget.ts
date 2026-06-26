@@ -3,8 +3,17 @@ import { env } from "@/src/config/env"
 import { logger } from "@/src/config/logger"
 import type { TokenUsage } from "@/src/ai/types"
 
+let _todayKey: string | null = null
+let _todayKeyTs = 0
+
 function todayKey(): string {
-  return new Date().toISOString().slice(0, 10) // YYYY-MM-DD (UTC)
+  const now = Date.now()
+  // Refresh cached key every 10 minutes (more than enough for daily counter)
+  if (_todayKey === null || now - _todayKeyTs > 600_000) {
+    _todayKey = new Date().toISOString().slice(0, 10)
+    _todayKeyTs = now
+  }
+  return _todayKey
 }
 
 /** True when today's LLM call count has reached the configured daily budget. */

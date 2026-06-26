@@ -1,13 +1,8 @@
 import { useState, useEffect, useCallback } from 'react'
 import { fetchApi } from '@/lib/api.ts'
+import type { WaStatus } from '@/types.ts'
 
-export interface WaStatus {
-  qr: string
-  connection: string
-  phone: string
-  loading: boolean
-  error: string | null
-}
+export type { WaStatus }
 
 export function useWaStatus(pollInterval = 5000): WaStatus {
   const [qr, setQr] = useState('')

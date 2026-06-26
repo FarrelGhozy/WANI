@@ -68,7 +68,7 @@ export class ActivityLogModel extends BaseModel {
     ])
 
     return this.listResult(
-      rows.map((r: any) => ({
+      rows.map((r: Prisma.ActivityLogModel) => ({
         id: r.id,
         type: r.type,
         referenceId: r.referenceId ?? null,

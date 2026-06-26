@@ -1,38 +1,8 @@
 import { useState, useMemo, useCallback, useEffect } from 'react'
 import { fetchApi } from '@/lib/api'
+import type { MessageRole, ConversationStatus, Message, Conversation, Customer } from '@/types.ts'
 
-export type MessageRole = 'CUSTOMER' | 'BOT' | 'HUMAN'
-export type ConversationStatus = 'ACTIVE' | 'RESOLVED' | 'ARCHIVED' | 'ESCALATED'
-
-export interface Message {
-  id: string
-  role: MessageRole
-  content: string
-  msgType: string
-  waMsgId: string | null
-  metadata: Record<string, unknown> | null
-  createdAt: string
-}
-
-export interface Conversation {
-  id: string
-  customerId: string
-  status: ConversationStatus
-  messages: Message[]
-}
-
-export interface Customer {
-  id: string
-  phone: string
-  name: string
-  notes: string | null
-  totalOrders: number
-  unreadCount: number
-  lastMessage: Pick<Message, 'content' | 'role' | 'createdAt'> | null
-  recentOrder: { id: string; status: string; totalAmount: number; createdAt: string } | null
-  createdAt: string
-  updatedAt: string
-}
+export type { MessageRole, ConversationStatus, Message, Conversation, Customer }
 
 export function useCustomers() {
   const [customers, setCustomers] = useState<Customer[]>([])

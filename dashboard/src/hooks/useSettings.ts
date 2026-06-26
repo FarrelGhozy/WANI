@@ -1,29 +1,8 @@
 import { useState, useCallback, useEffect } from 'react'
 import { fetchApi } from '@/lib/api'
+import type { StoreProfile, AiConfig } from '@/types.ts'
 
-export interface StoreProfile {
-  id: string
-  businessName: string
-  phone: string
-  logoUrl: string | null
-  address: string | null
-  businessHours: string | null
-  paymentMethods: string | null
-  shippingInfo: string | null
-  returnPolicy: string | null
-  isActive: boolean
-}
-
-export interface AiConfig {
-  id: string
-  isActive: boolean
-  systemPrompt: string
-  model: string
-  greetingMessage: string | null
-  knowledgeBase: string | null
-  maxTokens: number
-  temperature: number
-}
+export type { StoreProfile, AiConfig }
 
 export function useSettings() {
   const [store, setStore] = useState<StoreProfile | null>(null)

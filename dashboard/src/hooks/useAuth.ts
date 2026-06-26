@@ -1,12 +1,8 @@
 import { useState, useCallback, useEffect } from 'react'
 import { fetchApi } from '@/lib/api.ts'
+import type { User } from '@/types.ts'
 
-export interface User {
-  id: string
-  name: string
-  email: string
-  role: string
-}
+export type { User }
 
 const AUTH_TOKEN_KEY = 'wani_auth_token'
 const AUTH_USER_KEY = 'wani_auth_user'
