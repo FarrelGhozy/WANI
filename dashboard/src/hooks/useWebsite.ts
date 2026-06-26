@@ -11,6 +11,7 @@ export interface WebsiteConfig {
   phone: string
   selectedProductIds: string[]
   template: string
+  theme: string
 }
 
 export interface GenerateLog {
@@ -30,6 +31,7 @@ const defaultConfig: WebsiteConfig = {
   phone: '',
   selectedProductIds: [],
   template: 'default',
+  theme: 'classic',
 }
 
 export function useWebsite() {
