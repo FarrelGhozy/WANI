@@ -8,4 +8,4 @@ until bunx prisma migrate deploy; do
 done
 echo "Migrations done."
 
-exec bun run dist/index.js
+exec bun run --cwd /app/api src/index.ts
