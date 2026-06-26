@@ -170,7 +170,7 @@ export default function PaymentTab() {
     if (editing) {
       await update(editing.id, payload)
     } else {
-      await create(payload as CreatePaymentMethodData)
+      await create(payload as unknown as CreatePaymentMethodData)
     }
     closeModal()
   }
