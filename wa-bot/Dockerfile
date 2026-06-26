@@ -11,7 +11,7 @@ RUN DATABASE_URL="postgresql://dummy:dummy@db:5432/wa_bot" bunx prisma generate
 
 COPY wa-bot/ ./
 
-RUN bun build ./src/index.ts --target=bun --outfile=./dist/index.js --external link-preview-js --external jimp --external sharp
+RUN bun build ./src/index.ts --target=bun --outfile=./dist/index.js --external link-preview-js --external jimp --external sharp --external @whiskeysockets/baileys
 
 FROM base AS runner
 WORKDIR /app
