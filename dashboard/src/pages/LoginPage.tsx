@@ -21,11 +21,12 @@ export default function LoginPage() {
   }, [user, loading, navigate])
 
   useEffect(() => {
-    if (error) {
+    if (!error) return
+    const t = setTimeout(() => {
       setShaking(true)
-      const t = setTimeout(() => setShaking(false), 500)
-      return () => clearTimeout(t)
-    }
+      setTimeout(() => setShaking(false), 500)
+    })
+    return () => clearTimeout(t)
   }, [error])
 
   function validate() {
