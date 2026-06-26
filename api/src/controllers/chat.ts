@@ -12,5 +12,5 @@ export async function postChat(
 ): Promise<void> {
   const { phone, name, text, waMsgId } = req.body
   const result = await processMessage({ phone, name, text, waMsgId })
-  sendResponse(res, 200, "ok", { reply: result.reply, intent: result.intent })
+  sendResponse(res, 200, "ok", { reply: result.reply, intent: result.intent, qrisImageUrl: result.qrisImageUrl ?? null })
 }

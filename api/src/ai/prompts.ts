@@ -1,9 +1,22 @@
+export interface PaymentMethodEntry {
+  type: string
+  label?: string | null
+  bankName?: string | null
+  accountNumber?: string | null
+  accountName?: string | null
+  providerName?: string | null
+  phoneNumber?: string | null
+  qrImageUrl?: string | null
+  instructions?: string | null
+}
+
 export interface StoreInfo {
   businessName: string
   address?: string | null
   phone: string
   businessHours?: string | null
   paymentMethods?: string | null
+  activePaymentMethods?: PaymentMethodEntry[]
   shippingInfo?: string | null
   returnPolicy?: string | null
 }
@@ -38,9 +51,31 @@ function formatProductCatalog(products: ProductEntry[]): string {
     .join("\n")
 }
 
+function formatPaymentMethods(pm: PaymentMethodEntry[]): string {
+  if (pm.length === 0) return "Metode pembayaran belum tersedia."
+  return pm
+    .filter((m) => m.type !== "QRIS")
+    .map((m) => {
+      switch (m.type) {
+        case "BANK_TRANSFER":
+          return `- Transfer ${m.bankName ?? "Bank"}: ${m.accountNumber ?? ""} a/n ${m.accountName ?? "-"}`
+        case "E_WALLET":
+          return `- ${m.providerName ?? "E-Wallet"}: ${m.phoneNumber ?? ""}`
+        case "COD":
+          return `- Bayar di Tempat (COD): ${m.instructions ?? "Bayar tunai saat barang diterima"}`
+        default:
+          return ""
+      }
+    })
+    .filter(Boolean)
+    .join("\n")
+}
+
 function formatPolicies(store: StoreInfo): string {
   const hours = store.businessHours ?? "08:00–17:00 WIB (Senin–Jumat)"
-  const payment = store.paymentMethods ?? "Tunai (COD), Transfer Bank, QRIS"
+  const paymentText = (store.activePaymentMethods && store.activePaymentMethods.length > 0)
+    ? `\n${formatPaymentMethods(store.activePaymentMethods)}\n${store.activePaymentMethods.some((m) => m.type === "QRIS") ? "- QRIS: Kirimkan gambar QR yang akan dikirim bot kepada pelanggan" : ""}`
+    : (store.paymentMethods ?? "Tunai (COD), Transfer Bank, QRIS")
   const shipping = store.shippingInfo ?? "Pengiriman 1–3 hari kerja dalam kota."
   const returns = store.returnPolicy ?? "Retur/tukar dalam 7 hari dengan kemasan asli."
   return [
@@ -48,7 +83,7 @@ function formatPolicies(store: StoreInfo): string {
     "- Selalu balas dalam bahasa yang sama dengan pelanggan (Indonesia atau Inggris).",
     "- Ramah, profesional, dan ringkas.",
     `- Jam operasional: ${hours}.`,
-    `- Metode pembayaran: ${payment}.`,
+    `- Metode pembayaran: ${paymentText}.`,
     `- Pengiriman: ${shipping}`,
     `- Retur: ${returns}`,
   ].join("\n")

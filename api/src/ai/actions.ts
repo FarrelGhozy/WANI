@@ -4,6 +4,7 @@ import { OrderModel } from "@/src/models/order"
 import { CustomerModel } from "@/src/models/customer"
 import { ConversationModel } from "@/src/models/conversation"
 import { ActivityLogModel } from "@/src/models/activity-log"
+import { StorePaymentMethodModel } from "@/src/models/store-payment"
 
 export interface ActionCtx {
   customerId: string
@@ -13,6 +14,7 @@ export interface ActionCtx {
 
 export interface ActionResult {
   reply: string
+  qrisImageUrl?: string | null
 }
 
 export async function handleIntent(output: LLMOutput, ctx: ActionCtx): Promise<ActionResult> {
@@ -71,14 +73,41 @@ async function handleOrder(
     (r) => `• ${r.productName} × ${r.qty} = Rp${(r.unitPrice * r.qty).toLocaleString("id-ID")}`,
   )
   const total = Number(order.totalAmount).toLocaleString("id-ID")
-  return {
-    reply: [
-      "Pesanan diterima! 🎉",
-      ...lines,
-      `Total: Rp${total}`,
-      "Terima kasih, pesanan akan segera diproses.",
-    ].join("\n"),
+
+  const paymentMethods = await StorePaymentMethodModel.listActive()
+  const qrisMethod = paymentMethods.find((pm) => pm.type === "QRIS" && pm.qrImageUrl)
+  const paymentLines = paymentMethods.map((pm) => {
+    switch (pm.type) {
+      case "QRIS":
+        return pm.qrImageUrl
+          ? `📱 QRIS: Silakan scan QR code yang dikirim bersama pesan ini`
+          : `📱 QRIS: Tersedia`
+      case "BANK_TRANSFER":
+        return `🏦 Transfer ${pm.bankName ?? "Bank"}: ${pm.accountNumber ?? ""} a/n ${pm.accountName ?? "-"}`
+      case "E_WALLET":
+        return `📱 ${pm.providerName ?? "E-Wallet"}: ${pm.phoneNumber ?? ""}`
+      case "COD":
+        return `💵 Bayar di Tempat: ${pm.instructions ?? "Bayar tunai saat barang diterima"}`
+      default:
+        return ""
+    }
+  }).filter(Boolean)
+
+  const reply: string[] = [
+    "Pesanan diterima! 🎉",
+    ...lines,
+    `Total: Rp${total}`,
+  ]
+
+  if (paymentLines.length > 0) {
+    reply.push("", "💳 Pembayaran:")
+    reply.push(...paymentLines.map((l) => `  ${l}`))
+    reply.push("", "Setelah bayar, konfirmasikan ke kami ya 😊")
   }
+
+  reply.push("", "Terima kasih, pesanan akan segera diproses.")
+
+  return { reply: reply.join("\n"), qrisImageUrl: qrisMethod?.qrImageUrl ?? null }
 }
 
 async function handleInquiry(output: Extract<LLMOutput, { intent: "inquiry" }>): Promise<ActionResult> {

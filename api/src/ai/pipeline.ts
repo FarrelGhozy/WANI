@@ -14,6 +14,7 @@ import { CustomerModel } from "@/src/models/customer"
 import { ConversationModel } from "@/src/models/conversation"
 import { MessageModel } from "@/src/models/message"
 import { StoreModel } from "@/src/models/store"
+import { StorePaymentMethodModel } from "@/src/models/store-payment"
 import { AiConfigModel } from "@/src/models/ai-config"
 import { ProductModel } from "@/src/models/catalog"
 import { ActivityLogModel } from "@/src/models/activity-log"
@@ -33,6 +34,7 @@ export interface PipelineResult {
   reply: string
   intent: string
   blocked: boolean
+  qrisImageUrl?: string | null
 }
 
 const FALLBACK_REPLY = "Maaf, sistem sedang sibuk. Silakan coba lagi sebentar ya."
@@ -158,10 +160,11 @@ export async function processMessage(input: PipelineInput): Promise<PipelineResu
 
   // ── 9. Load context ─────────────────────────────────────────────────
   trace.begin("load_context")
-  const [store, products, aiConfig] = await Promise.all([
+  const [store, products, aiConfig, paymentMethods] = await Promise.all([
     StoreModel.find(),
     ProductModel.listAvailable(),
     AiConfigModel.find(),
+    StorePaymentMethodModel.listActive(),
   ])
 
   const isActive = aiConfig?.isActive ?? true
@@ -175,6 +178,17 @@ export async function processMessage(input: PipelineInput): Promise<PipelineResu
     address: store?.address ?? null,
     businessHours: store?.businessHours ?? null,
     paymentMethods: store?.paymentMethods ?? null,
+    activePaymentMethods: paymentMethods.map((pm) => ({
+      type: pm.type,
+      label: pm.label,
+      bankName: pm.bankName,
+      accountNumber: pm.accountNumber,
+      accountName: pm.accountName,
+      providerName: pm.providerName,
+      phoneNumber: pm.phoneNumber,
+      qrImageUrl: pm.qrImageUrl,
+      instructions: pm.instructions,
+    })),
     shippingInfo: store?.shippingInfo ?? null,
     returnPolicy: store?.returnPolicy ?? null,
   }
@@ -255,7 +269,7 @@ export async function processMessage(input: PipelineInput): Promise<PipelineResu
     greetingMessage: aiConfig?.greetingMessage,
   }
 
-  const { reply: actionReply } = await handleIntent(llmOutput, ctx)
+  const { reply: actionReply, qrisImageUrl: actionQrisUrl } = await handleIntent(llmOutput, ctx)
 
   // ── 14. Sanitize + output scan (Layer 4) ────────────────────────────
   trace.begin("output_scan")
@@ -323,7 +337,7 @@ export async function processMessage(input: PipelineInput): Promise<PipelineResu
   await MessageModel.append({ conversationId: conv.id, role: "BOT", content: finalReply })
   await ConversationModel.touch(conv.id)
 
-  const result: PipelineResult = { reply: finalReply, intent: llmOutput.intent, blocked: false }
+  const result: PipelineResult = { reply: finalReply, intent: llmOutput.intent, blocked: false, qrisImageUrl: actionQrisUrl }
   trace.set("reply_length", finalReply.length).finish(result)
   storeTrace(trace)
   return result

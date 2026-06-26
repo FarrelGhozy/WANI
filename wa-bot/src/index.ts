@@ -63,11 +63,21 @@ async function main() {
             waMsgId: msg.key.id,
           })
           const reply = data?.data?.reply
+          const qrisUrl = data?.data?.qrisImageUrl
           if (reply) {
-            await sock.sendMessage(jid, { text: reply })
+            if (qrisUrl) {
+              const fullUrl = `${process.env.API_URL?.replace(/\/$/, "")}${qrisUrl}`
+              try {
+                await sock.sendMessage(jid, { image: { url: fullUrl }, caption: reply })
+              } catch {
+                await sock.sendMessage(jid, { text: reply })
+              }
+            } else {
+              await sock.sendMessage(jid, { text: reply })
+            }
           }
         } catch {
-          await sock.sendMessage(jid, { text: "Maaf, sistem sedang sibuk, coba sebentar lagi." }).catch(() => {})
+          await sock.sendMessage(jid, { text: "Maaf, sistem sedang sibuk, coba sebentar lagi." })
         }
       }
     }
