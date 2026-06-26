@@ -5,7 +5,7 @@ COPY wa-bot/package.json wa-bot/bun.lock ./
 RUN bun install
 
 COPY wa-bot/prisma/ ./prisma/
-RUN bunx prisma generate
+RUN DATABASE_URL="postgresql://dummy:dummy@db:5432/wa_bot" bunx prisma generate
 
 COPY wa-bot/ ./
 
