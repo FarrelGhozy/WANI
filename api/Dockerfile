@@ -2,9 +2,9 @@ FROM oven/bun:1-alpine
 WORKDIR /app
 
 COPY api/ ./api/
-RUN bun install --cwd api && bunx prisma generate --cwd api
+RUN cd api && bun install && bunx prisma generate
 COPY web-gen/ ./web-gen/
-RUN bun install --cwd web-gen
+RUN cd web-gen && bun install
 
 COPY api/docker-entrypoint.sh /
 RUN chmod +x /docker-entrypoint.sh
