@@ -406,7 +406,7 @@ export default function StoreTab({ store, onUpdate }: StoreTabProps) {
 
       {/* Categories */}
       <Card accent="teal" className="mt-4 md:mt-6">
-        <div className="flex items-center justify-between gap-4">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-teal-100">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" className="text-teal-600">
@@ -418,14 +418,14 @@ export default function StoreTab({ store, onUpdate }: StoreTabProps) {
               <p className="text-xs text-stone-500">{categories.length} kategori — atur pengelompokan produk Anda</p>
             </div>
           </div>
-          <Button size="sm" variant="secondary" onClick={() => setCategoryModalOpen(true)}>
+          <Button size="sm" variant="secondary" className="w-full sm:w-auto" onClick={() => setCategoryModalOpen(true)}>
             Kelola Kategori
           </Button>
         </div>
       </Card>
 
       <Card accent="amber" className="mt-4 md:mt-6">
-        <div className="flex items-center justify-between gap-4">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-100">
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-amber-600">
@@ -443,7 +443,7 @@ export default function StoreTab({ store, onUpdate }: StoreTabProps) {
           </div>
           <Link
             to="/website"
-            className="shrink-0 rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-amber-700"
+            className="w-full rounded-lg bg-amber-600 px-4 py-2 text-center text-sm font-medium text-white transition-colors hover:bg-amber-700 sm:w-auto sm:shrink-0"
           >
             Buka Website
           </Link>
