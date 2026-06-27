@@ -5,7 +5,7 @@ import type {
   CompletionOptions,
   CompletionResult,
   TokenUsage,
-} from "@/src/ai/types"
+} from "@/src/types/ai"
 
 const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 

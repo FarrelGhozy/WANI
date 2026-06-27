@@ -1,21 +1,10 @@
-import type { LLMOutput } from "@/src/ai/types"
+import type { LLMOutput, ActionCtx, ActionResult } from "@/src/types/ai"
 import { ProductModel } from "@/src/models/catalog"
 import { OrderModel } from "@/src/models/order"
 import { CustomerModel } from "@/src/models/customer"
 import { ConversationModel } from "@/src/models/conversation"
 import { ActivityLogModel } from "@/src/models/activity-log"
 import { StorePaymentMethodModel } from "@/src/models/store-payment"
-
-export interface ActionCtx {
-  customerId: string
-  conversationId: string
-  greetingMessage?: string | null
-}
-
-export interface ActionResult {
-  reply: string
-  qrisImageUrl?: string | null
-}
 
 export async function handleIntent(output: LLMOutput, ctx: ActionCtx): Promise<ActionResult> {
   switch (output.intent) {

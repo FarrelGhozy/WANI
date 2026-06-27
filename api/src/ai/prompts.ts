@@ -1,34 +1,4 @@
-export interface PaymentMethodEntry {
-  type: string
-  label?: string | null
-  bankName?: string | null
-  accountNumber?: string | null
-  accountName?: string | null
-  providerName?: string | null
-  phoneNumber?: string | null
-  qrImageUrl?: string | null
-  instructions?: string | null
-}
-
-export interface StoreInfo {
-  businessName: string
-  address?: string | null
-  phone: string
-  businessHours?: string | null
-  paymentMethods?: string | null
-  activePaymentMethods?: PaymentMethodEntry[]
-  shippingInfo?: string | null
-  returnPolicy?: string | null
-}
-
-export interface ProductEntry {
-  id: string
-  name: string
-  price: number
-  stock: number
-  isAvailable: boolean
-  categoryName?: string | null
-}
+import type { PaymentMethodEntry, StoreInfo, ProductEntry } from "@/src/types/ai"
 
 // Secret marker embedded in the system prompt. The output guardrail rejects any
 // reply that contains it, which catches prompt-leak / injection attempts.

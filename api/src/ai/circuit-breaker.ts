@@ -1,3 +1,4 @@
+import type { CircuitResult } from "@/src/types/ai"
 import { logger } from "@/src/config/logger"
 
 interface State {
@@ -11,12 +12,6 @@ const state: State = { failures: 0, lastFailure: 0, halfOpen: false }
 const THRESHOLD = 3
 const COOLDOWN_MS = 60_000
 const HALF_OPEN_TIMEOUT_MS = 30_000
-
-export interface CircuitResult<T> {
-  allowed: boolean
-  result?: T
-  error?: Error
-}
 
 export async function withCircuit<T>(
   fn: () => Promise<T>,

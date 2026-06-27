@@ -1,7 +1,7 @@
 import { prisma } from "@/src/config/db"
 import { env } from "@/src/config/env"
 import { logger } from "@/src/config/logger"
-import type { TokenUsage } from "@/src/ai/types"
+import type { TokenUsage } from "@/src/types/ai"
 
 let _todayKey: string | null = null
 let _todayKeyTs = 0
