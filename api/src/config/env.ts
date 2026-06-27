@@ -33,12 +33,12 @@ export const env = {
 
     // Classifier tier (ML model via OpenRouter)
     classifierEnabled: bool("CLASSIFIER_ENABLED", true),
-    classifierModel: process.env.CLASSIFIER_MODEL ?? "google/gemini-2.0-flash-lite",
+    classifierModel: process.env.CLASSIFIER_MODEL ?? "qwen/qwen3-next-80b-a3b-instruct:free",
     // Judge tier (deep analysis for SUSPICIOUS cases)
     judgeEnabled: bool("JUDGE_ENABLED", true),
-    judgeModel: process.env.JUDGE_MODEL ?? "google/gemini-2.0-flash-lite",
+    judgeModel: process.env.JUDGE_MODEL ?? "qwen/qwen3-next-80b-a3b-instruct:free",
     // Grounding check on output
     groundingEnabled: bool("GROUNDING_CHECK_ENABLED", true),
-    groundingModel: process.env.GROUNDING_MODEL ?? "google/gemini-2.0-flash-lite"
+    groundingModel: process.env.GROUNDING_MODEL ?? "qwen/qwen3-next-80b-a3b-instruct:free"
   }
 } as const;
