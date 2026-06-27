@@ -1,3 +1,4 @@
+import { useState, useCallback } from 'react'
 import type { ReactNode } from 'react'
 import type { AiConfig } from '@/hooks/useSettings.ts'
 import Card from '@/components/ui/Card.tsx'
@@ -5,7 +6,7 @@ import Button from '@/components/ui/Button.tsx'
 
 interface AiTabProps {
   config: AiConfig
-  onUpdate: (patch: Partial<AiConfig>) => void
+  onUpdate: (patch: Partial<AiConfig>) => Promise<void>
 }
 
 function Field({ label, children }: { label: string; children: ReactNode }) {
@@ -18,6 +19,17 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
 }
 
 export default function AiTab({ config, onUpdate }: AiTabProps) {
+  const [saving, setSaving] = useState(false)
+
+  const handleSave = useCallback(async (patch: Partial<AiConfig>) => {
+    setSaving(true)
+    try {
+      await onUpdate(patch)
+    } finally {
+      setSaving(false)
+    }
+  }, [onUpdate])
+
   return (
     <Card accent="amber">
       <h2 className="mb-6 text-lg font-semibold text-stone-900">Konfigurasi AI Agent</h2>
@@ -26,7 +38,7 @@ export default function AiTab({ config, onUpdate }: AiTabProps) {
           <input
             type="text"
             value={config.model}
-            onChange={(e) => onUpdate({ model: e.target.value })}
+            onChange={(e) => handleSave({ model: e.target.value })}
             placeholder="deepseek/deepseek-v4-flash:free"
             className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
           />
@@ -45,7 +57,7 @@ export default function AiTab({ config, onUpdate }: AiTabProps) {
           <input
             type="number"
             value={config.maxTokens}
-            onChange={(e) => onUpdate({ maxTokens: Number(e.target.value) })}
+            onChange={(e) => handleSave({ maxTokens: Number(e.target.value) })}
             className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
           />
         </Field>
@@ -56,35 +68,42 @@ export default function AiTab({ config, onUpdate }: AiTabProps) {
             max="2"
             step="0.1"
             value={config.temperature}
-            onChange={(e) => onUpdate({ temperature: Number(e.target.value) })}
+            onChange={(e) => handleSave({ temperature: Number(e.target.value) })}
             className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
           />
         </Field>
         <Field label="Pesan Sapaan">
-          <input
+          <textarea
             value={config.greetingMessage ?? ''}
-            onChange={(e) => onUpdate({ greetingMessage: e.target.value || null })}
-            className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+            onChange={(e) => handleSave({ greetingMessage: e.target.value || null })}
+            placeholder="Selamat datang di toko kami! Ada yang bisa dibantu?"
+            rows={3}
+            className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
           />
+          <p className="text-xs text-stone-400">Pesan otomatis ketika pelanggan menyapa. Biarkan kosong untuk menggunakan pesan bawaan.</p>
         </Field>
         <div className="sm:col-span-2">
           <Field label="System Prompt">
             <textarea
               value={config.systemPrompt}
-              onChange={(e) => onUpdate({ systemPrompt: e.target.value })}
-              rows={4}
+              onChange={(e) => handleSave({ systemPrompt: e.target.value })}
+              placeholder="Kosongkan untuk menggunakan prompt bawaan (nama toko, katalog, aturan keamanan, dan format output JSON akan otomatis disisipkan)"
+              rows={8}
               className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
             />
+            <p className="text-xs text-stone-400">Instruksi tambahan untuk AI. Jika dikosongkan, AI akan menggunakan prompt default yang mencakup info toko, katalog produk, dan aturan keamanan.</p>
           </Field>
         </div>
         <div className="sm:col-span-2">
           <Field label="Basis Pengetahuan">
             <textarea
               value={config.knowledgeBase ?? ''}
-              onChange={(e) => onUpdate({ knowledgeBase: e.target.value || null })}
-              rows={3}
+              onChange={(e) => handleSave({ knowledgeBase: e.target.value || null })}
+              placeholder="Contoh: Jam operasional custom, informasi promo, FAQ, kebijakan khusus..."
+              rows={5}
               className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
             />
+            <p className="text-xs text-stone-400">Informasi tambahan yang akan disisipkan ke prompt AI. Bisa diisi jam operasional, daftar promo, FAQ, atau kebijakan khusus toko.</p>
           </Field>
         </div>
       </div>
@@ -94,10 +113,11 @@ export default function AiTab({ config, onUpdate }: AiTabProps) {
           <p className="text-xs text-stone-500">Matikan untuk menjawab pelanggan secara manual</p>
         </div>
         <button
-          onClick={() => onUpdate({ isActive: !config.isActive })}
+          onClick={() => handleSave({ isActive: !config.isActive })}
+          disabled={saving}
           className={`relative h-6 w-11 rounded-full transition-colors ${
             config.isActive ? 'bg-amber-500' : 'bg-stone-300'
-          }`}
+          } ${saving ? 'cursor-not-allowed opacity-50' : ''}`}
         >
           <span
             className={`absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${
@@ -107,7 +127,7 @@ export default function AiTab({ config, onUpdate }: AiTabProps) {
         </button>
       </div>
       <div className="mt-4 flex justify-end gap-3">
-        <Button size="sm">Simpan Perubahan</Button>
+        <Button size="sm" loading={saving} onClick={() => handleSave({})}>Simpan Perubahan</Button>
       </div>
     </Card>
   )

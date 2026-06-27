@@ -29,6 +29,14 @@ function statusDot(status: string) {
   }
 }
 
+function statusLabel(status: string) {
+  switch (status) {
+    case 'connected': return 'Terhubung'
+    case 'connecting': return 'Menghubungkan'
+    default: return 'Terputus'
+  }
+}
+
 export default function Topbar({ connection }: TopbarProps) {
   const location = useLocation()
   const navigate = useNavigate()
@@ -44,7 +52,7 @@ export default function Topbar({ connection }: TopbarProps) {
 
       <div className="flex items-center gap-2">
         <span className={`h-2 w-2 rounded-full ${statusDot(connection)}`} />
-        <span className="text-xs font-medium capitalize text-stone-500">{connection}</span>
+        <span className="text-xs font-medium text-stone-500">{statusLabel(connection)}</span>
       </div>
     </header>
   )

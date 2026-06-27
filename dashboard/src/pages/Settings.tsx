@@ -2,11 +2,13 @@ import { useState, useCallback } from 'react'
 import { useSearchParams } from 'react-router'
 import { useSettings } from '@/hooks/useSettings.ts'
 import { useWaStatus } from '@/hooks/useWaStatus.ts'
+import { useToast } from '@/hooks/useToast.ts'
 import { fetchApi } from '@/lib/api.ts'
 import StoreTab from '@/components/StoreTab.tsx'
 import AiTab from '@/components/AiTab.tsx'
 import WaSessionTab from '@/components/WaSessionTab.tsx'
 import PaymentTab from '@/components/PaymentTab.tsx'
+import ToastContainer from '@/components/ui/Toast.tsx'
 import Spinner from '@/components/ui/Spinner.tsx'
 
 const tabs = [
@@ -25,6 +27,7 @@ export default function Settings() {
   }
   const { store, aiConfig, error, updateStore, updateAiConfig, loading, reload } = useSettings()
   const { qr: liveQr, connection: liveConn, phone: livePhone, connectedAt: liveConnectedAt } = useWaStatus()
+  const { toasts, toast, removeToast } = useToast()
 
   const [override, setOverride] = useState<{ connection: string; qr: string; phone: string } | null>(null)
 
@@ -43,18 +46,28 @@ export default function Settings() {
 
   const [resetting, setResetting] = useState(false)
 
+  const handleAiUpdate = useCallback(async (patch: Partial<import('@/hooks/useSettings.ts').AiConfig>) => {
+    try {
+      await updateAiConfig(patch)
+      toast('Konfigurasi AI berhasil disimpan', 'success')
+    } catch {
+      toast('Gagal menyimpan konfigurasi AI', 'error')
+    }
+  }, [updateAiConfig, toast])
+
   const handleReset = useCallback(async () => {
     if (resetting) return
     setResetting(true)
     try {
       await fetchApi('/api/qr/reset', { method: 'POST' })
       setOverride(null)
+      toast('Koneksi WhatsApp direset. Scan QR baru untuk menghubungkan.', 'info')
     } catch {
-      // error ignored — next poll will show current state
+      toast('Gagal mereset koneksi', 'error')
     } finally {
       setResetting(false)
     }
-  }, [resetting])
+  }, [resetting, toast])
 
   if (loading) {
     return <div className="flex items-center justify-center py-20"><Spinner size={24} /></div>
@@ -97,7 +110,7 @@ export default function Settings() {
       </div>
 
       {activeTab === 'store' && <StoreTab store={store} onUpdate={updateStore} />}
-      {activeTab === 'ai' && <AiTab config={aiConfig} onUpdate={updateAiConfig} />}
+      {activeTab === 'ai' && <AiTab config={aiConfig} onUpdate={handleAiUpdate} />}
       {activeTab === 'wa' && (
         <WaSessionTab
           qr={qr}
@@ -111,6 +124,8 @@ export default function Settings() {
         />
       )}
       {activeTab === 'payment' && <PaymentTab />}
+
+      <ToastContainer toasts={toasts} onRemove={removeToast} />
     </div>
   )
 }
