@@ -4,7 +4,7 @@ Four independent Bun packages (not a monorepo). Each has its own `bun.lock` and 
 
 - **`api/`** — Express 5 + Prisma 7 — REST server with layered architecture (routes → controllers → models → Prisma delegate)
 - **`dashboard/`** — React 19 + TypeScript 6 + Vite 8 (Rolldown, not esbuild) — frontend UI
-- **`web-gen/`** — Bun + Astro 6.4 — static site generator for UMKM websites
+- **`web-gen/`** — Bun + Astro 7 — static site generator for UMKM websites
 - **`wa-bot/`** — Baileys 6 + Prisma 7 — WhatsApp bot with persistent auth, auto-reconnect
 
 ## Architecture
@@ -111,11 +111,13 @@ Error classes: BadRequestError (400), UnauthorizedError (401), ForbiddenError (4
 
 ## Dashboard
 
-- **5 pages implemented**: Dashboard, Products (+ProductForm), Orders (+OrderDetail), Customers (dual-panel inline chat), Settings (Store + AI + WA tabs)
-- **All hooks use real API**: `useProducts`, `useOrders`, `useCustomers`, `useSettings`, `useWebsite` — no MOCK toggle, fetch via `fetchApi()`. `useWaStatus` and `useAuth` retain `MOCK = false` toggle for legacy compatibility.
+- **11 pages implemented**: Dashboard, Products (+ProductForm), Orders (+OrderDetail), Customers (dual-panel inline chat), Settings (Store + AI + WA + Payment tabs), Website, LoginPage, SignUpPage, ForgotPasswordPage
+- **Settings has 4 tabs**: Store, AI Agent, WA Session, Pembayaran
+- **All hooks use real API**: `useProducts`, `useOrders`, `useCustomers`, `useSettings`, `usePaymentMethods`, `useWebsite` — no MOCK toggle, fetch via `fetchApi()`. `useWaStatus` and `useAuth` retain `MOCK = false` toggle for legacy compatibility.
 - **UI primitives** in `components/ui/` (Button, Card, Badge, Table, Modal, Input, Select, Spinner, EmptyState, Pagination) — no external component library
-- **Layout**: `Layout.tsx` shell with `Sidebar.tsx` + `Topbar.tsx` + `<Outlet />`, `BottomNav.tsx` for mobile
-- **Routing**: React Router v8 `createBrowserRouter` in `App.tsx`
+- **Feature components**: StoreTab, AiTab, WaSessionTab, PaymentTab, CategoryModal, ProductListView, ProductCard, OrderListView, OrderTimeline, CustomerListView, ChatView
+- **Layout**: `Layout.tsx` shell with `Sidebar.tsx` + `Topbar.tsx` + `<Outlet />`, `BottomNav.tsx` for mobile; `AuthLayout.tsx` for public pages
+- **Routing**: React Router v8 `createBrowserRouter` in `App.tsx`, with `ProtectedRoute` gate
 
 ## Docker Compose
 
@@ -294,7 +296,7 @@ scanInput reasons mapped by confidence:
 ### What's missing
 
 - No embeddings / vector store / RAG (the `knowledgeBase` field is plain text)
-- 152 unit tests (guardrails + firewall + schemas + auth + middleware + errors)
+- 152+ unit tests (guardrails + firewall + schemas + auth + middleware + errors + response + intent + golden-reply)
 
 ## Referensi Dokumen
 
