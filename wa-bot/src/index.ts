@@ -60,15 +60,17 @@ async function main() {
     }
   });
 
-  sock.ev.on("messages.upsert", async ({ messages }) => {
+  sock.ev.on("messages.upsert", async ({ messages, type }) => {
+    if (type !== "notify") return;
+
     for (const msg of messages) {
       if (msg.key.fromMe || !msg.message || !msg.key.remoteJid) continue;
 
+      const jid = msg.key.remoteJidAlt ?? msg.key.remoteJid;
+      if (!jid.endsWith("@s.whatsapp.net")) continue;
+
       const text = msg.message.conversation ?? msg.message.extendedTextMessage?.text ?? "";
       if (!text) continue;
-
-      const jid = msg.key.remoteJidAlt ?? msg.key.remoteJid;
-      if (jid.endsWith("@g.us")) continue;
 
       const phone = jid.replace(/[^0-9]/g, "");
       const pushName = msg.pushName || phone;
