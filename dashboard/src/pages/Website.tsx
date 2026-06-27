@@ -48,14 +48,16 @@ export default function Website() {
                 <input
                   value={config.heroHeadline}
                   onChange={(e) => updateConfig({ heroHeadline: e.target.value })}
-                  className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+                  placeholder="Contoh: Selamat Datang di Toko Kami"
+                  className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all placeholder:text-stone-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
                 />
               </Field>
               <Field label="Subjudul Hero">
                 <input
                   value={config.heroSubheadline}
                   onChange={(e) => updateConfig({ heroSubheadline: e.target.value })}
-                  className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+                  placeholder="Contoh: Temukan produk terbaik untuk kebutuhan Anda"
+                  className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all placeholder:text-stone-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
                 />
               </Field>
               <div className="sm:col-span-2">
@@ -63,8 +65,9 @@ export default function Website() {
                   <textarea
                     value={config.aboutText}
                     onChange={(e) => updateConfig({ aboutText: e.target.value })}
+                    placeholder="Contoh: Toko kami berdiri sejak 2020, menyediakan berbagai produk berkualitas dengan harga terjangkau. Kami melayani pengiriman ke seluruh Indonesia."
                     rows={3}
-                    className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+                    className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 transition-all placeholder:text-stone-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
                   />
                 </Field>
               </div>
@@ -116,8 +119,10 @@ export default function Website() {
                 <input
                   value={config.phone}
                   onChange={(e) => updateConfig({ phone: e.target.value })}
-                  className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+                  placeholder="6281234567890"
+                  className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all placeholder:text-stone-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
                 />
+                <p className="text-xs text-stone-400">Gunakan format internasional, contoh: 6281234567890 (tanpa +)</p>
               </Field>
               <Field label="Tema">
                 <select
@@ -132,7 +137,7 @@ export default function Website() {
                 </select>
               </Field>
               <div className="sm:col-span-2">
-                <Field label="Pilih Produk ({config.selectedProductIds.length} dipilih)">
+                <Field label={'Pilih Produk (' + config.selectedProductIds.length + ' dipilih)'}>
                   <div className="max-h-48 overflow-y-auto rounded-lg border border-stone-200">
                     {availableProducts.map((p) => {
                       const checked = config.selectedProductIds.includes(p.id)
