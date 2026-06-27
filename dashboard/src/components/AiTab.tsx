@@ -81,16 +81,12 @@ export default function AiTab({ config, onUpdate }: AiTabProps) {
           <p className="mt-1 text-xs text-stone-400">
             Cari model gratis di{' '}
             <a href="https://opencode.ai/zen/v1/models" target="_blank" rel="noopener noreferrer" className="text-teal-600 underline">OpenCode Zen</a>
-            {' atau '}
-            <a href="https://openrouter.ai/models?q=free" target="_blank" rel="noopener noreferrer" className="text-teal-600 underline">OpenRouter</a>
             . Contoh: <code className="text-stone-500">deepseek-v4-flash-free</code>,{' '}
             <code className="text-stone-500">north-mini-code-free</code>
           </p>
           <p className="mt-0.5 text-xs text-stone-400">
-            API Key via <code className="text-stone-500">LLM_API_KEY</code> atau <code className="text-stone-500">OPENROUTER_API_KEY</code>{' '}
+            API Key via <code className="text-stone-500">LLM_API_KEY</code> —{' '}
             <a href="https://opencode.ai/zen" target="_blank" rel="noopener noreferrer" className="text-teal-600 underline">OpenCode Zen</a>
-            {' atau '}
-            <a href="https://openrouter.ai/keys" target="_blank" rel="noopener noreferrer" className="text-teal-600 underline">OpenRouter</a>
           </p>
         </Field>
         <Field label="Token Maksimal">
