@@ -144,7 +144,13 @@ function BusinessHoursEditor({
             <span className="w-14 text-xs font-medium text-stone-700">{day}</span>
             <button
               type="button"
-              onClick={() => setDay(day, { open: !h.open })}
+              onClick={() => {
+                if (h.open) {
+                  setDay(day, { open: false })
+                } else {
+                  setDay(day, { open: true, start: '08:00', end: '17:00' })
+                }
+              }}
               className={`flex h-7 w-14 items-center justify-center rounded-md text-xs font-medium transition-colors ${
                 h.open
                   ? 'bg-teal-100 text-teal-700'
