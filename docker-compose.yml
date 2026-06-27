@@ -74,9 +74,7 @@ services:
         max-file: "3"
 
   dashboard:
-    build:
-      context: .
-      dockerfile: dashboard/Dockerfile
+    image: ghcr.io/farrelghozy/wani-dashboard:latest
     depends_on:
       api:
         condition: service_healthy
