@@ -296,10 +296,10 @@ export default function StoreTab({ store, onUpdate }: StoreTabProps) {
   return (
     <>
       <Card accent="teal">
-        <h2 className="mb-6 text-lg font-semibold text-stone-900">Profil Toko</h2>
+        <h2 className="mb-4 text-base font-semibold text-stone-900 md:mb-6 md:text-lg">Profil Toko</h2>
 
         {/* Photo */}
-        <div className="mb-8 flex flex-col items-center gap-4 sm:flex-row">
+        <div className="mb-6 flex flex-col items-center gap-3 sm:flex-row md:mb-8 md:gap-4">
           <div className="relative">
             <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-full bg-teal-50 ring-4 ring-teal-100">
               {store.logoUrl ? (
@@ -328,7 +328,7 @@ export default function StoreTab({ store, onUpdate }: StoreTabProps) {
           </div>
         </div>
 
-        <div className="grid gap-5 sm:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-2 md:gap-5">
           <Input
             label="Nama Bisnis"
             value={form.businessName}
@@ -380,10 +380,10 @@ export default function StoreTab({ store, onUpdate }: StoreTabProps) {
             />
           </Field>
         </div>
-        <div className="mt-6 flex items-center justify-between rounded-lg bg-stone-50 px-4 py-3">
-          <div>
+        <div className="mt-5 flex items-center justify-between gap-3 rounded-lg bg-stone-50 px-3 py-2.5 md:mt-6 md:px-4 md:py-3">
+          <div className="min-w-0">
             <p className="text-sm font-medium text-stone-900">Toko Aktif</p>
-            <p className="text-xs text-stone-500">Nonaktifkan untuk menyembunyikan toko dari pelanggan</p>
+            <p className="text-xs text-stone-500 truncate">Nonaktifkan untuk menyembunyikan toko dari pelanggan</p>
           </div>
           <button
             onClick={handleToggle}
@@ -398,19 +398,19 @@ export default function StoreTab({ store, onUpdate }: StoreTabProps) {
             />
           </button>
         </div>
-        <div className="mt-4 flex justify-end gap-3">
+        <div className="mt-4 flex justify-end md:mt-6">
           <Button size="sm" loading={saving} onClick={handleSave}>Simpan Perubahan</Button>
         </div>
       </Card>
 
       {/* Payment Methods */}
-      <Card accent="teal" className="mt-6">
-        <h2 className="mb-5 text-lg font-semibold text-stone-900">Metode Pembayaran</h2>
+      <Card accent="teal" className="mt-4 md:mt-6">
+        <h2 className="mb-4 text-base font-semibold text-stone-900 md:mb-5 md:text-lg">Metode Pembayaran</h2>
         <PaymentTab />
       </Card>
 
       {/* Categories */}
-      <Card accent="teal" className="mt-6">
+      <Card accent="teal" className="mt-4 md:mt-6">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-teal-100">
@@ -429,7 +429,7 @@ export default function StoreTab({ store, onUpdate }: StoreTabProps) {
         </div>
       </Card>
 
-      <Card accent="amber" className="mt-6">
+      <Card accent="amber" className="mt-4 md:mt-6">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-100">
