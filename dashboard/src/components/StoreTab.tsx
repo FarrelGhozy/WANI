@@ -6,11 +6,110 @@ import { useProducts } from '@/hooks/useProducts.ts'
 import { useToast } from '@/hooks/useToast.ts'
 import Card from '@/components/ui/Card.tsx'
 import Button from '@/components/ui/Button.tsx'
+import Input from '@/components/ui/Input.tsx'
 import CategoryModal from '@/components/CategoryModal.tsx'
 
 interface StoreTabProps {
   store: StoreProfile
   onUpdate: (patch: Partial<StoreProfile>) => void
+}
+
+const DAYS = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'] as const
+
+interface DayHours {
+  open: boolean
+  start: string
+  end: string
+}
+
+type HoursState = Record<string, DayHours>
+
+const DEFAULT_HOURS: HoursState = {
+  Senin: { open: true, start: '08:00', end: '17:00' },
+  Selasa: { open: true, start: '08:00', end: '17:00' },
+  Rabu: { open: true, start: '08:00', end: '17:00' },
+  Kamis: { open: true, start: '08:00', end: '17:00' },
+  Jumat: { open: true, start: '08:00', end: '17:00' },
+  Sabtu: { open: false, start: '', end: '' },
+  Minggu: { open: false, start: '', end: '' },
+}
+
+const PAYMENT_OPTIONS = ['QRIS', 'Transfer Bank', 'E-Wallet', 'COD', 'Tunai']
+
+function formatHoursState(hours: HoursState): string {
+  const parts: string[] = []
+  let i = 0
+  const ds = DAYS as readonly string[]
+  while (i < ds.length) {
+    const day = ds[i]
+    const h = hours[day]
+    const endSame = (idx: number): boolean =>
+      idx < ds.length &&
+      hours[ds[idx]].open === h.open &&
+      hours[ds[idx]].start === h.start &&
+      hours[ds[idx]].end === h.end
+    let j = i
+    while (endSame(j)) j++
+    if (j - 1 === i) {
+      if (h.open) parts.push(`${ds[i]} ${h.start}–${h.end}`)
+      else parts.push(`${ds[i]} libur`)
+    } else {
+      if (h.open) parts.push(`${ds[i]}–${ds[j - 1]} ${h.start}–${h.end}`)
+      else parts.push(`${ds[i]}–${ds[j - 1]} libur`)
+    }
+    i = j
+  }
+  return parts.join(', ') + ' WIB'
+}
+
+function dayIndex(name: string): number {
+  return DAYS.indexOf(name as typeof DAYS[number])
+}
+
+function isDay(name: string): name is typeof DAYS[number] {
+  return DAYS.includes(name as typeof DAYS[number])
+}
+
+function parseToHoursState(str: string | null | undefined): HoursState {
+  const result: HoursState = {} as HoursState
+  for (const d of DAYS) result[d] = { open: false, start: '', end: '' }
+  if (!str) return { ...DEFAULT_HOURS }
+  const clean = str.replace(/\s*WIB\s*/g, '').trim()
+  const parts = clean.split(',').map((s) => s.trim()).filter(Boolean)
+  for (const part of parts) {
+    const liburMatch = part.match(/^([A-Za-z]+(?:\s*–\s*[A-Za-z]+)?)\s+libur$/)
+    if (liburMatch) {
+      const name = liburMatch[1]
+      if (name.includes('–')) {
+        const [s, e] = name.split('–').map((n) => n.trim())
+        const si = dayIndex(s)
+        const ei = dayIndex(e)
+        if (si >= 0 && ei >= 0) for (let k = si; k <= ei; k++) result[DAYS[k]] = { open: false, start: '', end: '' }
+      } else if (isDay(name)) {
+        result[name] = { open: false, start: '', end: '' }
+      }
+      continue
+    }
+    const timeMatch = part.match(/^([A-Za-z]+(?:\s*–\s*[A-Za-z]+)?)\s+(\d{2}:\d{2})–(\d{2}:\d{2})$/)
+    if (timeMatch) {
+      const name = timeMatch[1]
+      const start = timeMatch[2]
+      const end = timeMatch[3]
+      if (name.includes('–')) {
+        const [s, e] = name.split('–').map((n) => n.trim())
+        const si = dayIndex(s)
+        const ei = dayIndex(e)
+        if (si >= 0 && ei >= 0) for (let k = si; k <= ei; k++) result[DAYS[k]] = { open: true, start, end }
+      } else if (isDay(name)) {
+        result[name] = { open: true, start, end }
+      }
+    }
+  }
+  return result
+}
+
+function cleanPhone(v: string): string {
+  return v.replace(/^(\+62|62|0)/, '')
 }
 
 function Field({ label, children }: { label: string; children: ReactNode }) {
@@ -22,22 +121,146 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
   )
 }
 
+function BusinessHoursEditor({
+  value,
+  onChange,
+}: {
+  value: string | null
+  onChange: (v: string) => void
+}) {
+  const hours = parseToHoursState(value)
+
+  function setDay(day: string, patch: Partial<DayHours>) {
+    const next = { ...hours, [day]: { ...hours[day], ...patch } }
+    onChange(formatHoursState(next))
+  }
+
+  return (
+    <div className="space-y-1">
+      {DAYS.map((day) => {
+        const h = hours[day]
+        return (
+          <div key={day} className="flex items-center gap-2">
+            <span className="w-14 text-xs font-medium text-stone-700">{day}</span>
+            <button
+              type="button"
+              onClick={() => setDay(day, { open: !h.open })}
+              className={`flex h-7 w-14 items-center justify-center rounded-md text-xs font-medium transition-colors ${
+                h.open
+                  ? 'bg-teal-100 text-teal-700'
+                  : 'bg-stone-100 text-stone-400'
+              }`}
+            >
+              {h.open ? 'BUKA' : 'LIBUR'}
+            </button>
+            {h.open && (
+              <>
+                <input
+                  type="time"
+                  value={h.start}
+                  onChange={(e) => setDay(day, { start: e.target.value })}
+                  className="h-7 w-24 rounded-md border border-stone-300 bg-white px-2 text-xs text-stone-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+                />
+                <span className="text-xs text-stone-400">&ndash;</span>
+                <input
+                  type="time"
+                  value={h.end}
+                  onChange={(e) => setDay(day, { end: e.target.value })}
+                  className="h-7 w-24 rounded-md border border-stone-300 bg-white px-2 text-xs text-stone-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+                />
+              </>
+            )}
+          </div>
+        )
+      })}
+      <p className="pt-1 text-xs text-stone-400">
+        {formatHoursState(hours)}
+      </p>
+    </div>
+  )
+}
+
+function PaymentMethodsCheckbox({
+  value,
+  onChange,
+}: {
+  value: string | null
+  onChange: (v: string) => void
+}) {
+  const selected = new Set((value ?? 'QRIS, Transfer Bank, E-Wallet, COD').split(', ').filter(Boolean))
+
+  function toggle(method: string) {
+    const next = new Set(selected)
+    if (next.has(method)) next.delete(method)
+    else next.add(method)
+    onChange(Array.from(next).join(', '))
+  }
+
+  return (
+    <div className="flex flex-wrap gap-3">
+      {PAYMENT_OPTIONS.map((opt) => (
+        <label
+          key={opt}
+          className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 text-sm transition-colors ${
+            selected.has(opt)
+              ? 'border-teal-400 bg-teal-50 text-teal-700'
+              : 'border-stone-300 bg-white text-stone-600 hover:border-stone-400'
+          }`}
+        >
+          <input
+            type="checkbox"
+            checked={selected.has(opt)}
+            onChange={() => toggle(opt)}
+            className="h-4 w-4 accent-teal-600"
+          />
+          {opt}
+        </label>
+      ))}
+    </div>
+  )
+}
+
 export default function StoreTab({ store, onUpdate }: StoreTabProps) {
   const fileRef = useRef<HTMLInputElement>(null)
   const { categories, createCategory, updateCategory, deleteCategory } = useProducts()
   const [categoryModalOpen, setCategoryModalOpen] = useState(false)
   const { toast } = useToast()
 
-  const handleUpdate = useCallback(async (patch: Partial<StoreProfile>) => {
+  const [form, setForm] = useState(() => ({
+    businessName: store.businessName,
+    phone: cleanPhone(store.phone),
+    address: store.address ?? '',
+    businessHours: store.businessHours ?? null,
+    paymentMethods: store.paymentMethods ?? null,
+    shippingInfo: store.shippingInfo ?? null,
+    returnPolicy: store.returnPolicy ?? null,
+  }))
+
+  const handleSave = useCallback(async () => {
     try {
-      await onUpdate(patch)
-      if ('isActive' in patch) {
-        toast(patch.isActive ? 'Toko berhasil diaktifkan' : 'Toko berhasil dinonaktifkan', 'success')
-      }
+      await onUpdate({
+        businessName: form.businessName,
+        phone: form.phone,
+        address: form.address || null,
+        businessHours: form.businessHours || null,
+        paymentMethods: form.paymentMethods || null,
+        shippingInfo: form.shippingInfo || null,
+        returnPolicy: form.returnPolicy || null,
+      })
+      toast('Pengaturan toko berhasil disimpan', 'success')
     } catch {
       toast('Gagal menyimpan pengaturan toko', 'error')
     }
-  }, [onUpdate, toast])
+  }, [form, onUpdate, toast])
+
+  const handleToggle = useCallback(async () => {
+    try {
+      await onUpdate({ isActive: !store.isActive })
+      toast(store.isActive ? 'Toko berhasil dinonaktifkan' : 'Toko berhasil diaktifkan', 'success')
+    } catch {
+      toast('Gagal mengubah status toko', 'error')
+    }
+  }, [store.isActive, onUpdate, toast])
 
   function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
@@ -91,57 +314,60 @@ export default function StoreTab({ store, onUpdate }: StoreTabProps) {
         <div className="grid gap-5 sm:grid-cols-2">
           <Field label="Nama Bisnis">
             <input
-              value={store.businessName}
-              onChange={(e) => onUpdate({ businessName: e.target.value })}
-              className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+              value={form.businessName}
+              onChange={(e) => setForm((prev) => ({ ...prev, businessName: e.target.value }))}
+              placeholder="Contoh: Warung Nasi Goreng"
+              className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all placeholder:text-stone-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
             />
           </Field>
-          <Field label="Telepon">
-            <input
-              value={store.phone}
-              onChange={(e) => onUpdate({ phone: e.target.value })}
-              className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-            />
-          </Field>
-          <Field label="Alamat">
-            <textarea
-              value={store.address ?? ''}
-              onChange={(e) => onUpdate({ address: e.target.value || null })}
-              rows={3}
-              className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-            />
-          </Field>
+          <Input
+            label="TELEPON"
+            value={form.phone}
+            onChange={(e) => setForm((prev) => ({ ...prev, phone: e.target.value }))}
+            prefix="+62"
+            placeholder="81234567890"
+            hint="Masukkan nomor setelah +62, cukup angka"
+          />
+          <div className="sm:col-span-2">
+            <Field label="Alamat">
+              <textarea
+                value={form.address}
+                onChange={(e) => setForm((prev) => ({ ...prev, address: e.target.value }))}
+                placeholder="Contoh: Jl. Merdeka No. 123, RT 01 RW 02, Kel. Sukamaju, Kec. Sukasari, Kota Bandung 40123"
+                rows={3}
+                className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 transition-all placeholder:text-stone-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+              />
+            </Field>
+          </div>
           <Field label="Jam Operasional">
-            <input
-              value={store.businessHours ?? ''}
-              onChange={(e) => onUpdate({ businessHours: e.target.value || null })}
-              className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+            <BusinessHoursEditor
+              value={form.businessHours}
+              onChange={(v) => setForm((prev) => ({ ...prev, businessHours: v }))}
             />
           </Field>
           <Field label="Metode Pembayaran">
-            <input
-              value={store.paymentMethods ?? ''}
-              onChange={(e) => onUpdate({ paymentMethods: e.target.value || null })}
-              className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+            <PaymentMethodsCheckbox
+              value={form.paymentMethods}
+              onChange={(v) => setForm((prev) => ({ ...prev, paymentMethods: v || null }))}
             />
           </Field>
           <Field label="Info Pengiriman">
             <input
-              value={store.shippingInfo ?? ''}
-              onChange={(e) => onUpdate({ shippingInfo: e.target.value || null })}
-              className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+              value={form.shippingInfo ?? ''}
+              onChange={(e) => setForm((prev) => ({ ...prev, shippingInfo: e.target.value || null }))}
+              placeholder="Contoh: Gratis ongkir untuk area Kec. Sukasari. Estimasi 1-2 hari kerja."
+              className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all placeholder:text-stone-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
             />
           </Field>
-          <div className="sm:col-span-2">
-            <Field label="Kebijakan Retur">
-              <textarea
-                value={store.returnPolicy ?? ''}
-                onChange={(e) => onUpdate({ returnPolicy: e.target.value || null })}
-                rows={3}
-                className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-              />
-            </Field>
-          </div>
+          <Field label="Kebijakan Retur">
+            <textarea
+              value={form.returnPolicy ?? ''}
+              onChange={(e) => setForm((prev) => ({ ...prev, returnPolicy: e.target.value || null }))}
+              placeholder="Contoh: Barang dapat diretur maksimal 3 hari setelah diterima dengan kondisi masih segel. Biaya pengiriman retur ditanggung pembeli."
+              rows={3}
+              className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 transition-all placeholder:text-stone-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+            />
+          </Field>
         </div>
         <div className="mt-6 flex items-center justify-between rounded-lg bg-stone-50 px-4 py-3">
           <div>
@@ -149,7 +375,7 @@ export default function StoreTab({ store, onUpdate }: StoreTabProps) {
             <p className="text-xs text-stone-500">Nonaktifkan untuk menyembunyikan toko dari pelanggan</p>
           </div>
           <button
-            onClick={() => handleUpdate({ isActive: !store.isActive })}
+            onClick={handleToggle}
             className={`relative h-6 w-11 rounded-full transition-colors ${
               store.isActive ? 'bg-teal-600' : 'bg-stone-300'
             }`}
@@ -162,7 +388,7 @@ export default function StoreTab({ store, onUpdate }: StoreTabProps) {
           </button>
         </div>
         <div className="mt-4 flex justify-end gap-3">
-          <Button size="sm">Simpan Perubahan</Button>
+          <Button size="sm" onClick={handleSave}>Simpan Perubahan</Button>
         </div>
       </Card>
 
@@ -212,7 +438,6 @@ export default function StoreTab({ store, onUpdate }: StoreTabProps) {
         </div>
       </Card>
 
-      {/* Category Modal */}
       <CategoryModal
         open={categoryModalOpen}
         onClose={() => setCategoryModalOpen(false)}

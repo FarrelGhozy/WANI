@@ -26,7 +26,7 @@ export default function Settings() {
   }
   const { store, aiConfig, error, updateStore, updateAiConfig, loading, reload } = useSettings()
   const { qr: liveQr, connection: liveConn, phone: livePhone, connectedAt: liveConnectedAt } = useWaStatus()
-  const { toasts, toast, removeToast } = useToast()
+  const { toast } = useToast()
 
   const [override, setOverride] = useState<{ connection: string; qr: string; phone: string } | null>(null)
 
