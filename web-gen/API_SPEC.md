@@ -53,47 +53,31 @@ Authorization: Bearer {API_TOKEN}
 
 Single-row table (`id: "default"`) — satu site per instalasi WANI.
 
-```sql
-CREATE TABLE "WebSite" (
-  "id"          TEXT PRIMARY KEY DEFAULT 'default',
-  "slug"        TEXT NOT NULL UNIQUE,
-  "template"    TEXT NOT NULL DEFAULT 'default',
-  "config"      JSONB NOT NULL DEFAULT '{}',
-  "publishedAt" TIMESTAMP,
-  "createdAt"   TIMESTAMP NOT NULL DEFAULT NOW(),
-  "updatedAt"   TIMESTAMP NOT NULL DEFAULT NOW()
-);
-```
-
-### Default Config Shape
-
-```typescript
-interface SiteConfig {
-  hero: {
-    headline: string
-    subheadline: string
-    ctaText: string
-  }
-  about: {
-    description: string
-    mission: string | null
-  }
-  contact: {
-    email: string | null
-    mapsUrl: string | null
-  }
-  selectedProductIds: string[]
-  colors: {
-    primary: string    // hex, default "#059669"
-    secondary: string  // hex, default "#f59e0b"
-  }
-  waOrderTemplate: string  // default lihat ARCHITECTURE.md
+```prisma
+model WebSite {
+  id        String   @id @default("default")
+  config    Json     @default("{}")
+  published Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 ```
 
-### Default Values (first create)
+Semua konfigurasi disimpan di field `config` (JSON). Default config shape:
 
-Saat pertama kali `GET /api/website` dan belum ada data, endpoint akan return `data: null`. Dashboard bisa auto-create dengan `PUT /api/website` dengan body minimal.
+```typescript
+interface SiteConfig {
+  heroHeadline: string
+  heroSubheadline?: string
+  aboutText: string
+  primaryColor: string      // hex, default "#059669"
+  secondaryColor: string    // hex, default "#f59e0b"
+  phone?: string
+  selectedProductIds: string[]
+  template: string          // default "default"
+  theme: string             // "classic" | "modern" | "vibrant" | "elegant"
+}
+```
 
 ---
 
@@ -104,150 +88,100 @@ Saat pertama kali `GET /api/website` dan belum ada data, endpoint akan return `d
 Ambil konfigurasi website generator.
 
 ```typescript
-// Response 200 — site sudah ada
+// Response 200
 {
   "status": "success",
   "data": {
-    "id": "default",
-    "slug": "toko-ayu",
+    "heroHeadline": "Toko Ayu",
+    "heroSubheadline": "Kuliner enak sejak 2010",
+    "aboutText": "Toko Ayu menyediakan...",
+    "primaryColor": "#059669",
+    "secondaryColor": "#f59e0b",
+    "selectedProductIds": ["uuid-1", "uuid-2"],
     "template": "default",
-    "config": {
-      "hero": {
-        "headline": "Toko Ayu",
-        "subheadline": "Kuliner enak sejak 2010",
-        "ctaText": "Lihat Produk"
-      },
-      "about": {
-        "description": "Toko Ayu menyediakan...",
-        "mission": null
-      },
-      "contact": {
-        "email": null,
-        "mapsUrl": null
-      },
-      "selectedProductIds": ["uuid-1", "uuid-2"],
-      "colors": {
-        "primary": "#059669",
-        "secondary": "#f59e0b"
-      },
-      "waOrderTemplate": "Halo {store.businessName}, saya tertarik dengan produk berikut:\n\n• {product.name}\n• Harga: Rp {product.price}\n\nApakah produk ini tersedia?"
-    },
-    "publishedAt": null,
-    "createdAt": "2026-06-22T00:00:00.000Z",
-    "updatedAt": "2026-06-22T00:00:00.000Z"
+    "theme": "classic"
   }
-}
-
-// Response 200 — site belum pernah dibuat (data null)
-{
-  "status": "success",
-  "message": "site not configured yet",
-  "data": null
 }
 ```
 
-### PUT /api/website 🔒
+### PUT /api/website 🔒 JWT
 
 Buat atau update konfigurasi website generator. **Idempotent** — panggil pertama = create, selanjutnya = update.
 
 ```typescript
-// Request body
+// Request body (partial — semua field optional)
 {
-  "slug": "toko-ayu",                    // required, URL-safe
-  "template": "default",                  // optional, default "default"
-  "config": {                             // required
-    "hero": {
-      "headline": "Toko Ayu",             // required
-      "subheadline": "Kuliner enak sejak 2010", // optional
-      "ctaText": "Lihat Produk"           // optional
-    },
-    "about": {
-      "description": "Toko Ayu menyediakan...", // required
-      "mission": null                     // optional
-    },
-    "contact": {
-      "email": null,                      // optional
-      "mapsUrl": null                     // optional
-    },
-    "selectedProductIds": ["uuid-1", "uuid-2"], // required, array of Product IDs
-    "colors": {
-      "primary": "#059669",               // optional, default "#059669"
-      "secondary": "#f59e0b"              // optional, default "#f59e0b"
-    },
-    "waOrderTemplate": "Halo..."          // optional, default template
-  }
+  "heroHeadline": "Toko Ayu",                    // optional
+  "heroSubheadline": "Kuliner enak sejak 2010",  // optional
+  "aboutText": "Toko Ayu menyediakan...",        // optional
+  "primaryColor": "#059669",                     // optional, hex color
+  "secondaryColor": "#f59e0b",                   // optional, hex color
+  "selectedProductIds": ["uuid-1", "uuid-2"],    // optional
+  "template": "default",                         // optional
+  "theme": "classic"                             // optional, "classic"|"modern"|"vibrant"|"elegant"
 }
 
 // Response 200
 {
   "status": "success",
-  "message": "site config updated",
+  "message": "website config updated",
   "data": {
-    "id": "default",
-    "slug": "toko-ayu",
+    "heroHeadline": "Toko Ayu",
+    "heroSubheadline": "Kuliner enak sejak 2010",
+    "aboutText": "Toko Ayu menyediakan...",
+    "primaryColor": "#059669",
+    "secondaryColor": "#f59e0b",
+    "selectedProductIds": ["uuid-1", "uuid-2"],
     "template": "default",
-    "config": { ... },
-    "publishedAt": null,
-    "createdAt": "2026-06-22T00:00:00.000Z",
-    "updatedAt": "2026-06-22T00:00:00.000Z"
+    "theme": "classic"
   }
 }
 ```
 
 ```typescript
-// Error 400 — slug tidak valid
+// Error 400 — invalid hex color
 {
   "status": "failure",
   "message": "Validation failed",
   "data": [
-    { "path": "slug", "message": "Must be URL-safe (letters, numbers, hyphens only)" }
+    { "path": "primaryColor", "message": "Must be hex color" }
   ]
 }
 ```
 
 ---
 
-## 4. Endpoint Preview
+## 4. Endpoint Generate (Preview + Production)
 
-### POST /api/website/preview 🔒
+### POST /api/website/generate 🔒 JWT
 
-Generate website preview. Server akan:
+Generate website. Server akan:
 
-1. Ambil site config dari DB
-2. Fetch data Store, Products (filtered), Orders stats
-3. Panggil `web-gen/generate()` → build Astro
-4. Output ke `web-gen/generated-sites/preview/{slug}/`
-5. Dashboard bisa lihat hasil di `/s/{slug}/`
+1. Validasi request + simpan config ke DB (WebSite table)
+2. Fetch data Store, Products (filtered), Orders stats dari DB
+3. Panggil `generate()` dari web-gen → copy template → inject data → `bun install` → `bunx astro build`
+4. Output ke `api/generated-sites/default/`
+5. Dashboard bisa lihat hasil di `/s/default/`
 
 ```typescript
-// Request body — kosong (gunakan data yang sudah disimpan)
-{}
+// Request body
+{
+  "template": "default"     // optional, default "default"
+}
 
 // Response 200 — sukses
 {
   "status": "success",
-  "message": "preview generated",
+  "message": "website generated",
   "data": {
-    "success": true,
-    "outputPath": "/abs/path/web-gen/generated-sites/preview/toko-ayu",
-    "previewUrl": "/s/toko-ayu/"
+    "outputPath": "/abs/path/api/generated-sites/default"
   }
-}
-
-// Response 400 — site belum dikonfigurasi
-{
-  "status": "failure",
-  "message": "Configure site first via PUT /api/website"
 }
 
 // Response 500 — build gagal
 {
   "status": "failure",
-  "message": "Build failed",
-  "data": {
-    "success": false,
-    "error": "npm install failed: ..."
-  }
+  "message": "Generate failed: ..."
 }
 ```
 
@@ -257,26 +191,26 @@ Generate website preview. Server akan:
 
 ## 5. Endpoint Download
 
-### GET /api/website/download 🔒
+### GET /api/website/download 🔒 JWT
 
-Download hasil preview terakhir sebagai file `.zip`.
+Download hasil generate terakhir sebagai file `.zip`.
 
 ```typescript
 // Response 200 — stream file
 // Content-Type: application/zip
-// Content-Disposition: attachment; filename="toko-ayu.zip"
+// Content-Disposition: attachment; filename="website-default.zip"
 
-// Response 400 — preview belum di-generate
+// Response 404 — belum di-generate
 {
   "status": "failure",
-  "message": "Generate preview first via POST /api/website/preview"
+  "message": "no generated website found — generate first"
 }
 ```
 
 **Isi ZIP:**
 ```
-toko-ayu.zip
-└── toko-ayu/
+website-default.zip
+└── default/
     ├── index.html
     ├── produk/index.html
     ├── kontak/index.html
@@ -291,17 +225,9 @@ toko-ayu.zip
 
 ## 6. Endpoint Publish
 
-### POST /api/website/publish 🔒
+### POST /api/website/publish 🔒 JWT
 
-Generate dan publish website final. Beda dengan preview:
-
-| Aspek | Preview | Publish |
-|-------|---------|---------|
-| Output | `preview/{slug}/` | `{slug}/` |
-| Serve via Express | ✅ Ya | ❌ Tidak |
-| Set `publishedAt` | ❌ Tidak | ✅ Ya |
-| ZIP download | ✅ Dari sini | ❌ Dari folder publish |
-| Dapat diakses publik | Tidak langsung | Via deploy manual |
+Tandai website sebagai published (set `published: true` di database). Generate harus dilakukan terlebih dahulu.
 
 ```typescript
 // Request body — kosong
@@ -310,18 +236,13 @@ Generate dan publish website final. Beda dengan preview:
 // Response 200
 {
   "status": "success",
-  "message": "site published",
-  "data": {
-    "success": true,
-    "outputPath": "/abs/path/web-gen/generated-sites/toko-ayu",
-    "publishedAt": "2026-06-22T10:30:00.000Z"
-  }
+  "message": "website published"
 }
 
-// Response 400
+// Response 404 — belum di-generate
 {
   "status": "failure",
-  "message": "Configure site first via PUT /api/website"
+  "message": "no generated website found — generate first"
 }
 ```
 
@@ -329,31 +250,20 @@ Generate dan publish website final. Beda dengan preview:
 
 ## 7. Static File Serving
 
-Express menyajikan folder `preview/` sebagai static files untuk preview di iframe dashboard:
+Express menyajikan folder `generated-sites/` sebagai static files:
 
 ```typescript
-// api/src/index.ts
-app.use("/s", express.static(path.join(__dirname, "../../web-gen/generated-sites/preview")))
+// api/src/server.ts
+const generatedDir = path.resolve(import.meta.dir, "..", "generated-sites")
+app.use("/s", express.static(generatedDir))
 ```
 
-Dengan ini, preview bisa diakses di browser:
+Hasil generate bisa diakses di browser:
 
 ```
-http://localhost:3001/s/toko-ayu/         → index.html
-http://localhost:3001/s/toko-ayu/produk/  → produk/index.html
-http://localhost:3001/s/toko-ayu/kontak/  → kontak/index.html
-```
-
-### Vite Proxy (Development)
-
-```typescript
-// dashboard/vite.config.ts
-server: {
-  proxy: {
-    "/api": "http://localhost:3001",
-    "/s":   "http://localhost:3001",    // forward ke Express static
-  },
-}
+http://localhost:3001/s/default/            → index.html
+http://localhost:3001/s/default/produk/     → produk/index.html
+http://localhost:3001/s/default/kontak/     → kontak/index.html
 ```
 
 ---
@@ -396,5 +306,4 @@ server: {
 ---
 
 > **Catatan Implementasi**: Semua endpoint sudah diimplementasikan di `api/`.
-> Endpoint menggunakan prefix `/api/website` (bukan `/api/website`).
-> Static file diserve dari `api/generated-sites/` via Express `express.static`.
+> Static file diserve dari `api/generated-sites/` via Express `express.static` di path `/s`.
