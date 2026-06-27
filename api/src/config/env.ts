@@ -18,8 +18,8 @@ export const env = {
     llmApiKey: process.env.LLM_API_KEY ?? process.env.OPENROUTER_API_KEY ?? "",
     openrouterApiKey: process.env.OPENROUTER_API_KEY ?? "",
     llmBaseUrl: process.env.LLM_BASE_URL ?? "https://openrouter.ai/api/v1/chat/completions",
-    defaultModel: process.env.LLM_MODEL ?? "google/gemma-4-31b-it:free",
-    fallbackModel: process.env.LLM_FALLBACK_MODEL ?? "qwen/qwen3-next-80b-a3b-instruct:free",
+    defaultModel: process.env.LLM_MODEL ?? "deepseek-v4-flash-free",
+    fallbackModel: process.env.LLM_FALLBACK_MODEL ?? "north-mini-code-free",
     maxTokens: num("LLM_MAX_TOKENS", 2048),
     temperature: num("LLM_TEMPERATURE", 0.7)
   },

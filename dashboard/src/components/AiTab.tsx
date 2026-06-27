@@ -84,7 +84,7 @@ export default function AiTab({ config, onUpdate }: AiTabProps) {
             {' atau '}
             <a href="https://openrouter.ai/models?q=free" target="_blank" rel="noopener noreferrer" className="text-teal-600 underline">OpenRouter</a>
             . Contoh: <code className="text-stone-500">deepseek-v4-flash-free</code>,{' '}
-            <code className="text-stone-500">qwen/qwen3-next-80b-a3b-instruct:free</code>
+            <code className="text-stone-500">north-mini-code-free</code>
           </p>
           <p className="mt-0.5 text-xs text-stone-400">
             API Key via <code className="text-stone-500">LLM_API_KEY</code> atau <code className="text-stone-500">OPENROUTER_API_KEY</code>{' '}
