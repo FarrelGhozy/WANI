@@ -1,9 +1,9 @@
-import { makeWASocket, Browsers, useMultiFileAuthState } from "baileys";
+import { makeWASocket, Browsers } from "baileys";
 import pino from "pino";
 import qrcode from "qrcode-terminal";
 import axios from "axios";
-// import { prisma } from "@/src/config/db";
-// import { usePrismaAuthState } from "@/src/services/whatsapp-auth";
+import { prisma } from "@/src/config/db";
+import { usePrismaAuthState } from "@/src/services/whatsapp-auth";
 
 const logger = pino({
   level: "info",
@@ -23,12 +23,11 @@ const api = axios.create({
 });
 
 async function main() {
-  const { state, saveCreds } = await useMultiFileAuthState("auth-info");
+  const { state, saveCreds } = await usePrismaAuthState(prisma);
 
   const sock = makeWASocket({
     auth: state,
     logger,
-    printQRInTerminal: true,
     browser: Browsers.ubuntu("Firefox")
   });
 
