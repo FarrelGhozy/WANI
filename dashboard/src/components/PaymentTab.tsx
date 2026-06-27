@@ -276,7 +276,7 @@ export default function PaymentTab() {
 
       {/* Table */}
       {methods.length === 0 ? (
-        <div className="mt-4 rounded-lg border-2 border-dashed border-stone-300 p-8 text-center">
+        <div className="mt-4 rounded-lg border-2 border-dashed border-stone-300 p-6 text-center md:p-8">
           <p className="text-sm text-stone-500 mb-1">Belum ada metode pembayaran</p>
           <p className="text-xs text-stone-400">Tambahkan minimal satu metode agar pelanggan bisa membayar</p>
         </div>
@@ -285,10 +285,10 @@ export default function PaymentTab() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-stone-200 text-left text-xs font-medium uppercase tracking-wider text-stone-400">
-                <th className="py-3 pr-4">Tipe</th>
-                <th className="py-3 pr-4">Detail</th>
-                <th className="py-3 pr-4 text-center">Status</th>
-                <th className="py-3 text-right">Aksi</th>
+                <th className="py-2 pr-3 md:py-3 md:pr-4">Tipe</th>
+                <th className="py-2 pr-3 md:py-3 md:pr-4">Detail</th>
+                <th className="py-2 pr-3 text-center md:py-3 md:pr-4">Status</th>
+                <th className="py-2 text-right md:py-3">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-stone-100">
@@ -297,28 +297,28 @@ export default function PaymentTab() {
                   key={method.id}
                   className={`transition-colors hover:bg-stone-50/50 ${method.isActive ? '' : 'opacity-50'}`}
                 >
-                  <td className="py-3 pr-4">
-                    <div className="flex items-center gap-3">
-                      <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-sm ${TYPE_CONFIG[method.type].color}`}>
+                  <td className="py-2 pr-3 md:py-3 md:pr-4">
+                    <div className="flex items-center gap-2 md:gap-3">
+                      <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-xs md:h-8 md:w-8 md:text-sm ${TYPE_CONFIG[method.type].color}`}>
                         {TYPE_CONFIG[method.type].icon}
                       </div>
-                      <div>
-                        <p className="text-sm font-medium text-stone-900 truncate max-w-[180px] sm:max-w-xs">
+                      <div className="min-w-0">
+                        <p className="text-xs font-medium text-stone-900 truncate max-w-[140px] sm:max-w-[200px] md:text-sm">
                           {methodLabel(method)}
                         </p>
-                        <p className="text-xs text-stone-400">{TYPE_CONFIG[method.type].label}</p>
+                        <p className="text-[10px] text-stone-400 md:text-xs">{TYPE_CONFIG[method.type].label}</p>
                       </div>
                     </div>
                   </td>
-                  <td className="py-3 pr-4">
-                    <div className="flex items-center gap-3">
+                  <td className="py-2 pr-3 md:py-3 md:pr-4">
+                    <div className="flex items-center gap-2 md:gap-3">
                       {method.type === 'QRIS' && method.qrImageUrl ? (
-                        <img src={method.qrImageUrl} alt="QRIS" className="h-10 w-10 rounded border border-stone-200 object-cover" />
+                        <img src={method.qrImageUrl} alt="QRIS" className="h-8 w-8 rounded border border-stone-200 object-cover md:h-10 md:w-10" />
                       ) : null}
-                      <span className="text-xs text-stone-600">{methodDetail(method)}</span>
+                      <span className="text-[10px] text-stone-600 md:text-xs">{methodDetail(method)}</span>
                     </div>
                   </td>
-                  <td className="py-3 pr-4 text-center">
+                  <td className="py-2 pr-3 text-center md:py-3 md:pr-4">
                     <button
                       onClick={() => handleToggle(method)}
                       className={`relative inline-block h-5 w-9 rounded-full transition-colors ${
@@ -332,7 +332,7 @@ export default function PaymentTab() {
                       />
                     </button>
                   </td>
-                  <td className="py-3 text-right">
+                  <td className="py-2 text-right md:py-3">
                     <div className="flex items-center justify-end gap-1">
                       <button
                         onClick={() => openEdit(method)}
@@ -363,7 +363,7 @@ export default function PaymentTab() {
       <Modal
         open={modalOpen}
         onClose={closeModal}
-        title={editing ? 'Edit Metode Pembayaran' : `Tambah ${TYPE_CONFIG[editing ? editing.type : activeType].label}`}
+        title={editing ? 'Edit Metode Pembayaran' : `Tambah ${TYPE_CONFIG[activeType].label}`}
         actions={
           <div className="flex gap-2">
             <Button size="sm" variant="secondary" onClick={closeModal}>Batal</Button>
