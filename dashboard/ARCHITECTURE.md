@@ -18,6 +18,7 @@
 | **Lint** | ESLint | 10.5.0 |
 | **TS Lint** | typescript-eslint | 8.61.1 |
 | **Compiler** | React Compiler (Babel) | 1.0.0 |
+| **CSS Framework** | Tailwind CSS (Vite plugin) | 4.3.1 |
 
 ### Prinsip Stack
 
@@ -206,13 +207,14 @@ dashboard/
 │   │   └── api.ts               # Fetch wrapper (unified response parse)
 │   │
 │   ├── hooks/                   # Custom React hooks (real API via fetchApi)
+│   │   ├── useAuth.ts           # Login/register/logout/logged-in user
 │   │   ├── useWaStatus.ts       # WA connection status + QR polling
 │   │   ├── useProducts.ts       # Produk CRUD + sort/filter
-│   │   ├── useOrders.ts         # Order list + sort/filter/status
+│   │   ├── useOrders.ts         # Order list + sort/filter/status + payment confirm
 │   │   ├── useCustomers.ts      # Customer list + conversations
 │   │   ├── useSettings.ts       # Store profile + AI config
-│   │   ├── useAuth.ts           # Login/register/logout (MOCK=false)
-│   │   └── useWebsite.ts       # Website config + generate
+│   │   ├── usePaymentMethods.ts # Payment method CRUD (QRIS/Bank/E-Wallet/COD)
+│   │   ├── useWebsite.ts        # Website config + generate
 │   │
 │   ├── components/              # Shared UI components & feature components
 │   │   ├── ui/                  # Primitives
@@ -234,9 +236,13 @@ dashboard/
 │   │   ├── Icons.tsx            # SVG icon library
 │   │   ├── QRCode.tsx           # QR display from string
 │   │   ├── StatusCard.tsx       # Metric stat card
+│   │   ├── AuthLayout.tsx       # Public layout: centered card + logo
+│   │   ├── ProtectedRoute.tsx   # Auth gate: redirect to /login if not authenticated
 │   │   ├── StoreTab.tsx         # Settings — Store tab form
 │   │   ├── AiTab.tsx            # Settings — AI Agent tab form
 │   │   ├── WaSessionTab.tsx     # WA QR login + session detail (uses useWaStatus)
+│   │   ├── PaymentTab.tsx       # Settings — Payment methods tab (QRIS/Bank/E-Wallet/COD)
+│   │   ├── CategoryModal.tsx    # Products — category CRUD modal
 │   │   ├── ProductListView.tsx  # Products — sortable table view
 │   │   ├── ProductCard.tsx      # Products — card/grid view
 │   │   ├── OrderListView.tsx    # Orders — sortable table view
@@ -245,16 +251,17 @@ dashboard/
 │   │   └── ChatView.tsx         # Customers — inline chat panel
 │   │
 │   ├── pages/                   # Page components (one per route)
-│   │   ├── Dashboard.tsx        # Revenue, pending orders, stock alerts, WA status
+│   │   ├── Dashboard.tsx        # Revenue, pending orders, stock alerts, WA status, warning banner
 │   │   ├── Products.tsx         # Product list/card + CRUD form
 │   │   ├── ProductForm.tsx      # Add/Edit product form
 │   │   ├── Orders.tsx           # Order list with sort & status filter
-│   │   ├── OrderDetail.tsx      # Order detail + status timeline
+│   │   ├── OrderDetail.tsx      # Order detail + status timeline + payment confirmation
 │   │   ├── Customers.tsx        # Dual-panel: customer list + inline chat
-│   │   ├── Settings.tsx         # Tabs: Store / AI Agent / WA Session
-│   │   └── Website.tsx          # Website config, generate, download
-│   │
-│   └── (no mocks/ — inline mock data in each hook)
+│   │   ├── Settings.tsx         # Tabs: Store / AI Agent / WA Session / Pembayaran
+│   │   ├── Website.tsx          # Website config, generate, download
+│   │   ├── LoginPage.tsx        # Login form (email + password)
+│   │   ├── SignUpPage.tsx       # Registration form
+│   │   └── ForgotPasswordPage.tsx # Password reset flow
 ```
 
 ---
@@ -306,6 +313,9 @@ Semua UI primitives ada di `components/ui/`, menggunakan Tailwind utility classe
 ## Routing Design
 
 ```
+/login              → LoginPage (public, AuthLayout)
+/signup             → SignUpPage (public, AuthLayout)
+/forgot-password    → ForgotPasswordPage (public, AuthLayout)
 /                   → Dashboard (QR + Status + quick stats)
 /products           → Products (CRUD table)
 /products/new       → ProductForm (create)
@@ -314,17 +324,28 @@ Semua UI primitives ada di `components/ui/`, menggunakan Tailwind utility classe
 /orders/:id         → OrderDetail
 /customers          → Customers + Chats (list + inline chat)
 /customers/:id      → Customers (state-driven, not a separate page)
-/settings           → Store + AI Config + WA Session
+/website            → Website config + generate + download
+/settings           → Store + AI Config + WA Session + Pembayaran
 ```
 
 React Router v8 dengan `createBrowserRouter`:
 
 ```tsx
 const router = createBrowserRouter([
+  // Public routes — AuthLayout (no sidebar, centered card)
   {
-    element: <Layout />,
+    element: <AuthLayout />,
     children: [
-      { index: true,          element: <Dashboard /> },
+      { path: '/login',           element: <LoginPage /> },
+      { path: '/signup',          element: <SignUpPage /> },
+      { path: '/forgot-password', element: <ForgotPasswordPage /> },
+    ],
+  },
+  // Protected routes — Layout (with sidebar + topbar)
+  {
+    element: <ProtectedRoute><Layout /></ProtectedRoute>,
+    children: [
+      { index: true,           element: <Dashboard /> },
       { path: 'products',     element: <Products /> },
       { path: 'products/new',  element: <ProductForm /> },
       { path: 'products/:id',  element: <ProductForm /> },
@@ -332,6 +353,7 @@ const router = createBrowserRouter([
       { path: 'orders/:id',   element: <OrderDetail /> },
       { path: 'customers',    element: <Customers /> },
       { path: 'customers/:id',element: <Customers /> },
+      { path: 'website',      element: <Website /> },
       { path: 'settings',     element: <Settings /> },
     ],
   },
@@ -374,10 +396,14 @@ const router = createBrowserRouter([
   ┌──────────────────────────────────────────────┐
   │            src/hooks/use*.ts                   │
   │                                                │
+  │  useAuth()          → { login, register, ... } │
   │  useWaStatus()      → { qr, connection, ... } │
-  │  useProducts()       → { products, loading }  │
-  │  useOrders()         → { orders, filters }    │
-  │  useCustomers()      → { customers, chats }   │
+  │  useProducts()      → { products, loading }  │
+  │  useOrders()        → { orders, filters }    │
+  │  useCustomers()     → { customers, chats }   │
+  │  useSettings()      → { store, aiConfig }    │
+  │  usePaymentMethods()->{ methods, crud }      │
+  │  useWebsite()       → { config, generate }   │
   └──────────────────┬───────────────────────────┘
                      │
                      ▼
@@ -512,13 +538,14 @@ Klik customer → load percakapan.
 
 ### 5. Settings (`/settings`)
 
-Settings adalah halaman tab tunggal dengan 3 bagian:
+Settings adalah halaman tab tunggal dengan 4 bagian:
 
 | Tab | Isi |
 |-----|-----|
-| **Store** | Business name, phone, logo/photo, address, business hours, payment methods, shipping info, return policy |
+| **Store** | Business name, phone, logo/photo, address, business hours, shipping info, return policy |
 | **AI Agent** | System prompt, model, greeting message, knowledge base, temperature, max tokens, active toggle |
 | **WA Session** | QR login flow, status koneksi (dot + label), nomor telepon, session detail (platform, connected since, last active), disconnect/connect button, info card tentang session |
+| **Pembayaran** | List metode pembayaran (QRIS/Bank Transfer/E-Wallet/COD), tambah/edit/hapus, upload QRIS, toggle aktif/nonaktif |
 
 Desain tab horizontal di bagian atas, konten di bawah. Satu form per tab.
 
@@ -554,7 +581,7 @@ Jika polling data dibutuhkan di multiple pages, hook akan di-memoize dengan `use
 
 **Semua hooks sudah terintegrasi dengan API nyata.** Mock strategy digunakan saat development awal (setiap hook punya `MOCK = true` dengan data inline). Sekarang:
 
-- `useProducts`, `useOrders`, `useCustomers`, `useSettings`, `useWebsite` — **no MOCK toggle**, real API via `fetchApi()`
+- `useProducts`, `useOrders`, `useCustomers`, `useSettings`, `usePaymentMethods`, `useWebsite` — **no MOCK toggle**, real API via `fetchApi()`
 - `useWaStatus`, `useAuth` — retain `MOCK = false` toggle for legacy compatibility
 
 ---
@@ -584,7 +611,7 @@ createBrowserRouter([
 
 | File | Role |
 |------|------|
-| `hooks/useAuth.ts` | Hook auth mock dengan `MOCK = true`: `{ user, isAuthenticated, login(), register(), logout(), loading, error }` |
+| `hooks/useAuth.ts` | Hook auth dengan `MOCK = false`: `{ user, isAuthenticated, login(), register(), logout(), loading, error }` |
 | `components/AuthLayout.tsx` | Layout publik: full-screen centered, card putih shadow-lg dengan logo WANI + `<Outlet />` |
 | `components/ProtectedRoute.tsx` | Gate: cek `isAuthenticated` → render children atau redirect ke `/login` |
 | `pages/LoginPage.tsx` | Form email + password, validasi client-side, show/hide toggle, error alert, loading state. Link ke signup + forgot password |
@@ -609,15 +636,14 @@ LoginPage                         ProtectedRoute
               └─ navigate('/login')
 ```
 
-### Mock Credentials
+### Auth Storage
 
-```typescript
-// MOCK = true — semua email & password diterima (asalkan validasi lolos)
-login('admin@wani.id', 'password')   → user { name: 'Admin WANI', email, role: 'admin' }
-register('Nama', 'email', 'password') → user { name, email, role: 'admin' }
-```
+Token & user disimpan di localStorage (`wani_auth_token`, `wani_auth_user`). Hook akan call real API endpoints:
 
-Token & user disimpan di localStorage (`wani_auth_token`, `wani_auth_user`). Saat `MOCK = false`, hook akan call `POST /api/auth/login` dan `POST /api/auth/register`.
+- `POST /api/auth/login` → login
+- `POST /api/auth/register` → register
+- `GET /api/auth/me` → verify current token
+- `POST /api/auth/logout` → logout
 
 ### API Token Auto-attach
 
@@ -670,5 +696,8 @@ bun run preview
 | **P2** | ✅ Selesai | Products CRUD (list, card, form, categories, sort) |
 | **P3** | ✅ Selesai | Orders management (list, detail, status update, sort) |
 | **P4** | ✅ Selesai | Customers + Inline Chat (dual panel, mobile back) |
-| **P5** | ✅ Selesai | Settings (Store + AI + WA Session tabs with photo) |
-| **P6** | ✅ Selesai | Integrasi API — semua hooks pakai real API
+| **P5** | ✅ Selesai | Settings (Store + AI + WA Session + Pembayaran tabs) |
+| **P6** | ✅ Selesai | Integrasi API — semua hooks pakai real API |
+| **P7** | ✅ Selesai | Auth pages (Login + Sign Up + Forgot Password) + JWT |
+| **P8** | ✅ Selesai | Halaman Website config + generate |
+| **P9** | ✅ Selesai | Manual payment flow + warning banner + konfirmasi pembayaran |
