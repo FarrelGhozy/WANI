@@ -8,6 +8,7 @@ import Card from '@/components/ui/Card.tsx'
 import Button from '@/components/ui/Button.tsx'
 import Input from '@/components/ui/Input.tsx'
 import CategoryModal from '@/components/CategoryModal.tsx'
+import PaymentTab from '@/components/PaymentTab.tsx'
 
 interface StoreTabProps {
   store: StoreProfile
@@ -33,8 +34,6 @@ const DEFAULT_HOURS: HoursState = {
   Sabtu: { open: false, start: '', end: '' },
   Minggu: { open: false, start: '', end: '' },
 }
-
-const PAYMENT_OPTIONS = ['QRIS', 'Transfer Bank', 'E-Wallet', 'COD', 'Tunai']
 
 function formatHoursState(hours: HoursState): string {
   const parts: string[] = []
@@ -207,46 +206,6 @@ function BusinessHoursEditor({
   )
 }
 
-function PaymentMethodsCheckbox({
-  value,
-  onChange,
-}: {
-  value: string | null
-  onChange: (v: string) => void
-}) {
-  const selected = new Set((value ?? 'QRIS, Transfer Bank, E-Wallet, COD').split(', ').filter(Boolean))
-
-  function toggle(method: string) {
-    const next = new Set(selected)
-    if (next.has(method)) next.delete(method)
-    else next.add(method)
-    onChange(Array.from(next).join(', '))
-  }
-
-  return (
-    <div className="flex flex-wrap gap-3">
-      {PAYMENT_OPTIONS.map((opt) => (
-        <label
-          key={opt}
-          className={`flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 text-sm transition-colors ${
-            selected.has(opt)
-              ? 'border-teal-400 bg-teal-50 text-teal-700'
-              : 'border-stone-300 bg-white text-stone-600 hover:border-stone-400'
-          }`}
-        >
-          <input
-            type="checkbox"
-            checked={selected.has(opt)}
-            onChange={() => toggle(opt)}
-            className="h-4 w-4 accent-teal-600"
-          />
-          {opt}
-        </label>
-      ))}
-    </div>
-  )
-}
-
 function validateHours(hours: HoursState): string | null {
   for (const day of DAYS) {
     const h = hours[day]
@@ -270,7 +229,6 @@ export default function StoreTab({ store, onUpdate }: StoreTabProps) {
     phone: cleanPhone(store.phone),
     address: store.address ?? '',
     businessHours: store.businessHours ?? null,
-    paymentMethods: store.paymentMethods ?? null,
     shippingInfo: store.shippingInfo ?? null,
     returnPolicy: store.returnPolicy ?? null,
   }))
@@ -290,7 +248,6 @@ export default function StoreTab({ store, onUpdate }: StoreTabProps) {
         phone: form.phone,
         address: form.address || null,
         businessHours: form.businessHours || null,
-        paymentMethods: form.paymentMethods || null,
         shippingInfo: form.shippingInfo || null,
         returnPolicy: form.returnPolicy || null,
       })
@@ -404,12 +361,6 @@ export default function StoreTab({ store, onUpdate }: StoreTabProps) {
               onChange={(v) => { setForm((prev) => ({ ...prev, businessHours: v })); setErrors((prev) => ({ ...prev, businessHours: '' })) }}
             />
           </Field>
-          <Field label="Metode Pembayaran">
-            <PaymentMethodsCheckbox
-              value={form.paymentMethods}
-              onChange={(v) => setForm((prev) => ({ ...prev, paymentMethods: v || null }))}
-            />
-          </Field>
           <Field label="Info Pengiriman">
             <textarea
               value={form.shippingInfo ?? ''}
@@ -450,6 +401,12 @@ export default function StoreTab({ store, onUpdate }: StoreTabProps) {
         <div className="mt-4 flex justify-end gap-3">
           <Button size="sm" loading={saving} onClick={handleSave}>Simpan Perubahan</Button>
         </div>
+      </Card>
+
+      {/* Payment Methods */}
+      <Card accent="teal" className="mt-6">
+        <h2 className="mb-5 text-lg font-semibold text-stone-900">Metode Pembayaran</h2>
+        <PaymentTab />
       </Card>
 
       {/* Categories */}
