@@ -3,6 +3,7 @@ import type { z } from "zod"
 import { WaSessionModel } from "@/src/models/wa-session"
 import { sendResponse } from "@/src/utils/response"
 import { upsertQrSchema } from "@/src/schemas/wa-session"
+import { clearBotCreds } from "@/src/utils/wa-bot-db"
 
 type UpsertQrBody = z.infer<typeof upsertQrSchema>
 
@@ -31,4 +32,10 @@ export async function upsertQr(
 export async function clearQr(_req: Request, res: Response): Promise<void> {
   await WaSessionModel.clearQr()
   sendResponse(res, 200, "qr cleared")
+}
+
+export async function resetQr(_req: Request, res: Response): Promise<void> {
+  await clearBotCreds()
+  await WaSessionModel.upsert({ qr: null, status: "disconnected" })
+  sendResponse(res, 200, "reset berhasil — bot akan scan QR baru")
 }

@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react'
 import { useSearchParams } from 'react-router'
 import { useSettings } from '@/hooks/useSettings.ts'
 import { useWaStatus } from '@/hooks/useWaStatus.ts'
+import { fetchApi } from '@/lib/api.ts'
 import StoreTab from '@/components/StoreTab.tsx'
 import AiTab from '@/components/AiTab.tsx'
 import WaSessionTab from '@/components/WaSessionTab.tsx'
@@ -38,6 +39,21 @@ export default function Settings() {
   const handleConnect = useCallback(() => {
     setOverride(null)
   }, [])
+
+  const [resetting, setResetting] = useState(false)
+
+  const handleReset = useCallback(async () => {
+    if (resetting) return
+    setResetting(true)
+    try {
+      await fetchApi('/api/qr/reset', { method: 'POST' })
+      setOverride(null)
+    } catch {
+      // error ignored — next poll will show current state
+    } finally {
+      setResetting(false)
+    }
+  }, [resetting])
 
   if (loading) {
     return <div className="flex items-center justify-center py-20"><Spinner size={24} /></div>
@@ -88,6 +104,8 @@ export default function Settings() {
           phone={phone}
           onDisconnect={handleDisconnect}
           onConnect={handleConnect}
+          onReset={handleReset}
+          resetting={resetting}
         />
       )}
       {activeTab === 'payment' && <PaymentTab />}

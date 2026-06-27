@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import Card from '@/components/ui/Card.tsx'
 import Button from '@/components/ui/Button.tsx'
 import QRCode from '@/components/QRCode.tsx'
@@ -8,6 +9,8 @@ interface WaSessionTabProps {
   phone: string
   onDisconnect: () => void
   onConnect: () => void
+  onReset: () => void
+  resetting: boolean
 }
 
 const statusConfig: Record<string, { dot: string; label: string; bg: string }> = {
@@ -30,10 +33,40 @@ const statusConfig: Record<string, { dot: string; label: string; bg: string }> =
 
 const isMockQr = (qr: string) => !qr || qr === 'mock-qr-data-for-development'
 
-export default function WaSessionTab({ qr, connection, phone, onDisconnect, onConnect }: WaSessionTabProps) {
+export default function WaSessionTab({ qr, connection, phone, onDisconnect, onReset, resetting }: WaSessionTabProps) {
+  const [confirming, setConfirming] = useState(false)
   const cfg = statusConfig[connection] ?? statusConfig.disconnected
   const canDisconnect = connection === 'connected'
-  const canConnect = connection !== 'connecting'
+
+  const handleReset = () => {
+    if (confirming) {
+      setConfirming(false)
+      onReset()
+    } else {
+      setConfirming(true)
+    }
+  }
+
+  const resetButton = confirming ? (
+    <div className="mt-4 flex items-center gap-2">
+      <Button size="sm" variant="danger" disabled={resetting} onClick={handleReset}>
+        {resetting ? 'Mereset...' : 'Konfirmasi Reset'}
+      </Button>
+      <Button size="sm" variant="secondary" onClick={() => setConfirming(false)}>
+        Batal
+      </Button>
+    </div>
+  ) : (
+    <Button
+      size="sm"
+      variant="danger"
+      className="mt-4"
+      disabled={resetting}
+      onClick={handleReset}
+    >
+      {resetting ? 'Mereset...' : 'Reset Koneksi'}
+    </Button>
+  )
 
   return (
     <div className="space-y-6">
@@ -64,11 +97,11 @@ export default function WaSessionTab({ qr, connection, phone, onDisconnect, onCo
               ) : (
                 <Button
                   size="sm"
-                  variant="primary"
-                  disabled={!canConnect}
-                  onClick={canConnect ? onConnect : undefined}
+                  variant="danger"
+                  disabled={resetting}
+                  onClick={handleReset}
                 >
-                  {connection === 'connecting' ? 'Menghubungkan...' : 'Hubungkan'}
+                  {resetting ? 'Mereset...' : 'Reset Koneksi'}
                 </Button>
               )}
             </div>
@@ -116,18 +149,8 @@ export default function WaSessionTab({ qr, connection, phone, onDisconnect, onCo
                   </div>
                 </div>
                 <p className="text-center text-xs font-medium text-stone-500">
-                  Hubungkan WhatsApp Anda dengan menekan tombol Hubungkan di bawah.
-                  QR Code akan muncul secara otomatis saat bot mulai memproses koneksi.
+                  Jika QR Code tidak muncul, reset koneksi untuk memulai ulang proses pairing.
                 </p>
-                <Button
-                  size="sm"
-                  variant="primary"
-                  className="mt-4"
-                  disabled={!canConnect}
-                  onClick={canConnect ? onConnect : undefined}
-                >
-                  {connection === 'connecting' ? 'Menghubungkan...' : 'Hubungkan'}
-                </Button>
               </>
             ) : (
               <>
@@ -138,17 +161,9 @@ export default function WaSessionTab({ qr, connection, phone, onDisconnect, onCo
                 <p className="mt-3 text-center text-xs text-stone-400">
                   QR Code akan kadaluarsa dalam beberapa menit. Scan segera sebelum masa berlaku habis.
                 </p>
-                <Button
-                  size="sm"
-                  variant="primary"
-                  className="mt-4"
-                  disabled={!canConnect}
-                  onClick={canConnect ? onConnect : undefined}
-                >
-                  Generate QR Baru
-                </Button>
               </>
             )}
+            {resetButton}
           </div>
         )}
       </Card>
@@ -171,6 +186,10 @@ export default function WaSessionTab({ qr, connection, phone, onDisconnect, onCo
           <li className="flex gap-2">
             <span className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-teal-400" />
             Klik <span className="font-medium text-stone-600">Putuskan</span> untuk memutuskan session kapan saja.
+          </li>
+          <li className="flex gap-2">
+            <span className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400" />
+            Jika session bermasalah, klik <span className="font-medium text-stone-600">Reset Koneksi</span> untuk menghapus data session lama dan memulai pairing ulang.
           </li>
         </ul>
       </Card>
