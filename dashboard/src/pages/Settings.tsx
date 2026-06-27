@@ -87,15 +87,15 @@ export default function Settings() {
   }
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-semibold tracking-tight text-stone-900">Pengaturan</h1>
+    <div className="space-y-5 md:space-y-6">
+      <h1 className="text-xl font-semibold tracking-tight text-stone-900 md:text-2xl">Pengaturan</h1>
 
       <div className="flex overflow-x-auto border-b border-stone-200">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => handleTabChange(tab.id)}
-            className={`px-5 py-3 text-sm font-medium transition-all ${
+            className={`px-3 py-2.5 text-sm font-medium transition-all sm:px-5 sm:py-3 ${
               activeTab === tab.id
                 ? 'border-b-2 border-teal-600 text-teal-700'
                 : 'text-stone-500 hover:text-stone-700'
