@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { Category } from '@/hooks/useProducts.ts'
+import { useToast } from '@/hooks/useToast.ts'
 import Modal from '@/components/ui/Modal.tsx'
 import Button from '@/components/ui/Button.tsx'
 import Input from '@/components/ui/Input.tsx'
@@ -25,6 +26,7 @@ export default function CategoryModal({ open, onClose, categories, onCreate, onU
   const [editDesc, setEditDesc] = useState('')
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [creating, setCreating] = useState(false)
+  const { toast } = useToast()
 
   function resetNew() {
     setNewName('')
@@ -34,9 +36,15 @@ export default function CategoryModal({ open, onClose, categories, onCreate, onU
   async function handleCreate() {
     if (!newName.trim()) return
     setCreating(true)
-    await onCreate({ name: newName.trim(), description: newDesc.trim() || null })
-    setCreating(false)
-    resetNew()
+    try {
+      await onCreate({ name: newName.trim(), description: newDesc.trim() || null })
+      toast('Kategori berhasil ditambahkan', 'success')
+      resetNew()
+    } catch {
+      toast('Gagal menambahkan kategori', 'error')
+    } finally {
+      setCreating(false)
+    }
   }
 
   function startEdit(cat: CategoryItem) {
@@ -47,8 +55,23 @@ export default function CategoryModal({ open, onClose, categories, onCreate, onU
 
   async function handleEdit() {
     if (!editingId || !editName.trim()) return
-    await onUpdate(editingId, { name: editName.trim(), description: editDesc.trim() || null })
-    setEditingId(null)
+    try {
+      await onUpdate(editingId, { name: editName.trim(), description: editDesc.trim() || null })
+      toast('Kategori berhasil diperbarui', 'success')
+      setEditingId(null)
+    } catch {
+      toast('Gagal memperbarui kategori', 'error')
+    }
+  }
+
+  async function handleDelete(id: string) {
+    try {
+      await onDelete(id)
+      toast('Kategori berhasil dihapus', 'success')
+      setDeleteId(null)
+    } catch {
+      toast('Gagal menghapus kategori', 'error')
+    }
   }
 
   const deleteTarget = deleteId ? categories.find((c) => c.id === deleteId) : null
@@ -164,7 +187,7 @@ export default function CategoryModal({ open, onClose, categories, onCreate, onU
         onClose={() => setDeleteId(null)}
         title="Hapus Kategori"
         actions={
-          <Button variant="danger" size="sm" onClick={() => { onDelete(deleteId!); setDeleteId(null) }}>
+          <Button variant="danger" size="sm" onClick={() => handleDelete(deleteId!)}>
             Hapus
           </Button>
         }

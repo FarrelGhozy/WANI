@@ -1,8 +1,9 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, useCallback } from 'react'
 import type { ReactNode } from 'react'
 import { Link } from 'react-router'
 import type { StoreProfile } from '@/hooks/useSettings.ts'
 import { useProducts } from '@/hooks/useProducts.ts'
+import { useToast } from '@/hooks/useToast.ts'
 import Card from '@/components/ui/Card.tsx'
 import Button from '@/components/ui/Button.tsx'
 import CategoryModal from '@/components/CategoryModal.tsx'
@@ -25,12 +26,29 @@ export default function StoreTab({ store, onUpdate }: StoreTabProps) {
   const fileRef = useRef<HTMLInputElement>(null)
   const { categories, createCategory, updateCategory, deleteCategory } = useProducts()
   const [categoryModalOpen, setCategoryModalOpen] = useState(false)
+  const { toast } = useToast()
+
+  const handleUpdate = useCallback(async (patch: Partial<StoreProfile>) => {
+    try {
+      await onUpdate(patch)
+      if ('isActive' in patch) {
+        toast(patch.isActive ? 'Toko berhasil diaktifkan' : 'Toko berhasil dinonaktifkan', 'success')
+      }
+    } catch {
+      toast('Gagal menyimpan pengaturan toko', 'error')
+    }
+  }, [onUpdate, toast])
 
   function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
     const url = URL.createObjectURL(file)
-    onUpdate({ logoUrl: url })
+    try {
+      onUpdate({ logoUrl: url })
+      toast('Foto toko berhasil diganti', 'success')
+    } catch {
+      toast('Gagal mengganti foto toko', 'error')
+    }
   }
 
   const initial = store.businessName.charAt(0).toUpperCase()
@@ -131,7 +149,7 @@ export default function StoreTab({ store, onUpdate }: StoreTabProps) {
             <p className="text-xs text-stone-500">Nonaktifkan untuk menyembunyikan toko dari pelanggan</p>
           </div>
           <button
-            onClick={() => onUpdate({ isActive: !store.isActive })}
+            onClick={() => handleUpdate({ isActive: !store.isActive })}
             className={`relative h-6 w-11 rounded-full transition-colors ${
               store.isActive ? 'bg-teal-600' : 'bg-stone-300'
             }`}

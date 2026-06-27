@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import type { Conversation, Message } from '@/hooks/useCustomers.ts'
+import { useToast } from '@/hooks/useToast.ts'
 import Badge from '@/components/ui/Badge.tsx'
 import { formatDate } from '@/utils/format'
 
@@ -13,8 +14,8 @@ interface ChatViewProps {
 
 const roleLabel: Record<string, string> = {
   CUSTOMER: '',
-  BOT: '🤖 Bot',
-  HUMAN: '👤 Anda',
+  BOT: 'Bot',
+  HUMAN: 'Anda',
 }
 
 const roleBg: Record<string, string> = {
@@ -49,6 +50,7 @@ const statusVariant: Record<string, 'teal' | 'green' | 'amber' | 'gray'> = {
 export default function ChatView({ customerName, conversation, onBack, onSendMessage, sending }: ChatViewProps) {
   const [input, setInput] = useState('')
   const bottomRef = useRef<HTMLDivElement>(null)
+  const { toast } = useToast()
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -56,8 +58,13 @@ export default function ChatView({ customerName, conversation, onBack, onSendMes
 
   function handleSend() {
     if (!input.trim() || !onSendMessage) return
-    onSendMessage(input.trim())
-    setInput('')
+    try {
+      onSendMessage(input.trim())
+      setInput('')
+      toast('Pesan berhasil dikirim', 'success')
+    } catch {
+      toast('Gagal mengirim pesan', 'error')
+    }
   }
 
   return (

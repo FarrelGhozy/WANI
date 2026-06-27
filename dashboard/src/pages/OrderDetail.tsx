@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router'
 import { useOrders, formatPrice, type OrderStatus } from '@/hooks/useOrders.ts'
 import { fetchApi } from '@/lib/api'
 import type { StorePaymentMethod } from '@/types'
+import { useToast } from '@/hooks/useToast.ts'
 import { formatDate } from '@/utils/format'
 import Card from '@/components/ui/Card.tsx'
 import Badge from '@/components/ui/Badge.tsx'
@@ -37,6 +38,7 @@ export default function OrderDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
   const { getOrder, updateStatus, confirmPayment } = useOrders()
+  const { toast } = useToast()
   const order = id ? getOrder(id) : undefined
 
   const [paymentModal, setPaymentModal] = useState(false)
@@ -62,7 +64,10 @@ export default function OrderDetail() {
     setConfirmingPayment(true)
     try {
       await confirmPayment(id, { method: selectedMethod, amount: paymentAmount })
+      toast('Pembayaran berhasil dikonfirmasi', 'success')
       setPaymentModal(false)
+    } catch {
+      toast('Gagal mengkonfirmasi pembayaran', 'error')
     } finally {
       setConfirmingPayment(false)
     }
@@ -81,9 +86,21 @@ export default function OrderDetail() {
   const cancelable = order.status !== 'COMPLETED' && order.status !== 'CANCELLED'
   const paymentPending = !order.payment || order.payment.status === 'PENDING'
 
-  function handleStatus(next: OrderStatus) {
+  async function handleStatus(next: OrderStatus) {
     if (!id) return
-    updateStatus(id, next)
+    const labels: Record<OrderStatus, string> = {
+      CONFIRMED: 'Pesanan berhasil dikonfirmasi',
+      PROCESSING: 'Pesanan sedang diproses',
+      COMPLETED: 'Pesanan selesai',
+      CANCELLED: 'Pesanan dibatalkan',
+      PENDING: '',
+    }
+    try {
+      await updateStatus(id, next)
+      toast(labels[next] || 'Status pesanan berhasil diperbarui', 'success')
+    } catch {
+      toast('Gagal memperbarui status pesanan', 'error')
+    }
   }
 
   return (

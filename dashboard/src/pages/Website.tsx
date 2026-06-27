@@ -1,4 +1,5 @@
 import { useWebsite } from '@/hooks/useWebsite.ts'
+import { useToast } from '@/hooks/useToast.ts'
 import Card from '@/components/ui/Card.tsx'
 import Button from '@/components/ui/Button.tsx'
 import Badge from '@/components/ui/Badge.tsx'
@@ -7,6 +8,25 @@ import { formatDate } from '@/utils/format'
 
 export default function Website() {
   const { config, logs, generating, availableProducts, updateConfig, generate, downloadZip, publish, loading } = useWebsite()
+  const { toast } = useToast()
+
+  async function handleGenerate() {
+    try {
+      await generate()
+      toast('Website berhasil dibuat', 'success')
+    } catch {
+      toast('Gagal membuat website', 'error')
+    }
+  }
+
+  async function handlePublish() {
+    try {
+      await publish()
+      toast('Website berhasil dipublikasikan', 'success')
+    } catch {
+      toast('Gagal mempublikasikan website', 'error')
+    }
+  }
 
   if (loading) return <Spinner />
 
@@ -85,7 +105,7 @@ export default function Website() {
                         <span className="h-4 w-4 rounded-full border border-stone-200" style={{ background: p.secondary }} />
                         <span className="ml-1 text-stone-500">{p.name}</span>
                         {config.primaryColor === p.primary && config.secondaryColor === p.secondary && (
-                          <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-teal-500 text-[10px] text-white">✓</span>
+                          <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-teal-500 text-[10px] text-white">{'\u2713'}</span>
                         )}
                       </button>
                     ))}
@@ -184,7 +204,7 @@ export default function Website() {
                 size="md"
                 className="w-full"
                 loading={generating}
-                onClick={generate}
+                onClick={handleGenerate}
               >
                 Generate Sekarang
               </Button>
@@ -208,7 +228,7 @@ export default function Website() {
                 size="md"
                 variant="secondary"
                 className="w-full"
-                onClick={publish}
+                onClick={handlePublish}
               >
                 Publish
               </Button>

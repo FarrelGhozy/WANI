@@ -1,6 +1,7 @@
 import { useState, useRef, type ReactNode } from 'react'
 import { usePaymentMethods } from '@/hooks/usePaymentMethods'
 import type { StorePaymentMethod, PaymentMethodType, CreatePaymentMethodData } from '@/hooks/usePaymentMethods'
+import { useToast } from '@/hooks/useToast'
 import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
 import Modal from '@/components/ui/Modal'
@@ -34,10 +35,10 @@ function Select(props: React.SelectHTMLAttributes<HTMLSelectElement>) {
 }
 
 const TYPE_ICONS: Record<PaymentMethodType, string> = {
-  QRIS: '▦',
-  BANK_TRANSFER: '🏦',
-  E_WALLET: '📱',
-  COD: '💵',
+  QRIS: '\u25A6',
+  BANK_TRANSFER: '\uD83C\uDFE6',
+  E_WALLET: '\uD83D\uDCF1',
+  COD: '\uD83D\uDCB5',
 }
 
 const TYPE_LABELS: Record<PaymentMethodType, string> = {
@@ -83,6 +84,7 @@ const emptyForm = (type: PaymentMethodType): PaymentFormData => ({
 
 export default function PaymentTab() {
   const { methods, loading, create, update, remove, toggleActive } = usePaymentMethods()
+  const { toast } = useToast()
   const [modalOpen, setModalOpen] = useState(false)
   const [editing, setEditing] = useState<StorePaymentMethod | null>(null)
   const [form, setForm] = useState<PaymentFormData>(emptyForm('QRIS'))
@@ -135,7 +137,10 @@ export default function PaymentTab() {
       const json = await res.json()
       if (json.status === 'success') {
         setForm((prev) => ({ ...prev, qrImageUrl: json.data.url }))
+        toast('QRIS berhasil diupload', 'success')
       }
+    } catch {
+      toast('Gagal mengupload QRIS', 'error')
     } finally {
       setUploading(false)
     }
@@ -167,17 +172,37 @@ export default function PaymentTab() {
         break
     }
 
-    if (editing) {
-      await update(editing.id, payload)
-    } else {
-      await create(payload as unknown as CreatePaymentMethodData)
+    try {
+      if (editing) {
+        await update(editing.id, payload)
+        toast('Metode pembayaran berhasil diperbarui', 'success')
+      } else {
+        await create(payload as unknown as CreatePaymentMethodData)
+        toast('Metode pembayaran berhasil ditambahkan', 'success')
+      }
+      closeModal()
+    } catch {
+      toast('Gagal menyimpan metode pembayaran', 'error')
     }
-    closeModal()
   }
 
   async function handleDelete(method: StorePaymentMethod) {
     if (!confirm(`Hapus metode pembayaran "${method.label}"?`)) return
-    await remove(method.id)
+    try {
+      await remove(method.id)
+      toast('Metode pembayaran berhasil dihapus', 'success')
+    } catch {
+      toast('Gagal menghapus metode pembayaran', 'error')
+    }
+  }
+
+  async function handleToggle(method: StorePaymentMethod) {
+    try {
+      await toggleActive(method)
+      toast(method.isActive ? 'Metode pembayaran dinonaktifkan' : 'Metode pembayaran diaktifkan', 'success')
+    } catch {
+      toast('Gagal mengubah status metode pembayaran', 'error')
+    }
   }
 
   function updateLabel(m: StorePaymentMethod): string {
@@ -227,7 +252,7 @@ export default function PaymentTab() {
               }`}
             >
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-teal-50 text-base">
-                {TYPE_ICONS[method.type] ?? '💳'}
+                {TYPE_ICONS[method.type] ?? '\uD83D\uDCB3'}
               </div>
 
               <div className="min-w-0 flex-1">
@@ -249,7 +274,7 @@ export default function PaymentTab() {
 
               <div className="flex items-center gap-2 shrink-0">
                 <button
-                  onClick={() => toggleActive(method)}
+                  onClick={() => handleToggle(method)}
                   className={`relative h-5 w-9 rounded-full transition-colors ${
                     method.isActive ? 'bg-teal-600' : 'bg-stone-300'
                   }`}

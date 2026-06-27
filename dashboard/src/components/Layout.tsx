@@ -2,12 +2,15 @@ import { Outlet } from 'react-router'
 import Sidebar from '@/components/Sidebar.tsx'
 import BottomNav from '@/components/BottomNav.tsx'
 import Topbar from '@/components/Topbar.tsx'
+import ToastContainer from '@/components/ui/Toast.tsx'
+import { useToast } from '@/hooks/useToast.ts'
 import { useWaStatus } from '@/hooks/useWaStatus.ts'
 import { useSettings } from '@/hooks/useSettings.ts'
 
 export default function Layout() {
   const { connection } = useWaStatus()
   const { store } = useSettings()
+  const { toasts, removeToast } = useToast()
 
   return (
     <div className="flex min-h-screen bg-stone-50">
@@ -19,6 +22,7 @@ export default function Layout() {
         </main>
       </div>
       <BottomNav />
+      <ToastContainer toasts={toasts} onRemove={removeToast} />
     </div>
   )
 }

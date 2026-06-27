@@ -8,7 +8,6 @@ import StoreTab from '@/components/StoreTab.tsx'
 import AiTab from '@/components/AiTab.tsx'
 import WaSessionTab from '@/components/WaSessionTab.tsx'
 import PaymentTab from '@/components/PaymentTab.tsx'
-import ToastContainer from '@/components/ui/Toast.tsx'
 import Spinner from '@/components/ui/Spinner.tsx'
 
 const tabs = [
@@ -124,8 +123,6 @@ export default function Settings() {
         />
       )}
       {activeTab === 'payment' && <PaymentTab />}
-
-      <ToastContainer toasts={toasts} onRemove={removeToast} />
     </div>
   )
 }

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { useProducts } from '@/hooks/useProducts.ts'
+import { useToast } from '@/hooks/useToast.ts'
 import ProductListView from '@/components/ProductListView.tsx'
 import ProductCard from '@/components/ProductCard.tsx'
 import CategoryModal from '@/components/CategoryModal.tsx'
@@ -21,6 +22,7 @@ export default function Products() {
     deleteProduct,
     createCategory, updateCategory, deleteCategory,
   } = useProducts()
+  const { toast } = useToast()
 
   const [view, setView] = useState<'list' | 'card'>('list')
   const [cardPage, setCardPage] = useState(1)
@@ -31,6 +33,16 @@ export default function Products() {
   const cardTotalPages = Math.max(1, Math.ceil(products.length / CARD_LIMIT))
   const cardProducts = products.slice((cardPage - 1) * CARD_LIMIT, cardPage * CARD_LIMIT)
   const safeCardPage = Math.min(cardPage, cardTotalPages)
+
+  async function handleDelete(id: string) {
+    try {
+      await deleteProduct(id)
+      toast('Produk berhasil dihapus', 'success')
+      setDeleteId(null)
+    } catch {
+      toast('Gagal menghapus produk', 'error')
+    }
+  }
 
   if (loading) {
     return <div className="flex items-center justify-center py-20"><Spinner size={24} /></div>
@@ -148,7 +160,7 @@ export default function Products() {
         onClose={() => setDeleteId(null)}
         title="Hapus Produk"
         actions={
-          <Button variant="danger" size="sm" onClick={() => { deleteProduct(deleteId!); setDeleteId(null) }}>
+          <Button variant="danger" size="sm" onClick={() => handleDelete(deleteId!)}>
             Hapus
           </Button>
         }

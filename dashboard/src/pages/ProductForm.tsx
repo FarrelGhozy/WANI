@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { useProducts, type ProductFormData } from '@/hooks/useProducts.ts'
+import { useToast } from '@/hooks/useToast.ts'
 import Button from '@/components/ui/Button.tsx'
 import Input from '@/components/ui/Input.tsx'
 import Select from '@/components/ui/Select.tsx'
@@ -20,6 +21,7 @@ export default function ProductForm() {
   const { id } = useParams()
   const navigate = useNavigate()
   const { getProduct, categories, createProduct, updateProduct, createCategory } = useProducts()
+  const { toast } = useToast()
   const isEdit = Boolean(id)
 
   const [form, setForm] = useState<ProductFormData>({
@@ -95,17 +97,23 @@ export default function ProductForm() {
   async function handleCreateCategory() {
     if (!newCategoryName.trim()) return
     setCreatingCategory(true)
-    const cat = await createCategory({ name: newCategoryName.trim(), description: newCategoryDesc.trim() || null })
-    if (cat) {
-      set('categoryId', cat.id)
+    try {
+      const cat = await createCategory({ name: newCategoryName.trim(), description: newCategoryDesc.trim() || null })
+      if (cat) {
+        set('categoryId', cat.id)
+        toast('Kategori berhasil ditambahkan', 'success')
+      }
+      setShowNewCategory(false)
+      setNewCategoryName('')
+      setNewCategoryDesc('')
+    } catch {
+      toast('Gagal menambahkan kategori', 'error')
+    } finally {
+      setCreatingCategory(false)
     }
-    setCreatingCategory(false)
-    setShowNewCategory(false)
-    setNewCategoryName('')
-    setNewCategoryDesc('')
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!validate()) return
     setSaving(true)
@@ -115,15 +123,22 @@ export default function ProductForm() {
       description: form.description || null,
       imageUrl: form.imageUrl || null,
     }
-    if (isEdit && id) {
-      updateProduct(id, data)
-    } else {
-      createProduct(data)
-    }
-    setTimeout(() => {
+    try {
+      if (isEdit && id) {
+        await updateProduct(id, data)
+        toast('Produk berhasil diperbarui', 'success')
+      } else {
+        await createProduct(data)
+        toast('Produk berhasil dibuat', 'success')
+      }
+      setTimeout(() => {
+        setSaving(false)
+        navigate('/products')
+      }, 300)
+    } catch {
+      toast(isEdit ? 'Gagal memperbarui produk' : 'Gagal membuat produk', 'error')
       setSaving(false)
-      navigate('/products')
-    }, 300)
+    }
   }
 
   return (
