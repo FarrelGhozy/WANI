@@ -1,4 +1,5 @@
 import type { Customer, MessageRole } from '@/hooks/useCustomers.ts'
+import { formatDate } from '@/utils/format'
 
 interface CustomerListViewProps {
   customers: Customer[]
@@ -57,9 +58,7 @@ export default function CustomerListView({ customers, selectedId, onSelect }: Cu
               <div className="flex shrink-0 flex-col items-end gap-1">
                 <span className="whitespace-nowrap text-[11px] text-stone-400">
                   {customer.lastMessage
-                    ? new Date(customer.lastMessage.createdAt).toLocaleDateString('id-ID', {
-                        hour: '2-digit', minute: '2-digit',
-                      })
+                    ? formatDate(customer.lastMessage.createdAt, { timeOnly: true })
                     : ''}
                 </span>
                 {customer.totalOrders > 0 && (

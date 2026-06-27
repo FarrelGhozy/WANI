@@ -3,6 +3,7 @@ import Card from '@/components/ui/Card.tsx'
 import Button from '@/components/ui/Button.tsx'
 import Badge from '@/components/ui/Badge.tsx'
 import Spinner from '@/components/ui/Spinner.tsx'
+import { formatDate } from '@/utils/format'
 
 export default function Website() {
   const { config, logs, generating, availableProducts, updateConfig, generate, downloadZip, publish, loading } = useWebsite()
@@ -160,7 +161,7 @@ export default function Website() {
                     </Badge>
                     <div>
                       <p className="text-sm text-stone-700">{log.message}</p>
-                      <p className="text-xs text-stone-400">{log.timestamp}</p>
+                      <p className="text-xs text-stone-400">{formatDate(log.timestamp)}</p>
                     </div>
                   </div>
                   {log.status === 'success' && (

@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import type { Conversation, Message } from '@/hooks/useCustomers.ts'
 import Badge from '@/components/ui/Badge.tsx'
+import { formatDate } from '@/utils/format'
 
 interface ChatViewProps {
   customerName: string
@@ -23,9 +24,7 @@ const roleBg: Record<string, string> = {
 }
 
 function ChatBubble({ message }: { message: Message }) {
-  const time = new Date(message.createdAt).toLocaleDateString('id-ID', {
-    hour: '2-digit', minute: '2-digit',
-  })
+  const time = formatDate(message.createdAt, { timeOnly: true })
 
   return (
     <div className={`flex flex-col ${message.role === 'CUSTOMER' ? 'items-start' : 'items-end'}`}>

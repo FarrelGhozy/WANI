@@ -1,4 +1,5 @@
 import type { OrderStatus } from '@/hooks/useOrders.ts'
+import { formatDate } from '@/utils/format'
 
 interface TimelineStep {
   status: OrderStatus
@@ -51,9 +52,7 @@ function addMin(time: string, min: number): string {
 }
 
 function fmt(time: string) {
-  return new Date(time).toLocaleDateString('id-ID', {
-    day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit',
-  })
+  return formatDate(time)
 }
 
 export default function OrderTimeline({ status, createdAt, updatedAt, paidAt }: OrderTimelineProps) {

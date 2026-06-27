@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router'
 import type { Order, OrderStatus, OrderSortField } from '@/hooks/useOrders.ts'
 import Badge from '@/components/ui/Badge.tsx'
-import { formatPrice } from '@/utils/format'
+import { formatPrice, formatDate } from '@/utils/format'
 
 interface OrderListViewProps {
   orders: Order[]
@@ -82,7 +82,7 @@ export default function OrderListView({ orders, sortField, sortDir, onSort }: Or
                 <Badge variant={statusBadge[order.status]} dot>{statusLabel[order.status]}</Badge>
               </td>
               <td className="max-sm:px-2 max-sm:py-2 sm:px-4 sm:py-3 text-right text-xs text-stone-400">
-                {new Date(order.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                {formatDate(order.createdAt)}
               </td>
             </tr>
           ))}

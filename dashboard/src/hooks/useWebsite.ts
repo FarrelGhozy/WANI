@@ -67,7 +67,7 @@ export function useWebsite() {
       })
       setLogs((prev) => [{
         id: `log-${Date.now()}`,
-        timestamp: new Date().toLocaleString('id-ID'),
+        timestamp: new Date().toISOString(),
         status: res.status === 'success' ? 'success' : 'failed',
         productCount: config.selectedProductIds.length,
         message: res.status === 'success' ? 'Website berhasil di-generate' : (res.message ?? 'Gagal generate'),
@@ -75,7 +75,7 @@ export function useWebsite() {
     } catch (e) {
       setLogs((prev) => [{
         id: `log-${Date.now()}`,
-        timestamp: new Date().toLocaleString('id-ID'),
+        timestamp: new Date().toISOString(),
         status: 'failed',
         productCount: 0,
         message: (e as Error).message,

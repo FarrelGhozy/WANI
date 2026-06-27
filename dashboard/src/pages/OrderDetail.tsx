@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router'
 import { useOrders, formatPrice, type OrderStatus } from '@/hooks/useOrders.ts'
 import { fetchApi } from '@/lib/api'
 import type { StorePaymentMethod } from '@/types'
+import { formatDate } from '@/utils/format'
 import Card from '@/components/ui/Card.tsx'
 import Badge from '@/components/ui/Badge.tsx'
 import Button from '@/components/ui/Button.tsx'
@@ -109,9 +110,7 @@ export default function OrderDetail() {
             {order.customerName} &middot; {order.customerPhone}
           </p>
           <p className="text-xs text-stone-400">
-            {new Date(order.createdAt).toLocaleDateString('id-ID', {
-              day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit',
-            })}
+            {formatDate(order.createdAt, { long: true })}
           </p>
         </div>
 
