@@ -24,13 +24,14 @@ export default function Settings() {
     setSearchParams(tab === 'store' ? {} : { tab }, { replace: true })
   }
   const { store, aiConfig, error, updateStore, updateAiConfig, loading, reload } = useSettings()
-  const { qr: liveQr, connection: liveConn, phone: livePhone } = useWaStatus()
+  const { qr: liveQr, connection: liveConn, phone: livePhone, connectedAt: liveConnectedAt } = useWaStatus()
 
   const [override, setOverride] = useState<{ connection: string; qr: string; phone: string } | null>(null)
 
   const qr = override?.qr ?? liveQr
   const connection = override?.connection ?? liveConn
   const phone = override?.phone ?? livePhone
+  const connectedAt = liveConnectedAt
 
   const handleDisconnect = useCallback(() => {
     setOverride({ connection: 'disconnected', qr: '', phone: '' })
@@ -102,6 +103,7 @@ export default function Settings() {
           qr={qr}
           connection={connection}
           phone={phone}
+          connectedAt={connectedAt}
           onDisconnect={handleDisconnect}
           onConnect={handleConnect}
           onReset={handleReset}

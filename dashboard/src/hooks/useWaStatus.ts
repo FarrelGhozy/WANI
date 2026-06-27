@@ -8,6 +8,7 @@ export function useWaStatus(pollInterval = 5000): WaStatus {
   const [qr, setQr] = useState('')
   const [connection, setConnection] = useState('disconnected')
   const [phone, setPhone] = useState('')
+  const [connectedAt, setConnectedAt] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -15,11 +16,12 @@ export function useWaStatus(pollInterval = 5000): WaStatus {
     try {
       const [qrRes, statusRes] = await Promise.all([
         fetchApi<{ qr: string | null }>('/api/qr'),
-        fetchApi<{ status: string; phone: string | null }>('/api/qr/status'),
+        fetchApi<{ status: string; phone: string | null; connectedAt: string | null }>('/api/qr/status'),
       ])
       setQr(qrRes.data?.qr ?? '')
       setConnection(statusRes.data?.status ?? 'disconnected')
       setPhone(statusRes.data?.phone ?? '')
+      setConnectedAt(statusRes.data?.connectedAt ?? null)
       setLoading(false)
       setError(null)
     } catch (e) {
@@ -37,5 +39,5 @@ export function useWaStatus(pollInterval = 5000): WaStatus {
     }
   }, [poll, pollInterval])
 
-  return { qr, connection, phone, loading, error }
+  return { qr, connection, phone, connectedAt, loading, error }
 }

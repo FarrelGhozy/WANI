@@ -151,6 +151,7 @@ export interface WaStatus {
   qr: string
   connection: string
   phone: string
+  connectedAt: string | null
   loading: boolean
   error: string | null
 }

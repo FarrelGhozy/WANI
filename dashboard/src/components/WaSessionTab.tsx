@@ -2,11 +2,13 @@ import { useState } from 'react'
 import Card from '@/components/ui/Card.tsx'
 import Button from '@/components/ui/Button.tsx'
 import QRCode from '@/components/QRCode.tsx'
+import { formatDate } from '@/utils/format'
 
 interface WaSessionTabProps {
   qr: string
   connection: string
   phone: string
+  connectedAt: string | null
   onDisconnect: () => void
   onConnect: () => void
   onReset: () => void
@@ -33,7 +35,7 @@ const statusConfig: Record<string, { dot: string; label: string; bg: string }> =
 
 const isMockQr = (qr: string) => !qr || qr === 'mock-qr-data-for-development'
 
-export default function WaSessionTab({ qr, connection, phone, onDisconnect, onReset, resetting }: WaSessionTabProps) {
+export default function WaSessionTab({ qr, connection, phone, connectedAt, onDisconnect, onReset, resetting }: WaSessionTabProps) {
   const [confirming, setConfirming] = useState(false)
   const cfg = statusConfig[connection] ?? statusConfig.disconnected
   const canDisconnect = connection === 'connected'
@@ -125,7 +127,7 @@ export default function WaSessionTab({ qr, connection, phone, onDisconnect, onRe
             <div className="grid gap-3 sm:grid-cols-2">
               <SessionInfo label="Telepon" value={phone} />
               <SessionInfo label="Platform" value="WhatsApp Web" />
-              <SessionInfo label="Terhubung Sejak" value="22 Jun 2026, 09:15" />
+              <SessionInfo label="Terhubung Sejak" value={connectedAt ? formatDate(connectedAt) : '-'} />
               <SessionInfo label="Terakhir Aktif" value="Sekarang" />
             </div>
           </div>

@@ -17,6 +17,7 @@ export async function getStatus(_req: Request, res: Response): Promise<void> {
   sendResponse(res, 200, "status retrieved", {
     status: session?.status ?? "disconnected",
     phone: session?.phone ?? null,
+    connectedAt: session?.updatedAt?.toISOString() ?? null,
   })
 }
 
