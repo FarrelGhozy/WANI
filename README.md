@@ -2,26 +2,28 @@
 
 Platform omnichannel UMKM dengan AI chatbot WhatsApp, dashboard manajemen, dan website generator. Empat service independent (Bun + TypeScript) berbagi PostgreSQL backend.
 
+> **🌐 Live Demo:** [http://103.195.19.115:5173/](http://103.195.19.115:5173/)
+
 ```
 ┌──────────────┐  HTTP (Vite proxy)  ┌──────────────┐
 │  Dashboard   │ ◄─────────────────► │  API Server  │
 │  React 19    │    /api/* → :3001   │  Express 5   │
 │  Vite 8      │                     │  port 3001   │
 └──────────────┘                     └──────┬───────┘
-                                            │ Bearer / JWT
-                                            │ POST /api/chat
-                                            │ POST/DELETE /api/qr
-                                    ┌──────▼───────┐
-                                    │   WA Bot     │
-                                    │  Baileys 6   │
-                                    │  Prisma 7    │
-                                    └──────────────┘
+                                             │ Bearer / JWT
+                                             │ POST /api/chat
+                                             │ POST/DELETE /api/qr
+                                     ┌──────▼───────┐
+                                     │   WA Bot     │
+                                     │  Baileys 6   │
+                                     │  Prisma 7    │
+                                     └──────────────┘
 ```
 
 ## Prerequisites
 
 - **Bun 1.3+**
-- **PostgreSQL 16+** — dua database: `wani_api` (api) + `wa_bot` (wa-bot)
+- **PostgreSQL 17** — dua database: `wani_api` (api) + `wa_bot` (wa-bot)
 - **OpenRouter API key** (gratis) — untuk AI pipeline
 
 ---
@@ -137,7 +139,7 @@ cd dashboard && bun run dev
 WANI/
 ├── api/            Express 5 + Prisma 7 — REST server + AI pipeline + guardrails
 ├── dashboard/      React 19 + Vite 8 — frontend UI
-├── web-gen/        Bun + Astro 6.4 — static site generator UMKM
+├── web-gen/        Bun + Astro 7 — static site generator UMKM
 ├── wa-bot/         Baileys 6 + Prisma 7 — WhatsApp bot
 ├── docker-compose.yml
 ├── .env.example
@@ -151,9 +153,9 @@ Express 5 dengan layered architecture: routes → controllers → models → Pri
 - **AI Pipeline 18-step** — normalize → guardrails 3-tier → LLM (OpenRouter) → intent handler → output scan
 - **Circuit breaker** — 3 gagal beruntun → open 60s → half-open → retry
 - **Guardrails** — PII scanner, rate limit, budget tracker, injection defense (regex + classifier + LLM judge), output grounding
-- **Full CRUD** — Products, Categories, Orders, Customers, Conversations
+- **Full CRUD** — Products, Categories, Orders, Customers, Conversations, Store Payment Methods
 - **Auth** — JWT (login/register) + API Token (bot)
-- **~40 endpoints** — lihat [ARSITEKTUR.md](api/ARSITEKTUR.md) untuk daftar lengkap
+- **~45 endpoints** — lihat [ARSITEKTUR.md](api/ARSITEKTUR.md) untuk daftar lengkap
 
 ### Dashboard (`dashboard/`)
 
@@ -161,11 +163,12 @@ React 19 + Vite 8 (Rolldown) + TypeScript 6. React Compiler via Babel plugin.
 
 | Halaman | Fitur |
 |---------|-------|
-| Dashboard | Statistik toko |
+| Dashboard | Statistik toko + warning banner pembayaran |
 | Products | CRUD produk, filter kategori, list/grid view |
-| Orders | Daftar + detail pesanan, update status |
+| Orders | Daftar + detail pesanan, update status + konfirmasi pembayaran |
 | Customers | Daftar + detail pelanggan, chat inline |
-| Settings | Profil toko, AI config, WA session, kategori produk |
+| Settings | Profil toko, AI config, WA session, pembayaran |
+| Website | Konfigurasi + generate website UMKM |
 
 Semua hooks panggil real API (`fetchApi()` via Vite proxy `/api/*` → `localhost:3001`).
 
@@ -176,10 +179,11 @@ Baileys 6 WhatsApp Web client dengan PostgreSQL persistent auth.
 - QR code → POST ke API + print terminal
 - Auto-reconnect (kecuali explicit logout)
 - Forward pesan ke `POST /api/chat` → kirim balasan AI
+- Deteksi URL QRIS di reply → kirim sebagai image message
 
 ### Web-Gen (`web-gen/`)
 
-Static site generator UMKM — Astro 6.4 templates → HTML/CSS/JS statis.
+Static site generator UMKM — Astro 7 templates → HTML/CSS/JS statis. Bisa generate, preview, download ZIP, dan publish.
 
 ---
 
@@ -198,10 +202,10 @@ Semua response format:
 | `POST` | `/api/qr` | 🔒 API_TOKEN | Push QR / update status |
 | `DELETE` | `/api/qr` | 🔒 API_TOKEN | Clear QR (saat connect) |
 | `POST` | `/api/chat` | 🔒 API_TOKEN | Proses pesan WA → AI reply |
-| `GET` | `/api/store` | — | Profil toko |
-| `PUT` | `/api/store` | 🔒 API_TOKEN | Update profil toko |
+| `GET` | `/api/store` | — | Profil toko + `hasPaymentMethods` |
+| `PUT` | `/api/store` | 🔒 JWT | Update profil toko |
 | `GET` | `/api/ai-config` | — | Konfigurasi AI |
-| `PUT` | `/api/ai-config` | 🔒 API_TOKEN | Update AI config |
+| `PUT` | `/api/ai-config` | 🔒 JWT | Update AI config |
 | `GET` | `/api/products` | — | Daftar produk (paginated, searchable) |
 | `GET` | `/api/products/:id` | — | Detail produk |
 | `POST` | `/api/products` | 🔒 JWT | Tambah produk |
@@ -227,15 +231,26 @@ Semua response format:
 | `GET` | `/api/usage` | — | Counter LLM usage (hari ini) |
 | `POST` | `/api/auth/register` | — | Register |
 | `POST` | `/api/auth/login` | — | Login → JWT |
-| `GET` | `/api/auth/me` | — | Current user |
+| `GET` | `/api/auth/me` | 🔒 JWT | Current user |
 | `POST` | `/api/auth/logout` | — | Logout |
 | `POST` | `/api/auth/forgot-password` | — | Generate reset token |
 | `POST` | `/api/auth/reset-password` | — | Reset password |
+| `GET` | `/api/store/payment-methods` | — | Daftar metode pembayaran |
+| `POST` | `/api/store/payment-methods` | 🔒 JWT | Tambah metode bayar |
+| `PUT` | `/api/store/payment-methods/:id` | 🔒 JWT | Edit metode bayar |
+| `DELETE` | `/api/store/payment-methods/:id` | 🔒 JWT | Hapus metode bayar |
+| `POST` | `/api/upload` | 🔒 JWT | Upload file (QRIS image) |
 | `GET` | `/api/website` | — | Website config |
 | `PUT` | `/api/website` | 🔒 JWT | Update website config |
 | `POST` | `/api/website/generate` | 🔒 JWT | Generate static site |
 | `GET` | `/api/website/download` | 🔒 JWT | Download ZIP |
 | `POST` | `/api/website/publish` | 🔒 JWT | Tandai sebagai published |
+| `GET` | `/s/:slug` | — | Serve generated static site |
+| `GET` | `/api/debug/traces` | — | Pipeline traces (dev) |
+| `GET` | `/api/debug/traces/:id` | — | Trace detail (dev) |
+| `DELETE` | `/api/debug/traces` | — | Clear traces (dev) |
+| `GET` | `/api/debug/status` | — | Server status (dev) |
+| `POST` | `/api/debug/circuit/reset` | — | Reset circuit breaker (dev) |
 
 > 🔒 API_TOKEN = `requireAuth` (Bearer API_TOKEN), 🔒 JWT = `requireJwt` (JWT dari login)
 
@@ -243,17 +258,19 @@ Semua response format:
 
 ## Data Model
 
-### wani_api — 11 tabel
+### wani_api — 13 tabel
 
 ```
 Store (single-row)
   ├── AiConfig (single-row)
   ├── WaSession (single-row)
+  ├── WebSite (single-row)
+  ├── StorePaymentMethod (multi-row)
   ├── Category ──→ Product ──→ OrderItem
   Customer ──→ Order ─────────────┘
   │    │         └── Payment
   │    └── Conversation ──→ Message
-  ActivityLog · UsageCounter
+  User · ActivityLog · UsageCounter
 ```
 
 ### wa_bot — 2 tabel
@@ -268,7 +285,7 @@ Store (single-row)
 | Enum | Values |
 |------|--------|
 | `OrderStatus` | PENDING, CONFIRMED, PROCESSING, COMPLETED, CANCELLED |
-| `PaymentMethod` | CASH, TRANSFER, QRIS |
+| `PaymentMethod` | CASH, TRANSFER, QRIS, E_WALLET |
 | `PaymentStatus` | PENDING, PAID, FAILED, REFUNDED |
 | `MessageRole` | CUSTOMER, BOT, HUMAN |
 | `ConversationStatus` | ACTIVE, RESOLVED, ARCHIVED, ESCALATED |
@@ -300,6 +317,10 @@ Detail lengkap: [`api/ARSITEKTUR.md`](api/ARSITEKTUR.md)
 | Prisma migrate | `bun run prisma:migrate` | — | `bun run prisma:migrate` | — |
 | Prisma deploy | `bun run prisma:deploy` | — | `bun run prisma:deploy` | — |
 | Test | `bun test` | — | — | — |
+
+## Live Demo
+
+Platform berjalan di **http://103.195.19.115:5173/** — Dashboard production dengan real API backend.
 
 ## Architecture Docs
 
