@@ -121,6 +121,36 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
   )
 }
 
+const HOURS = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0'))
+const MINUTES = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'))
+
+function TimeSelect({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const [h, m] = (value || '08:00').split(':')
+  return (
+    <span className="inline-flex items-center gap-0.5">
+      <select
+        value={h}
+        onChange={(e) => onChange(`${e.target.value}:${m}`)}
+        className="h-7 w-14 rounded-md border border-stone-300 bg-white px-1 text-xs text-stone-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+      >
+        {HOURS.map((hr) => (
+          <option key={hr} value={hr}>{hr}</option>
+        ))}
+      </select>
+      <span className="text-xs text-stone-400">:</span>
+      <select
+        value={m}
+        onChange={(e) => onChange(`${h}:${e.target.value}`)}
+        className="h-7 w-14 rounded-md border border-stone-300 bg-white px-1 text-xs text-stone-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+      >
+        {MINUTES.map((mi) => (
+          <option key={mi} value={mi}>{mi}</option>
+        ))}
+      </select>
+    </span>
+  )
+}
+
 function BusinessHoursEditor({
   value,
   onChange,
@@ -161,19 +191,9 @@ function BusinessHoursEditor({
             </button>
             {h.open && (
               <>
-                <input
-                  type="time"
-                  value={h.start}
-                  onChange={(e) => setDay(day, { start: e.target.value })}
-                  className="h-7 w-24 rounded-md border border-stone-300 bg-white px-2 text-xs text-stone-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-                />
+                <TimeSelect value={h.start} onChange={(v) => setDay(day, { start: v })} />
                 <span className="text-xs text-stone-400">&ndash;</span>
-                <input
-                  type="time"
-                  value={h.end}
-                  onChange={(e) => setDay(day, { end: e.target.value })}
-                  className="h-7 w-24 rounded-md border border-stone-300 bg-white px-2 text-xs text-stone-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-                />
+                <TimeSelect value={h.end} onChange={(v) => setDay(day, { end: v })} />
               </>
             )}
           </div>
