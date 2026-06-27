@@ -23,15 +23,23 @@ export default function AiTab({ config, onUpdate }: AiTabProps) {
       <h2 className="mb-6 text-lg font-semibold text-stone-900">Konfigurasi AI Agent</h2>
       <div className="grid gap-5 sm:grid-cols-2">
         <Field label="Model">
-          <select
+          <input
+            type="text"
             value={config.model}
             onChange={(e) => onUpdate({ model: e.target.value })}
+            placeholder="deepseek/deepseek-v4-flash:free"
             className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-          >
-            <option value="gpt-4o-mini">GPT-4o Mini</option>
-            <option value="gpt-4o">GPT-4o</option>
-            <option value="claude-3-haiku">Claude 3 Haiku</option>
-          </select>
+          />
+          <p className="mt-1 text-xs text-stone-400">
+            Cari model gratis di{' '}
+            <a href="https://openrouter.ai/models?q=free" target="_blank" rel="noopener noreferrer" className="text-teal-600 underline">openrouter.ai/models</a>
+            . Contoh: <code className="text-stone-500">deepseek/deepseek-v4-flash:free</code>,{' '}
+            <code className="text-stone-500">google/gemini-2.0-flash-exp:free</code>
+          </p>
+          <p className="mt-0.5 text-xs text-stone-400">
+            API Key diatur via <code className="text-stone-500">OPENROUTER_API_KEY</code> —{' '}
+            <a href="https://openrouter.ai/keys" target="_blank" rel="noopener noreferrer" className="text-teal-600 underline">openrouter.ai/keys</a>
+          </p>
         </Field>
         <Field label="Token Maksimal">
           <input
