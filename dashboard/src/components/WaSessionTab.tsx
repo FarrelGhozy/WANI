@@ -73,9 +73,9 @@ export default function WaSessionTab({ qr, connection, phone, connectedAt, onDis
   return (
     <div className="space-y-6">
       <Card accent="teal">
-        <h2 className="mb-6 text-lg font-semibold text-stone-900">WhatsApp Session</h2>
+        <h2 className="mb-4 text-base font-semibold text-stone-900 md:mb-6 md:text-lg">WhatsApp Session</h2>
 
-        <div className="mb-6 grid gap-4 sm:grid-cols-3">
+        <div className="mb-5 grid gap-3 sm:grid-cols-3 md:mb-6 md:gap-4">
           <div className={`rounded-lg p-4 ${cfg.bg}`}>
             <p className="text-xs text-stone-500">Status</p>
             <div className="mt-1 flex items-center gap-2">
@@ -111,7 +111,7 @@ export default function WaSessionTab({ qr, connection, phone, connectedAt, onDis
         </div>
 
         {connection === 'connected' && (
-          <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-5">
+          <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-4 md:p-5">
             <div className="mb-4 flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="text-emerald-600">
@@ -134,7 +134,7 @@ export default function WaSessionTab({ qr, connection, phone, connectedAt, onDis
         )}
 
         {(connection === 'disconnected' || connection === 'connecting') && (
-          <div className="flex flex-col items-center rounded-lg bg-stone-50 p-6">
+          <div className="flex flex-col items-center rounded-lg bg-stone-50 p-4 md:p-6">
             {isMockQr(qr) ? (
               <>
                 <div className="mb-4 flex aspect-square w-[200px] items-center justify-center rounded-xl border-2 border-dashed border-stone-300 bg-white">
