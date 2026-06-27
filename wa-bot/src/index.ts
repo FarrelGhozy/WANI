@@ -41,9 +41,10 @@ async function main() {
     }
 
     if (connection === "open" || receivedPendingNotifications) {
-      logger.info({ connection, receivedPendingNotifications }, "connected — clearing QR");
+      const phoneNumber = sock.user?.phoneNumber ?? state.creds.me?.phoneNumber ?? null;
+      logger.info({ connection, receivedPendingNotifications, phoneNumber }, "connected — clearing QR");
       api.delete("/api/qr").catch(e => logger.error({ err: e?.response?.data ?? e }, "clear QR failed"));
-      api.post("/api/qr", { status: "connected" }).catch(e => logger.error({ err: e?.response?.data ?? e }, "status update failed"));
+      api.post("/api/qr", { status: "connected", phone: phoneNumber }).catch(e => logger.error({ err: e?.response?.data ?? e }, "status update failed"));
     }
 
     if (connection === "close") {
@@ -98,7 +99,8 @@ async function main() {
             await sock.sendMessage(jid, { text: reply });
           }
         }
-      } catch {
+      } catch (err) {
+        logger.error({ err: err instanceof Error ? err.message : String(err), phone, text }, "chat API failed");
         await sock.sendMessage(jid, { text: "Maaf, sistem sedang sibuk, coba sebentar lagi." });
       }
     }
