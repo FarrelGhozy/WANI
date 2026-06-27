@@ -15,7 +15,9 @@ export const env = {
   nodeEnv: process.env.NODE_ENV ?? "development",
 
   ai: {
+    llmApiKey: process.env.LLM_API_KEY ?? process.env.OPENROUTER_API_KEY ?? "",
     openrouterApiKey: process.env.OPENROUTER_API_KEY ?? "",
+    llmBaseUrl: process.env.LLM_BASE_URL ?? "https://openrouter.ai/api/v1/chat/completions",
     defaultModel: process.env.LLM_MODEL ?? "google/gemma-4-31b-it:free",
     fallbackModel: process.env.LLM_FALLBACK_MODEL ?? "qwen/qwen3-next-80b-a3b-instruct:free",
     maxTokens: num("LLM_MAX_TOKENS", 2048),

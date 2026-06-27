@@ -75,18 +75,22 @@ export default function AiTab({ config, onUpdate }: AiTabProps) {
             type="text"
             value={model}
             onChange={(e) => { setModel(e.target.value); setDirty(true) }}
-            placeholder="google/gemma-4-31b-it:free"
+            placeholder="deepseek-v4-flash-free"
             className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
           />
           <p className="mt-1 text-xs text-stone-400">
             Cari model gratis di{' '}
-            <a href="https://openrouter.ai/models?q=free" target="_blank" rel="noopener noreferrer" className="text-teal-600 underline">openrouter.ai/models</a>
-            . Contoh: <code className="text-stone-500">google/gemma-4-31b-it:free</code>,{' '}
+            <a href="https://opencode.ai/zen/v1/models" target="_blank" rel="noopener noreferrer" className="text-teal-600 underline">OpenCode Zen</a>
+            {' atau '}
+            <a href="https://openrouter.ai/models?q=free" target="_blank" rel="noopener noreferrer" className="text-teal-600 underline">OpenRouter</a>
+            . Contoh: <code className="text-stone-500">deepseek-v4-flash-free</code>,{' '}
             <code className="text-stone-500">qwen/qwen3-next-80b-a3b-instruct:free</code>
           </p>
           <p className="mt-0.5 text-xs text-stone-400">
-            API Key diatur via <code className="text-stone-500">OPENROUTER_API_KEY</code> —{' '}
-            <a href="https://openrouter.ai/keys" target="_blank" rel="noopener noreferrer" className="text-teal-600 underline">openrouter.ai/keys</a>
+            API Key via <code className="text-stone-500">LLM_API_KEY</code> atau <code className="text-stone-500">OPENROUTER_API_KEY</code>{' '}
+            <a href="https://opencode.ai/zen" target="_blank" rel="noopener noreferrer" className="text-teal-600 underline">OpenCode Zen</a>
+            {' atau '}
+            <a href="https://openrouter.ai/keys" target="_blank" rel="noopener noreferrer" className="text-teal-600 underline">OpenRouter</a>
           </p>
         </Field>
         <Field label="Token Maksimal">

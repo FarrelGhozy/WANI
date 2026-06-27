@@ -7,8 +7,6 @@ import type {
   TokenUsage,
 } from "@/src/types/ai"
 
-const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
-
 export class LLMError extends Error {
   constructor(
     message: string,
@@ -23,29 +21,30 @@ function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
-interface OpenRouterChoice {
+interface LLMChoice {
   message?: { content?: string }
   finish_reason?: string
 }
 
-interface OpenRouterResponse {
-  choices?: OpenRouterChoice[]
+interface LLMResponse {
+  choices?: LLMChoice[]
   usage?: { prompt_tokens?: number; completion_tokens?: number }
   error?: { message?: string }
 }
 
 /**
- * Send a chat completion to OpenRouter with retry + backoff and a one-time
- * fallback to a secondary model. Throws LLMError on permanent failure.
+ * Send a chat completion to the configured LLM provider with retry + backoff
+ * and a one-time fallback to a secondary model. Throws LLMError on permanent failure.
  */
 export async function complete(
   messages: ChatMessage[],
   options: CompletionOptions = {},
 ): Promise<CompletionResult> {
-  if (!env.ai.openrouterApiKey) {
-    throw new LLMError("OPENROUTER_API_KEY is not configured", false)
+  if (!env.ai.llmApiKey) {
+    throw new LLMError("LLM_API_KEY (or OPENROUTER_API_KEY) is not configured", false)
   }
 
+  const baseUrl = env.ai.llmBaseUrl
   const maxTokens = options.maxTokens ?? env.ai.maxTokens
   const temperature = options.temperature ?? env.ai.temperature
   const maxRetries = options.retries ?? 2
@@ -64,15 +63,21 @@ export async function complete(
     const timeoutId = setTimeout(() => controller.abort(), timeout)
 
     try {
-      const res = await fetch(OPENROUTER_URL, {
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${env.ai.llmApiKey}`,
+      }
+
+      // OpenRouter-specific metadata headers
+      if (baseUrl.includes("openrouter.ai")) {
+        headers["HTTP-Referer"] = "https://wani.app"
+        headers["X-Title"] = "WANI"
+      }
+
+      const res = await fetch(baseUrl, {
         method: "POST",
         signal: controller.signal,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${env.ai.openrouterApiKey}`,
-          "HTTP-Referer": "https://wani.app",
-          "X-Title": "WANI",
-        },
+        headers,
         body: JSON.stringify({ model, messages, max_tokens: maxTokens, temperature }),
       })
 
@@ -80,19 +85,19 @@ export async function complete(
         const retryable = res.status === 429 || res.status >= 500
         let detail = res.statusText
         try {
-          const body = (await res.json()) as OpenRouterResponse
+          const body = (await res.json()) as LLMResponse
           detail = body.error?.message ?? detail
         } catch {
           /* ignore body parse errors */
         }
-        throw new LLMError(`OpenRouter ${res.status}: ${detail}`, retryable)
+        throw new LLMError(`LLM ${res.status}: ${detail}`, retryable)
       }
 
-      const data = (await res.json()) as OpenRouterResponse
+      const data = (await res.json()) as LLMResponse
       const choice = data.choices?.[0]
       const content = choice?.message?.content
       if (!content) {
-        throw new LLMError("Invalid response structure from OpenRouter", true)
+        throw new LLMError("Invalid response structure from LLM", true)
       }
 
       const usage: TokenUsage = {
@@ -100,7 +105,7 @@ export async function complete(
         completionTokens: data.usage?.completion_tokens ?? 0,
       }
 
-      logger.info("OpenRouter completion succeeded", {
+      logger.info("LLM completion succeeded", {
         model,
         finishReason: choice?.finish_reason,
         attempt,
@@ -128,13 +133,13 @@ export async function complete(
 
       if (attempt === maxRetries) {
         throw new LLMError(
-          `OpenRouter failed after ${maxRetries + 1} attempt(s): ${message}`,
+          `LLM failed after ${maxRetries + 1} attempt(s): ${message}`,
           false,
         )
       }
 
       const delay = Math.min(1000 * 2 ** attempt, 10_000)
-      logger.warn("OpenRouter request failed, retrying", { attempt, delay, model, message })
+      logger.warn("LLM request failed, retrying", { attempt, delay, model, message })
       await sleep(delay)
     } finally {
       clearTimeout(timeoutId)
