@@ -249,8 +249,8 @@ export default function PaymentTab() {
   return (
     <>
       {/* Type tabs + Add button */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex overflow-x-auto gap-1 rounded-lg bg-stone-100 p-1">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex min-w-0 flex-1 overflow-x-auto gap-1 rounded-lg bg-stone-100 p-1">
           {TYPE_ORDER.map((t) => {
             const cfg = TYPE_CONFIG[t]
             const count = methods.filter((m) => m.type === t).length
