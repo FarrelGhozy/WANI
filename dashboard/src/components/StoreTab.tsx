@@ -300,7 +300,7 @@ export default function StoreTab({ store, onUpdate }: StoreTabProps) {
         <h2 className="mb-4 text-base font-semibold text-stone-900 md:mb-6 md:text-lg">Profil Toko</h2>
 
         {/* Photo */}
-        <div className="mb-6 flex flex-col items-center gap-3 sm:flex-row md:mb-8 md:gap-4">
+        <div className="mb-4 flex flex-col items-center gap-3 sm:flex-row md:mb-6 md:gap-4">
           <div className="relative">
             <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-full bg-teal-50 ring-4 ring-teal-100">
               {store.logoUrl ? (
@@ -329,7 +329,7 @@ export default function StoreTab({ store, onUpdate }: StoreTabProps) {
           </div>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 md:gap-5">
+        <div className="grid gap-3 sm:grid-cols-2 md:gap-5">
           <Input
             label="Nama Bisnis"
             value={form.businessName}
@@ -399,13 +399,13 @@ export default function StoreTab({ store, onUpdate }: StoreTabProps) {
       </Card>
 
       {/* Payment Methods */}
-      <Card accent="teal" className="mt-4 md:mt-6">
+      <Card accent="teal">
         <h2 className="mb-4 text-base font-semibold text-stone-900 md:mb-5 md:text-lg">Metode Pembayaran</h2>
         <PaymentTab />
       </Card>
 
       {/* Categories */}
-      <Card accent="teal" className="mt-4 md:mt-6">
+      <Card accent="teal">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-teal-100">
@@ -424,7 +424,7 @@ export default function StoreTab({ store, onUpdate }: StoreTabProps) {
         </div>
       </Card>
 
-      <Card accent="amber" className="mt-4 md:mt-6">
+      <Card accent="amber">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-100">
