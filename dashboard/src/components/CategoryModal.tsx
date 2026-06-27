@@ -24,6 +24,7 @@ export default function CategoryModal({ open, onClose, categories, onCreate, onU
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editName, setEditName] = useState('')
   const [editDesc, setEditDesc] = useState('')
+  const [editErrors, setEditErrors] = useState<Record<string, string>>({})
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [creating, setCreating] = useState(false)
   const { toast } = useToast()
@@ -51,10 +52,15 @@ export default function CategoryModal({ open, onClose, categories, onCreate, onU
     setEditingId(cat.id)
     setEditName(cat.name)
     setEditDesc(cat.description ?? '')
+    setEditErrors({})
   }
 
   async function handleEdit() {
-    if (!editingId || !editName.trim()) return
+    if (!editingId) return
+    if (!editName.trim()) {
+      setEditErrors({ editName: 'Nama kategori wajib diisi' })
+      return
+    }
     try {
       await onUpdate(editingId, { name: editName.trim(), description: editDesc.trim() || null })
       toast('Kategori berhasil diperbarui', 'success')
@@ -122,20 +128,20 @@ export default function CategoryModal({ open, onClose, categories, onCreate, onU
               >
                 {editingId === cat.id ? (
                   <div className="flex flex-1 flex-col gap-2">
-                    <input
+                    <Input
+                      placeholder="Nama kategori"
                       value={editName}
-                      onChange={(e) => setEditName(e.target.value)}
-                      className="h-9 rounded-md border border-stone-300 px-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+                      onChange={(e) => { setEditName(e.target.value); setEditErrors((prev) => ({ ...prev, editName: '' })) }}
+                      error={editErrors.editName}
                     />
-                    <input
+                    <Input
+                      placeholder="Deskripsi (opsional)"
                       value={editDesc}
                       onChange={(e) => setEditDesc(e.target.value)}
-                      placeholder="Deskripsi (opsional)"
-                      className="h-9 rounded-md border border-stone-300 px-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
                     />
                     <div className="flex gap-2">
                       <Button size="sm" onClick={handleEdit} disabled={!editName.trim()}>Simpan</Button>
-                      <Button size="sm" variant="secondary" onClick={() => setEditingId(null)}>Batal</Button>
+                      <Button size="sm" variant="secondary" onClick={() => { setEditingId(null); setEditErrors({}) }}>Batal</Button>
                     </div>
                   </div>
                 ) : (
