@@ -48,10 +48,13 @@ async function main() {
     }
 
     if (connection === "open" || receivedPendingNotifications) {
-      const phoneNumber = sock.user?.phoneNumber ?? state.creds.me?.phoneNumber ?? null;
+      const id = sock.user?.id ?? state.creds.me?.id ?? "";
+      const phoneNumber = id.split(":")[0]?.replace(/[^0-9]/g, "") || null;
       logger.info({ connection, receivedPendingNotifications, phoneNumber }, "connected — clearing QR");
       api.delete("/api/qr").catch(e => logger.error({ err: e?.response?.data ?? e }, "clear QR failed"));
-      api.post("/api/qr", { status: "connected", phone: phoneNumber }).catch(e => logger.error({ err: e?.response?.data ?? e }, "status update failed"));
+      const payload: Record<string, string> = { status: "connected" };
+      if (phoneNumber) payload.phone = phoneNumber;
+      api.post("/api/qr", payload).catch(e => logger.error({ err: e?.response?.data ?? e }, "status update failed"));
     }
 
     if (connection === "close") {
