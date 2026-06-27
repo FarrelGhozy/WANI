@@ -2,21 +2,24 @@ import { useState } from 'react'
 import { Link } from 'react-router'
 import { MailIcon } from '@/components/Icons.tsx'
 import Button from '@/components/ui/Button.tsx'
+import Input from '@/components/ui/Input.tsx'
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [fieldError, setFieldError] = useState<string | undefined>()
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    setFieldError(undefined)
     if (!email) {
-      setError('Email wajib diisi')
+      setFieldError('Email wajib diisi')
       return
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError('Format email tidak valid')
+      setFieldError('Format email tidak valid')
       return
     }
     setLoading(true)
@@ -65,21 +68,16 @@ export default function ForgotPasswordPage() {
         </div>
       )}
 
-      <div className="space-y-1.5">
-        <label className="text-xs font-medium uppercase tracking-wider text-stone-500">Email</label>
-        <div className="relative">
-          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-stone-400">
-            <MailIcon />
-          </span>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="email@contoh.com"
-            className="h-11 w-full rounded-lg border border-stone-300 bg-white pl-10 pr-3 text-sm text-stone-900 transition-all placeholder:text-stone-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-          />
-        </div>
-      </div>
+      <Input
+        label="Email"
+        type="email"
+        value={email}
+        onChange={(e) => { setEmail(e.target.value); setFieldError(undefined) }}
+        placeholder="email@contoh.com"
+        prefix={<MailIcon />}
+        error={fieldError}
+        inputSize="lg"
+      />
 
       <Button type="submit" size="lg" className="w-full" loading={loading}>
         Kirim Tautan Reset
