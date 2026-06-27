@@ -1,4 +1,5 @@
 import { createPortal } from 'react-dom'
+import type { ReactNode } from 'react'
 import { Check, X, Info } from 'lucide-react'
 import type { Toast } from '@/hooks/useToast'
 
@@ -8,7 +9,7 @@ const colors: Record<Toast['type'], string> = {
   info: 'border-stone-300 bg-stone-50 text-stone-800',
 }
 
-const icons: Record<Toast['type'], JSX.Element> = {
+const icons: Record<Toast['type'], ReactNode> = {
   success: <Check size={16} />,
   error: <X size={16} />,
   info: <Info size={16} />,
