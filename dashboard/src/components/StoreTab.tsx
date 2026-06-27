@@ -112,11 +112,12 @@ function cleanPhone(v: string): string {
   return v.replace(/^(\+62|62|0)/, '')
 }
 
-function Field({ label, children }: { label: string; children: ReactNode }) {
+function Field({ label, children, error }: { label: string; children: ReactNode; error?: string }) {
   return (
     <div className="space-y-1.5">
       <label className="text-xs font-medium text-stone-500">{label}</label>
       {children}
+      {error && <p className="text-xs text-red-500">{error}</p>}
     </div>
   )
 }
@@ -154,9 +155,11 @@ function TimeSelect({ value, onChange }: { value: string; onChange: (v: string) 
 function BusinessHoursEditor({
   value,
   onChange,
+  error,
 }: {
   value: string | null
   onChange: (v: string) => void
+  error?: string
 }) {
   const hours = parseToHoursState(value)
 
@@ -199,9 +202,7 @@ function BusinessHoursEditor({
           </div>
         )
       })}
-      <p className="pt-1 text-xs text-stone-400">
-        {formatHoursState(hours)}
-      </p>
+      {error && <p className="pt-1 text-xs text-red-500">{error}</p>}
     </div>
   )
 }
@@ -246,10 +247,22 @@ function PaymentMethodsCheckbox({
   )
 }
 
+function validateHours(hours: HoursState): string | null {
+  for (const day of DAYS) {
+    const h = hours[day]
+    if (h.open && h.start && h.end && h.start >= h.end) {
+      return `${day}: jam tutup (${h.end}) harus setelah jam buka (${h.start})`
+    }
+  }
+  return null
+}
+
 export default function StoreTab({ store, onUpdate }: StoreTabProps) {
   const fileRef = useRef<HTMLInputElement>(null)
   const { categories, createCategory, updateCategory, deleteCategory } = useProducts()
   const [categoryModalOpen, setCategoryModalOpen] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const [errors, setErrors] = useState<Record<string, string>>({})
   const { toast } = useToast()
 
   const [form, setForm] = useState(() => ({
@@ -263,6 +276,14 @@ export default function StoreTab({ store, onUpdate }: StoreTabProps) {
   }))
 
   const handleSave = useCallback(async () => {
+    const errs: Record<string, string> = {}
+    if (!form.businessName.trim()) errs.businessName = 'Nama bisnis wajib diisi'
+    const hoursErr = validateHours(parseToHoursState(form.businessHours))
+    if (hoursErr) errs.businessHours = hoursErr
+    setErrors(errs)
+    if (Object.keys(errs).length > 0) return
+
+    setSaving(true)
     try {
       await onUpdate({
         businessName: form.businessName,
@@ -276,6 +297,8 @@ export default function StoreTab({ store, onUpdate }: StoreTabProps) {
       toast('Pengaturan toko berhasil disimpan', 'success')
     } catch {
       toast('Gagal menyimpan pengaturan toko', 'error')
+    } finally {
+      setSaving(false)
     }
   }, [form, onUpdate, toast])
 
@@ -288,15 +311,26 @@ export default function StoreTab({ store, onUpdate }: StoreTabProps) {
     }
   }, [store.isActive, onUpdate, toast])
 
-  function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
+  async function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
-    const url = URL.createObjectURL(file)
     try {
-      onUpdate({ logoUrl: url })
-      toast('Foto toko berhasil diganti', 'success')
+      const body = new FormData()
+      body.append('file', file)
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${localStorage.getItem('wani_auth_token')}` },
+        body,
+      })
+      const json = await res.json()
+      if (json.status === 'success') {
+        await onUpdate({ logoUrl: json.data.url })
+        toast('Foto toko berhasil diganti', 'success')
+      } else {
+        toast('Gagal mengupload foto', 'error')
+      }
     } catch {
-      toast('Gagal mengganti foto toko', 'error')
+      toast('Gagal mengupload foto', 'error')
     }
   }
 
@@ -338,14 +372,13 @@ export default function StoreTab({ store, onUpdate }: StoreTabProps) {
         </div>
 
         <div className="grid gap-5 sm:grid-cols-2">
-          <Field label="Nama Bisnis">
-            <input
-              value={form.businessName}
-              onChange={(e) => setForm((prev) => ({ ...prev, businessName: e.target.value }))}
-              placeholder="Contoh: Warung Nasi Goreng"
-              className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all placeholder:text-stone-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-            />
-          </Field>
+          <Input
+            label="Nama Bisnis"
+            value={form.businessName}
+            onChange={(e) => { setForm((prev) => ({ ...prev, businessName: e.target.value })); setErrors((prev) => ({ ...prev, businessName: '' })) }}
+            placeholder="Contoh: Warung Nasi Goreng"
+            error={errors.businessName}
+          />
           <Input
             label="TELEPON"
             value={form.phone}
@@ -365,10 +398,10 @@ export default function StoreTab({ store, onUpdate }: StoreTabProps) {
               />
             </Field>
           </div>
-          <Field label="Jam Operasional">
+          <Field label="Jam Operasional" error={errors.businessHours}>
             <BusinessHoursEditor
               value={form.businessHours}
-              onChange={(v) => setForm((prev) => ({ ...prev, businessHours: v }))}
+              onChange={(v) => { setForm((prev) => ({ ...prev, businessHours: v })); setErrors((prev) => ({ ...prev, businessHours: '' })) }}
             />
           </Field>
           <Field label="Metode Pembayaran">
@@ -378,11 +411,12 @@ export default function StoreTab({ store, onUpdate }: StoreTabProps) {
             />
           </Field>
           <Field label="Info Pengiriman">
-            <input
+            <textarea
               value={form.shippingInfo ?? ''}
               onChange={(e) => setForm((prev) => ({ ...prev, shippingInfo: e.target.value || null }))}
               placeholder="Contoh: Gratis ongkir untuk area Kec. Sukasari. Estimasi 1-2 hari kerja."
-              className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all placeholder:text-stone-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+              rows={3}
+              className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 transition-all placeholder:text-stone-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
             />
           </Field>
           <Field label="Kebijakan Retur">
@@ -414,7 +448,7 @@ export default function StoreTab({ store, onUpdate }: StoreTabProps) {
           </button>
         </div>
         <div className="mt-4 flex justify-end gap-3">
-          <Button size="sm" onClick={handleSave}>Simpan Perubahan</Button>
+          <Button size="sm" loading={saving} onClick={handleSave}>Simpan Perubahan</Button>
         </div>
       </Card>
 
