@@ -1,0 +1,10 @@
+{
+  "name": "wani",
+  "private": true,
+  "scripts": {
+    "dev": "bun run dev:api & bun run dev:bot & bun run dev:dash & wait",
+    "dev:api": "cd api && bun --watch run src/index.ts",
+    "dev:bot": "cd wa-bot && bun --watch run src/index.ts",
+    "dev:dash": "cd dashboard && bun run dev"
+  }
+}
