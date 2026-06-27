@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from "express"
 import { AppError } from "@/src/utils/errors"
 import { sendResponse } from "@/src/utils/response"
+import { logger } from "@/src/config/logger"
 
 export function errorHandler(
   err: Error,
@@ -13,7 +14,7 @@ export function errorHandler(
     return
   }
 
-  console.error(err)
+  logger.error(err)
 
   const data =
     process.env.NODE_ENV === "development"

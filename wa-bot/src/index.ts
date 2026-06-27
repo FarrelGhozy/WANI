@@ -5,7 +5,17 @@ import axios from "axios";
 import { prisma } from "@/src/config/db";
 import { usePrismaAuthState } from "@/src/services/whatsapp-auth";
 
-const logger = pino({ level: "info" });
+const logger = pino({
+  level: "info",
+  transport: {
+    target: "pino-pretty",
+    options: {
+      colorize: true,
+      translateTime: "HH:MM:ss",
+      ignore: "pid,hostname",
+    },
+  },
+});
 
 const api = axios.create({
   baseURL: process.env.API_URL!,
@@ -18,7 +28,7 @@ async function main() {
   const sock = makeWASocket({
     auth: state,
     logger,
-    printQRInTerminal: false,
+    printQRInTerminal: true,
     browser: Browsers.ubuntu("Firefox")
   });
 
@@ -26,16 +36,22 @@ async function main() {
 
   sock.ev.on("connection.update", ({ connection, lastDisconnect, qr }) => {
     if (qr) {
+      logger.info(`qr code received: ${qr}`);
+
       qrcode.generate(qr, { small: true });
       api.post("/api/qr", { qr }).catch(() => {});
     }
     if (connection === "close") {
       const loggedOut = lastDisconnect?.error?.toString()?.includes("logged out");
+
       logger.info({ loggedOut }, "connection closed");
+
       api.post("/api/qr", { status: "disconnected" }).catch(() => {});
+
       if (!loggedOut) main();
     } else if (connection === "open") {
       logger.info("connected!");
+
       api.delete("/api/qr").catch(() => {});
     }
   });

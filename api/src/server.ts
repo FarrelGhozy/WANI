@@ -15,7 +15,7 @@ app.set("etag", false)
 
 app.use(helmet())
 app.use(cors())
-app.use(morgan("short", { stream: morganStream }))
+app.use(morgan(":method :url :status :response-time ms", { stream: morganStream }))
 app.use(express.json())
 app.use("/api", routes)
 
