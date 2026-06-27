@@ -1,6 +1,6 @@
 # WANI Web-Gen — Architecture
 
-> Static site generator untuk UMKM. Package standalone (Bun + Astro 6.4) yang menghasilkan multi-page website statis dari data toko, produk, dan pesanan.
+> Static site generator untuk UMKM. Package standalone (Bun + Astro 7) yang menghasilkan multi-page website statis dari data toko, produk, dan pesanan.
 
 ---
 
@@ -29,13 +29,13 @@
 |-------|-----------|-------|
 | **Runtime** | Bun | 1.3.x |
 | **Generator** | TypeScript (Bun native) | — |
-| **Template Engine** | Astro | 6.4.x |
+| **Template Engine** | Astro | 7.x |
 | **Output** | Static HTML + CSS + JS | — |
 
 ### Prinsip
 
 - **No downgrade.** Jika ada error, cari solusi via searching — jangan turunin versi.
-- **Latest stable.** Astro 6.4.x, bukan beta/rc.
+- **Latest stable.** Astro 7.x, bukan beta/rc.
 - **Statis murni.** Output adalah folder HTML/CSS/JS siap deploy — zero server runtime.
 - **Satu template per folder.** Setiap template di `src/templates/{nama}/` adalah project Astro yang lengkap dan standalone.
 
@@ -48,8 +48,8 @@
 | **Tugas** | Generate static HTML dari data yang diberikan |
 | **Bukan tugas** | Menyimpan config, menyajikan API, autentikasi |
 | **Sumber data** | Diterima via parameter function dari API (`import { generate }`) |
-| **Output** | Folder static files di `generated-sites/{slug}/` |
-| **Preview** | Sama seperti publish, output ke `generated-sites/preview/{slug}/` |
+| **Output** | Folder static files di `api/generated-sites/{slug}/` |
+| **Preview** | Sama seperti publish, output ke `api/generated-sites/{slug}/` |
 | **Integrasi** | Dipanggil langsung (`import`) dari `api/` — Bun resolve TypeScript tanpa build |
 
 web-gen **tidak punya akses database sendiri**. Semua data dikirim sebagai argument function oleh API.
@@ -131,10 +131,8 @@ web-gen/
 │                   ├── site-config.json
 │                   └── orders-stats.json
 │
-└── generated-sites/             # Output static files (gitignored)
-    ├── .gitkeep
-    ├── preview/{slug}/           # Hasil preview — overwrite tiap generate
-    └── {slug}/                   # Hasil publish — final output, siap deploy
+└── generated-sites/             # Output static files (gitignored, mostly unused)
+    └── .gitkeep                  # Output utama ada di api/generated-sites/
 ```
 
 ### Template Naming Convention
@@ -176,8 +174,8 @@ Template bisa ditambah di masa depan: `src/templates/modern/`, `src/templates/mi
 │   │     - site-config.json   ← dari API site config (hero,       │
 │   │                            about, colors, contact info)      │
 │   │     - orders-stats.json  ← dari API Orders stats             │
-│   ├── 4. npm install --silent di workingDir                      │
-│   ├── 5. npx astro build di workingDir                           │
+│   ├── 4. bun install --silent di workingDir                      │
+│   ├── 5. bunx astro build di workingDir                          │
 │   ├── 6. Copy workingDir/dist/ → outputDir/{slug}/               │
 │   └── 7. Bersihkan workingDir                                    │
 │                                                                  │
@@ -186,7 +184,7 @@ Template bisa ditambah di masa depan: `src/templates/modern/`, `src/templates/mi
                                    │
                                    ▼
 ┌──────────────────────────────────────────────────────────────────┐
-│  generated-sites/{slug}/                                         │
+│  api/generated-sites/{slug}/                                     │
 │                                                                  │
 │  ├── index.html           ── hasil render index.astro            │
 │  ├── produk/index.html    ── hasil render produk.astro           │
@@ -287,8 +285,8 @@ Buka WhatsApp dengan pre-filled message:
 https://wa.me/62xxxxxxxxx?text=Halo%20...%2C%20saya%20ingin%20memesan%3A%0A...
         │
         ▼
-Template pesan: "Halo {store.nama}, saya ingin memesan:
-                {product.nama} — Rp {product.harga}
+Template pesan: "Halo {store.businessName}, saya ingin memesan:
+                {product.name} — Rp {product.price}
                 Terima kasih."
 ```
 
@@ -296,10 +294,10 @@ Template pesan: "Halo {store.nama}, saya ingin memesan:
 
 ```astro
 ---
-const waNumber = store.wa.replace(/[^0-9]/g, "")
+const waNumber = store.phone.replace(/[^0-9]/g, "")
 const message = encodeURIComponent(
-  `Halo ${store.nama}, saya ingin memesan:\n` +
-  `${product.nama} — Rp ${product.harga.toLocaleString("id-ID")}\n` +
+  `Halo ${store.businessName}, saya ingin memesan:\n` +
+  `${product.name} — Rp ${product.price.toLocaleString("id-ID")}\n` +
   `Terima kasih.`
 )
 const waUrl = `https://wa.me/${waNumber}?text=${message}`
@@ -314,7 +312,7 @@ const waUrl = `https://wa.me/${waNumber}?text=${message}`
 `products.json` menyertakan field yang dibutuhkan WA button:
 - `nama` — nama produk
 - `harga` — number, diformat Rp di rendering
-- `wa` — nomor WhatsApp toko (disalin dari store)
+- `phone` — nomor WhatsApp toko (disalin dari store)
 
 ### Keuntungan
 
@@ -334,6 +332,7 @@ File: `src/generator.ts`
 interface GenerateParams {
   slug: string
   template: string  // nama folder di src/templates/
+  theme?: string    // nama theme CSS (classic/modern/vibrant/elegant)
   store: StoreData
   products: ProductData[]
   config: SiteConfig
@@ -360,8 +359,8 @@ export async function generate(params: GenerateParams): Promise<GenerateResult>
    - `workingDir/src/data/products.json`
    - `workingDir/src/data/site-config.json`
    - `workingDir/src/data/orders-stats.json`
-5. **Install dependencies**: `Bun.spawnSync(["npm", "install", "--silent"], { cwd: workingDir })`
-6. **Build**: `Bun.spawnSync(["npx", "astro", "build"], { cwd: workingDir })`
+5. **Install dependencies**: `Bun.spawnSync(["bun", "install", "--silent"], { cwd: workingDir })`
+6. **Build**: `Bun.spawnSync(["bunx", "astro", "build"], { cwd: workingDir })`
 7. **Copy output**: `fs.cpSync(path.join(workingDir, "dist"), outputDir, { recursive: true })`
 8. **Cleanup**: `fs.rmSync(workingDir, { recursive: true, force: true })`
 9. **Return**: `{ success: true, outputPath: outputDir }`
@@ -418,7 +417,7 @@ export async function createZipFile(params: ZipParams & { outputPath: string }):
 
 ## Output Structure
 
-Setelah generate, folder `generated-sites/{slug}/` berisi:
+Setelah generate, folder `api/generated-sites/{slug}/` berisi:
 
 ```
 {slug}/
@@ -435,15 +434,15 @@ Setelah generate, folder `generated-sites/{slug}/` berisi:
 
 ### Preview
 
-Preview output di `generated-sites/preview/{slug}/` — struktur yang sama. API serve folder ini via Express static middleware di path `/s/{slug}`.
+Preview output di `api/generated-sites/{slug}/` — struktur yang sama. API serve folder ini via Express static middleware di path `/s/{slug}`.
 
 ### ZIP Download
 
-Hasil generate bisa di-download sebagai file ZIP (`wani-website-{slug}.zip`). File ZIP bersifat sementara, tidak disimpan permanen.
+Hasil generate bisa di-download sebagai file ZIP (`website-{slug}.zip`). File ZIP bersifat sementara, tidak disimpan permanen.
 
 ### Publish
 
-Publish memindahkan hasil ke `generated-sites/{slug}/` (final). Folder ini siap di-copy ke:
+Publish menandai website sebagai `published: true` di database. Hasil generate tetap di `api/generated-sites/{slug}/`. Folder ini siap di-copy ke:
 - Vercel (`vercel deploy --prebuilt`)
 - Netlify (drag & drop folder)
 - Nginx / Apache (copy ke document root)
@@ -524,33 +523,32 @@ Form untuk mengatur konten website:
 ### Cara API Memanggil web-gen
 
 ```typescript
-// api/src/controllers/site.ts
-import { generate } from "../../web-gen/src/index.ts"
+// api/src/controllers/website.ts
+import { generate } from "@web-gen/index.ts"
 import path from "node:path"
 
-export async function publishSite(req: Request, res: Response) {
-  const siteConfig = await siteModel.find()
-  const store = await storeModel.getById("default")
-  const products = await productModel.getAll({ ids: siteConfig.selectedProductIds })
-  const stats = await orderModel.getStats()
+export async function generateWebsite(req: Request, res: Response) {
+  const store = await StoreModel.find()
+  const products = await ProductModel.getAll()
+  const { totalOrders } = await OrderModel.getStats()
+  const stats = await OrderModel.getStatusCounts()
 
-  const outputDir = path.join(
-    import.meta.dir, "../../web-gen/generated-sites", siteConfig.slug
-  )
+  const slug = "default"
+  const GENERATED_DIR = path.resolve(import.meta.dir, "..", "..", "generated-sites")
 
   const result = await generate({
-    slug: siteConfig.slug,
-    template: siteConfig.template,
+    slug,
+    template: req.body.template,
+    theme: config.theme,
     store,
-    products,
-    config: siteConfig.config,
-    stats,
-    outputDir,
+    products: selectedProducts,
+    config: siteConfig,
+    stats: { totalOrders, ...stats },
+    outputDir: path.join(GENERATED_DIR, slug),
   })
 
-  // Simpan publishedAt
   if (result.success) {
-    await siteModel.update({ publishedAt: new Date() })
+    await WebSiteModel.markPublished()
   }
 
   sendResponse(res, result.success ? 200 : 500, result)
@@ -559,17 +557,17 @@ export async function publishSite(req: Request, res: Response) {
 
 ### Preview — Serve Static Files
 
-Di Express, tambahkan static middleware:
+Di Express, static middleware sudah terpasang di `api/src/server.ts`:
 
 ```typescript
-// api/src/index.ts
-app.use("/s", express.static(path.join(__dirname, "../../web-gen/generated-sites")))
+// api/src/server.ts
+const generatedDir = path.resolve(import.meta.dir, "..", "generated-sites")
+app.use("/s", express.static(generatedDir))
 ```
 
-Dengan ini, preview bisa diakses via:
+Preview bisa diakses via:
 ```
-http://localhost:3001/s/preview/{slug}/       ← preview
-http://localhost:3001/s/{slug}/               ← published (jika diserve)
+http://localhost:3001/s/default/               ← generated site
 ```
 
 ---
