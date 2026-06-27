@@ -75,6 +75,8 @@ async function main() {
       api.delete("/api/qr").catch(() => {});
       api.post("/api/qr", { status: "connected" }).catch(() => {});
 
+      logger.info({ phone, text, pushName }, "message received");
+
       try {
         const { data } = await api.post("/api/chat", {
           phone,
