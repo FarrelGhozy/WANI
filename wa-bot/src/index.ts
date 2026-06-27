@@ -34,7 +34,13 @@ async function main() {
 
   sock.ev.on("creds.update", saveCreds);
 
-  sock.ev.on("connection.update", ({ connection, lastDisconnect, qr, receivedPendingNotifications }) => {
+  sock.ev.on("connection.update", (update) => {
+    const { connection, lastDisconnect, qr, receivedPendingNotifications } = update;
+
+    const sockUser = sock.user ? { id: sock.user.id, phoneNumber: sock.user.phoneNumber, lid: sock.user.lid, name: sock.user.name } : null;
+    const credsMe = state.creds.me ? { id: state.creds.me.id, phoneNumber: state.creds.me.phoneNumber, lid: state.creds.me.lid } : null;
+    logger.info({ connection, hasQr: !!qr, receivedPendingNotifications, updateKeys: Object.keys(update), sockUser, credsMe }, "connection update");
+
     if (qr) {
       logger.info("QR code received");
       qrcode.generate(qr, { small: true });
