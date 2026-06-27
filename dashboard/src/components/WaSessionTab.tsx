@@ -127,7 +127,7 @@ export default function WaSessionTab({ qr, connection, phone, connectedAt, onDis
             <div className="grid gap-3 sm:grid-cols-2">
               <SessionInfo label="Telepon" value={phone} />
               <SessionInfo label="Platform" value="WhatsApp Web" />
-              <SessionInfo label="Terhubung Sejak" value={connectedAt ? formatDate(connectedAt) : '-'} />
+              <SessionInfo label="Terhubung Sejak" value={connectedAt ? formatDate(connectedAt, { long: true, withTz: true }) : '-'} />
               <SessionInfo label="Terakhir Aktif" value="Sekarang" />
             </div>
           </div>

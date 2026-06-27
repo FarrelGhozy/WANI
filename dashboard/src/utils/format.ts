@@ -2,13 +2,18 @@ export function formatPrice(price: number): string {
   return `Rp${price.toLocaleString('id-ID')}`
 }
 
-export function formatDate(date: string | Date, options?: { timeOnly?: boolean; long?: boolean }): string {
+export function formatDate(date: string | Date, options?: { timeOnly?: boolean; long?: boolean; withTz?: boolean }): string {
   const d = new Date(date)
+  const fmt: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }
   if (options?.timeOnly) {
-    return d.toLocaleDateString('id-ID', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })
+    return d.toLocaleTimeString('id-ID', fmt).replace(/\./g, ':')
   }
-  const opts: Intl.DateTimeFormatOptions = options?.long
-    ? { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }
-    : { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }
-  return d.toLocaleDateString('id-ID', opts)
+  const dateOpts: Intl.DateTimeFormatOptions = {
+    day: 'numeric',
+    month: options?.long ? 'long' : 'short',
+    year: 'numeric',
+    ...fmt,
+  }
+  if (options?.withTz) dateOpts.timeZoneName = 'short'
+  return d.toLocaleDateString('id-ID', dateOpts).replace(/\./g, ':')
 }
