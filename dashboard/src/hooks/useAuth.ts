@@ -64,7 +64,7 @@ export function useAuth() {
     return () => { cancelled = true }
   }, [])
 
-  const register = useCallback(async (name: string, email: string, password: string) => {
+  const register = useCallback(async (name: string, email: string, password: string): Promise<boolean> => {
     setLoading(true)
     setError(null)
     try {
@@ -77,8 +77,10 @@ export function useAuth() {
       localStorage.setItem(AUTH_TOKEN_KEY, token)
       localStorage.setItem(AUTH_USER_KEY, JSON.stringify(userData))
       setUser(userData)
+      return true
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Registrasi gagal')
+      return false
     } finally {
       setLoading(false)
     }
