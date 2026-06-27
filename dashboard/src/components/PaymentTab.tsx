@@ -250,26 +250,28 @@ export default function PaymentTab() {
     <>
       {/* Type tabs + Add button */}
       <div className="flex items-center justify-between gap-3">
-        <div className="flex min-w-0 flex-1 overflow-x-auto gap-1 rounded-lg bg-stone-100 p-1">
-          {TYPE_ORDER.map((t) => {
-            const cfg = TYPE_CONFIG[t]
-            const count = methods.filter((m) => m.type === t).length
-            return (
-              <button
-                key={t}
-                onClick={() => setActiveType(t)}
-                className={`flex items-center gap-1.5 whitespace-nowrap rounded-md px-3 py-1.5 text-xs font-medium transition-all ${
-                  activeType === t
-                    ? 'bg-white text-stone-900 shadow-sm'
-                    : 'text-stone-500 hover:text-stone-700'
-                }`}
-              >
-                <span>{cfg.icon}</span>
-                <span>{cfg.label}</span>
-                <span className="ml-0.5 rounded-full bg-stone-200 px-1.5 py-0.5 text-[10px] tabular-nums text-stone-500">{count}</span>
-              </button>
-            )
-          })}
+        <div className="min-w-0 flex-1 overflow-x-auto">
+          <div className="flex w-max gap-1 rounded-lg bg-stone-100 p-1">
+            {TYPE_ORDER.map((t) => {
+              const cfg = TYPE_CONFIG[t]
+              const count = methods.filter((m) => m.type === t).length
+              return (
+                <button
+                  key={t}
+                  onClick={() => setActiveType(t)}
+                  className={`flex items-center gap-1.5 whitespace-nowrap rounded-md px-3 py-1.5 text-xs font-medium transition-all ${
+                    activeType === t
+                      ? 'bg-white text-stone-900 shadow-sm'
+                      : 'text-stone-500 hover:text-stone-700'
+                  }`}
+                >
+                  <span>{cfg.icon}</span>
+                  <span className="hidden sm:inline">{cfg.label}</span>
+                  <span className="hidden sm:inline ml-0.5 rounded-full bg-stone-200 px-1.5 py-0.5 text-[10px] tabular-nums text-stone-500">{count}</span>
+                </button>
+              )
+            })}
+          </div>
         </div>
         <Button size="sm" onClick={openCreate}>Tambah {TYPE_CONFIG[activeType].label}</Button>
       </div>
@@ -282,7 +284,13 @@ export default function PaymentTab() {
         </div>
       ) : (
         <div className="mt-4 overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-sm table-fixed">
+            <colgroup>
+              <col className="w-[36%]" />
+              <col className="w-[30%]" />
+              <col className="w-[16%]" />
+              <col className="w-[18%]" />
+            </colgroup>
             <thead>
               <tr className="border-b border-stone-200 text-left text-xs font-medium uppercase tracking-wider text-stone-400">
                 <th className="py-2 pr-3 md:py-3 md:pr-4">Tipe</th>
@@ -303,10 +311,10 @@ export default function PaymentTab() {
                         {TYPE_CONFIG[method.type].icon}
                       </div>
                       <div className="min-w-0">
-                        <p className="text-xs font-medium text-stone-900 truncate max-w-[140px] sm:max-w-[200px] md:text-sm">
+                        <p className="truncate text-xs font-medium text-stone-900 md:text-sm">
                           {methodLabel(method)}
                         </p>
-                        <p className="text-[10px] text-stone-400 md:text-xs">{TYPE_CONFIG[method.type].label}</p>
+                        <p className="truncate text-[10px] text-stone-400 md:text-xs">{TYPE_CONFIG[method.type].label}</p>
                       </div>
                     </div>
                   </td>
