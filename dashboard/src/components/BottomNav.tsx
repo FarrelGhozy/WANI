@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router'
-import { GridIcon, BagIcon, ClipboardIcon, PeopleIcon, GlobeIcon, CogIcon } from '@/components/Icons.tsx'
+import { GridIcon, BagIcon, ClipboardIcon, PeopleIcon, GlobeIcon } from '@/components/Icons.tsx'
 
 const navItems = [
   { to: '/', icon: GridIcon, label: 'Dashboard' },
@@ -7,7 +7,6 @@ const navItems = [
   { to: '/orders', icon: ClipboardIcon, label: 'Pesanan' },
   { to: '/customers', icon: PeopleIcon, label: 'Pelanggan' },
   { to: '/website', icon: GlobeIcon, label: 'Website' },
-  { to: '/settings', icon: CogIcon, label: 'Pengaturan' },
 ]
 
 export default function BottomNav() {

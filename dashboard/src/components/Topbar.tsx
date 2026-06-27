@@ -1,4 +1,5 @@
-import { useLocation, useNavigate } from 'react-router'
+import { useLocation, useNavigate, Link } from 'react-router'
+import { CogIcon } from '@/components/Icons.tsx'
 
 function pathToLabel(path: string): string {
   if (path === '/') return 'Dashboard'
@@ -51,6 +52,13 @@ export default function Topbar({ connection }: TopbarProps) {
       </div>
 
       <div className="flex items-center gap-2">
+        <Link
+          to="/settings"
+          className="rounded-lg p-2 text-stone-400 transition-colors hover:bg-stone-100 hover:text-stone-700 lg:hidden"
+          aria-label="Pengaturan"
+        >
+          <CogIcon />
+        </Link>
         <span className={`h-2 w-2 rounded-full ${statusDot(connection)}`} />
         <span className="text-xs font-medium text-stone-500">{statusLabel(connection)}</span>
       </div>
