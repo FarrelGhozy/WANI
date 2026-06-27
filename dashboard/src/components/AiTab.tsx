@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback } from 'react'
 import type { ReactNode } from 'react'
 import type { AiConfig } from '@/hooks/useSettings.ts'
 import Card from '@/components/ui/Card.tsx'
@@ -28,15 +28,6 @@ export default function AiTab({ config, onUpdate }: AiTabProps) {
   const [greetingMessage, setGreetingMessage] = useState(config.greetingMessage ?? '')
   const [systemPrompt, setSystemPrompt] = useState(config.systemPrompt)
   const [knowledgeBase, setKnowledgeBase] = useState(config.knowledgeBase ?? '')
-
-  useEffect(() => {
-    setModel(config.model)
-    setMaxTokens(config.maxTokens)
-    setTemperature(config.temperature)
-    setGreetingMessage(config.greetingMessage ?? '')
-    setSystemPrompt(config.systemPrompt)
-    setKnowledgeBase(config.knowledgeBase ?? '')
-  }, [config])
 
   const handleSave = useCallback(async () => {
     setSaving(true)
@@ -92,10 +83,14 @@ export default function AiTab({ config, onUpdate }: AiTabProps) {
         <Field label="Token Maksimal">
           <input
             type="number"
+            min={1}
+            max={32000}
             value={maxTokens}
             onChange={(e) => { setMaxTokens(Number(e.target.value)); setDirty(true) }}
+            placeholder="4096"
             className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
           />
+          <p className="text-xs text-stone-400">Maksimal token per respons. Default: 4096. Kisaran: 1–32000.</p>
         </Field>
         <Field label="Temperature">
           <input
@@ -105,8 +100,10 @@ export default function AiTab({ config, onUpdate }: AiTabProps) {
             step="0.1"
             value={temperature}
             onChange={(e) => { setTemperature(Number(e.target.value)); setDirty(true) }}
+            placeholder="0.7"
             className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
           />
+          <p className="text-xs text-stone-400">Kreativitas respons. 0 = konsisten, 1 = seimbang, 2 = kreatif. Default: 0.7.</p>
         </Field>
         <Field label="Pesan Sapaan">
           <textarea
