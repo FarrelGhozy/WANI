@@ -59,8 +59,8 @@ export default function AiTab({ config, onUpdate }: AiTabProps) {
 
   return (
     <Card accent="amber">
-      <h2 className="mb-6 text-lg font-semibold text-stone-900">Konfigurasi AI Agent</h2>
-      <div className="grid gap-5 sm:grid-cols-2">
+      <h2 className="mb-4 text-base font-semibold text-stone-900 md:mb-6 md:text-lg">Konfigurasi AI Agent</h2>
+      <div className="grid gap-4 sm:grid-cols-2 md:gap-5">
         <Field label="Model">
           <input
             type="text"
@@ -174,10 +174,10 @@ export default function AiTab({ config, onUpdate }: AiTabProps) {
           </Field>
         </div>
       </div>
-      <div className="mt-6 flex items-center justify-between rounded-lg bg-stone-50 px-4 py-3">
-        <div>
+      <div className="mt-5 flex items-center justify-between gap-3 rounded-lg bg-stone-50 px-3 py-2.5 md:mt-6 md:px-4 md:py-3">
+        <div className="min-w-0">
           <p className="text-sm font-medium text-stone-900">AI Agent Aktif</p>
-          <p className="text-xs text-stone-500">Matikan untuk menjawab pelanggan secara manual</p>
+          <p className="text-xs text-stone-500 truncate">Matikan untuk menjawab pelanggan secara manual</p>
         </div>
         <button
           onClick={handleToggle}
