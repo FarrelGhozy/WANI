@@ -5,7 +5,7 @@ import Spinner from '@/components/ui/Spinner.tsx'
 
 function EmptyChatPanel() {
   return (
-    <div className="flex h-full flex-col items-center justify-center text-center">
+    <div className="flex flex-col items-center justify-center text-center">
       <div className="mb-4 rounded-full bg-stone-100 p-5 text-stone-300">
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
           <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
@@ -66,7 +66,7 @@ export default function Customers() {
         </div>
 
         {/* Right: Chat + Detail */}
-        <div className={`overflow-hidden rounded-xl border border-stone-200 bg-white ${!selectedId ? 'hidden lg:flex lg:flex-1' : 'flex-1'}`}>
+        <div className={`relative overflow-hidden rounded-xl border border-stone-200 bg-white ${!selectedId ? 'hidden lg:block lg:flex-1' : 'flex-1'}`}>
           {selected && conversation ? (
             <ChatView
               customerName={selected.name}
@@ -76,7 +76,7 @@ export default function Customers() {
               sending={convLoading}
             />
           ) : (
-            <div className="flex h-full items-center justify-center">
+            <div className="absolute inset-0 flex items-center justify-center">
               {selectedId && convLoading ? (
                 <Spinner size={24} />
               ) : (
