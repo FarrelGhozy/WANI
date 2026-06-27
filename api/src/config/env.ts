@@ -35,12 +35,12 @@ export const env = {
 
     // Classifier tier (ML model via OpenRouter)
     classifierEnabled: bool("CLASSIFIER_ENABLED", true),
-    classifierModel: process.env.CLASSIFIER_MODEL ?? "qwen/qwen3-next-80b-a3b-instruct:free",
+    classifierModel: process.env.CLASSIFIER_MODEL ?? "north-mini-code-free",
     // Judge tier (deep analysis for SUSPICIOUS cases)
     judgeEnabled: bool("JUDGE_ENABLED", true),
-    judgeModel: process.env.JUDGE_MODEL ?? "qwen/qwen3-next-80b-a3b-instruct:free",
+    judgeModel: process.env.JUDGE_MODEL ?? "north-mini-code-free",
     // Grounding check on output
     groundingEnabled: bool("GROUNDING_CHECK_ENABLED", true),
-    groundingModel: process.env.GROUNDING_MODEL ?? "qwen/qwen3-next-80b-a3b-instruct:free"
+    groundingModel: process.env.GROUNDING_MODEL ?? "north-mini-code-free"
   }
 } as const;
