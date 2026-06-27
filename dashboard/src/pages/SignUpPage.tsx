@@ -13,6 +13,7 @@ export default function SignUpPage() {
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
 
   function validate() {
@@ -74,7 +75,11 @@ export default function SignUpPage() {
             {showPassword ? <EyeOffIcon /> : <EyeIcon />}
           </button>
         ))}
-        {renderField('Konfirmasi Password', <LockIcon />, 'confirmPassword', showPassword ? 'text' : 'password', confirmPassword, setConfirmPassword, 'Ulangi password')}
+        {renderField('Konfirmasi Password', <LockIcon />, 'confirmPassword', showConfirmPassword ? 'text' : 'password', confirmPassword, setConfirmPassword, 'Ulangi password', (
+          <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600">
+            {showConfirmPassword ? <EyeOffIcon /> : <EyeIcon />}
+          </button>
+        ))}
       </div>
 
       <Button type="submit" size="lg" className="w-full" loading={loading}>
