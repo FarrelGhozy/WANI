@@ -17,11 +17,13 @@
 6. [Endpoint Orders (Implemented)](#6-endpoint-orders-planned)
 7. [Endpoint Customers + Chats (Implemented)](#7-endpoint-customers--chats-planned)
 8. [Endpoint Settings (Implemented)](#8-endpoint-settings-planned)
-9. [Endpoint Activity Log & Usage (Implemented)](#9-endpoint-activity-log--usage-planned)
-10. [Endpoint Website (Implemented)](#10-endpoint-website-planned)
-11. [Endpoint Auth (Implemented)](#11-endpoint-auth-planned)
-12. [Endpoint Debug (Existing)](#12-endpoint-debug-existing)
-13. [Error Codes](#13-error-codes)
+9. [Endpoint Store Payment Methods (Implemented)](#9-endpoint-store-payment-methods-implemented)
+10. [Endpoint Upload (Implemented)](#10-endpoint-upload-implemented)
+11. [Endpoint Activity Log & Usage (Implemented)](#11-endpoint-activity-log--usage-planned)
+12. [Endpoint Website (Implemented)](#12-endpoint-website-planned)
+13. [Endpoint Auth (Implemented)](#13-endpoint-auth-planned)
+14. [Endpoint Debug (Existing)](#14-endpoint-debug-existing)
+15. [Error Codes](#15-error-codes)
 
 ---
 
@@ -601,6 +603,7 @@ Profil toko.
     "shippingInfo": string | null,
     "returnPolicy": string | null,
     "isActive": boolean,
+    "hasPaymentMethods": boolean,     // true jika ada StorePaymentMethod aktif
     "createdAt": string,
     "updatedAt": string
   }
@@ -663,33 +666,102 @@ Profil toko.
 // Response 200
 ```
 
-### GET /api/qr/settings
+---
 
-Detail WA Session untuk ditampilkan di Settings (QR, nomor, status).
+## 9. Endpoint Store Payment Methods (Implemented)
+
+Database: `StorePaymentMethod`.
+
+### GET /api/store/payment-methods
+
+Daftar semua metode pembayaran toko.
 
 ```typescript
 // Response 200
 {
-  "data": {
-    "status": "connected" | "disconnected" | "connecting",
-    "phone": string | null,
-    "qr": string | null
-  }
+  "status": "success",
+  "data": [{
+    "id": string,
+    "type": "QRIS" | "BANK_TRANSFER" | "E_WALLET" | "COD",
+    "label": string,
+    "accountName": string | null,
+    "accountNumber": string | null,
+    "bankName": string | null,
+    "providerName": string | null,
+    "phoneNumber": string | null,
+    "qrImageUrl": string | null,
+    "instructions": string | null,
+    "isActive": boolean,
+    "sortOrder": number
+  }]
 }
 ```
 
-### POST /api/qr/disconnect 🔒
+### POST /api/store/payment-methods 🔒 JWT
 
-Putuskan koneksi WA.
+Tambah metode pembayaran baru.
+
+```typescript
+// Body — discriminated union berdasarkan type
+// QRIS:
+{ "type": "QRIS", "label": string, "qrImageUrl": string, "instructions"?: string }
+
+// BANK_TRANSFER:
+{ "type": "BANK_TRANSFER", "label": string, "bankName": string, "accountNumber": string, "accountName": string }
+
+// E_WALLET:
+{ "type": "E_WALLET", "label": string, "providerName": string, "phoneNumber": string, "accountName"?: string }
+
+// COD:
+{ "type": "COD", "label": string, "instructions": string }
+
+// Response 201
+{ "status": "success", "message": "payment method created", "data": { ...method } }
+```
+
+### PUT /api/store/payment-methods/:id 🔒 JWT
+
+Edit metode pembayaran.
+
+```typescript
+// Body (partial — fields sesuai type)
+{ "label"?: string, "isActive"?: boolean, ... }
+
+// Response 200
+{ "status": "success", "message": "payment method updated", "data": { ...method } }
+```
+
+### DELETE /api/store/payment-methods/:id 🔒 JWT
+
+Hapus metode pembayaran.
 
 ```typescript
 // Response 200
-{ "status": "success", "message": "disconnected" }
+{ "status": "success", "message": "payment method deleted" }
 ```
 
 ---
 
-## 9. Endpoint Activity Log & Usage (Implemented)
+## 10. Endpoint Upload (Implemented)
+
+### POST /api/upload 🔒 JWT
+
+Upload file gambar (untuk QRIS).
+
+```
+Content-Type: multipart/form-data
+Body: file (image/png, image/jpeg, image/webp, max 2MB)
+
+Response 201:
+{
+  "status": "success",
+  "data": { "url": "/uploads/qris-abc123.png" }
+}
+```
+
+---
+
+## 11. Endpoint Activity Log & Usage (Implemented)
 
 ### GET /api/logs
 
@@ -731,7 +803,7 @@ Putuskan koneksi WA.
 
 ---
 
-## 10. Endpoint Website (Implemented)
+## 12. Endpoint Website (Implemented)
 
 ### POST /api/website/generate 🔒
 
@@ -787,7 +859,7 @@ Publish website ke hosting.
 
 ---
 
-## 11. Endpoint Auth (Implemented)
+## 13. Endpoint Auth (Implemented)
 
 Database: `User`.
 
@@ -910,7 +982,7 @@ Reset password dengan token dari email.
 
 ---
 
-## 12. Endpoint Debug (Existing)
+## 14. Endpoint Debug (Existing)
 
 Dev-only tooling. Hanya aktif ketika `NODE_ENV !== "production"`.
 
@@ -967,7 +1039,7 @@ Reset circuit breaker ke closed state.
 
 ---
 
-## 13. Error Codes
+## 15. Error Codes
 
 | Status | Class | Penyebab |
 |--------|-------|----------|
@@ -1041,8 +1113,15 @@ Reset circuit breaker ke closed state.
 | `POST` | `/api/website/publish` | 🔒 JWT | ✅ Existing | Mark published |
 | `POST` | `/api/auth/register` | — | ✅ Existing | |
 | `POST` | `/api/auth/login` | — | ✅ Existing | |
-| `GET` | `/api/auth/me` | — | ✅ Existing | |
+| `GET` | `/api/auth/me` | 🔒 JWT | ✅ Existing | Auto-verify token |
 | `POST` | `/api/auth/logout` | — | ✅ Existing | |
+| `POST` | `/api/auth/forgot-password` | — | ✅ Existing | |
+| `POST` | `/api/auth/reset-password` | — | ✅ Existing | |
+| `GET` | `/api/store/payment-methods` | — | ✅ Existing | List payment methods |
+| `POST` | `/api/store/payment-methods` | 🔒 JWT | ✅ Existing | Add payment method |
+| `PUT` | `/api/store/payment-methods/:id` | 🔒 JWT | ✅ Existing | Update payment method |
+| `DELETE` | `/api/store/payment-methods/:id` | 🔒 JWT | ✅ Existing | Delete payment method |
+| `POST` | `/api/upload` | 🔒 JWT | ✅ Existing | Upload file |
 | `POST` | `/api/auth/forgot-password` | — | ✅ Existing | |
 | `POST` | `/api/auth/reset-password` | — | ✅ Existing | |
 | `GET` | `/s/:slug` | — | ✅ Existing | Serve generated static site |
