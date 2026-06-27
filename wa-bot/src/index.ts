@@ -1,9 +1,9 @@
-import { makeWASocket, Browsers } from "@whiskeysockets/baileys";
+import { makeWASocket, Browsers, useMultiFileAuthState } from "baileys";
 import pino from "pino";
 import qrcode from "qrcode-terminal";
 import axios from "axios";
-import { prisma } from "@/src/config/db";
-import { usePrismaAuthState } from "@/src/services/whatsapp-auth";
+// import { prisma } from "@/src/config/db";
+// import { usePrismaAuthState } from "@/src/services/whatsapp-auth";
 
 const logger = pino({
   level: "info",
@@ -23,7 +23,7 @@ const api = axios.create({
 });
 
 async function main() {
-  const { state, saveCreds } = await usePrismaAuthState(prisma);
+  const { state, saveCreds } = await useMultiFileAuthState("auth-info");
 
   const sock = makeWASocket({
     auth: state,
@@ -62,7 +62,7 @@ async function main() {
         const text = msg.message.conversation ?? msg.message.extendedTextMessage?.text ?? "";
         if (!text) continue;
 
-        const jid = msg.key.remoteJid;
+        const jid = msg.key.remoteJidAlt ?? msg.key.remoteJid;
         if (jid.endsWith("@g.us")) continue;
 
         const phone = jid.replace(/[^0-9]/g, "");
@@ -97,17 +97,14 @@ async function main() {
   });
 }
 
-process.on("SIGINT", async () => {
-  await prisma.$disconnect();
+process.on("SIGINT", () => {
   process.exit(0);
 });
-process.on("SIGTERM", async () => {
-  await prisma.$disconnect();
+process.on("SIGTERM", () => {
   process.exit(0);
 });
 
 main().catch((err) => {
   logger.error(err);
-  prisma.$disconnect();
   process.exit(1);
 });

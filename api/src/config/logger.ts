@@ -6,12 +6,8 @@ const format = combine(
   timestamp({ format: "HH:mm:ss" }),
   colorize(),
   errors({ stack: true }),
-  printf(({ timestamp, level, message, stack, ...meta }) => {
+  printf(({ timestamp, level, message, stack, http: _http, ..._meta }) => {
     const ts = timestamp as string
-    const http = meta.http as string | undefined
-    if (http) {
-      return `${ts}  ${level} ${http}`
-    }
     let line = `${ts}  ${level} ${message as string}`
     if (stack) line += `\n${stack as string}`
     return line

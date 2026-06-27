@@ -5,7 +5,7 @@ Four independent Bun packages (not a monorepo). Each has its own `bun.lock` and 
 - **`api/`** — Express 5 + Prisma 7 — REST server with layered architecture (routes → controllers → models → Prisma delegate)
 - **`dashboard/`** — React 19 + TypeScript 6 + Vite 8 (Rolldown, not esbuild) — frontend UI
 - **`web-gen/`** — Bun + Astro 7 — static site generator for UMKM websites
-- **`wa-bot/`** — Baileys 6 + Prisma 7 — WhatsApp bot with persistent auth, auto-reconnect
+- **`wa-bot/`** — Baileys 7 RC (`baileys` unscoped) + Prisma 7 — WhatsApp bot with persistent auth, auto-reconnect
 
 ## Architecture
 

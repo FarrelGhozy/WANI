@@ -1,6 +1,6 @@
 import type { PrismaClient } from "@db/client"
-import { initAuthCreds, BufferJSON, type AuthenticationState } from "@whiskeysockets/baileys"
-import type { SignalKeyStore } from "@whiskeysockets/baileys"
+import { initAuthCreds, BufferJSON, type AuthenticationState } from "baileys"
+import type { SignalKeyStore } from "baileys"
 
 export async function usePrismaAuthState(db: PrismaClient): Promise<{
   state: AuthenticationState
