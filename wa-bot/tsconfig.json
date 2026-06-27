@@ -26,5 +26,5 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["src", "prisma.config.ts"]
+  "include": ["src", "test", "prisma.config.ts"]
 }
