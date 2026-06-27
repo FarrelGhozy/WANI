@@ -13,6 +13,7 @@
   body {
     background-color: var(--color-stone-50);
     color: var(--color-stone-900);
+    overflow-x: hidden;
   }
 }
 

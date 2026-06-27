@@ -132,7 +132,7 @@ function TimeSelect({ value, onChange }: { value: string; onChange: (v: string) 
       <select
         value={h}
         onChange={(e) => onChange(`${e.target.value}:${m}`)}
-        className="h-7 w-12 rounded-md border border-stone-300 bg-white px-1 text-xs text-stone-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 sm:w-14"
+        className="h-7 w-12 appearance-none rounded-md border border-stone-300 bg-white px-1 text-xs text-stone-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 sm:w-14"
       >
         {HOURS.map((hr) => (
           <option key={hr} value={hr}>{hr}</option>
@@ -142,7 +142,7 @@ function TimeSelect({ value, onChange }: { value: string; onChange: (v: string) 
       <select
         value={m}
         onChange={(e) => onChange(`${h}:${e.target.value}`)}
-        className="h-7 w-12 rounded-md border border-stone-300 bg-white px-1 text-xs text-stone-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 sm:w-14"
+        className="h-7 w-12 appearance-none rounded-md border border-stone-300 bg-white px-1 text-xs text-stone-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 sm:w-14"
       >
         {MINUTES.map((mi) => (
           <option key={mi} value={mi}>{mi}</option>
@@ -193,7 +193,7 @@ function BusinessHoursEditor({
               {h.open ? 'BUKA' : 'LIBUR'}
             </button>
             {h.open && (
-              <span className="flex items-center gap-x-1.5 flex-wrap sm:flex-nowrap">
+              <span className="flex items-center gap-x-1.5 gap-y-1 flex-wrap sm:flex-nowrap">
                 <TimeSelect value={h.start} onChange={(v) => setDay(day, { start: v })} />
                 <span className="text-xs text-stone-400">&ndash;</span>
                 <TimeSelect value={h.end} onChange={(v) => setDay(day, { end: v })} />
@@ -329,7 +329,7 @@ export default function StoreTab({ store, onUpdate }: StoreTabProps) {
           </div>
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-2 md:gap-5">
+        <div className="grid gap-4 sm:grid-cols-2 md:gap-5">
           <Input
             label="Nama Bisnis"
             value={form.businessName}
