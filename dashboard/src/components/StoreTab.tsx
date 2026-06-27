@@ -193,7 +193,7 @@ function BusinessHoursEditor({
               {h.open ? 'BUKA' : 'LIBUR'}
             </button>
             {h.open && (
-              <span className="flex items-center gap-x-1.5 gap-y-1 flex-wrap sm:flex-nowrap">
+              <span className="flex items-center gap-x-1.5">
                 <TimeSelect value={h.start} onChange={(v) => setDay(day, { start: v })} />
                 <span className="text-xs text-stone-400">&ndash;</span>
                 <TimeSelect value={h.end} onChange={(v) => setDay(day, { end: v })} />
