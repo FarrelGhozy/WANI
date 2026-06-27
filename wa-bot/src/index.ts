@@ -28,7 +28,8 @@ async function main() {
   const sock = makeWASocket({
     auth: state,
     logger,
-    browser: Browsers.ubuntu("Firefox")
+    browser: Browsers.ubuntu("Firefox"),
+    shouldSyncHistoryMessage: () => false,
   });
 
   sock.ev.on("creds.update", saveCreds);
