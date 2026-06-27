@@ -1,4 +1,4 @@
-import { useState, useRef, type ReactNode } from 'react'
+import { useState, useRef } from 'react'
 import { usePaymentMethods } from '@/hooks/usePaymentMethods'
 import type { StorePaymentMethod, PaymentMethodType, CreatePaymentMethodData } from '@/hooks/usePaymentMethods'
 import { useToast } from '@/hooks/useToast'
@@ -6,33 +6,8 @@ import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
 import Modal from '@/components/ui/Modal'
 import Spinner from '@/components/ui/Spinner'
-
-function Field({ label, children }: { label: string; children: ReactNode }) {
-  return (
-    <div className="space-y-1.5">
-      <label className="text-xs font-medium text-stone-500">{label}</label>
-      {children}
-    </div>
-  )
-}
-
-function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
-  return (
-    <input
-      {...props}
-      className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-    />
-  )
-}
-
-function Select(props: React.SelectHTMLAttributes<HTMLSelectElement>) {
-  return (
-    <select
-      {...props}
-      className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-    />
-  )
-}
+import Input from '@/components/ui/Input'
+import Select from '@/components/ui/Select'
 
 const TYPE_ICONS: Record<PaymentMethodType, string> = {
   QRIS: '\u25A6',
@@ -49,14 +24,40 @@ const TYPE_LABELS: Record<PaymentMethodType, string> = {
 }
 
 const BANK_OPTIONS = [
-  'BCA', 'Mandiri', 'BRI', 'BNI', 'BSI',
-  'CIMB Niaga', 'Danamon', 'Permata', 'Maybank',
-  'Panin', 'OCBC NISP', 'BTN', 'Bank Mega',
-  'Bank Jago', 'SeaBank', 'Blu (BCA Digital)',
-  'Lainnya',
+  { value: 'BCA', label: 'BCA' },
+  { value: 'Mandiri', label: 'Mandiri' },
+  { value: 'BRI', label: 'BRI' },
+  { value: 'BNI', label: 'BNI' },
+  { value: 'BSI', label: 'BSI' },
+  { value: 'CIMB Niaga', label: 'CIMB Niaga' },
+  { value: 'Danamon', label: 'Danamon' },
+  { value: 'Permata', label: 'Permata' },
+  { value: 'Maybank', label: 'Maybank' },
+  { value: 'Panin', label: 'Panin' },
+  { value: 'OCBC NISP', label: 'OCBC NISP' },
+  { value: 'BTN', label: 'BTN' },
+  { value: 'Bank Mega', label: 'Bank Mega' },
+  { value: 'Bank Jago', label: 'Bank Jago' },
+  { value: 'SeaBank', label: 'SeaBank' },
+  { value: 'Blu (BCA Digital)', label: 'Blu (BCA Digital)' },
+  { value: 'Lainnya', label: 'Lainnya' },
 ]
 
-const EWALLET_OPTIONS = ['GoPay', 'OVO', 'Dana', 'LinkAja', 'ShopeePay', 'Lainnya']
+const EWALLET_OPTIONS = [
+  { value: 'GoPay', label: 'GoPay' },
+  { value: 'OVO', label: 'OVO' },
+  { value: 'Dana', label: 'Dana' },
+  { value: 'LinkAja', label: 'LinkAja' },
+  { value: 'ShopeePay', label: 'ShopeePay' },
+  { value: 'Lainnya', label: 'Lainnya' },
+]
+
+const TYPE_SELECT_OPTIONS: { value: PaymentMethodType; label: string }[] = [
+  { value: 'QRIS', label: 'QRIS' },
+  { value: 'BANK_TRANSFER', label: 'Transfer Bank' },
+  { value: 'E_WALLET', label: 'E-Wallet' },
+  { value: 'COD', label: 'Bayar di Tempat (COD)' },
+]
 
 interface PaymentFormData {
   type: PaymentMethodType
@@ -89,10 +90,13 @@ export default function PaymentTab() {
   const [editing, setEditing] = useState<StorePaymentMethod | null>(null)
   const [form, setForm] = useState<PaymentFormData>(emptyForm('QRIS'))
   const [uploading, setUploading] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const [errors, setErrors] = useState<Record<string, string>>({})
   const fileRef = useRef<HTMLInputElement>(null)
 
   function openCreate(type: PaymentMethodType) {
     setEditing(null)
+    setErrors({})
     const f = emptyForm(type)
     if (type === 'COD') f.instructions = 'Bayar tunai saat barang diterima'
     if (type === 'BANK_TRANSFER') f.bankName = 'BCA'
@@ -103,6 +107,7 @@ export default function PaymentTab() {
 
   function openEdit(m: StorePaymentMethod) {
     setEditing(m)
+    setErrors({})
     setForm({
       type: m.type,
       label: m.label,
@@ -120,6 +125,7 @@ export default function PaymentTab() {
   function closeModal() {
     setModalOpen(false)
     setEditing(null)
+    setErrors({})
   }
 
   async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
@@ -137,6 +143,7 @@ export default function PaymentTab() {
       const json = await res.json()
       if (json.status === 'success') {
         setForm((prev) => ({ ...prev, qrImageUrl: json.data.url }))
+        setErrors((prev) => ({ ...prev, qrImageUrl: '' }))
         toast('QRIS berhasil diupload', 'success')
       }
     } catch {
@@ -146,7 +153,24 @@ export default function PaymentTab() {
     }
   }
 
+  function validate(): boolean {
+    const errs: Record<string, string> = {}
+    if (form.type === 'QRIS' && !form.qrImageUrl) errs.qrImageUrl = 'QR Code wajib diupload'
+    if (form.type === 'BANK_TRANSFER') {
+      if (!form.accountNumber) errs.accountNumber = 'Nomor rekening wajib diisi'
+      if (!form.accountName) errs.accountName = 'Atas nama wajib diisi'
+    }
+    if (form.type === 'E_WALLET') {
+      if (!form.phoneNumber) errs.phoneNumber = 'Nomor HP wajib diisi'
+    }
+    if (form.type === 'COD' && !form.instructions) errs.instructions = 'Instruksi pembayaran wajib diisi'
+    setErrors(errs)
+    return Object.keys(errs).length === 0
+  }
+
   async function handleSave() {
+    if (!validate()) return
+    setSaving(true)
     const payload: Record<string, unknown> = {
       type: form.type,
       label: form.label,
@@ -183,6 +207,8 @@ export default function PaymentTab() {
       closeModal()
     } catch {
       toast('Gagal menyimpan metode pembayaran', 'error')
+    } finally {
+      setSaving(false)
     }
   }
 
@@ -306,7 +332,6 @@ export default function PaymentTab() {
           ))}
         </div>
 
-        {/* Add buttons */}
         <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {types.map((type) => (
             <button
@@ -321,33 +346,32 @@ export default function PaymentTab() {
         </div>
       </Card>
 
-      {/* Add/Edit Modal */}
       <Modal
         open={modalOpen}
         onClose={closeModal}
         title={editing ? 'Edit Metode Pembayaran' : `Tambah ${TYPE_LABELS[form.type]}`}
         actions={
-          <Button size="sm" onClick={handleSave}>
-            {editing ? 'Simpan' : 'Tambah'}
-          </Button>
+          <div className="flex gap-2">
+            <Button size="sm" variant="secondary" onClick={closeModal}>Batal</Button>
+            <Button size="sm" loading={saving} onClick={handleSave}>
+              {editing ? 'Simpan' : 'Tambah'}
+            </Button>
+          </div>
         }
       >
         <div className="space-y-4">
           {!editing && (
-            <Field label="Tipe Pembayaran">
-              <Select
-                value={form.type}
-                onChange={(e) => setForm(emptyForm(e.target.value as PaymentMethodType))}
-              >
-                {types.map((t) => (
-                  <option key={t} value={t}>{TYPE_LABELS[t]}</option>
-                ))}
-              </Select>
-            </Field>
+            <Select
+              label="Tipe Pembayaran"
+              options={TYPE_SELECT_OPTIONS}
+              value={form.type}
+              onChange={(e) => setForm(emptyForm(e.target.value as PaymentMethodType))}
+            />
           )}
 
           {form.type === 'QRIS' && (
-            <Field label="QR Code">
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium uppercase tracking-wider text-stone-500">QR Code</label>
               <div className="flex items-center gap-4">
                 {form.qrImageUrl ? (
                   <div className="relative">
@@ -375,70 +399,84 @@ export default function PaymentTab() {
                 <input ref={fileRef} type="file" accept="image/*" onChange={handleFileUpload} className="hidden" />
                 <span className="text-xs text-stone-400">Upload gambar QRIS (PNG/JPEG, max 2MB)</span>
               </div>
-            </Field>
+              {errors.qrImageUrl && <p className="text-xs text-red-500">{errors.qrImageUrl}</p>}
+            </div>
           )}
 
           {form.type === 'BANK_TRANSFER' && (
             <>
-              <Field label="Bank">
-                <Select value={form.bankName} onChange={(e) => setForm((prev) => ({ ...prev, bankName: e.target.value }))}>
-                  {BANK_OPTIONS.map((b) => <option key={b} value={b}>{b}</option>)}
-                </Select>
-              </Field>
-              <Field label="Nomor Rekening">
-                <Input value={form.accountNumber} onChange={(e) => setForm((prev) => ({ ...prev, accountNumber: e.target.value }))} placeholder="1234567890" />
-              </Field>
-              <Field label="Atas Nama">
-                <Input value={form.accountName} onChange={(e) => setForm((prev) => ({ ...prev, accountName: e.target.value }))} placeholder="Toko Maju" />
-              </Field>
+              <Select
+                label="Bank"
+                options={BANK_OPTIONS}
+                value={form.bankName}
+                onChange={(e) => setForm((prev) => ({ ...prev, bankName: e.target.value }))}
+              />
+              <Input
+                label="Nomor Rekening"
+                value={form.accountNumber}
+                onChange={(e) => { setForm((prev) => ({ ...prev, accountNumber: e.target.value })); setErrors((prev) => ({ ...prev, accountNumber: '' })) }}
+                placeholder="1234567890"
+                error={errors.accountNumber}
+              />
+              <Input
+                label="Atas Nama"
+                value={form.accountName}
+                onChange={(e) => { setForm((prev) => ({ ...prev, accountName: e.target.value })); setErrors((prev) => ({ ...prev, accountName: '' })) }}
+                placeholder="Toko Maju"
+                error={errors.accountName}
+              />
             </>
           )}
 
           {form.type === 'E_WALLET' && (
             <>
-              <Field label="Provider">
-                <Select value={form.providerName} onChange={(e) => setForm((prev) => ({ ...prev, providerName: e.target.value }))}>
-                  {EWALLET_OPTIONS.map((p) => <option key={p} value={p}>{p}</option>)}
-                </Select>
-              </Field>
-              <Field label="Nomor HP">
-                <Input value={form.phoneNumber} onChange={(e) => setForm((prev) => ({ ...prev, phoneNumber: e.target.value }))} placeholder="08123456789" />
-              </Field>
-              <Field label="Atas Nama (opsional)">
-                <Input value={form.accountName} onChange={(e) => setForm((prev) => ({ ...prev, accountName: e.target.value }))} placeholder="Toko Maju" />
-              </Field>
+              <Select
+                label="Provider"
+                options={EWALLET_OPTIONS}
+                value={form.providerName}
+                onChange={(e) => setForm((prev) => ({ ...prev, providerName: e.target.value }))}
+              />
+              <Input
+                label="Nomor HP"
+                value={form.phoneNumber}
+                onChange={(e) => { setForm((prev) => ({ ...prev, phoneNumber: e.target.value })); setErrors((prev) => ({ ...prev, phoneNumber: '' })) }}
+                placeholder="08123456789"
+                error={errors.phoneNumber}
+              />
+              <Input
+                label="Atas Nama (opsional)"
+                value={form.accountName}
+                onChange={(e) => setForm((prev) => ({ ...prev, accountName: e.target.value }))}
+                placeholder="Toko Maju"
+              />
             </>
           )}
 
           {form.type === 'COD' && (
-            <Field label="Instruksi Pembayaran">
-              <input
-                value={form.instructions}
-                onChange={(e) => setForm((prev) => ({ ...prev, instructions: e.target.value }))}
-                placeholder="Bayar tunai saat barang diterima"
-                className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-              />
-            </Field>
+            <Input
+              label="Instruksi Pembayaran"
+              value={form.instructions}
+              onChange={(e) => { setForm((prev) => ({ ...prev, instructions: e.target.value })); setErrors((prev) => ({ ...prev, instructions: '' })) }}
+              placeholder="Bayar tunai saat barang diterima"
+              error={errors.instructions}
+            />
           )}
 
-          <Field label="Label Tampilan">
-            <input
-              value={form.label}
-              onChange={(e) => setForm((prev) => ({ ...prev, label: e.target.value }))}
-              placeholder={form.type === 'BANK_TRANSFER' ? `${form.bankName || 'Bank'} a/n ${form.accountName || '...'}` : TYPE_LABELS[form.type]}
-              className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-            />
-          </Field>
+          <Input
+            label="Label Tampilan"
+            value={form.label}
+            onChange={(e) => setForm((prev) => ({ ...prev, label: e.target.value }))}
+            placeholder={form.type === 'BANK_TRANSFER' ? `${form.bankName || 'Bank'} a/n ${form.accountName || '...'}` : TYPE_LABELS[form.type]}
+          />
 
-          <Field label="Petunjuk Tambahan (opsional)">
-            <textarea
+          {form.type !== 'COD' && (
+            <Input
+              label="Petunjuk Tambahan (opsional)"
               value={form.instructions}
               onChange={(e) => setForm((prev) => ({ ...prev, instructions: e.target.value }))}
-              rows={2}
-              placeholder={form.type === 'COD' ? 'Bayar tunai saat barang diterima' : 'Scan QRIS di atas menggunakan GoPay/OVO/Dana'}
-              className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+              placeholder="Scan QRIS di atas menggunakan GoPay/OVO/Dana"
             />
-          </Field>
+          )}
         </div>
       </Modal>
     </>
