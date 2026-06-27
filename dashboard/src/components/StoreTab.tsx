@@ -7,6 +7,7 @@ import { useToast } from '@/hooks/useToast.ts'
 import Card from '@/components/ui/Card.tsx'
 import Button from '@/components/ui/Button.tsx'
 import Input from '@/components/ui/Input.tsx'
+import Textarea from '@/components/ui/Textarea.tsx'
 import CategoryModal from '@/components/CategoryModal.tsx'
 import PaymentTab from '@/components/PaymentTab.tsx'
 
@@ -114,7 +115,7 @@ function cleanPhone(v: string): string {
 function Field({ label, children, error }: { label: string; children: ReactNode; error?: string }) {
   return (
     <div className="space-y-1.5">
-      <label className="text-xs font-medium text-stone-500">{label}</label>
+      <label className="text-xs font-medium uppercase tracking-wider text-stone-500">{label}</label>
       {children}
       {error && <p className="text-xs text-red-500">{error}</p>}
     </div>
@@ -345,15 +346,13 @@ export default function StoreTab({ store, onUpdate }: StoreTabProps) {
             hint="Masukkan nomor setelah +62, cukup angka"
           />
           <div className="sm:col-span-2">
-            <Field label="Alamat">
-              <textarea
-                value={form.address}
-                onChange={(e) => setForm((prev) => ({ ...prev, address: e.target.value }))}
-                placeholder="Contoh: Jl. Merdeka No. 123, RT 01 RW 02, Kel. Sukamaju, Kec. Sukasari, Kota Bandung 40123"
-                rows={3}
-                className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 transition-all placeholder:text-stone-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-              />
-            </Field>
+            <Textarea
+              label="Alamat"
+              value={form.address}
+              onChange={(e) => setForm((prev) => ({ ...prev, address: e.target.value }))}
+              placeholder="Contoh: Jl. Merdeka No. 123, RT 01 RW 02, Kel. Sukamaju, Kec. Sukasari, Kota Bandung 40123"
+              rows={3}
+            />
           </div>
           <Field label="Jam Operasional" error={errors.businessHours}>
             <BusinessHoursEditor
@@ -361,24 +360,20 @@ export default function StoreTab({ store, onUpdate }: StoreTabProps) {
               onChange={(v) => { setForm((prev) => ({ ...prev, businessHours: v })); setErrors((prev) => ({ ...prev, businessHours: '' })) }}
             />
           </Field>
-          <Field label="Info Pengiriman">
-            <textarea
-              value={form.shippingInfo ?? ''}
-              onChange={(e) => setForm((prev) => ({ ...prev, shippingInfo: e.target.value || null }))}
-              placeholder="Contoh: Gratis ongkir untuk area Kec. Sukasari. Estimasi 1-2 hari kerja."
-              rows={3}
-              className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 transition-all placeholder:text-stone-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-            />
-          </Field>
-          <Field label="Kebijakan Retur">
-            <textarea
-              value={form.returnPolicy ?? ''}
-              onChange={(e) => setForm((prev) => ({ ...prev, returnPolicy: e.target.value || null }))}
-              placeholder="Contoh: Barang dapat diretur maksimal 3 hari setelah diterima dengan kondisi masih segel. Biaya pengiriman retur ditanggung pembeli."
-              rows={3}
-              className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 transition-all placeholder:text-stone-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-            />
-          </Field>
+          <Textarea
+            label="Info Pengiriman"
+            value={form.shippingInfo ?? ''}
+            onChange={(e) => setForm((prev) => ({ ...prev, shippingInfo: e.target.value || null }))}
+            placeholder="Contoh: Gratis ongkir untuk area Kec. Sukasari. Estimasi 1-2 hari kerja."
+            rows={3}
+          />
+          <Textarea
+            label="Kebijakan Retur"
+            value={form.returnPolicy ?? ''}
+            onChange={(e) => setForm((prev) => ({ ...prev, returnPolicy: e.target.value || null }))}
+            placeholder="Contoh: Barang dapat diretur maksimal 3 hari setelah diterima dengan kondisi masih segel. Biaya pengiriman retur ditanggung pembeli."
+            rows={3}
+          />
         </div>
         <div className="mt-5 flex items-center justify-between gap-3 rounded-lg bg-stone-50 px-3 py-2.5 md:mt-6 md:px-4 md:py-3">
           <div className="min-w-0">
