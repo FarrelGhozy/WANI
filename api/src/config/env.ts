@@ -16,8 +16,8 @@ export const env = {
 
   ai: {
     openrouterApiKey: process.env.OPENROUTER_API_KEY ?? "",
-    defaultModel: process.env.LLM_MODEL ?? "deepseek/deepseek-v4-flash:free",
-    fallbackModel: process.env.LLM_FALLBACK_MODEL ?? "google/gemini-2.0-flash-exp:free",
+    defaultModel: process.env.LLM_MODEL ?? "google/gemma-4-31b-it:free",
+    fallbackModel: process.env.LLM_FALLBACK_MODEL ?? "qwen/qwen3-next-80b-a3b-instruct:free",
     maxTokens: num("LLM_MAX_TOKENS", 2048),
     temperature: num("LLM_TEMPERATURE", 0.7)
   },
