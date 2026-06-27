@@ -1,5 +1,12 @@
 # Xendit Platform API — Integrasi Pembayaran WANI
 
+> **⚠️ NOT IMPLEMENTED — Design Reference Only**
+>
+> Dokumen ini adalah rencana integrasi Xendit yang **tidak diimplementasikan**.
+> WANI menggunakan **Manual Payment Flow** sebagai gantinya — lihat [`MANUAL_PAYMENT_FLOW.md`](MANUAL_PAYMENT_FLOW.md).
+>
+> Disimpan sebagai referensi arsitektur untuk implementasi di masa depan.
+
 > **Opsi 1:** Xendit Platform API (Sub-Merchant)
 > Dana langsung ke rekening UMKM, WANI ambil fee opsional.
 

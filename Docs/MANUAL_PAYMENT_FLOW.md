@@ -733,36 +733,36 @@ Setelah order berhasil dibuat, generate reply dengan instruksi pembayaran berdas
 
 ### Tahap 1: Database & API Core ⭐
 
-- [ ] Prisma migration: model `StorePaymentMethod` + enum `E_WALLET`
-- [ ] Zod schema: `createPaymentMethodSchema` (discriminated union)
-- [ ] Model: `StorePaymentMethodModel` (CRUD)
-- [ ] Upload endpoint: `POST /api/upload` (multer + static serve)
-- [ ] Payment method CRUD endpoints
-- [ ] Update `GET /api/store`: tambah `hasPaymentMethods`
-- [ ] Update `PUT /api/orders/:id/payment`: dukung method dari StorePaymentMethod
+- [x] Prisma migration: model `StorePaymentMethod` + enum `E_WALLET`
+- [x] Zod schema: `createPaymentMethodSchema` (discriminated union)
+- [x] Model: `StorePaymentMethodModel` (CRUD)
+- [x] Upload endpoint: `POST /api/upload` (multer + static serve)
+- [x] Payment method CRUD endpoints
+- [x] Update `GET /api/store`: tambah `hasPaymentMethods`
+- [x] Update `PUT /api/orders/:id/payment`: dukung method dari StorePaymentMethod
 
 ### Tahap 2: Dashboard — Pembayaran Tab
 
-- [ ] Hook `usePaymentMethods.ts`
-- [ ] Component `PaymentTab.tsx` — list + toggle + edit + delete
-- [ ] Modal form dinamis (QRIS / Transfer / E-Wallet / COD)
-- [ ] Upload file component untuk QRIS
-- [ ] Integrasi tab ke `Settings.tsx`
+- [x] Hook `usePaymentMethods.ts`
+- [x] Component `PaymentTab.tsx` — list + toggle + edit + delete
+- [x] Modal form dinamis (QRIS / Transfer / E-Wallet / COD)
+- [x] Upload file component untuk QRIS
+- [x] Integrasi tab ke `Settings.tsx`
 
 ### Tahap 3: Dashboard — Konfirmasi & Warning
 
-- [ ] Warning banner di halaman Dashboard
-- [ ] Tombol "Konfirmasi Pembayaran" di OrderDetail
-- [ ] Modal konfirmasi: pilih metode + amount + confirm
-- [ ] Fungsi `confirmPayment()` di `useOrders.ts`
-- [ ] Auto-update order status ke CONFIRMED
+- [x] Warning banner di halaman Dashboard
+- [x] Tombol "Konfirmasi Pembayaran" di OrderDetail
+- [x] Modal konfirmasi: pilih metode + amount + confirm
+- [x] Fungsi `confirmPayment()` di `useOrders.ts`
+- [x] Auto-update order status ke CONFIRMED
 
 ### Tahap 4: AI & Bot Integration
 
-- [ ] Update `buildSystemPrompt()`: load dari StorePaymentMethod
-- [ ] Update `handleOrder()`: include payment info di reply
-- [ ] Bot detect QRIS URL → kirim sebagai image message
-- [ ] Format reply dengan QRIS image embed
+- [x] Update `buildSystemPrompt()`: load dari StorePaymentMethod
+- [x] Update `handleOrder()`: include payment info di reply
+- [x] Bot detect QRIS URL → kirim sebagai image message
+- [x] Format reply dengan QRIS image embed
 
 ### Tahap 5: Polish
 
