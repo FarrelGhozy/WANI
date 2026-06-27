@@ -1,15 +1,14 @@
 # api
 
-To install dependencies:
+REST API server WANI — Express 5 + Prisma 7 + OpenRouter AI pipeline.
+Bagian dari platform omnichannel [WANI](https://github.com/anomalyco/WANI).
 
 ```bash
-bun install
+bun install                         # install dependencies
+bun run prisma:generate             # generate Prisma client
+bun run prisma:migrate              # apply dev migrations
+bun run src/index.ts                # start server (port 3001)
+bun test                            # run tests
 ```
 
-To run:
-
-```bash
-bun run index.ts
-```
-
-This project was created using `bun init` in bun v1.3.9. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
+Lihat [ARSITEKTUR.md](ARSITEKTUR.md) untuk dokumentasi lengkap.

@@ -64,29 +64,30 @@ Semua endpoint **sudah diimplementasikan**. See `api/ARSITEKTUR.md` for the full
 
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
+| `POST` | `/api/upload` | 🔒 JWT | Upload file (QRIS image, etc.) |
 | `GET` | `/api/qr` | — | Get current QR code string |
 | `GET` | `/api/qr/status` | — | Get connection status + phone number |
 | `POST` | `/api/qr` | Bearer API_TOKEN | Push QR code / update status (Zod validated) |
 | `DELETE` | `/api/qr` | Bearer API_TOKEN | Clear QR on successful connection |
 | `POST` | `/api/chat` | Bearer API_TOKEN | Process message through AI pipeline → reply |
 | `GET` | `/api/store` | — | Get store profile |
-| `PUT` | `/api/store` | Bearer API_TOKEN | Update store profile |
+| `PUT` | `/api/store` | 🔒 JWT | Update store profile |
 | `GET` | `/api/ai-config` | — | Get AI config |
-| `PUT` | `/api/ai-config` | Bearer API_TOKEN | Update AI config (model, prompt, etc.) |
+| `PUT` | `/api/ai-config` | 🔒 JWT | Update AI config (model, prompt, etc.) |
 | `GET` | `/api/products` | — | Product list (paginated, searchable) |
-| `GET/POST/PUT/DELETE` | `/api/products/:id` | 🔒 | Product CRUD |
-| `GET/POST` | `/api/products/categories` | 🔒 | Category list / create |
-| `PUT/DELETE` | `/api/products/categories/:id` | 🔒 | Category update / delete |
+| `GET/POST/PUT/DELETE` | `/api/products/:id` | —/🔒 JWT | Product CRUD |
+| `GET/POST` | `/api/products/categories` | —/🔒 JWT | Category list / create |
+| `PUT/DELETE` | `/api/products/categories/:id` | 🔒 JWT | Category update / delete |
 | `GET` | `/api/orders` | — | Order list (paginated, filterable) |
 | `GET` | `/api/orders/:id` | — | Order detail |
-| `PUT` | `/api/orders/:id/status` | 🔒 | Update order status |
-| `PUT` | `/api/orders/:id/notes` | 🔒 | Update order notes |
-| `PUT` | `/api/orders/:id/payment` | 🔒 | Create / update payment |
+| `PUT` | `/api/orders/:id/status` | 🔒 JWT | Update order status |
+| `PUT` | `/api/orders/:id/notes` | 🔒 JWT | Update order notes |
+| `PUT` | `/api/orders/:id/payment` | 🔒 JWT | Create / update payment |
 | `GET` | `/api/customers` | — | Customer list |
-| `GET/PUT` | `/api/customers/:id` | —/🔒 | Customer detail / update |
+| `GET/PUT` | `/api/customers/:id` | —/🔒 JWT | Customer detail / update |
 | `GET` | `/api/conversations/:id` | — | Conversation messages |
-| `PUT` | `/api/conversations/:id/status` | 🔒 | Update conversation status |
-| `POST` | `/api/conversations/:id/messages` | 🔒 | Send HUMAN message |
+| `PUT` | `/api/conversations/:id/status` | 🔒 JWT | Update conversation status |
+| `POST` | `/api/conversations/:id/messages` | 🔒 JWT | Send HUMAN message |
 | `GET` | `/api/dashboard/stats` | — | Aggregated dashboard stats |
 | `GET` | `/api/logs` | — | Activity log (paginated) |
 | `GET` | `/api/usage` | — | LLM usage counters (today) |

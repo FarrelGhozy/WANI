@@ -23,7 +23,7 @@
 
 ---
 
-## Terimplementasi ✅
+## ✅ Terimplementasi
 
 - **WA Session** — QR push/pull/clear/status, auto-reconnect
 - **AI Pipeline (18-step)** — normalize → PII → rate limit → 3-tier firewall → budget → context → LLM → parse → intent → sanitize → output scan → PII redact → grounding → persist
@@ -31,59 +31,18 @@
 - **Circuit Breaker** — 3 failures → 60s open → half-open → retry
 - **Debug Tracer** — Ring buffer (500 cap), per-request TraceContext, duration tracking
 - **Debug Routes** — GET /api/debug/traces, GET /api/debug/traces/:id, DELETE /api/debug/traces, GET /api/debug/status, POST /api/debug/circuit/reset
+- **Manual Payment Flow** — QRIS/Bank Transfer/E-Wallet/COD, CRUD payment methods, QRIS upload, warning banner, konfirmasi pembayaran
 - **API Spec** — Lengkap dengan request/response shapes
-- **Frontend (Dashboard)** — 5 pages (Dashboard, Products, Orders, Customers, Settings), **semua hooks panggil API real** (via `fetchApi()`), React 19 + Vite 8 + Tailwind v4
-- **Bot (wa-bot/)** — Baileys connect, QR terminal + API POST, forward messages to API, send reply back
-- **API Endpoints** — Semua ~40 endpoint sudah diimplementasikan (routes, controllers, models, schemas, Zod validation)
-- **Tests** — 152 test, 0 failures (firewall, guardrails, auth, middleware, errors, schemas, intent, golden-reply)
-- **Prisma Migrations** — 3 migrations applied (core tables + users/website + store logo)
+- **Frontend (Dashboard)** — 11 pages (Dashboard, Products, ProductForm, Orders, OrderDetail, Customers, Settings, Website, Login, Signup, ForgotPassword), semua hooks panggil API real (via `fetchApi()`), React 19 + Vite 8 + Tailwind v4
+- **Bot (wa-bot/)** — Baileys connect, QR terminal + API POST, forward messages to API, send reply back, QRIS image detection
+- **API Endpoints** — Semua ~45 endpoint sudah diimplementasikan (routes, controllers, models, schemas, Zod validation)
+- **Tests** — 9 test files, 0 failures (firewall, guardrails, auth, middleware, errors, schemas, intent, golden-reply, response)
+- **Prisma Migrations** — 3+ migrations applied
 - **Docker Compose** — 4 service definitions (db, api, dashboard, wa-bot)
 - **Dockerfile** — Ada untuk api, dashboard, wa-bot
-
-~~Semua item di 🔴 Critical dan 🟡 Medium sudah diresolve.~~
-
-## 🔄 Current Sprint — Manual Payment Flow
-
-> **Docs:** `Docs/MANUAL_PAYMENT_FLOW.md`
-> **Alasan:** Midtrans/Xendit butuh NIK+NPWP — tidak feasible untuk lomba.
-
-### Tahap 1: Database & API Core
-
-| # | Item | Package | Detail |
-|---|------|---------|--------|
-| P1 | **Prisma migration** — model `StorePaymentMethod` + enum `E_WALLET` | api | Model baru, ganti field `paymentMethods` free-text |
-| P2 | **Zod schema** — `createPaymentMethodSchema` (discriminated union) | api | Validasi per tipe (QRIS/BANK_TRANSFER/E_WALLET/COD) |
-| P3 | **StorePaymentMethod model** — CRUD | api | Extend BaseModel pattern |
-| P4 | **Upload endpoint** — `POST /api/upload` | api | Multer + static serve `uploads/` |
-| P5 | **Payment method CRUD endpoints** | api | GET/POST/PUT/DELETE `/api/store/payment-methods` |
-| P6 | **Update `GET /api/store`** — tambah `hasPaymentMethods` | api | Flag buat dashboard warning |
-| P7 | **Update `PUT /api/orders/:id/payment`** | api | Support method dari StorePaymentMethod + auto-paidAt |
-
-### Tahap 2: Dashboard — Pembayaran Tab
-
-| # | Item | Package | Detail |
-|---|------|---------|--------|
-| P8 | **`usePaymentMethods` hook** | dashboard | CRUD via fetchApi |
-| P9 | **`PaymentTab` component** — list + toggle + edit + delete | dashboard | Cards per metode + modal form dinamis |
-| P10 | **Upload file component** untuk QRIS | dashboard | Preview + upload via `POST /api/upload` |
-| P11 | **Integrasi tab ke Settings** | dashboard | Tab ke-4: Pembayaran |
-
-### Tahap 3: Dashboard — Konfirmasi & Warning
-
-| # | Item | Package | Detail |
-|---|------|---------|--------|
-| P12 | **Warning banner** di Dashboard page | dashboard | Warning jika `hasPaymentMethods === false` |
-| P13 | **Tombol "Konfirmasi Pembayaran"** di OrderDetail | dashboard | Modal: pilih metode + amount + confirm |
-| P14 | **`confirmPayment()`** di `useOrders` hook | dashboard | PUT `/api/orders/:id/payment` + auto-refetch |
-| P15 | **Auto-update order status** ke CONFIRMED | api | Saat payment di-set ke PAID |
-
-### Tahap 4: AI & Bot Integration
-
-| # | Item | Package | Detail |
-|---|------|---------|--------|
-| P16 | **Update `buildSystemPrompt()`** | api | Load payment methods dari StorePaymentMethod |
-| P17 | **Update `handleOrder()`** — payment info di reply | api | Include metode bayar aktif |
-| P18 | **Bot send QRIS image** | wa-bot | Detect `/uploads/` URL → kirim sebagai image message |
+- **JWT Auth** — Login/register, requireJwt middleware, auto-verify
+- **Website Generator** — Generate, download ZIP, publish, serve via /s/:slug
+- **Store Payment Methods** — Discriminated union Zod schema, dynamic form, QRIS upload via multer
 
 ---
 
@@ -141,7 +100,7 @@
 ### Catatan Penting
 
 - **AI pipeline TIDAK akan jalan** tanpa `OPENROUTER_API_KEY` — semua LLM call timeout/fail
-- **Bot ga bisa QR-generate** tanpa API endpoint `POST /api/qr` (wait, ini udah jalan sih)
+- **Bot ga bisa QR-generate** tanpa API endpoint `POST /api/qr`
 - **Database harus PostgreSQL 17** — Prisma pake `@prisma/adapter-pg` yang spesifik PG
 - **Port conflict**: API (3001), Dashboard (5173), PostgreSQL (5432)
 - **wa-bot dan API** harus jalan bareng biar chat flow lengkap
