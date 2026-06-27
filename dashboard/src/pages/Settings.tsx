@@ -109,7 +109,7 @@ export default function Settings() {
       </div>
 
       {activeTab === 'store' && <StoreTab store={store} onUpdate={updateStore} />}
-      {activeTab === 'ai' && <AiTab config={aiConfig} onUpdate={handleAiUpdate} />}
+      {activeTab === 'ai' && <AiTab key={aiConfig.id} config={aiConfig} onUpdate={handleAiUpdate} />}
       {activeTab === 'wa' && (
         <WaSessionTab
           qr={qr}
