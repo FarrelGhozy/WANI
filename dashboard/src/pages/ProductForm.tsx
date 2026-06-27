@@ -5,6 +5,7 @@ import { useToast } from '@/hooks/useToast.ts'
 import Button from '@/components/ui/Button.tsx'
 import Input from '@/components/ui/Input.tsx'
 import Select from '@/components/ui/Select.tsx'
+import Textarea from '@/components/ui/Textarea.tsx'
 import Card from '@/components/ui/Card.tsx'
 
 function formatPriceInput(value: string) {
@@ -265,16 +266,13 @@ export default function ProductForm() {
                 Tambah Kategori Baru
               </button>
             )}
-            <div className="space-y-1.5">
-              <label className="text-xs font-medium uppercase tracking-wider text-stone-500">Deskripsi</label>
-              <textarea
-                placeholder="Deskripsi produk..."
-                value={form.description ?? ''}
-                onChange={(e) => set('description', e.target.value)}
-                rows={3}
-                className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 transition-all placeholder:text-stone-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-              />
-            </div>
+            <Textarea
+              label="Deskripsi"
+              placeholder="Deskripsi produk..."
+              value={form.description ?? ''}
+              onChange={(e) => set('description', e.target.value)}
+              rows={3}
+            />
           </div>
         </Card>
 
