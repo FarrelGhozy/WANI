@@ -33,64 +33,71 @@ async function main() {
 
   sock.ev.on("creds.update", saveCreds);
 
-  sock.ev.on("connection.update", ({ connection, lastDisconnect, qr }) => {
+  sock.ev.on("connection.update", ({ connection, lastDisconnect, qr, receivedPendingNotifications }) => {
     if (qr) {
-      logger.info(`qr code received: ${qr}`);
-
+      logger.info("QR code received");
       qrcode.generate(qr, { small: true });
-      api.post("/api/qr", { qr }).catch(() => {});
+      api.post("/api/qr", { qr }).catch(e => logger.error({ err: e?.response?.data ?? e }, "push QR failed"));
     }
+
+    if (connection === "open" || receivedPendingNotifications) {
+      logger.info({ connection, receivedPendingNotifications }, "connected — clearing QR");
+      api.delete("/api/qr").catch(e => logger.error({ err: e?.response?.data ?? e }, "clear QR failed"));
+      api.post("/api/qr", { status: "connected" }).catch(e => logger.error({ err: e?.response?.data ?? e }, "status update failed"));
+    }
+
     if (connection === "close") {
-      const loggedOut = lastDisconnect?.error?.toString()?.includes("logged out");
-
-      logger.info({ loggedOut }, "connection closed");
-
-      api.post("/api/qr", { status: "disconnected" }).catch(() => {});
-
-      if (!loggedOut) main();
-    } else if (connection === "open") {
-      logger.info("connected!");
-
-      api.delete("/api/qr").catch(() => {});
+      const reason = lastDisconnect?.error?.message ?? lastDisconnect?.error?.toString() ?? "unknown";
+      const loggedOut = reason.includes("logged out");
+      logger.info({ loggedOut, reason }, "connection closed");
+      api.post("/api/qr", { status: "disconnected" }).catch(e => logger.error({ err: e?.response?.data ?? e }, "disconnect status failed"));
+      if (!loggedOut) {
+        logger.info("reconnecting...");
+        main();
+      }
     }
   });
 
   sock.ev.on("messages.upsert", async ({ messages }) => {
     for (const msg of messages) {
-      if (!msg.key.fromMe && msg.message && msg.key.remoteJid) {
-        const text = msg.message.conversation ?? msg.message.extendedTextMessage?.text ?? "";
-        if (!text) continue;
+      if (msg.key.fromMe || !msg.message || !msg.key.remoteJid) continue;
 
-        const jid = msg.key.remoteJidAlt ?? msg.key.remoteJid;
-        if (jid.endsWith("@g.us")) continue;
+      const text = msg.message.conversation ?? msg.message.extendedTextMessage?.text ?? "";
+      if (!text) continue;
 
-        const phone = jid.replace(/[^0-9]/g, "");
-        const pushName = msg.pushName || phone;
+      const jid = msg.key.remoteJidAlt ?? msg.key.remoteJid;
+      if (jid.endsWith("@g.us")) continue;
 
-        try {
-          const { data } = await api.post("/api/chat", {
-            phone,
-            name: pushName,
-            text,
-            waMsgId: msg.key.id
-          });
-          const reply = data?.data?.reply;
-          const qrisUrl = data?.data?.qrisImageUrl;
-          if (reply) {
-            if (qrisUrl) {
-              const fullUrl = `${process.env.API_URL?.replace(/\/$/, "")}${qrisUrl}`;
-              try {
-                await sock.sendMessage(jid, { image: { url: fullUrl }, caption: reply });
-              } catch {
-                await sock.sendMessage(jid, { text: reply });
-              }
-            } else {
+      const phone = jid.replace(/[^0-9]/g, "");
+      const pushName = msg.pushName || phone;
+
+      // Safety net: receiving messages confirms connection
+      api.delete("/api/qr").catch(() => {});
+      api.post("/api/qr", { status: "connected" }).catch(() => {});
+
+      try {
+        const { data } = await api.post("/api/chat", {
+          phone,
+          name: pushName,
+          text,
+          waMsgId: msg.key.id
+        });
+        const reply = data?.data?.reply;
+        const qrisUrl = data?.data?.qrisImageUrl;
+        if (reply) {
+          if (qrisUrl) {
+            const fullUrl = `${process.env.API_URL?.replace(/\/$/, "")}${qrisUrl}`;
+            try {
+              await sock.sendMessage(jid, { image: { url: fullUrl }, caption: reply });
+            } catch {
               await sock.sendMessage(jid, { text: reply });
             }
+          } else {
+            await sock.sendMessage(jid, { text: reply });
           }
-        } catch {
-          await sock.sendMessage(jid, { text: "Maaf, sistem sedang sibuk, coba sebentar lagi." });
         }
+      } catch {
+        await sock.sendMessage(jid, { text: "Maaf, sistem sedang sibuk, coba sebentar lagi." });
       }
     }
   });
