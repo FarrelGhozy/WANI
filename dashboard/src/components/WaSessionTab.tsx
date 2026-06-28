@@ -17,9 +17,9 @@ interface WaSessionTabProps {
 
 const statusConfig: Record<string, { dot: string; label: string; bg: string }> = {
   connected: {
-    dot: 'bg-emerald-500',
+    dot: 'bg-teal-500',
     label: 'Terhubung',
-    bg: 'bg-emerald-50',
+    bg: 'bg-teal-50',
   },
   disconnected: {
     dot: 'bg-stone-400',
@@ -111,17 +111,17 @@ export default function WaSessionTab({ qr, connection, phone, connectedAt, onDis
         </div>
 
         {connection === 'connected' && (
-          <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-4 md:p-5">
+          <div className="rounded-lg border border-teal-200 bg-teal-50 p-4 md:p-5">
             <div className="mb-4 flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="text-emerald-600">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-teal-100">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="text-teal-600">
                   <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
                   <path d="M22 4L12 14.01l-3-3" />
                 </svg>
               </div>
               <div>
-                <p className="text-sm font-semibold text-emerald-800">WhatsApp Terhubung</p>
-                <p className="text-xs text-emerald-600">Session aktif dan melayani pelanggan</p>
+                <p className="text-sm font-semibold text-teal-800">WhatsApp Terhubung</p>
+                <p className="text-xs text-teal-600">Session aktif dan melayani pelanggan</p>
               </div>
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
@@ -202,7 +202,7 @@ export default function WaSessionTab({ qr, connection, phone, connectedAt, onDis
 function SessionInfo({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-md bg-white/60 px-3 py-2">
-      <p className="text-[10px] font-medium uppercase tracking-wider text-emerald-600">{label}</p>
+      <p className="text-[10px] font-medium uppercase tracking-wider text-teal-600">{label}</p>
       <p className="text-sm font-medium text-stone-800">{value}</p>
     </div>
   )

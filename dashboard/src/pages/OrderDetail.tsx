@@ -11,22 +11,12 @@ import Button from '@/components/ui/Button.tsx'
 import Modal from '@/components/ui/Modal.tsx'
 import OrderTimeline from '@/components/OrderTimeline.tsx'
 import Spinner from '@/components/ui/Spinner.tsx'
+import Input from '@/components/ui/Input.tsx'
+import type { BadgeVariant } from '@/constants.ts'
+import { STATUS_BADGE, STATUS_LABEL } from '@/constants.ts'
 
-const statusBadge: Record<OrderStatus, 'teal' | 'amber' | 'green' | 'gray' | 'red'> = {
-  PENDING: 'amber',
-  CONFIRMED: 'teal',
-  PROCESSING: 'green',
-  COMPLETED: 'gray',
-  CANCELLED: 'red',
-}
-
-const statusLabel: Record<OrderStatus, string> = {
-  PENDING: 'Tertunda',
-  CONFIRMED: 'Dikonfirmasi',
-  PROCESSING: 'Diproses',
-  COMPLETED: 'Selesai',
-  CANCELLED: 'Dibatalkan',
-}
+const statusBadge = STATUS_BADGE as Record<OrderStatus, BadgeVariant>
+const statusLabel = STATUS_LABEL
 
 const statusAction: Record<string, { label: string; variant: 'primary' | 'danger' | 'secondary'; next: OrderStatus }> = {
   PENDING: { label: 'Konfirmasi Pesanan', variant: 'primary', next: 'CONFIRMED' },
@@ -204,7 +194,7 @@ export default function OrderDetail() {
                 </div>
                 <div>
                   <p className="text-xs text-stone-500">Status</p>
-                  <Badge variant={order.payment.status === 'PAID' ? 'green' : 'amber'} dot>
+                  <Badge variant={order.payment.status === 'PAID' ? 'teal' : 'amber'} dot>
                     {order.payment.status}
                   </Badge>
                 </div>
@@ -289,15 +279,12 @@ export default function OrderDetail() {
 
           <div className="space-y-1.5">
             <label className="text-xs font-medium text-stone-500">Jumlah Dibayar</label>
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-stone-400">Rp</span>
-              <input
-                type="number"
-                value={paymentAmount}
-                onChange={(e) => setPaymentAmount(Number(e.target.value))}
-                className="h-10 w-full rounded-lg border border-stone-300 bg-white pl-9 pr-3 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-              />
-            </div>
+            <Input
+              type="number"
+              value={paymentAmount}
+              onChange={(e) => setPaymentAmount(Number(e.target.value))}
+              prefix={<span className="text-sm text-stone-400">Rp</span>}
+            />
           </div>
 
           <div className="rounded-lg bg-amber-50 p-3 text-xs text-amber-800">

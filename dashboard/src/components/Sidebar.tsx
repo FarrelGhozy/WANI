@@ -2,6 +2,7 @@ import { useCallback } from 'react'
 import { NavLink, useNavigate } from 'react-router'
 import { useAuth } from '@/hooks/useAuth.ts'
 import { GridIcon, BagIcon, ClipboardIcon, PeopleIcon, GlobeIcon, CogIcon, LogOutIcon } from '@/components/Icons.tsx'
+import { statusDot, statusLabel } from '@/constants.ts'
 
 const navItems = [
   { to: '/', icon: GridIcon, label: 'Dashboard' },
@@ -16,22 +17,6 @@ interface SidebarProps {
   connection: string
   storeName: string
   storeLogoUrl: string | null
-}
-
-function statusColor(status: string) {
-  switch (status) {
-    case 'connected': return 'bg-emerald-400'
-    case 'connecting': return 'bg-amber-400'
-    default: return 'bg-red-400'
-  }
-}
-
-function statusLabel(status: string) {
-  switch (status) {
-    case 'connected': return 'Terhubung'
-    case 'connecting': return 'Menghubungkan'
-    default: return 'Terputus'
-  }
 }
 
 export default function Sidebar({ connection, storeName, storeLogoUrl }: SidebarProps) {
@@ -100,8 +85,8 @@ export default function Sidebar({ connection, storeName, storeLogoUrl }: Sidebar
       <div className="border-t border-teal-700/50 px-6 py-4">
         <div className="flex items-center gap-3">
           <div className="relative">
-            <span className={`block h-2 w-2 rounded-full ${statusColor(connection)}`} />
-            <span className={`absolute inset-0 h-2 w-2 animate-ping rounded-full ${statusColor(connection)} opacity-40`} />
+            <span className={`block h-2 w-2 rounded-full ${statusDot(connection)}`} />
+            <span className={`absolute inset-0 h-2 w-2 animate-ping rounded-full ${statusDot(connection)} opacity-40`} />
           </div>
           <div className="flex flex-col">
             <span className="text-xs font-medium text-teal-200">WhatsApp</span>

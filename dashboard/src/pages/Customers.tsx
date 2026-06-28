@@ -1,6 +1,7 @@
 import { useCustomers } from '@/hooks/useCustomers.ts'
 import CustomerListView from '@/components/CustomerListView.tsx'
 import ChatView from '@/components/ChatView.tsx'
+import Input from '@/components/ui/Input.tsx'
 import Spinner from '@/components/ui/Spinner.tsx'
 
 function EmptyChatPanel() {
@@ -27,25 +28,25 @@ export default function Customers() {
   }
 
   return (
-    <div className="flex h-[calc(100dvh-12rem)] flex-col pb-16 lg:h-[calc(100vh-9rem)] lg:pb-0">
+    <div className="flex min-h-0 flex-1 flex-col pb-16 lg:pb-0">
       <div className="mb-4">
-        <h1 className="text-2xl font-semibold tracking-tight text-stone-900">Pelanggan</h1>
+        <h1 className="text-2xl font-semibold tracking-tight text-stone-900 sm:text-3xl">Pelanggan</h1>
         <p className="mt-1 text-sm text-stone-500">{customers.length} pelanggan</p>
       </div>
 
       {/* Search */}
       <div className="mb-4">
-        <div className="relative">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-stone-400">
-            <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
-          </svg>
-          <input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Cari nama atau telepon..."
-            className="h-10 w-full max-w-md rounded-lg border border-stone-300 bg-white pl-9 pr-3 text-sm text-stone-900 transition-all placeholder:text-stone-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-          />
-        </div>
+        <Input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Cari nama atau telepon..."
+          className="max-w-md"
+          prefix={
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
+            </svg>
+          }
+        />
       </div>
 
       {/* Two-panel */}

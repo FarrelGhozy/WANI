@@ -4,7 +4,7 @@ import { Check, X, Info } from 'lucide-react'
 import type { Toast } from '@/hooks/useToast'
 
 const colors: Record<Toast['type'], string> = {
-  success: 'border-emerald-300 bg-emerald-50 text-emerald-800',
+  success: 'border-teal-300 bg-teal-50 text-teal-800',
   error: 'border-red-300 bg-red-50 text-red-800',
   info: 'border-stone-300 bg-stone-50 text-stone-800',
 }

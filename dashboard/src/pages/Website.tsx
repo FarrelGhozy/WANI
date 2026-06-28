@@ -3,8 +3,27 @@ import { useToast } from '@/hooks/useToast.ts'
 import Card from '@/components/ui/Card.tsx'
 import Button from '@/components/ui/Button.tsx'
 import Badge from '@/components/ui/Badge.tsx'
+import Input from '@/components/ui/Input.tsx'
+import Textarea from '@/components/ui/Textarea.tsx'
 import Spinner from '@/components/ui/Spinner.tsx'
 import { formatDate } from '@/utils/format'
+
+const PRESETS = [
+  { name: 'Teal',   primary: '#059669', secondary: '#f59e0b' },
+  { name: 'Rose',   primary: '#e11d48', secondary: '#f97316' },
+  { name: 'Navy',   primary: '#1e40af', secondary: '#0d9488' },
+  { name: 'Forest', primary: '#15803d', secondary: '#d97706' },
+  { name: 'Sunset', primary: '#c2410c', secondary: '#d4a017' },
+]
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="space-y-1.5">
+      <label className="text-xs font-medium text-stone-500">{label}</label>
+      {children}
+    </div>
+  )
+}
 
 export default function Website() {
   const { config, logs, generating, availableProducts, updateConfig, generate, downloadZip, publish, loading } = useWebsite()
@@ -34,7 +53,7 @@ export default function Website() {
     <div className="mx-auto max-w-5xl space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-stone-900">Website</h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-stone-900 sm:text-3xl">Website</h1>
           <p className="mt-1 text-sm text-stone-500">Kelola website toko Anda — generate, preview, dan publish</p>
         </div>
       </div>
@@ -45,29 +64,26 @@ export default function Website() {
             <h2 className="mb-5 text-lg font-semibold text-stone-900">Konfigurasi Konten</h2>
             <div className="grid gap-5 sm:grid-cols-2">
               <Field label="Judul Hero">
-                <input
+                <Input
                   value={config.heroHeadline}
                   onChange={(e) => updateConfig({ heroHeadline: e.target.value })}
                   placeholder="Contoh: Selamat Datang di Toko Kami"
-                  className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all placeholder:text-stone-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
                 />
               </Field>
               <Field label="Subjudul Hero">
-                <input
+                <Input
                   value={config.heroSubheadline}
                   onChange={(e) => updateConfig({ heroSubheadline: e.target.value })}
                   placeholder="Contoh: Temukan produk terbaik untuk kebutuhan Anda"
-                  className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all placeholder:text-stone-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
                 />
               </Field>
               <div className="sm:col-span-2">
                 <Field label="Teks Tentang">
-                  <textarea
+                  <Textarea
                     value={config.aboutText}
                     onChange={(e) => updateConfig({ aboutText: e.target.value })}
                     placeholder="Contoh: Toko kami berdiri sejak 2020, menyediakan berbagai produk berkualitas dengan harga terjangkau. Kami melayani pengiriman ke seluruh Indonesia."
                     rows={3}
-                    className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 transition-all placeholder:text-stone-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
                   />
                 </Field>
               </div>
@@ -78,6 +94,7 @@ export default function Website() {
                     value={config.primaryColor}
                     onChange={(e) => updateConfig({ primaryColor: e.target.value })}
                     className="h-10 w-12 cursor-pointer rounded-lg border border-stone-300 bg-white p-1"
+                    aria-label="Pilih warna utama"
                   />
                   <span className="font-mono text-xs text-stone-500">{config.primaryColor}</span>
                 </div>
@@ -89,6 +106,7 @@ export default function Website() {
                     value={config.secondaryColor}
                     onChange={(e) => updateConfig({ secondaryColor: e.target.value })}
                     className="h-10 w-12 cursor-pointer rounded-lg border border-stone-300 bg-white p-1"
+                    aria-label="Pilih warna sekunder"
                   />
                   <span className="font-mono text-xs text-stone-500">{config.secondaryColor}</span>
                 </div>
@@ -116,19 +134,19 @@ export default function Website() {
                 </Field>
               </div>
               <Field label="Nomor WhatsApp">
-                <input
+                <Input
                   value={config.phone}
                   onChange={(e) => updateConfig({ phone: e.target.value })}
                   placeholder="6281234567890"
-                  className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all placeholder:text-stone-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
                 />
-                <p className="text-xs text-stone-400">Gunakan format internasional, contoh: 6281234567890 (tanpa +)</p>
+                <p className="mt-1 text-xs text-stone-400">Gunakan format internasional, contoh: 6281234567890 (tanpa +)</p>
               </Field>
               <Field label="Tema">
                 <select
                   value={config.theme}
                   onChange={(e) => updateConfig({ theme: e.target.value })}
                   className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+                  aria-label="Pilih tema"
                 >
                   <option value="classic">Classic</option>
                   <option value="modern">Modern</option>
@@ -181,7 +199,7 @@ export default function Website() {
               {logs.map((log) => (
                 <div key={log.id} className="flex items-center justify-between px-4 py-3 sm:px-6">
                   <div className="flex items-center gap-3">
-                    <Badge variant={log.status === 'success' ? 'green' : 'red'} dot>
+                    <Badge variant={log.status === 'success' ? 'teal' : 'red'} dot>
                       {log.status === 'success' ? 'Berhasil' : 'Gagal'}
                     </Badge>
                     <div>
@@ -205,36 +223,16 @@ export default function Website() {
           <Card accent="amber">
             <h2 className="mb-4 text-lg font-semibold text-stone-900">Aksi Cepat</h2>
             <div className="space-y-3">
-              <Button
-                size="md"
-                className="w-full"
-                loading={generating}
-                onClick={handleGenerate}
-              >
+              <Button size="md" className="w-full" loading={generating} onClick={handleGenerate}>
                 Generate Sekarang
               </Button>
-              <Button
-                size="md"
-                variant="secondary"
-                className="w-full"
-                onClick={() => window.open('/s/preview/default/', '_blank')}
-              >
+              <Button size="md" variant="secondary" className="w-full" onClick={() => window.open('/s/preview/default/', '_blank')}>
                 Lihat Preview
               </Button>
-              <Button
-                size="md"
-                variant="secondary"
-                className="w-full"
-                onClick={downloadZip}
-              >
+              <Button size="md" variant="secondary" className="w-full" onClick={downloadZip}>
                 Download ZIP
               </Button>
-              <Button
-                size="md"
-                variant="secondary"
-                className="w-full"
-                onClick={handlePublish}
-              >
+              <Button size="md" variant="secondary" className="w-full" onClick={handlePublish}>
                 Publish
               </Button>
             </div>
@@ -251,23 +249,6 @@ export default function Website() {
           </Card>
         </div>
       </div>
-    </div>
-  )
-}
-
-const PRESETS = [
-  { name: 'Teal',   primary: '#059669', secondary: '#f59e0b' },
-  { name: 'Rose',   primary: '#e11d48', secondary: '#f97316' },
-  { name: 'Navy',   primary: '#1e40af', secondary: '#0d9488' },
-  { name: 'Forest', primary: '#15803d', secondary: '#d97706' },
-  { name: 'Sunset', primary: '#c2410c', secondary: '#d4a017' },
-]
-
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div className="space-y-1.5">
-      <label className="text-xs font-medium text-stone-500">{label}</label>
-      {children}
     </div>
   )
 }

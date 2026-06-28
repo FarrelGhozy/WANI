@@ -67,7 +67,7 @@ export default function ProductListView({ products, onDelete, sortField, sortDir
               <td className="max-sm:px-2 max-sm:py-2 sm:px-4 sm:py-3 text-right font-medium tabular-nums text-stone-900">{formatPrice(item.price)}</td>
               <td className={`max-sm:px-2 max-sm:py-2 sm:px-4 sm:py-3 text-center tabular-nums ${item.stock === 0 ? 'text-red-500' : 'text-stone-700'}`}>{item.stock}</td>
               <td className="max-sm:px-2 max-sm:py-2 sm:px-4 sm:py-3">
-                <Badge variant={item.isAvailable ? 'green' : 'red'} dot>
+                <Badge variant={item.isAvailable ? 'teal' : 'red'} dot>
                   {item.isAvailable ? 'Aktif' : 'Nonaktif'}
                 </Badge>
               </td>

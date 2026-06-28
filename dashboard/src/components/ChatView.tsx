@@ -3,6 +3,7 @@ import type { Conversation, Message } from '@/hooks/useCustomers.ts'
 import { useToast } from '@/hooks/useToast.ts'
 import Badge from '@/components/ui/Badge.tsx'
 import { formatDate } from '@/utils/format'
+import type { BadgeVariant } from '@/constants.ts'
 
 interface ChatViewProps {
   customerName: string
@@ -40,9 +41,10 @@ function ChatBubble({ message }: { message: Message }) {
   )
 }
 
-const statusVariant: Record<string, 'teal' | 'green' | 'amber' | 'gray'> = {
+const statusVariant: Record<string, BadgeVariant> = {
   ACTIVE: 'teal',
-  RESOLVED: 'green',
+  RESOLVED: 'teal',
+  PENDING: 'amber',
   ARCHIVED: 'gray',
   ESCALATED: 'amber',
 }

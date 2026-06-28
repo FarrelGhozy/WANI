@@ -33,7 +33,7 @@ export default function ProductCard({ product: item, onDelete }: ProductCardProp
             <h3 className="truncate text-sm font-medium text-stone-900">{item.name}</h3>
             <p className="text-xs text-stone-400">{item.category?.name ?? 'Tanpa Kategori'}</p>
           </div>
-          <Badge variant={item.isAvailable ? 'green' : 'red'} dot>
+          <Badge variant={item.isAvailable ? 'teal' : 'red'} dot>
             {item.isAvailable ? 'Aktif' : 'Nonaktif'}
           </Badge>
         </div>

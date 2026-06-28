@@ -1,5 +1,6 @@
 import { useLocation, useNavigate, Link } from 'react-router'
 import { CogIcon } from '@/components/Icons.tsx'
+import { statusDot, statusLabel } from '@/constants.ts'
 
 function pathToLabel(path: string): string {
   if (path === '/') return 'Dashboard'
@@ -20,22 +21,6 @@ function pathToLabel(path: string): string {
 
 interface TopbarProps {
   connection: string
-}
-
-function statusDot(status: string) {
-  switch (status) {
-    case 'connected': return 'bg-emerald-500'
-    case 'connecting': return 'bg-amber-500'
-    default: return 'bg-red-500'
-  }
-}
-
-function statusLabel(status: string) {
-  switch (status) {
-    case 'connected': return 'Terhubung'
-    case 'connecting': return 'Menghubungkan'
-    default: return 'Terputus'
-  }
 }
 
 export default function Topbar({ connection }: TopbarProps) {

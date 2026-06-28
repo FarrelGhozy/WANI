@@ -1,65 +1,49 @@
-import { useMemo, useState, useEffect } from 'react'
-import { useNavigate } from 'react-router'
-import { useWaStatus } from '@/hooks/useWaStatus.ts'
-import { useOrders } from '@/hooks/useOrders.ts'
+import { useEffect, useState } from 'react'
+import { Link, useNavigate } from 'react-router'
+import { useOrders, type OrderStatus } from '@/hooks/useOrders.ts'
 import { useProducts } from '@/hooks/useProducts.ts'
 import { useCustomers } from '@/hooks/useCustomers.ts'
-import { fetchApi } from '@/lib/api'
+import { useWaStatus } from '@/hooks/useWaStatus.ts'
+import { fetchApi } from '@/lib/api.ts'
 import StatusCard from '@/components/StatusCard.tsx'
-import Card from '@/components/ui/Card.tsx'
 import Badge from '@/components/ui/Badge.tsx'
-import QRCode from '@/components/QRCode.tsx'
+import Spinner from '@/components/ui/Spinner.tsx'
+import type { BadgeVariant } from '@/constants.ts'
+import { STATUS_BADGE, STATUS_LABEL, statusDot, statusLabel } from '@/constants.ts'
+import { formatPrice, formatDate } from '@/utils/format'
 import { SignalIcon, BagIcon, ClipboardIcon, PeopleIcon } from '@/components/Icons.tsx'
-import { formatPrice } from '@/utils/format'
 
-const statusBadgeVariant: Record<string, 'amber' | 'teal' | 'green' | 'gray' | 'red'> = {
-  PENDING: 'amber',
-  CONFIRMED: 'teal',
-  PROCESSING: 'green',
-  COMPLETED: 'gray',
-  CANCELLED: 'red',
-}
+const statusBadgeVariant: Record<OrderStatus, BadgeVariant> = STATUS_BADGE
+const statusLabelMap = STATUS_LABEL
 
-const statusLabel: Record<string, string> = {
-  PENDING: 'Tertunda',
-  CONFIRMED: 'Dikonfirmasi',
-  PROCESSING: 'Diproses',
-  COMPLETED: 'Selesai',
-  CANCELLED: 'Dibatalkan',
-}
-
-function mapAccent(status: string): 'teal' | 'amber' | 'red' {
-  switch (status) {
-    case 'connected': return 'teal'
-    case 'connecting': return 'amber'
-    default: return 'red'
-  }
-}
-
-function connectionLabel(status: string): string {
-  switch (status) {
-    case 'connected': return 'Terhubung'
-    case 'connecting': return 'Menghubungkan\u2026'
-    default: return 'Terputus'
-  }
+function mapAccent(connection: string): BadgeVariant {
+  if (connection === 'connected') return 'teal'
+  if (connection === 'connecting') return 'amber'
+  return 'red'
 }
 
 export default function Dashboard() {
   const navigate = useNavigate()
-  const { qr, connection, phone, loading: waLoading } = useWaStatus()
-  const { allOrders, loading: ordersLoading } = useOrders()
+  const { orders, loading: ordersLoading } = useOrders()
   const { products, loading: prodLoading } = useProducts()
   const { allCustomers, loading: custLoading } = useCustomers()
-  const [needsPaymentMethod, setNeedsPaymentMethod] = useState(false)
+  const { qr, connection, phone, connectedAt, loading: waLoading } = useWaStatus()
 
+  const [hasPaymentMethods, setHasPaymentMethods] = useState(false)
+  const [storeName, setStoreName] = useState('')
+
+  // Fetch store info
   useEffect(() => {
     let cancelled = false
     ;(async () => {
       try {
-        const res = await fetchApi<{ hasPaymentMethods: boolean }>('/api/store')
-        if (!cancelled) setNeedsPaymentMethod(!res.data?.hasPaymentMethods)
+        const res = await fetchApi<{ businessName: string; hasPaymentMethods: boolean }>('/api/store')
+        if (res.data && !cancelled) {
+          setStoreName(res.data.businessName || '')
+          setHasPaymentMethods(res.data.hasPaymentMethods || false)
+        }
       } catch {
-        // silent
+        // silent — use defaults
       }
     })()
     return () => { cancelled = true }
@@ -67,250 +51,195 @@ export default function Dashboard() {
 
   const loading = waLoading || ordersLoading || prodLoading || custLoading
 
-  const totalRevenue = useMemo(
-    () => allOrders
-      .filter((o) => o.status === 'COMPLETED')
-      .reduce((sum, o) => sum + o.totalAmount, 0),
-    [allOrders],
-  )
+  // Derived data
+  const pendingOrders = orders.filter((o) => o.status === 'PENDING')
+  const activeProducts = products.filter((p) => p.isAvailable)
+  const attentionProducts = products.filter((p) => !p.isAvailable || p.stock === 0)
+  const lowStockProducts = products.filter((p) => p.stock > 0 && p.stock <= 5)
 
-  const pendingProcessOrders = useMemo(
-    () => allOrders.filter((o) => o.status === 'PENDING' || o.status === 'CONFIRMED'),
-    [allOrders],
-  )
+  const recentPending = pendingOrders.slice(0, 5)
 
-  const activeProducts = useMemo(
-    () => products.filter((p) => p.isAvailable),
-    [products],
-  )
+  const totalRevenue = orders
+    .filter((o) => o.status === 'COMPLETED')
+    .reduce((sum, o) => sum + o.totalAmount, 0)
 
-  const lowStockProducts = useMemo(
-    () => products.filter((p) => p.stock === 0 || !p.isAvailable),
-    [products],
-  )
-
-  const unreadCustomerCount = useMemo(
-    () => allCustomers.filter((c) => c.unreadCount > 0).length,
-    [allCustomers],
-  )
+  const totalUnread = allCustomers.reduce((sum, c) => sum + (c.unreadCount || 0), 0)
 
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="h-6 w-48 animate-pulse rounded bg-stone-200" />
+        {/* Skeleton */}
+        <div className="h-8 w-48 animate-pulse rounded-lg bg-stone-100" />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[1, 2, 3, 4].map((i) => (
             <div key={i} className="h-28 animate-pulse rounded-xl bg-stone-100" />
           ))}
         </div>
-        <div className="h-64 animate-pulse rounded-xl bg-stone-100" />
+        <div className="h-80 animate-pulse rounded-xl bg-stone-100" />
+        <div className="h-40 animate-pulse rounded-xl bg-stone-100" />
       </div>
     )
   }
 
   return (
     <div className="space-y-6">
-
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-stone-900">Dashboard</h1>
-        <p className="mt-1 text-sm text-stone-500">Ringkasan bisnis dan status penting</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight text-stone-900 sm:text-3xl">
+            {storeName || 'Dashboard'}
+          </h1>
+          <p className="mt-1 text-sm text-stone-500">
+            Ringkasan bisnis UMKM Anda
+          </p>
+        </div>
       </div>
 
-      {/* Payment Method Warning */}
-      {needsPaymentMethod && (
-        <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
-          <div className="flex items-start gap-3">
-            <div className="mt-0.5 shrink-0 text-amber-500">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-                <line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" />
-              </svg>
-            </div>
-            <div className="flex-1">
-              <p className="text-sm font-medium text-amber-900">Belum ada metode pembayaran</p>
-              <p className="mt-0.5 text-xs text-amber-700">
-                Pelanggan belum bisa melihat informasi pembayaran.{' '}
-                <button
-                  onClick={() => navigate('/settings?tab=payment')}
-                  className="font-medium underline underline-offset-2 transition-colors hover:text-amber-900"
-                >
-                  Atur metode pembayaran
-                </button>
-              </p>
-            </div>
+      {/* WA Connection Banner */}
+      {connection === 'connected' && (
+        <div className="flex items-center gap-3 rounded-xl border border-teal-200 bg-teal-50 px-5 py-3">
+          <span className={`h-2.5 w-2.5 rounded-full ${statusDot(connection)}`} />
+          <div className="flex-1">
+            <p className="text-sm font-medium text-teal-800">WhatsApp Terhubung</p>
+            <p className="text-xs text-teal-600">{phone} &middot; Bot aktif melayani pelanggan</p>
           </div>
+          <Badge variant="teal" dot>Online</Badge>
         </div>
       )}
 
-      {/* Key Metrics */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      {/* Status Cards */}
+      <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <StatusCard
+          icon={<span className="text-lg font-bold text-stone-600">Rp</span>}
+          accent="teal"
           label="Total Pendapatan"
           value={formatPrice(totalRevenue)}
-          accent="teal"
-          icon={<BagIcon />}
-          subText="Dari pesanan selesai"
+          sub={`Dari ${orders.filter(o => o.status === 'COMPLETED').length} pesanan selesai`}
         />
         <StatusCard
-          label="Perlu Diproses"
-          value={String(pendingProcessOrders.length)}
-          accent={pendingProcessOrders.length > 0 ? 'amber' : 'teal'}
           icon={<ClipboardIcon />}
-          subText={pendingProcessOrders.length > 0 ? 'Menunggu konfirmasi' : 'Semua sudah diproses'}
+          accent="amber"
+          label="Perlu Diproses"
+          value={String(pendingOrders.length)}
+          sub="Menunggu konfirmasi"
         />
         <StatusCard
+          icon={<BagIcon />}
+          accent="teal"
           label="Produk Aktif"
           value={`${activeProducts.length}/${products.length}`}
-          accent={activeProducts.length > 0 ? 'teal' : 'red'}
-          icon={<BagIcon />}
-          subText={`${lowStockProducts.length} perlu perhatian`}
+          sub={attentionProducts.length > 0 ? `${attentionProducts.length} perlu perhatian` : 'Semua dalam stok'}
         />
         <StatusCard
+          icon={<PeopleIcon />}
+          accent="teal"
           label="Pelanggan"
           value={String(allCustomers.length)}
-          accent="teal"
-          icon={<PeopleIcon />}
-          subText={unreadCustomerCount > 0 ? `${unreadCustomerCount} pesan belum dibaca` : 'Tidak ada pesan baru'}
+          sub={totalUnread > 0 ? `${totalUnread} pesan belum dibaca` : 'Semua pesan terbaca'}
         />
       </div>
 
-      {/* Pending Orders List */}
-      <Card>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-sm font-semibold text-stone-900">Pesanan Perlu Diproses</h2>
-          {pendingProcessOrders.length > 0 && (
-            <button
-              onClick={() => navigate('/orders')}
-              className="text-xs font-medium text-teal-600 transition-colors hover:text-teal-700"
-            >
-              Lihat Semua &rarr;
-            </button>
+      {/* Grid: Recent Orders + WA Status */}
+      <div className="grid gap-6 lg:grid-cols-3">
+        {/* Pending Orders Table */}
+        <div className="overflow-hidden rounded-xl border border-stone-200 bg-white lg:col-span-2">
+          <div className="flex items-center justify-between border-b border-stone-100 px-5 py-4">
+            <h2 className="text-sm font-semibold text-stone-900">Pesanan Perlu Diproses</h2>
+            {pendingOrders.length > 0 && (
+              <Link to="/orders" className="text-xs font-medium text-teal-600 hover:text-teal-700">
+                Lihat semua &rarr;
+              </Link>
+            )}
+          </div>
+          {recentPending.length === 0 ? (
+            <div className="flex flex-col items-center justify-center px-5 py-12 text-center">
+              <p className="text-sm font-medium text-stone-500">Semua pesanan selesai &check;</p>
+              <p className="mt-1 text-xs text-stone-400">Tidak ada pesanan yang perlu diproses.</p>
+            </div>
+          ) : (
+            <div className="divide-y divide-stone-50">
+              {recentPending.map((order) => (
+                <div
+                  key={order.id}
+                  onClick={() => navigate(`/orders/${order.id}`)}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') navigate(`/orders/${order.id}`) }}
+                  tabIndex={0}
+                  role="button"
+                  aria-label={`Lihat pesanan ${order.id}`}
+                  className="flex cursor-pointer items-center justify-between px-5 py-3 transition-colors hover:bg-stone-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500/40"
+                >
+                  <div className="flex items-center gap-3">
+                    <Badge variant={statusBadgeVariant[order.status]} dot>
+                      {statusLabelMap[order.status]}
+                    </Badge>
+                    <div>
+                      <p className="text-sm font-medium text-stone-900">{order.customerName}</p>
+                      <p className="text-xs text-stone-400">
+                        {order.items.length} item &middot; {formatDate(order.createdAt)}
+                      </p>
+                    </div>
+                  </div>
+                  <span className="text-sm font-medium text-stone-900">{formatPrice(order.totalAmount)}</span>
+                </div>
+              ))}
+            </div>
           )}
         </div>
-        {pendingProcessOrders.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-10 text-center">
-            <div className="mb-3 rounded-full bg-emerald-50 p-3 text-emerald-500">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
-                <path d="M22 4L12 14.01l-3-3" />
-              </svg>
-            </div>
-            <p className="text-sm font-medium text-stone-900">Semua pesanan sudah diproses</p>
-            <p className="mt-1 text-xs text-stone-500">Tidak ada pesanan yang menunggu konfirmasi</p>
-          </div>
-        ) : (
-          <div className="divide-y divide-stone-100">
-            {pendingProcessOrders.slice(0, 5).map((order) => (
-              <div
-                key={order.id}
-                onClick={() => navigate(`/orders/${order.id}`)}
-                className="flex cursor-pointer items-center justify-between gap-3 px-1 py-3 transition-colors hover:bg-stone-50 -mx-1 rounded-lg"
-              >
-                <div className="flex items-center gap-3 min-w-0">
-                  <span className="shrink-0 font-mono text-xs font-medium text-teal-600">
-                    #{order.id.split('-')[1].toUpperCase().padStart(3, '0')}
-                  </span>
-                  <span className="truncate text-sm font-medium text-stone-900">
-                    {order.customerName}
-                  </span>
-                </div>
-                <div className="flex items-center gap-3 shrink-0">
-                  <span className="hidden sm:block text-xs text-stone-400">
-                    {formatPrice(order.totalAmount)}
-                  </span>
-                  <Badge variant={statusBadgeVariant[order.status]} dot>
-                    {statusLabel[order.status]}
-                  </Badge>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="text-stone-300">
-                    <path d="M9 18l6-6-6-6" />
-                  </svg>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </Card>
 
-      {/* Bottom Row: WhatsApp + Stock Alert */}
-      <div className="grid gap-6 lg:grid-cols-2">
-
-        {/* WhatsApp Connection */}
-        <Card>
-          <div className="flex items-start gap-4">
-            <div className={`rounded-lg p-2.5 ${
-              connection === 'connected' ? 'bg-emerald-50 text-emerald-600' :
-              connection === 'connecting' ? 'bg-amber-50 text-amber-600' :
-              'bg-red-50 text-red-600'
-            }`}>
-              <SignalIcon />
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center justify-between gap-2">
-                <h3 className="text-sm font-semibold text-stone-900">WhatsApp</h3>
-                <Badge variant={mapAccent(connection)} dot>
-                  {connectionLabel(connection)}
-                </Badge>
+        {/* WA Status Card */}
+        <div className="rounded-xl border border-stone-200 bg-white">
+          <div className="border-b border-stone-100 px-5 py-4">
+            <h2 className="text-sm font-semibold text-stone-900">WhatsApp</h2>
+          </div>
+          <div className="px-5 py-4">
+            <div className="flex items-center gap-3">
+              <div className={`rounded-full p-3 ${connection === 'connected' ? 'bg-teal-50 text-teal-500' : 'bg-stone-100 text-stone-400'}`}>
+                <SignalIcon />
               </div>
-              {phone && (
-                <p className="mt-0.5 text-xs text-stone-500">{phone}</p>
+              <div>
+                <p className="text-sm font-medium text-stone-900">{statusLabel(connection)}</p>
+                <p className="text-xs text-stone-400">{phone || '-'}</p>
+              </div>
+            </div>
+
+            {connection === 'connected' && connectedAt && (
+              <p className="mt-3 text-xs text-stone-400">
+                Terhubung sejak {formatDate(connectedAt, { long: true, withTz: true })}
+              </p>
+            )}
+
+            <div className="mt-4 space-y-2">
+              {/* Payment Methods Warning */}
+              {!hasPaymentMethods && (
+                <div className="rounded-lg bg-amber-50 px-4 py-3">
+                  <p className="text-xs font-medium text-amber-800">Metode Pembayaran Belum Diatur</p>
+                  <p className="mt-1 text-xs text-amber-600">Atur metode pembayaran agar pelanggan dapat melakukan checkout.</p>
+                </div>
               )}
-              {connection === 'disconnected' || connection === 'connecting' ? (
-                <div className="mt-4 flex flex-col items-center gap-3 sm:flex-row">
-                  <QRCode value={qr} />
-                  <p className="text-xs text-stone-400 sm:text-left text-center">
-                    Scan QR code dengan WhatsApp untuk menghubungkan
+
+              {/* Low Stock Alert */}
+              {lowStockProducts.length > 0 && (
+                <div className="rounded-lg bg-amber-50 px-4 py-3">
+                  <p className="text-xs font-medium text-amber-800">Stok Menipis</p>
+                  <p className="mt-1 text-xs text-amber-600">
+                    {lowStockProducts.length} produk hampir habis.
                   </p>
                 </div>
-              ) : (
-                <p className="mt-2 text-xs text-stone-500">
-                  Bot aktif melayani pelanggan
-                </p>
               )}
-            </div>
-          </div>
-        </Card>
 
-        {/* Stock Alert */}
-        <Card>
-          <div className="flex items-start gap-4">
-            <div className="rounded-lg p-2.5 bg-amber-50 text-amber-600">
-              <BagIcon />
-            </div>
-            <div className="flex-1 min-w-0">
-              <h3 className="text-sm font-semibold text-stone-900">Perhatian Stok</h3>
-              {lowStockProducts.length === 0 ? (
-                <div className="mt-3 flex flex-col items-center justify-center py-6 text-center">
-                  <div className="mb-2 rounded-full bg-emerald-50 p-2 text-emerald-500">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                      <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
-                      <path d="M22 4L12 14.01l-3-3" />
-                    </svg>
+              {/* All good */}
+              {hasPaymentMethods && lowStockProducts.length === 0 && (
+                <div className="rounded-lg bg-teal-50 px-4 py-3">
+                  <div className="flex items-center gap-2">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" className="text-teal-600"><polyline points="20 6 9 17 4 12" /></svg>
+                    <p className="text-xs font-medium text-teal-800">Semua dalam kondisi baik</p>
                   </div>
-                  <p className="text-sm font-medium text-stone-900">Semua stok aman</p>
-                </div>
-              ) : (
-                <div className="mt-3 divide-y divide-stone-100">
-                  {lowStockProducts.map((product) => (
-                    <div
-                      key={product.id}
-                      onClick={() => navigate(`/products/${product.id}`)}
-                      className="flex cursor-pointer items-center justify-between py-2 transition-colors hover:text-teal-600"
-                    >
-                      <span className="text-sm text-stone-700">{product.name}</span>
-                      <span className={`text-xs font-medium ${product.stock === 0 ? 'text-red-500' : 'text-stone-400'}`}>
-                        {product.isAvailable ? `Stok: ${product.stock}` : 'Tidak aktif'}
-                      </span>
-                    </div>
-                  ))}
                 </div>
               )}
             </div>
           </div>
-        </Card>
-
+        </div>
       </div>
-
     </div>
   )
 }

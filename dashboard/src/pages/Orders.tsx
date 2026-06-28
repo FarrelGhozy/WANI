@@ -1,6 +1,10 @@
 import { useOrders } from '@/hooks/useOrders.ts'
 import OrderListView from '@/components/OrderListView.tsx'
+import OrderCardList from '@/components/OrderCardList.tsx'
+import Input from '@/components/ui/Input.tsx'
+import Select from '@/components/ui/Select.tsx'
 import Spinner from '@/components/ui/Spinner.tsx'
+import { STATUS_LEGEND } from '@/constants.ts'
 
 const statusOptions = [
   { value: '', label: 'Semua Status' },
@@ -19,70 +23,95 @@ export default function Orders() {
   }
 
   return (
-    <div className="max-lg:flex max-lg:h-[calc(100dvh-12rem)] max-lg:flex-col lg:space-y-6">
+    <div className="flex flex-col gap-4 sm:gap-5 h-full">
       {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-stone-900">Pesanan</h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-stone-900 sm:text-3xl">Pesanan</h1>
           <p className="mt-1 text-sm text-stone-500">{orders.length} pesanan ditemukan</p>
         </div>
         <div className="flex flex-wrap items-center gap-2 text-xs text-stone-400">
-            <span className="inline-flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-amber-400" /> Tertunda
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-teal-400" /> Diproses
-            </span>
-            <span className="inline-flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-emerald-400" /> Selesai
-            </span>
+            {STATUS_LEGEND.map((item) => (
+              <span key={item.label} className="inline-flex items-center gap-1.5">
+                <span className={`h-2 w-2 rounded-full ${item.color}`} />
+                {item.label}
+              </span>
+            ))}
         </div>
       </div>
 
       {/* Filters */}
       <div className="flex flex-col gap-3 sm:flex-row">
-        <div className="relative flex-1">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-stone-400">
-            <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
-          </svg>
-          <input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Cari nama pelanggan atau ID pesanan..."
-            className="h-10 w-full rounded-lg border border-stone-300 bg-white pl-9 pr-3 text-sm text-stone-900 transition-all placeholder:text-stone-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-          />
-        </div>
-        <select
+        <Input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Cari nama pelanggan atau ID pesanan..."
+          className="flex-1"
+          prefix={
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
+            </svg>
+          }
+        />
+        <Select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="h-10 rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-700 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 sm:w-44"
-        >
-          {statusOptions.map((opt) => (
-            <option key={opt.value} value={opt.value}>{opt.label}</option>
-          ))}
-        </select>
+          options={statusOptions}
+          className="w-full sm:w-44"
+        />
       </div>
 
-      {/* Empty */}
-      {orders.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-16 text-center">
-          <div className="mb-4 rounded-full bg-stone-100 p-4 text-stone-300">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-              <path d="M3 1h2l1 3h10l-1 6H6L5 4" /><circle cx="7" cy="17" r="1.5" /><circle cx="14" cy="17" r="1.5" />
-            </svg>
+      {/* Table (desktop) + Card List (mobile) */}
+      <div className="hidden min-h-0 flex-1 sm:block">
+        {orders.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <div className="mb-4 rounded-full bg-stone-100 p-4 text-stone-300">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                <path d="M9 11l3 3L22 4" />
+                <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
+              </svg>
+            </div>
+            <h3 className="text-sm font-semibold text-stone-900">Tidak ada pesanan</h3>
+            <p className="mt-1 max-w-xs text-xs text-stone-500">
+              Pesanan dari pelanggan akan muncul di sini
+            </p>
           </div>
-          <h3 className="text-sm font-semibold text-stone-900">
-            {search || statusFilter ? 'Tidak ada pesanan yang cocok' : 'Belum ada pesanan'}
-          </h3>
-        </div>
-      )}
+        ) : (
+          <OrderListView
+            orders={orders}
+            sortField={sortField}
+            sortDir={sortDir}
+            onSort={toggleSort}
+          />
+        )}
+      </div>
 
-      {/* List */}
-      {orders.length > 0 && (
-        <div className="max-lg:flex-1 max-lg:overflow-auto">
-          <OrderListView orders={orders} sortField={sortField} sortDir={sortDir} onSort={toggleSort} />
-        </div>
-      )}
+      {/* Mobile card list */}
+      <div className="flex-1 sm:hidden">
+        {orders.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <div className="mb-4 rounded-full bg-stone-100 p-4 text-stone-300">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                <path d="M9 11l3 3L22 4" />
+                <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
+              </svg>
+            </div>
+            <h3 className="text-sm font-semibold text-stone-900">Tidak ada pesanan</h3>
+            <p className="mt-1 max-w-xs text-xs text-stone-500">
+              Pesanan dari pelanggan akan muncul di sini
+            </p>
+          </div>
+        ) : (
+          <div className="h-full overflow-y-auto pb-4">
+            <OrderCardList
+              orders={orders}
+              sortField={sortField}
+              sortDir={sortDir}
+              onSort={toggleSort}
+            />
+          </div>
+        )}
+      </div>
     </div>
   )
 }
