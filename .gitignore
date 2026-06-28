@@ -1,7 +1,6 @@
 # Project wide .gitignore file
 
 graphify-out
-erd*
 .env
 .env.*.local
 Docs/*.aux
