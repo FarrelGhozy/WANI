@@ -191,6 +191,48 @@ export default function Website() {
             </div>
           </Card>
 
+          <Card accent="teal">
+            <h2 className="mb-5 text-lg font-semibold text-stone-900">Media Sosial</h2>
+            <p className="mb-4 text-xs text-stone-500">Centang platform yang ingin ditampilkan, lalu masukkan URL profil toko Anda.</p>
+            <div className="space-y-3">
+              {SOCIAL_PLATFORMS.map((sp) => {
+                const checked = sp.key in config.socialMedia
+                const url = checked ? config.socialMedia[sp.key] || '' : ''
+                return (
+                  <div key={sp.key} className="flex items-start gap-3">
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={() => {
+                        const next = { ...config.socialMedia }
+                        if (checked) {
+                          delete next[sp.key]
+                        } else {
+                          next[sp.key] = ''
+                        }
+                        updateConfig({ socialMedia: next })
+                      }}
+                      className="mt-2.5 h-4 w-4 rounded border-stone-300 text-teal-600 focus:ring-teal-500"
+                    />
+                    <div className="flex-1 space-y-1">
+                      <label className="text-sm font-medium text-stone-700">{sp.label}</label>
+                      <input
+                        value={url}
+                        onChange={(e) => {
+                          const next = { ...config.socialMedia, [sp.key]: e.target.value }
+                          updateConfig({ socialMedia: next })
+                        }}
+                        disabled={!checked}
+                        placeholder={checked ? 'https://...' : ''}
+                        className={`h-10 w-full rounded-lg border bg-white px-3 text-sm text-stone-900 transition-all placeholder:text-stone-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 ${checked ? 'border-stone-300' : 'border-stone-200 bg-stone-50 text-stone-400'}`}
+                      />
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </Card>
+
           <Card accent="none" padding={false}>
             <div className="flex items-center justify-between px-4 py-3 sm:px-6">
               <h2 className="text-lg font-semibold text-stone-900">Log Aktivitas</h2>
@@ -310,6 +352,17 @@ export default function Website() {
     </div>
   )
 }
+
+const SOCIAL_PLATFORMS = [
+  { key: 'instagram', label: 'Instagram' },
+  { key: 'facebook', label: 'Facebook' },
+  { key: 'tiktok', label: 'TikTok' },
+  { key: 'youtube', label: 'YouTube' },
+  { key: 'shopee', label: 'Shopee' },
+  { key: 'tokopedia', label: 'Tokopedia' },
+  { key: 'twitter', label: 'X / Twitter' },
+  { key: 'linkedin', label: 'LinkedIn' },
+]
 
 const PRESETS = [
   { name: 'Teal',   primary: '#059669', secondary: '#f59e0b' },
