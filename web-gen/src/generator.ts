@@ -34,10 +34,14 @@ export async function generate(
 
     const theme = params.theme ?? "classic"
     const themeSrc = join(templatePath, "src", "themes", `${theme}.css`)
+    const baseSrc = join(templatePath, "src", "themes", "base.css")
     if (existsSync(themeSrc)) {
       const publicDir = join(workingDir, "public")
       mkdirSync(publicDir, { recursive: true })
       writeFileSync(join(publicDir, "theme.css"), readFileSync(themeSrc, "utf-8"))
+      if (existsSync(baseSrc)) {
+        writeFileSync(join(publicDir, "base.css"), readFileSync(baseSrc, "utf-8"))
+      }
     }
 
     writeDataFile(workingDir, "store.json", {
@@ -67,6 +71,7 @@ export async function generate(
       about: params.config.about,
       contact: params.config.contact,
       colors: params.config.colors,
+      basePath: `/s/${params.slug}/`,
       waOrderTemplate:
         params.config.waOrderTemplate ?? buildDefaultWaTemplate(),
     });
