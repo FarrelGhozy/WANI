@@ -1,9 +1,12 @@
 ---
 import * as fs from "node:fs"
+import SocialLinks from "../components/SocialLinks.astro"
 const store = JSON.parse(fs.readFileSync("src/data/store.json", "utf-8"))
 const siteConfig = JSON.parse(fs.readFileSync("src/data/site-config.json", "utf-8"))
 
 const waGeneralUrl = `https://wa.me/${store.phone.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(`Halo ${store.businessName}, saya mau tanya-tanya dulu.`)}`
+
+const hasSocial = Object.values(siteConfig.socialMedia ?? {}).some(Boolean)
 ---
 
 <section class="section">
@@ -31,6 +34,14 @@ const waGeneralUrl = `https://wa.me/${store.phone.replace(/[^0-9]/g, "")}?text=$
           <p class="contact-field-label">Metode Pembayaran</p>
           <p class="contact-field-value">{store.paymentMethods ?? "-"}</p>
         </div>
+        {hasSocial && (
+          <div class="contact-field">
+            <p class="contact-field-label">Media Sosial</p>
+            <div class="contact-social">
+              <SocialLinks socialMedia={siteConfig.socialMedia} />
+            </div>
+          </div>
+        )}
       </div>
       <div class="contact-actions">
         <a href={waGeneralUrl} target="_blank" rel="noopener noreferrer" class="btn btn-wa--lg btn-wa">
