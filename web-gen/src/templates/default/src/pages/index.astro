@@ -3,6 +3,7 @@ import * as fs from "node:fs"
 import BaseLayout from "../layouts/BaseLayout.astro"
 import Header from "../components/Header.astro"
 import HeroSection from "../components/HeroSection.astro"
+import FeaturesSection from "../components/FeaturesSection.astro"
 import AboutSection from "../components/AboutSection.astro"
 import ProductCard from "../components/ProductCard.astro"
 import ContactInfo from "../components/ContactInfo.astro"
@@ -19,6 +20,7 @@ const featuredProducts = products.slice(0, 6)
 <BaseLayout>
   <Header />
   <HeroSection />
+  <FeaturesSection />
   <AboutSection />
 
   {featuredProducts.length > 0 && (
