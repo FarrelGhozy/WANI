@@ -224,36 +224,56 @@ export class OrderModel extends BaseModel {
       paidAt?: string | null
     },
   ): Promise<OrderResponse> {
-    const payment = await this.db.payment.findUnique({ where: { orderId: id } })
-    if (payment?.status === "PAID") {
-      throw new BadRequestError("pembayaran sudah dikonfirmasi sebelumnya")
-    }
+    await this.db.$transaction(async (tx) => {
+      const prev = await tx.payment.findUnique({ where: { orderId: id } })
+      if (prev?.status === "PAID") {
+        throw new BadRequestError("pembayaran sudah dikonfirmasi sebelumnya")
+      }
 
-    await this.db.payment.upsert({
-      where: { orderId: id },
-      create: {
-        orderId: id,
-        method: data.method,
-        amount: data.amount,
-        status: data.status,
-        paidAt: data.paidAt ? new Date(data.paidAt) : null,
-      },
-      update: {
-        method: data.method,
-        amount: data.amount,
-        status: data.status,
-        paidAt: data.paidAt ? new Date(data.paidAt) : null,
-      },
+      await tx.payment.upsert({
+        where: { orderId: id },
+        create: {
+          orderId: id,
+          method: data.method,
+          amount: data.amount,
+          status: data.status,
+          paidAt: data.paidAt ? new Date(data.paidAt) : null,
+        },
+        update: {
+          method: data.method,
+          amount: data.amount,
+          status: data.status,
+          paidAt: data.paidAt ? new Date(data.paidAt) : null,
+        },
+      })
+
+      if (data.status === "PAID") {
+        const items = await tx.orderItem.findMany({
+          where: { orderId: id },
+          include: { product: { select: { name: true, stock: true } } },
+        })
+
+        for (const item of items) {
+          if (item.product.stock < item.qty) {
+            throw new BadRequestError(
+              `Stok "${item.product.name}" tidak mencukupi (tersedia ${item.product.stock}, diminta ${item.qty})`,
+            )
+          }
+          await tx.product.update({
+            where: { id: item.productId },
+            data: { stock: { decrement: item.qty } },
+          })
+        }
+
+        await tx.order.update({
+          where: { id },
+          data: { status: "CONFIRMED" },
+        })
+      }
     })
 
-    const updateData: Record<string, unknown> = {}
-    if (data.status === "PAID") {
-      updateData.status = "CONFIRMED"
-    }
-
-    const row = await this.delegate.update({
+    const row = await this.delegate.findUniqueOrThrow({
       where: { id },
-      data: updateData,
       include: orderInclude,
     })
     return toOrderResponse(row)
