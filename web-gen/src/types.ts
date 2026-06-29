@@ -24,6 +24,17 @@ export interface OrdersStats {
   pending: number
 }
 
+export interface SocialMediaLinks {
+  instagram?: string
+  facebook?: string
+  tiktok?: string
+  youtube?: string
+  shopee?: string
+  tokopedia?: string
+  twitter?: string
+  linkedin?: string
+}
+
 export interface SiteConfig {
   hero: {
     headline: string
@@ -34,6 +45,7 @@ export interface SiteConfig {
     description: string
     mission: string | null
   }
+  socialMedia: SocialMediaLinks
   contact: {
     email: string | null
     mapsUrl: string | null
