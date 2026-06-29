@@ -104,8 +104,8 @@ export async function generateWebsite(
         mission: null,
       },
       contact: {
-        email: null,
-        mapsUrl: null,
+        email: getConfigValue(config, "contactEmail", null),
+        mapsUrl: getConfigValue(config, "contactMapsUrl", null),
       },
       selectedProductIds: selectedProducts.map((p: any) => p.id),
       colors: {
