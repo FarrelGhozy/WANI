@@ -1,4 +1,5 @@
 import { makeWASocket, Browsers } from "baileys";
+import type { WASocket } from "baileys";
 import pino from "pino";
 import qrcode from "qrcode-terminal";
 import axios from "axios";
@@ -22,10 +23,18 @@ const api = axios.create({
   headers: { Authorization: `Bearer ${process.env.API_TOKEN}` }
 });
 
+let sock: WASocket | null = null;
+let pollTimer: ReturnType<typeof setInterval> | null = null;
+let connected = false;
+let cleanupRegistered = false;
+
 async function main() {
   const { state, saveCreds } = await usePrismaAuthState(prisma);
 
-  const sock = makeWASocket({
+  if (pollTimer) clearInterval(pollTimer);
+  sock?.end(undefined);
+
+  sock = makeWASocket({
     auth: state,
     logger,
     browser: Browsers.ubuntu("Firefox"),
@@ -37,7 +46,7 @@ async function main() {
   sock.ev.on("connection.update", (update) => {
     const { connection, lastDisconnect, qr, receivedPendingNotifications } = update;
 
-    const sockUser = sock.user ? { id: sock.user.id, phoneNumber: sock.user.phoneNumber, lid: sock.user.lid, name: sock.user.name } : null;
+    const sockUser = sock?.user ? { id: sock.user.id, phoneNumber: sock.user.phoneNumber, lid: sock.user.lid, name: sock.user.name } : null;
     const credsMe = state.creds.me ? { id: state.creds.me.id, phoneNumber: state.creds.me.phoneNumber, lid: state.creds.me.lid } : null;
     logger.info({ connection, hasQr: !!qr, receivedPendingNotifications, updateKeys: Object.keys(update), sockUser, credsMe }, "connection update");
 
@@ -48,7 +57,8 @@ async function main() {
     }
 
     if (connection === "open" || receivedPendingNotifications) {
-      const id = sock.user?.id ?? state.creds.me?.id ?? "";
+      connected = true;
+      const id = sock?.user?.id ?? state.creds.me?.id ?? "";
       const phoneNumber = id.split(":")[0]?.replace(/[^0-9]/g, "") || null;
       logger.info({ connection, receivedPendingNotifications, phoneNumber }, "connected — clearing QR");
       api.delete("/api/qr").catch(e => logger.error({ err: e?.response?.data ?? e }, "clear QR failed"));
@@ -58,12 +68,15 @@ async function main() {
     }
 
     if (connection === "close") {
+      connected = false;
       const reason = lastDisconnect?.error?.message ?? lastDisconnect?.error?.toString() ?? "unknown";
       const loggedOut = reason.includes("logged out");
       logger.info({ loggedOut, reason }, "connection closed");
       api.post("/api/qr", { status: "disconnected" }).catch(e => logger.error({ err: e?.response?.data ?? e }, "disconnect status failed"));
       if (!loggedOut) {
         logger.info("reconnecting...");
+        if (pollTimer) clearInterval(pollTimer);
+        sock?.end(undefined);
         main();
       }
     }
@@ -103,30 +116,42 @@ async function main() {
           if (qrisUrl) {
             const fullUrl = `${process.env.API_URL?.replace(/\/$/, "")}${qrisUrl}`;
             try {
-              await sock.sendMessage(jid, { image: { url: fullUrl }, caption: reply });
+              await sock?.sendMessage(jid, { image: { url: fullUrl }, caption: reply });
             } catch {
-              await sock.sendMessage(jid, { text: reply });
+              await sock?.sendMessage(jid, { text: reply });
             }
           } else {
-            await sock.sendMessage(jid, { text: reply });
+            await sock?.sendMessage(jid, { text: reply });
           }
         }
       } catch (err) {
         logger.error({ err: err instanceof Error ? err.message : String(err), phone, text }, "chat API failed");
-        await sock.sendMessage(jid, { text: "Maaf, sistem sedang sibuk, coba sebentar lagi." });
+        await sock?.sendMessage(jid, { text: "Maaf, sistem sedang sibuk, coba sebentar lagi." });
       }
     }
   });
-  // Polling: kirim pesan HUMAN dari dashboard ke WhatsApp
-  const POLL_INTERVAL = Number(process.env.OUTGOING_POLL_INTERVAL ?? 3000);
+
+  async function pollResetSignal() {
+    if (!connected) return;
+    try {
+      const { data } = await api.get("/api/qr/status");
+      const st = data?.data;
+      if (st?.status === "disconnected" && !st?.phone && !st?.qr) {
+        logger.info("reset detected — logging out");
+        sock?.logout();
+        process.exit(0);
+      }
+    } catch {}
+  }
 
   async function pollOutgoing() {
+    await pollResetSignal();
     try {
       const { data } = await api.get("/api/outgoing");
       const items: Array<{ id: string; jid: string; text: string }> = data?.data?.items ?? [];
       for (const msg of items) {
         try {
-          await sock.sendMessage(msg.jid, { text: msg.text });
+          await sock?.sendMessage(msg.jid, { text: msg.text });
           await api.patch(`/api/outgoing/${msg.id}/delivered`);
           logger.info({ id: msg.id }, "outgoing sent");
         } catch (err) {
@@ -138,16 +163,20 @@ async function main() {
     }
   }
 
-  const pollTimer = setInterval(pollOutgoing, POLL_INTERVAL);
+  const POLL_INTERVAL = Number(process.env.OUTGOING_POLL_INTERVAL ?? 3000);
+  pollTimer = setInterval(pollOutgoing, POLL_INTERVAL);
 
-  process.on("SIGINT", () => {
-    clearInterval(pollTimer);
-    process.exit(0);
-  });
-  process.on("SIGTERM", () => {
-    clearInterval(pollTimer);
-    process.exit(0);
-  });
+  if (!cleanupRegistered) {
+    cleanupRegistered = true;
+    process.on("SIGINT", () => {
+      if (pollTimer) clearInterval(pollTimer);
+      process.exit(0);
+    });
+    process.on("SIGTERM", () => {
+      if (pollTimer) clearInterval(pollTimer);
+      process.exit(0);
+    });
+  }
 }
 
 main().catch((err) => {
