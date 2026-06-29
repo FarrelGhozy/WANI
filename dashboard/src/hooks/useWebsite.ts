@@ -15,6 +15,7 @@ const defaultConfig: WebsiteConfig = {
   selectedProductIds: [],
   template: 'default',
   theme: 'classic',
+  socialMedia: {},
 }
 
 function getToken(): string | null {
