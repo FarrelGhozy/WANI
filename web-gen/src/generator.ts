@@ -51,6 +51,21 @@ function generateHtml(
     (_, block) => params.products.map((p) => renderItem(block, p)).join("\n"),
   );
 
+  // {{^products}} fallback — show block only when no products
+  html = html.replace(
+    /{{\^products}}([\s\S]*?){{\/products}}/g,
+    (_, block) => params.products.length === 0 ? block : "",
+  );
+
+  // conditional sections {{#key}}...{{/key}} for non-loop keys
+  html = html.replace(
+    /{{#([a-zA-Z.]+)}}([\s\S]*?){{\/\1}}/g,
+    (_, key, block) => {
+      const val = ctx[key];
+      return val && String(val).length > 0 ? block : "";
+    },
+  );
+
   // simple replacements
   for (const [k, v] of Object.entries(ctx)) {
     html = html.replaceAll(`{{${k}}}`, String(v ?? ""));
@@ -164,12 +179,16 @@ function buildContext(params: GenerateParams): Record<string, unknown> {
   const fmtPrice = (n: number) => `Rp ${n.toLocaleString("id-ID")}`;
   return {
     "store.businessName": store.businessName,
+    "store.name": store.businessName,
     "store.phone": store.phone,
     "store.address": store.address ?? "",
     "store.businessHours": store.businessHours ?? "",
+    "store.hours": store.businessHours ?? "",
     "store.paymentMethods": store.paymentMethods ?? "",
+    "store.logoUrl": "",
     "hero.headline": config.hero.headline,
     "hero.subheadline": config.hero.subheadline ?? "",
+    "hero.aboutText": config.about.description,
     "hero.ctaText": config.hero.ctaText ?? "Lihat Produk",
     "about.description": config.about.description,
     "social.instagram": config.socialMedia.instagram ?? "",
@@ -187,6 +206,7 @@ function buildContext(params: GenerateParams): Record<string, unknown> {
     "stats.totalOrders": String(stats.totalOrders),
     "stats.completed": String(stats.completed),
     "stats.pending": String(stats.pending),
+    "whatsapp.url": `https://wa.me/${store.phone}`,
     "wa.text": encodeURIComponent(
       config.waOrderTemplate ?? buildDefaultWaTemplate(),
     ),

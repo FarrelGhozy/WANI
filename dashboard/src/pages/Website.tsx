@@ -111,28 +111,7 @@ export default function Website() {
                   <span className="font-mono text-xs text-stone-500">{config.secondaryColor}</span>
                 </div>
               </Field>
-              <div className="sm:col-span-2">
-                <Field label="Preset Warna (cepat)">
-                  <div className="flex flex-wrap gap-2">
-                    {PRESETS.map((p) => (
-                      <button
-                        key={p.name}
-                        type="button"
-                        onClick={() => updateConfig({ primaryColor: p.primary, secondaryColor: p.secondary })}
-                        className="group relative flex items-center gap-2 rounded-lg border border-stone-200 px-3 py-2 text-xs font-medium text-stone-600 transition-all hover:border-stone-300 hover:shadow-sm"
-                        title={p.name}
-                      >
-                        <span className="h-4 w-4 rounded-full border border-stone-200" style={{ background: p.primary }} />
-                        <span className="h-4 w-4 rounded-full border border-stone-200" style={{ background: p.secondary }} />
-                        <span className="ml-1 text-stone-500">{p.name}</span>
-                        {config.primaryColor === p.primary && config.secondaryColor === p.secondary && (
-                          <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-teal-500 text-[10px] text-white">{'\u2713'}</span>
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                </Field>
-              </div>
+
               <Field label="Nomor WhatsApp">
                 <input
                   value={config.phone}
@@ -145,11 +124,19 @@ export default function Website() {
               <Field label="Template">
                 <select
                   value={config.template}
-                  onChange={(e) => updateConfig({ template: e.target.value })}
+                  onChange={(e) => {
+                    const t = e.target.value
+                    const d = TEMPLATE_DEFAULTS[t]
+                    updateConfig({ template: t, ...(d ? { primaryColor: d.primary, secondaryColor: d.secondary } : {}) })
+                  }}
                   className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
                 >
                   <option value="default">Default (Astro)</option>
                   <option value="modern">Modern</option>
+                  <option value="vibrant">Vibrant</option>
+                  <option value="cyberpunk">Cyberpunk</option>
+                  <option value="minimalist">Minimalist</option>
+                  <option value="classic">Classic Renaissance</option>
                 </select>
               </Field>
               <div className="sm:col-span-2">
@@ -362,13 +349,13 @@ const SOCIAL_PLATFORMS = [
   { key: 'linkedin', label: 'LinkedIn' },
 ]
 
-const PRESETS = [
-  { name: 'Teal',   primary: '#059669', secondary: '#f59e0b' },
-  { name: 'Rose',   primary: '#e11d48', secondary: '#f97316' },
-  { name: 'Navy',   primary: '#1e40af', secondary: '#0d9488' },
-  { name: 'Forest', primary: '#15803d', secondary: '#d97706' },
-  { name: 'Sunset', primary: '#c2410c', secondary: '#d4a017' },
-]
+const TEMPLATE_DEFAULTS: Record<string, { primary: string; secondary: string }> = {
+  modern:     { primary: '#004ac6', secondary: '#505f76' },
+  vibrant:    { primary: '#004ac6', secondary: '#505f76' },
+  cyberpunk:  { primary: '#e1fdff', secondary: '#ebb2ff' },
+  minimalist: { primary: '#004ac6', secondary: '#505f76' },
+  classic:    { primary: '#785600', secondary: '#5f5e5e' },
+}
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (

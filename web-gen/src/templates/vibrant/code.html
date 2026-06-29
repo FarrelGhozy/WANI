@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>{{store.name}} | Official Store</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=JetBrains+Mono:wght@100..900&amp;family=Plus+Jakarta+Sans:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed-variant": "#38485d",
+                    "primary": "{{color.primary}}",
+                    "background": "#faf8ff",
+                    "primary-container": "#2563eb",
+                    "secondary": "{{color.secondary}}",
+                    "on-primary-fixed-variant": "#003ea8",
+                    "on-primary-fixed": "#00174b",
+                    "tertiary": "#784b00",
+                    "secondary-container": "#d0e1fb",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-tint": "#0053db",
+                    "on-surface": "#131b2e",
+                    "surface-container-low": "#f2f3ff",
+                    "tertiary-container": "#996100",
+                    "on-surface-variant": "#434655",
+                    "on-background": "#131b2e",
+                    "on-tertiary-fixed-variant": "#653e00",
+                    "surface": "#faf8ff",
+                    "tertiary-fixed-dim": "#ffb95f",
+                    "surface-dim": "#d2d9f4",
+                    "outline-variant": "#c3c6d7",
+                    "on-primary": "#ffffff",
+                    "on-tertiary-fixed": "#2a1700",
+                    "surface-container": "#eaedff",
+                    "on-secondary-container": "#54647a",
+                    "on-error": "#ffffff",
+                    "primary-fixed-dim": "#b4c5ff",
+                    "on-secondary": "#ffffff",
+                    "inverse-primary": "#b4c5ff",
+                    "error-container": "#ffdad6",
+                    "surface-container-high": "#e2e7ff",
+                    "surface-bright": "#faf8ff",
+                    "secondary-fixed": "#d3e4fe",
+                    "on-tertiary-container": "#ffeedd",
+                    "surface-variant": "#dae2fd",
+                    "primary-fixed": "#dbe1ff",
+                    "tertiary-fixed": "#ffddb8",
+                    "on-secondary-fixed": "#0b1c30",
+                    "error": "#ba1a1a",
+                    "inverse-surface": "#283044",
+                    "on-error-container": "#93000a",
+                    "secondary-fixed-dim": "#b7c8e1",
+                    "surface-container-highest": "#dae2fd",
+                    "on-tertiary": "#ffffff",
+                    "on-primary-container": "#eeefff",
+                    "outline": "#737686",
+                    "inverse-on-surface": "#eef0ff",
+                    "vibrant-orange": "#FF8A00",
+                    "vibrant-teal": "#00D1FF",
+                    "vibrant-purple": "#AD00FF"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.5rem",
+                    "lg": "1rem",
+                    "xl": "1.5rem",
+                    "2xl": "2.5rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "base": "4px",
+                    "lg": "24px",
+                    "margin-mobile": "16px",
+                    "2xl": "64px",
+                    "xs": "4px",
+                    "sm": "8px",
+                    "md": "16px",
+                    "margin-desktop": "auto",
+                    "xl": "40px",
+                    "gutter": "20px",
+                    "3xl": "80px"
+            },
+            "fontFamily": {
+                    "display-lg-mobile": ["Plus Jakarta Sans"],
+                    "label-sm": ["Inter"],
+                    "display-lg": ["Plus Jakarta Sans"],
+                    "headline-md": ["Plus Jakarta Sans"],
+                    "label-md": ["JetBrains Mono"],
+                    "body-md": ["Inter"],
+                    "headline-sm": ["Plus Jakarta Sans"],
+                    "body-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "display-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "800"}],
+                    "label-sm": ["12px", {"lineHeight": "1.0", "fontWeight": "600"}],
+                    "display-lg": ["64px", {"lineHeight": "1.1", "letterSpacing": "-0.04em", "fontWeight": "900"}],
+                    "headline-md": ["36px", {"lineHeight": "1.2", "fontWeight": "800"}],
+                    "label-md": ["14px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "500"}],
+                    "headline-sm": ["24px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                    "body-lg": ["20px", {"lineHeight": "1.6", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+        }
+        .bento-shadow {
+            box-shadow: 0px 8px 30px rgba(0, 74, 198, 0.08);
+        }
+        .vibrant-gradient {
+            background: linear-gradient(135deg, #FF8A00 0%, #AD00FF 100%);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+        .stagger-item {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .stagger-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md selection:bg-primary-fixed selection:text-on-primary-fixed overflow-x-hidden">
+<!-- TopNavBar -->
+<nav class="w-full sticky top-0 z-50 bg-surface border-b border-outline-variant shadow-sm h-16">
+<div class="flex justify-between items-center max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop h-full">
+<div class="flex items-center gap-md">
+<span class="font-headline-sm text-headline-sm font-bold text-primary">{{store.name}}</span>
+</div>
+<div class="hidden md:flex items-center gap-xl">
+<a class="font-body-md text-body-md text-primary font-bold border-b-2 border-primary pb-1 transition-transform active:scale-95" href="#">Home</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-200 active:scale-95" href="#">Products</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-200 active:scale-95" href="#">Categories</a>
+<a class="font-body-md text-body-md text-on-surface-variant hover:text-primary transition-colors duration-200 active:scale-95" href="#">About Us</a>
+</div>
+<div class="flex items-center gap-md">
+<button class="p-2 rounded-full hover:bg-surface-container transition-colors active:scale-95">
+<span class="material-symbols-outlined text-primary" data-icon="shopping_cart">shopping_cart</span>
+</button>
+<button class="p-2 rounded-full hover:bg-surface-container transition-colors active:scale-95">
+<span class="material-symbols-outlined text-primary" data-icon="account_circle">account_circle</span>
+</button>
+<button class="md:hidden p-2">
+<span class="material-symbols-outlined text-on-surface" data-icon="menu">menu</span>
+</button>
+</div>
+</div>
+</nav>
+<!-- Hero Section -->
+<section class="relative min-h-[870px] flex items-center overflow-hidden py-2xl">
+
+<div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop relative z-10 grid lg:grid-cols-2 gap-xl items-center">
+<div class="space-y-lg">
+<div class="inline-flex items-center gap-2 bg-vibrant-teal/10 px-4 py-2 rounded-full border border-vibrant-teal/20">
+<span class="material-symbols-outlined text-vibrant-teal text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-vibrant-teal font-label-md text-label-md uppercase tracking-widest">New Arrivals Out Now</span>
+</div>
+<h1 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface">
+                    {{hero.headline}}
+                </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl">
+                    {{hero.subheadline}}
+                </p>
+<div class="flex flex-wrap gap-md pt-md">
+<button class="px-8 py-4 bg-primary text-on-primary rounded-2xl font-bold text-lg bento-shadow hover:bg-primary-container transition-all hover:scale-105 active:scale-95 flex items-center gap-2">
+                        Shop Now <span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+</button>
+<button class="px-8 py-4 border-2 border-outline text-on-surface rounded-2xl font-bold text-lg hover:bg-surface-variant transition-all active:scale-95">
+                        View Lookbook
+                    </button>
+</div>
+</div>
+<div class="relative group">
+<div class="absolute -inset-4 bg-vibrant-purple/20 rounded-[3rem] blur-2xl group-hover:bg-vibrant-orange/20 transition-colors duration-700"></div>
+<div class="relative rounded-2xl overflow-hidden bento-shadow rotate-3 group-hover:rotate-0 transition-transform duration-500">
+<img class="w-full aspect-[4/5] object-cover" alt="" src="{{store.logoUrl}}"/>
+</div>
+<!-- Floating Element -->
+<div class="absolute -bottom-10 -left-10 glass-card p-6 rounded-2xl bento-shadow floating hidden md:block">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-vibrant-orange flex items-center justify-center">
+<span class="material-symbols-outlined text-white" data-icon="local_fire_department" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+</div>
+<div>
+<p class="font-bold text-on-surface">Trending Now</p>
+<p class="text-sm text-on-surface-variant">{{hero.aboutText}}</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Daily Deals (Bento Grid Style) -->
+<section class="py-2xl bg-surface-container-low">
+<div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop">
+<div class="flex justify-between items-end mb-xl">
+<div>
+<h2 class="font-headline-md text-headline-md text-on-surface">Daily <span class="text-vibrant-purple underline decoration-4 underline-offset-8">Sparklers</span></h2>
+<p class="text-on-surface-variant mt-2">Catch 'em before they vanish!</p>
+</div>
+<div class="flex gap-2">
+<button class="p-3 bg-white border border-outline-variant rounded-full hover:bg-surface transition-colors">
+<span class="material-symbols-outlined" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="p-3 bg-white border border-outline-variant rounded-full hover:bg-surface transition-colors">
+<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-md md:h-[600px]">
+<!-- Large Highlight Deal -->
+<div class="md:col-span-2 md:row-span-2 group relative overflow-hidden rounded-2xl bento-shadow bg-vibrant-teal">
+<img class="absolute inset-0 w-full h-full object-cover mix-blend-overlay group-hover:scale-110 transition-transform duration-700" alt="" src=""/>
+<div class="relative h-full p-lg flex flex-col justify-end text-white bg-gradient-to-t from-black/60 to-transparent">
+<span class="bg-vibrant-orange text-white px-3 py-1 rounded-full font-bold text-sm w-fit mb-2">HOT DEAL - 40% OFF</span>
+<h3 class="text-3xl font-extrabold mb-2">Cosmic Glazed Set</h3>
+<p class="text-white/80 mb-4 font-medium">Limited batch of our signature treats</p>
+<button class="bg-white text-vibrant-teal px-6 py-3 rounded-xl font-bold w-fit active:scale-95 transition-transform">Grab it Now</button>
+</div>
+</div>
+<!-- Secondary Deal 1 -->
+<div class="md:col-span-2 group relative overflow-hidden rounded-2xl bento-shadow bg-vibrant-purple">
+<div class="flex h-full">
+<div class="w-1/2 p-lg flex flex-col justify-center text-white">
+<h3 class="text-2xl font-bold mb-2">Neon Tote Bag</h3>
+<p class="text-white/70 mb-4">Express yourself with color</p>
+<span class="text-xl font-black text-vibrant-teal">$24.00 <span class="line-through text-sm text-white/50">$39.00</span></span>
+</div>
+<div class="w-1/2 relative">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="" src=""/>
+</div>
+</div>
+</div>
+<!-- Secondary Deal 2 -->
+<div class="group relative overflow-hidden rounded-2xl bento-shadow bg-surface border border-outline-variant">
+<img class="w-full h-48 object-cover" alt="" src=""/>
+<div class="p-md text-center">
+<p class="font-bold text-on-surface">Whimsical Pins</p>
+<p class="text-vibrant-orange font-black">$5.99</p>
+</div>
+</div>
+<!-- Secondary Deal 3 -->
+<div class="group relative overflow-hidden rounded-2xl bento-shadow bg-surface border border-outline-variant">
+<img class="w-full h-48 object-cover" alt="" src=""/>
+<div class="p-md text-center">
+<p class="font-bold text-on-surface">Typo Mugs</p>
+<p class="text-vibrant-teal font-black">$12.50</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Interactive Product Grid -->
+<section class="py-3xl">
+<div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop">
+<div class="text-center mb-2xl">
+<h2 class="font-headline-md text-headline-md text-on-surface">Explore the <span class="text-primary italic">Goodies</span></h2>
+<div class="flex flex-wrap justify-center gap-sm mt-md">
+<button class="px-6 py-2 bg-primary text-white rounded-full font-bold bento-shadow">All Items</button>
+<button class="px-6 py-2 bg-neutral-100 hover:bg-neutral-200 rounded-full font-medium transition-colors">TREATS</button>
+<button class="px-6 py-2 bg-neutral-100 hover:bg-neutral-200 rounded-full font-medium transition-colors">APPAREL</button>
+<button class="px-6 py-2 bg-neutral-100 hover:bg-neutral-200 rounded-full font-medium transition-colors">DECOR</button>
+</div>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-lg">
+{{#products}}
+<div class="group stagger-item">
+<div class="aspect-square rounded-2xl overflow-hidden bg-surface-container-high relative mb-md bento-shadow">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="{{.name}}" src="{{.imageUrl}}"/>
+<button class="absolute top-4 right-4 w-10 h-10 bg-white/80 backdrop-blur rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-primary" data-icon="favorite">favorite</span>
+</button>
+<div class="absolute bottom-0 inset-x-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+<button class="w-full bg-primary text-white py-2 rounded-xl font-bold flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="add_shopping_cart">add_shopping_cart</span> Add to Cart
+                            </button>
+</div>
+</div>
+<h3 class="font-bold text-on-surface">{{.name}}</h3>
+<p class="text-on-surface-variant font-label-md text-sm">{{.description}}</p>
+<p class="font-black text-vibrant-purple text-lg mt-1">Rp {{.price}}</p>
+</div>
+{{/products}}
+{{^products}}<p class="text-on-surface-variant text-center col-span-full">Belum ada produk</p>{{/products}}
+</div>
+<div class="mt-2xl text-center">
+<button class="px-12 py-4 bg-white border-2 border-primary text-primary rounded-2xl font-bold hover:bg-primary hover:text-white transition-all duration-300">
+                    Load More Magic
+                </button>
+</div>
+</div>
+</section>
+<!-- Happy Customers -->
+<section class="py-2xl bg-vibrant-purple relative overflow-hidden">
+<div class="absolute top-0 right-0 w-64 h-64 bg-vibrant-teal/30 rounded-full blur-3xl -mr-32 -mt-32"></div>
+<div class="absolute bottom-0 left-0 w-64 h-64 bg-vibrant-orange/30 rounded-full blur-3xl -ml-32 -mb-32"></div>
+<div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop relative z-10 text-center">
+<h2 class="font-headline-md text-headline-md text-white mb-xl">The Happy <span class="text-vibrant-teal italic">Squad</span></h2>
+<div class="grid md:grid-cols-3 gap-lg">
+<!-- Testimonial 1 -->
+<div class="glass-card p-lg rounded-2xl text-left border-none bento-shadow">
+<div class="flex gap-1 text-vibrant-orange mb-md">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="text-on-surface font-medium italic mb-lg">"Absolutely obsessed with the quality of the Cosmic Glazed Set! The packaging was so cute too. Total vibe!"</p>
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-white border-2 border-vibrant-teal">
+<img class="w-full h-full object-cover" alt="" src=""/>
+</div>
+<div>
+<p class="font-bold text-on-surface">Lola Blue</p>
+<p class="text-xs text-on-surface-variant font-label-sm">VERIFIED BUYER</p>
+</div>
+</div>
+</div>
+<!-- Testimonial 2 -->
+<div class="glass-card p-lg rounded-2xl text-left border-none bento-shadow md:translate-y-8">
+<div class="flex gap-1 text-vibrant-orange mb-md">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="text-on-surface font-medium italic mb-lg">"{{store.name}} is my go-to for gifts. Everything is so unique and makes people smile. Shipping was lightning fast!"</p>
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-white border-2 border-vibrant-orange">
+<img class="w-full h-full object-cover" alt="" src=""/>
+</div>
+<div>
+<p class="font-bold text-on-surface">Marcus Creative</p>
+<p class="text-xs text-on-surface-variant font-label-sm">REPEAT CUSTOMER</p>
+</div>
+</div>
+</div>
+<!-- Testimonial 3 -->
+<div class="glass-card p-lg rounded-2xl text-left border-none bento-shadow">
+<div class="flex gap-1 text-vibrant-orange mb-md">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<p class="text-on-surface font-medium italic mb-lg">"Finally found a shop that matches my energy. The sunnies are high quality and look exactly like the photos!"</p>
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-white border-2 border-primary">
+<img class="w-full h-full object-cover" alt="" src=""/>
+</div>
+<div>
+<p class="font-bold text-on-surface">Alex Shine</p>
+<p class="text-xs text-on-surface-variant font-label-sm">FASHION BLOGGER</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Social Footer Section -->
+<footer class="w-full pt-3xl">
+<!-- Community Connect -->
+<div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop mb-2xl">
+<div class="bg-vibrant-orange rounded-[2.5rem] p-lg md:p-2xl flex flex-col md:flex-row items-center justify-between gap-xl relative overflow-hidden">
+<div class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
+<div class="grid grid-cols-6 gap-2 rotate-12 -mt-10">
+<div class="w-20 h-20 bg-white rounded-xl"></div><div class="w-20 h-20 bg-white rounded-xl"></div><div class="w-20 h-20 bg-white rounded-xl"></div><div class="w-20 h-20 bg-white rounded-xl"></div><div class="w-20 h-20 bg-white rounded-xl"></div><div class="w-20 h-20 bg-white rounded-xl"></div>
+</div>
+</div>
+<div class="relative z-10 text-center md:text-left">
+<h3 class="text-3xl md:text-4xl font-black text-white leading-tight">Join the WANI <br/>Inner Circle</h3>
+<p class="text-white/80 mt-4 text-lg">Get 15% off your first haul!</p>
+</div>
+<div class="relative z-10 flex flex-col sm:flex-row w-full md:w-auto gap-md">
+<input class="px-6 py-4 rounded-2xl bg-white border-none focus:ring-4 focus:ring-vibrant-purple/30 text-on-surface min-w-[300px]" placeholder="Enter your email..." type="email"/>
+<button class="px-8 py-4 bg-on-surface text-white rounded-2xl font-bold hover:bg-vibrant-purple transition-colors bento-shadow">Count Me In!</button>
+</div>
+</div>
+</div>
+<div class="w-full bg-surface-container-low border-t border-outline-variant">
+<div class="flex flex-col md:flex-row justify-between items-center py-xl px-margin-mobile md:px-margin-desktop max-w-7xl mx-auto gap-md">
+<div class="flex flex-col items-center md:items-start gap-sm">
+<span class="font-headline-sm text-headline-sm font-bold text-on-surface">{{store.name}}</span>
+<p class="font-label-sm text-label-sm text-on-surface-variant">&copy; 2024 {{store.name}}. All rights reserved.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-lg">
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">WhatsApp Support</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Store Location</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors" href="#">Payment Methods</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors underline" href="#">Privacy Policy</a>
+</div>
+<div class="flex gap-md">
+{{#social.instagram}}<a class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all" href="{{social.instagram}}">
+<span class="material-symbols-outlined text-xl" data-icon="share">share</span>
+</a>{{/social.instagram}}
+{{#social.facebook}}<a class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all" href="{{social.facebook}}">
+<span class="material-symbols-outlined text-xl" data-icon="photo_camera">photo_camera</span>
+</a>{{/social.facebook}}
+{{#social.tiktok}}<a class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all" href="{{social.tiktok}}">
+<span class="material-symbols-outlined text-xl" data-icon="public">public</span>
+</a>{{/social.tiktok}}
+</div>
+</div>
+</div>
+</footer>
+<!-- Mobile Navigation Shell (Conditional) -->
+<div class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-surface/80 backdrop-blur-lg border-t border-outline-variant px-margin-mobile h-16 flex justify-around items-center">
+<button class="flex flex-col items-center text-primary">
+<span class="material-symbols-outlined" data-icon="home" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="text-[10px] font-bold">Home</span>
+</button>
+<button class="flex flex-col items-center text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="category">category</span>
+<span class="text-[10px] font-bold">Catalog</span>
+</button>
+<button class="flex flex-col items-center text-on-surface-variant relative">
+<span class="material-symbols-outlined" data-icon="shopping_basket">shopping_basket</span>
+<span class="absolute -top-1 -right-1 bg-vibrant-orange text-[8px] text-white w-4 h-4 rounded-full flex items-center justify-center">2</span>
+<span class="text-[10px] font-bold">Cart</span>
+</button>
+<button class="flex flex-col items-center text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="text-[10px] font-bold">Profile</span>
+</button>
+</div>
+<!-- Floating FAB -->
+<a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="fixed bottom-24 right-6 w-14 h-14 bg-vibrant-teal text-white rounded-full bento-shadow flex items-center justify-center hover:scale-110 active:scale-95 transition-transform z-40">
+<span class="material-symbols-outlined" data-icon="chat_bubble" style="font-variation-settings: 'FILL' 1;">chat_bubble</span>
+</a>
+<script>
+        // Micro-interactions and appearance logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const items = document.querySelectorAll('.stagger-item');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.classList.add('visible');
+                        }, index * 100);
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            items.forEach(item => {
+                observer.observe(item);
+            });
+        });
+    </script>
+</body></html>
