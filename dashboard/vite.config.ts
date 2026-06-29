@@ -27,6 +27,9 @@ export default defineConfig({
       '/uploads': {
         target: process.env.VITE_API_URL || 'http://localhost:3001',
       },
+      '/s': {
+        target: process.env.VITE_API_URL || 'http://localhost:3001',
+      },
     },
   },
 })
