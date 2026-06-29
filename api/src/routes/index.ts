@@ -13,6 +13,7 @@ import usageRoutes from "@/src/routes/usage"
 import authRoutes from "@/src/routes/auth"
 import websiteRoutes from "@/src/routes/website"
 import uploadRoutes from "@/src/routes/upload"
+import outgoingRoutes from "@/src/routes/outgoing"
 import debugRoutes from "@/src/routes/debug"
 
 const router = Router()
@@ -32,6 +33,7 @@ router.use("/usage", usageRoutes)
 router.use("/auth", authRoutes)
 router.use("/website", websiteRoutes)
 router.use("/upload", uploadRoutes)
+router.use("/outgoing", outgoingRoutes)
 
 // Dev-only: pipeline traces, circuit breaker status/reset
 if (process.env.NODE_ENV !== "production") {

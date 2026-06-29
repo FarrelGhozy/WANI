@@ -117,14 +117,38 @@ async function main() {
       }
     }
   });
-}
+  // Polling: kirim pesan HUMAN dari dashboard ke WhatsApp
+  const POLL_INTERVAL = Number(process.env.OUTGOING_POLL_INTERVAL ?? 3000);
 
-process.on("SIGINT", () => {
-  process.exit(0);
-});
-process.on("SIGTERM", () => {
-  process.exit(0);
-});
+  async function pollOutgoing() {
+    try {
+      const { data } = await api.get("/api/outgoing");
+      const items: Array<{ id: string; jid: string; text: string }> = data?.data?.items ?? [];
+      for (const msg of items) {
+        try {
+          await sock.sendMessage(msg.jid, { text: msg.text });
+          await api.patch(`/api/outgoing/${msg.id}/delivered`);
+          logger.info({ id: msg.id }, "outgoing sent");
+        } catch (err) {
+          logger.error({ err: String(err), id: msg.id }, "outgoing failed");
+        }
+      }
+    } catch {
+      // Connection error — next cycle
+    }
+  }
+
+  const pollTimer = setInterval(pollOutgoing, POLL_INTERVAL);
+
+  process.on("SIGINT", () => {
+    clearInterval(pollTimer);
+    process.exit(0);
+  });
+  process.on("SIGTERM", () => {
+    clearInterval(pollTimer);
+    process.exit(0);
+  });
+}
 
 main().catch((err) => {
   logger.error(err);

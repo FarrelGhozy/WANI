@@ -9,6 +9,12 @@ export interface AppendData {
   msgType?: string
 }
 
+export interface OutgoingItem {
+  id: string
+  jid: string
+  text: string
+}
+
 export class MessageModel extends BaseModel {
   protected static override get delegate() {
     return this.db.message
@@ -37,6 +43,34 @@ export class MessageModel extends BaseModel {
         msgType: data.msgType ?? "text",
         waMsgId: data.waMsgId ?? undefined,
       },
+    })
+  }
+
+  static async listOutgoing(): Promise<OutgoingItem[]> {
+    const messages = await this.delegate.findMany({
+      where: { role: "HUMAN", waMsgId: null },
+      include: {
+        conversation: {
+          select: {
+            customer: { select: { phone: true } },
+          },
+        },
+      },
+      orderBy: { createdAt: "asc" },
+      take: 20,
+    })
+
+    return messages.map((m) => ({
+      id: m.id,
+      jid: `${m.conversation.customer.phone}@s.whatsapp.net`,
+      text: m.content,
+    }))
+  }
+
+  static async markDelivered(id: string): Promise<void> {
+    await this.delegate.update({
+      where: { id },
+      data: { waMsgId: `sent-${id}` },
     })
   }
 }
