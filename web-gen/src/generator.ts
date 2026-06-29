@@ -69,6 +69,7 @@ export async function generate(
     writeDataFile(workingDir, "site-config.json", {
       hero: params.config.hero,
       about: params.config.about,
+      socialMedia: params.config.socialMedia ?? {},
       contact: params.config.contact,
       colors: params.config.colors,
       basePath: `/s/${params.slug}/`,
