@@ -412,6 +412,13 @@ h1, h2, h3, h4 { line-height: 1.2; }
   color: var(--color-text);
 }
 
+.contact-social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  margin-top: .5rem;
+}
+
 .contact-actions {
   display: flex;
   flex-direction: column;
