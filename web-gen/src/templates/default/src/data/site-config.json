@@ -8,6 +8,16 @@
     "description": "Kami adalah toko yang menyediakan produk berkualitas terbaik untuk pelanggan setia kami.",
     "mission": null
   },
+  "socialMedia": {
+    "instagram": "https://instagram.com/tokokami",
+    "facebook": "https://facebook.com/tokokami",
+    "tiktok": "",
+    "youtube": "",
+    "shopee": "",
+    "tokopedia": "",
+    "twitter": "",
+    "linkedin": ""
+  },
   "contact": {
     "email": null,
     "mapsUrl": null
