@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Order" ADD COLUMN     "stockReleased" BOOLEAN NOT NULL DEFAULT false;

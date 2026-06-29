@@ -1,12 +1,13 @@
 model Order {
-  id          String      @id @default(uuid())
-  customerId  String
-  status      OrderStatus @default(PENDING)
-  totalAmount Decimal     @default(0) @db.Decimal(12, 2)
-  source      String      @default("wa_chat")
-  notes       String?
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  id             String      @id @default(uuid())
+  customerId     String
+  status         OrderStatus @default(PENDING)
+  totalAmount    Decimal     @default(0) @db.Decimal(12, 2)
+  source         String      @default("wa_chat")
+  stockReleased  Boolean     @default(false)
+  notes          String?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
 
   customer Customer    @relation(fields: [customerId], references: [id])
   items    OrderItem[]

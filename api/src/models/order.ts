@@ -174,7 +174,7 @@ export class OrderModel extends BaseModel {
   static async updateStatus(id: string, newStatus: $Enums.OrderStatus): Promise<OrderResponse> {
     const current = await this.delegate.findUnique({
       where: { id },
-      select: { status: true },
+      select: { status: true, stockReleased: true },
     })
     if (!current) {
       throw new NotFoundError("order not found")
@@ -185,9 +185,39 @@ export class OrderModel extends BaseModel {
       throw new BadRequestError(`invalid status transition: ${current.status} → ${newStatus}`)
     }
 
-    const row = await this.delegate.update({
+    if (newStatus === "CONFIRMED" && !current.stockReleased) {
+      await this.db.$transaction(async (tx) => {
+        const items = await tx.orderItem.findMany({
+          where: { orderId: id },
+          include: { product: { select: { name: true, stock: true } } },
+        })
+
+        for (const item of items) {
+          if (item.product.stock < item.qty) {
+            throw new BadRequestError(
+              `Stok "${item.product.name}" tidak mencukupi (tersedia ${item.product.stock}, diminta ${item.qty})`,
+            )
+          }
+          await tx.product.update({
+            where: { id: item.productId },
+            data: { stock: { decrement: item.qty } },
+          })
+        }
+
+        await tx.order.update({
+          where: { id },
+          data: { status: newStatus, stockReleased: true },
+        })
+      })
+    } else {
+      await this.delegate.update({
+        where: { id },
+        data: { status: newStatus },
+      })
+    }
+
+    const row = await this.delegate.findUniqueOrThrow({
       where: { id },
-      data: { status: newStatus },
       include: orderInclude,
     })
     return toOrderResponse(row)
@@ -248,27 +278,34 @@ export class OrderModel extends BaseModel {
       })
 
       if (data.status === "PAID") {
-        const items = await tx.orderItem.findMany({
-          where: { orderId: id },
-          include: { product: { select: { name: true, stock: true } } },
+        const order = await tx.order.findUnique({
+          where: { id },
+          select: { status: true, stockReleased: true },
         })
 
-        for (const item of items) {
-          if (item.product.stock < item.qty) {
-            throw new BadRequestError(
-              `Stok "${item.product.name}" tidak mencukupi (tersedia ${item.product.stock}, diminta ${item.qty})`,
-            )
+        if (order && !order.stockReleased) {
+          const items = await tx.orderItem.findMany({
+            where: { orderId: id },
+            include: { product: { select: { name: true, stock: true } } },
+          })
+
+          for (const item of items) {
+            if (item.product.stock < item.qty) {
+              throw new BadRequestError(
+                `Stok "${item.product.name}" tidak mencukupi (tersedia ${item.product.stock}, diminta ${item.qty})`,
+              )
+            }
+            await tx.product.update({
+              where: { id: item.productId },
+              data: { stock: { decrement: item.qty } },
+            })
           }
-          await tx.product.update({
-            where: { id: item.productId },
-            data: { stock: { decrement: item.qty } },
+
+          await tx.order.update({
+            where: { id },
+            data: { status: "CONFIRMED", stockReleased: true },
           })
         }
-
-        await tx.order.update({
-          where: { id },
-          data: { status: "CONFIRMED" },
-        })
       }
     })
 
