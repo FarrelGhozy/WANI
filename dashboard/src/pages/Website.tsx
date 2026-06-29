@@ -121,24 +121,54 @@ export default function Website() {
                 />
                 <p className="text-xs text-stone-400">Gunakan format internasional, contoh: 6281234567890 (tanpa +)</p>
               </Field>
-              <Field label="Template">
-                <select
-                  value={config.template}
-                  onChange={(e) => {
-                    const t = e.target.value
-                    const d = TEMPLATE_DEFAULTS[t]
-                    updateConfig({ template: t, ...(d ? { primaryColor: d.primary, secondaryColor: d.secondary } : {}) })
-                  }}
-                  className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-                >
-                  <option value="default">Default (Astro)</option>
-                  <option value="modern">Modern</option>
-                  <option value="vibrant">Vibrant</option>
-                  <option value="cyberpunk">Cyberpunk</option>
-                  <option value="minimalist">Minimalist</option>
-                  <option value="classic">Classic Renaissance</option>
-                </select>
-              </Field>
+              <div className="sm:col-span-2">
+                <Field label="Pilih Template">
+                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                    {TEMPLATES.map((t) => {
+                      const active = config.template === t.id
+                      return (
+                        <button
+                          key={t.id}
+                          type="button"
+                          onClick={() => {
+                            const d = TEMPLATE_DEFAULTS[t.id]
+                            updateConfig({ template: t.id, ...(d ? { primaryColor: d.primary, secondaryColor: d.secondary } : {}) })
+                          }}
+                          className={`group relative overflow-hidden rounded-xl border-2 text-left transition-all ${
+                            active
+                              ? 'border-teal-500 ring-2 ring-teal-500/20 shadow-md'
+                              : 'border-stone-200 hover:border-stone-300 hover:shadow-sm'
+                          }`}
+                        >
+                          <div className="aspect-[4/3] w-full overflow-hidden bg-stone-100">
+                            {t.id === 'default' ? (
+                              <div className="flex h-full items-center justify-center text-stone-300">
+                                <svg className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}><path strokeLinecap="round" strokeLinejoin="round" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" /></svg>
+                              </div>
+                            ) : (
+                              <img
+                                src={`/templates/${t.id}.png`}
+                                alt={t.label}
+                                className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                loading="lazy"
+                              />
+                            )}
+                          </div>
+                          <div className="flex items-center gap-2 px-3 py-2.5">
+                            <div className="flex gap-1">
+                              <span className="h-3 w-3 rounded-full border border-stone-200" style={{ background: t.primary }} />
+                              <span className="h-3 w-3 rounded-full border border-stone-200" style={{ background: t.secondary }} />
+                            </div>
+                            <span className={`text-xs font-medium ${active ? 'text-teal-700' : 'text-stone-600'}`}>
+                              {t.label}
+                            </span>
+                          </div>
+                        </button>
+                      )
+                    })}
+                  </div>
+                </Field>
+              </div>
               <div className="sm:col-span-2">
                 <Field label={`Pilih Produk (${config.selectedProductIds.length} dipilih)`}>
                   <div className="max-h-48 overflow-y-auto rounded-lg border border-stone-200">
@@ -349,12 +379,18 @@ const SOCIAL_PLATFORMS = [
   { key: 'linkedin', label: 'LinkedIn' },
 ]
 
-const TEMPLATE_DEFAULTS: Record<string, { primary: string; secondary: string }> = {
-  modern:     { primary: '#004ac6', secondary: '#505f76' },
-  vibrant:    { primary: '#004ac6', secondary: '#505f76' },
-  cyberpunk:  { primary: '#e1fdff', secondary: '#ebb2ff' },
-  minimalist: { primary: '#004ac6', secondary: '#505f76' },
-  classic:    { primary: '#785600', secondary: '#5f5e5e' },
+const TEMPLATES = [
+  { id: 'default',   label: 'Default (Astro)', primary: '#059669', secondary: '#f59e0b' },
+  { id: 'modern',    label: 'Modern',           primary: '#004ac6', secondary: '#505f76' },
+  { id: 'vibrant',   label: 'Vibrant',          primary: '#004ac6', secondary: '#505f76' },
+  { id: 'cyberpunk', label: 'Cyberpunk',        primary: '#e1fdff', secondary: '#ebb2ff' },
+  { id: 'minimalist',label: 'Minimalist',       primary: '#004ac6', secondary: '#505f76' },
+  { id: 'classic',   label: 'Classic',          primary: '#785600', secondary: '#5f5e5e' },
+]
+
+const TEMPLATE_DEFAULTS: Record<string, { primary: string; secondary: string }> = {}
+for (const t of TEMPLATES) {
+  TEMPLATE_DEFAULTS[t.id] = { primary: t.primary, secondary: t.secondary }
 }
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
