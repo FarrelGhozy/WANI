@@ -95,7 +95,7 @@ export function useWebsite() {
         return res.data.slug
       }
       return null
-    } catch (e) {
+    } catch {
       return null
     } finally {
       setGenerating(false)
