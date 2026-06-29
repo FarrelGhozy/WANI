@@ -103,6 +103,7 @@ export async function generateWebsite(
         description: getConfigValue(config, "aboutText", ""),
         mission: null,
       },
+      socialMedia: getConfigValue(config, "socialMedia", {}),
       contact: {
         email: getConfigValue(config, "contactEmail", null),
         mapsUrl: getConfigValue(config, "contactMapsUrl", null),
