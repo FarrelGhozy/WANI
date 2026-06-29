@@ -50,6 +50,7 @@
 % ── Hyperlinks ───────────────────────────────────────────────
 \hypersetup{
     colorlinks=true,
+    breaklinks=true,
     linkcolor=primary,
     urlcolor=primary!70!black,
     citecolor=dark
@@ -230,11 +231,15 @@ Kondisi ini menyebabkan inefisiensi operasional (waktu respons lambat, pesanan t
 
 \textbf{WhatsApp: Infrastruktur yang Terabaikan}
 
-WhatsApp telah menjadi infrastruktur komunikasi \textit{de facto} bagi UMKM Indonesia. Dengan \textbf{90,9\%} tingkat penetrasi sebagai platform media sosial paling banyak digunakan \cite{wearesocial2024}, WhatsApp digunakan secara luas untuk menerima pesanan, menjawab pertanyaan, dan membangun hubungan dengan pelanggan. Ironisnya, potensi ini belum dimanfaatkan secara optimal: percakapan bisnis bercampur dengan \textit{chat} pribadi, tidak ada sistem \textit{ticketing} atau pelacakan pesanan, tidak ada integrasi dengan manajemen inventaris, dan bot WhatsApp yang ada di pasaran umumnya tidak memiliki keamanan AI yang memadai.
+WhatsApp telah menjadi infrastruktur komunikasi \textit{de facto} bagi UMKM Indonesia. Dengan \textbf{90,9\%} tingkat penetrasi sebagai platform media sosial paling banyak digunakan \cite{wearesocial2024}. Riset internal Meta menambahkan bahwa \textbf{88\%} masyarakat Indonesia mengirim pesan kepada bisnis setiap minggunya — angka tertinggi secara global \cite{meta2025}. WhatsApp digunakan secara luas untuk menerima pesanan, menjawab pertanyaan, dan membangun hubungan dengan pelanggan. Ironisnya, potensi ini belum dimanfaatkan secara optimal: percakapan bisnis bercampur dengan \textit{chat} pribadi, tidak ada sistem \textit{ticketing} atau pelacakan pesanan, tidak ada integrasi dengan manajemen inventaris, dan bot WhatsApp yang ada di pasaran umumnya tidak memiliki keamanan AI yang memadai.
 
 \textbf{Ancaman Keamanan pada Chatbot AI}
 
 Seiring maraknya adopsi \textit{large language model} (LLM) untuk layanan pelanggan, muncul ancaman serius berupa \textit{prompt injection attack}. OWASP \cite{owasp2025} mengidentifikasikan \textit{prompt injection} (LLM01:2025) sebagai kerentanan nomor satu pada aplikasi LLM. Pelaku UMKM yang menggunakan \textit{chatbot} AI tanpa lapisan keamanan berisiko mengalami kebocoran data sensitif, manipulasi sistem, dan eksfiltrasi konfigurasi internal.
+
+\textbf{Kesenjangan Adopsi AI: Peluang yang Terlewatkan}
+
+Di tengah keterbatasan tersebut, potensi kecerdasan buatan (AI) bagi UMKM sangatlah besar. Laporan Salesforce \cite{salesforce2025} mengungkapkan bahwa \textbf{97\%} pelaku UMKM di Indonesia mengakui implementasi AI dapat meningkatkan pendapatan bisnis mereka, dan 77\% telah menggunakan atau bereksperimen dengan AI. Namun, adopsi AI masih terkendala oleh keterbatasan sumber daya, rendahnya literasi digital, dan kekhawatiran terhadap keamanan data — celah yang tepat dijawab oleh platform terintegrasi seperti WANI.
 
 Dari permasalahan di atas, lahirlah \textbf{WANI} -- sebuah platform omnichannel yang mengintegrasikan WhatsApp Bot bertenaga AI, REST API, dashboard administrasi, dan \textit{website generator} statis, dengan keamanan AI berlapis sebagai standar utama.
 
@@ -663,6 +668,7 @@ Ke depannya, WANI direncanakan untuk terus dikembangkan dengan penambahan fitur 
 \newpage
 \begin{thebibliography}{99}
 	\addcontentsline{toc}{section}{Daftar Pustaka}
+	\raggedright
 
 	\bibitem{baileys2024}
 	WhiskeySockets. (2024). \textit{Baileys: WhatsApp Web API Library for Node.js}. GitHub Repository. \\
@@ -772,6 +778,18 @@ Ke depannya, WANI direncanakan untuk terus dikembangkan dengan penambahan fitur 
 	Oven-Sh. (2024). \textit{Bun Test Runner Documentation}. \\
 	\url{https://bun.sh/docs/cli/test}
 
+	\bibitem{brin2025}
+	Badan Riset dan Inovasi Nasional. (2025). \textit{BRIN Soroti Rendahnya Adopsi Teknologi Digital oleh UMKM Indonesia}. \\
+	\url{https://brin.go.id/news/124058/brin-soroti-rendahnya-adopsi-teknologi-digital-oleh-umkm-indonesia}
+
+	\bibitem{meta2025}
+	Meta Indonesia. (2025). \textit{WhatsApp Business Summit 2025: 88\% Masyarakat Indonesia Kirim Pesan ke Bisnis Setiap Minggu}. \\
+	\url{https://inet.detik.com/business/d-8057281/whatsapp-umumkan-pembaruan-fitur-bisnis-dari-telepon-hingga-pemasaran}
+
+	\bibitem{salesforce2025}
+	Salesforce. (2025). \textit{Small \& Medium Business Trends: 97\% SMB di Indonesia Akui Implementasi AI Tingkatkan Pendapatan}. \\
+	\url{https://www.salesforce.com/ap/news/press-releases/2025/01/16/penelitian-salesforce-97-smb-di-indonesia-akui-implementasi-ai-tingkatkan-pendapatan-usaha}
+
 \end{thebibliography}
 
 % ============================================================
@@ -790,37 +808,40 @@ Tim WANI terdiri dari empat mahasiswa Program Studi Teknik Informatika Universit
 	\centering
 	\caption{Profil Tim Pengembang}
 	\label{tab:tim}
-	\begin{tabularx}{\textwidth}{p{2.5cm}p{4cm}X}
+	\begin{tabularx}{\textwidth}{p{3.5cm}p{4cm}X}
 		\toprule
-		\textbf{Peran}         & \textbf{Nama}  & \textbf{Kompetensi}                   \\
+		\textbf{Peran} & \textbf{Nama} & \textbf{Kompetensi} \\
 		\midrule
-		\textbf{Ketua Tim} /   & Farrel Ghozy   & Full-Stack Web Developer,             \\
-		\textit{Backend \& AI} & Affifudin      & TypeScript, Bun, Express,             \\
-		                       & (452025611053) & React, Prisma, PostgreSQL,            \\
-		                       &                & Docker, Linux Server                  \\
+		\textbf{Ketua Tim} / \textit{Frontend \& Backend} &
+		Farrel Ghozy Affifudin &
+		\textit{Frontend:} React 19, Tailwind CSS 4, TypeScript, UI/UX Design. %
+		\textit{Backend:} Bun, Express 5, Prisma 7, PostgreSQL 17, Docker, Linux Server \\
+		& (452025611053) & \\
 		\addlinespace
-		Anggota 1 /            & Fatih Jawwad   & Frontend Web Developer,               \\
-		\textit{Frontend}      & Al Mumtaz      & React, Tailwind CSS,                  \\
-		                       & (452024611047) & UI/UX Design                          \\
+		Anggota 1 / \textit{AI Pipeline \& WhatsApp Bot} &
+		Fatih Jawwad Al Mumtaz &
+		\textit{AI Pipeline:} LLM orchestration, prompt engineering, intent detection, %
+		multi-layer guardrails (regex $\rightarrow$ ML $\rightarrow$ deep judge), %
+		PII redaction, rate limiter, circuit breaker, grounding check. %
+		\textit{WhatsApp:} Baileys 7, persistent auth, auto-reconnect, SignalKeyStore \\
+		& (452024611047) & \\
 		\addlinespace
-		Anggota 2 /            & M. Faridh      & Full-Stack Developer, CI/CD,          \\
-		\textit{Backend, Bot}  & Maulana        & Typescript, Baileys, Bun, Prisma,     \\
-		\textit{CI/CD}         & (452024611065) & API Integration, Docker, Linux Server \\
+		Anggota 2 / \textit{Backend \& CI/CD} &
+		M. Faridh Maulana &
+		\textit{Backend:} Bun, Express 5, Prisma 7, TypeScript, PostgreSQL 17, %
+		REST API design, JWT auth, file upload (multer), Docker. %
+		\textit{CI/CD:} Docker Compose, Nginx, K3s, GitHub Actions, %
+		Linux System Administration \\
+		& (452024611065) & \\
 		\addlinespace
-		Anggota 3 /            & Naufal Razzaq  & Full-Stack Developer,                 \\
-		\textit{Web-Gen}       & Mu'afa         & Astro, TypeScript,                    \\
-		                       & (452024611110) & Static Site Generation                \\
+		Anggota 3 / \textit{Web-Gen} &
+		Naufal Razzaq Mu'afa &
+		\textit{Web-Gen:} Astro 7, TypeScript, Tailwind CSS, static site generation, %
+		HTML/CSS/JS, GitHub Pages / Netlify / Vercel \\
+		& (452024611110) & \\
 	\end{tabularx}
 \end{table}
 
-\noindent
-\textbf{Profil Ketua Tim:}
-\begin{itemize}
-	\item Mahasiswa Teknik Informatika, Universitas Darussalam Gontor (Semester 5, IPK 3.79/4.00).
-	\item Berpengalaman dalam pengembangan \textit{full-stack} web, \textit{system administration} (Ubuntu, Docker, Nginx, Proxmox, K3s), dan \textit{machine learning} (TensorFlow, PyTorch).
-	\item Prestasi: Juara 2 Coding Day (2026), The Best Thematic Hackathon SRE ITB (2026).
-	\item Ketua Himpunan Mahasiswa Teknik Informatika (2025--sekarang).
-\end{itemize}
 
 \subsection*{Lampiran B: Panduan Instalasi}
 \addcontentsline{toc}{subsection}{Lampiran B: Panduan Instalasi}
@@ -921,5 +942,77 @@ Tidak berlaku. WANI merupakan platform berbasis \textit{website} yang berjalan d
 \addcontentsline{toc}{subsection}{Lampiran F: Tautan Prototipe Interaktif}
 
 Tidak ada. Desain antarmuka WANI dikembangkan langsung dalam bentuk kode (\textit{in-code design}) menggunakan React 19 dan Tailwind CSS 4, sejalan dengan metodologi Extreme Programming yang mengutamakan iterasi cepat.
+
+\newpage
+\subsection*{Lampiran G: Tampilan Aplikasi}
+\addcontentsline{toc}{subsection}{Lampiran G: Tampilan Aplikasi}
+
+Berikut adalah tangkapan layar dari halaman-halaman utama WANI versi \textit{desktop}:
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.48\textwidth]{screenshots/01-login.png}
+	\caption{Halaman Login}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.48\textwidth]{screenshots/02-signup.png}
+	\caption{Halaman Sign Up}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.48\textwidth]{screenshots/03-forgot-password.png}
+	\caption{Halaman Lupa Password}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.48\textwidth]{screenshots/04-dashboard.png}
+	\caption{Dashboard Utama}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.48\textwidth]{screenshots/05-products.png}
+	\caption{Halaman Produk}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.48\textwidth]{screenshots/06-product-form.png}
+	\caption{Formulir Produk}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.48\textwidth]{screenshots/07-orders.png}
+	\caption{Halaman Pesanan}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.48\textwidth]{screenshots/08-order-detail.png}
+	\caption{Detail Pesanan}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.48\textwidth]{screenshots/09-customers.png}
+	\caption{Halaman Pelanggan}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.48\textwidth]{screenshots/10-website.png}
+	\caption{Halaman Website / Landing Page}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.48\textwidth]{screenshots/11-settings-store.png}
+	\caption{Pengaturan Toko}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.48\textwidth]{screenshots/12-settings-ai.png}
+	\caption{Pengaturan AI}
+\end{figure}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.48\textwidth]{screenshots/13-settings-wa.png}
+	\caption{Pengaturan WhatsApp}
+\end{figure}
 
 \end{document}
