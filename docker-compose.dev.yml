@@ -4,6 +4,9 @@
 services:
 
   api:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
     ports:
       - "3001:3001"
     environment:
@@ -15,5 +18,8 @@ services:
       dockerfile: dashboard/Dockerfile
 
   wa-bot:
+    build:
+      context: .
+      dockerfile: wa-bot/Dockerfile
     environment:
       NODE_ENV: development
