@@ -1,22 +1,19 @@
 import { makeWASocket, Browsers } from "baileys";
 import type { WASocket } from "baileys";
 import pino from "pino";
+import pretty from "pino-pretty";
 import qrcode from "qrcode-terminal";
 import axios from "axios";
 import { prisma } from "@/src/config/db";
 import { usePrismaAuthState } from "@/src/services/whatsapp-auth";
 
-const logger = pino({
-  level: "info",
-  transport: {
-    target: "pino-pretty",
-    options: {
-      colorize: true,
-      translateTime: "HH:MM:ss",
-      ignore: "pid,hostname",
-    },
-  },
-});
+const logger = pino(
+  pretty({
+    colorize: true,
+    translateTime: "HH:MM:ss",
+    ignore: "pid,hostname",
+  }),
+);
 
 const api = axios.create({
   baseURL: process.env.API_URL!,

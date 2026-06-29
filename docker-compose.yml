@@ -22,7 +22,9 @@ services:
         max-file: "3"
 
   api:
-    image: ghcr.io/farrelghozy/wani-api:latest
+    build:
+      context: .
+      dockerfile: api/Dockerfile
     depends_on:
       db:
         condition: service_healthy
@@ -58,7 +60,7 @@ services:
     expose:
       - "3001"
     volumes:
-      - generated-sites:/app/api/generated-sites
+      - generated-sites:/app/generated-sites
     restart: unless-stopped
     networks: [wani]
     healthcheck:
@@ -92,7 +94,9 @@ services:
         max-file: "3"
 
   wa-bot:
-    image: ghcr.io/farrelghozy/wani-wa-bot:latest
+    build:
+      context: .
+      dockerfile: wa-bot/Dockerfile
     depends_on:
       db:
         condition: service_healthy
