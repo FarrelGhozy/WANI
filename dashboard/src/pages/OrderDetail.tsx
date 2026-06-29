@@ -59,11 +59,18 @@ export default function OrderDetail() {
     setPaymentModal(true)
   }, [order])
 
+  const methodToApi: Record<string, string> = {
+    QRIS: 'QRIS',
+    BANK_TRANSFER: 'TRANSFER',
+    E_WALLET: 'E_WALLET',
+    COD: 'CASH',
+  }
+
   async function handleConfirmPayment() {
     if (!id || !selectedMethod || paymentAmount <= 0) return
     setConfirmingPayment(true)
     try {
-      await confirmPayment(id, { method: selectedMethod, amount: paymentAmount })
+      await confirmPayment(id, { method: methodToApi[selectedMethod] || selectedMethod, amount: paymentAmount })
       toast('Pembayaran berhasil dikonfirmasi', 'success')
       setPaymentModal(false)
     } catch {

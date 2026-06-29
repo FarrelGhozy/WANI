@@ -39,7 +39,8 @@ export default function ProductForm() {
   const [saving, setSaving] = useState(false)
   const [errors, setErrors] = useState<Partial<Record<keyof ProductFormData, string>>>({})
   const fileRef = useRef<HTMLInputElement>(null)
-  const objectUrlRef = useRef<string | null>(null)
+  const pendingFile = useRef<File | null>(null)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [showNewCategory, setShowNewCategory] = useState(false)
   const [newCategoryName, setNewCategoryName] = useState('')
   const [newCategoryDesc, setNewCategoryDesc] = useState('')
@@ -47,17 +48,17 @@ export default function ProductForm() {
 
   useEffect(() => {
     return () => {
-      if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current)
+      if (previewUrl) URL.revokeObjectURL(previewUrl)
     }
-  }, [])
+  }, [previewUrl])
 
   function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
-    if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current)
+    if (previewUrl) URL.revokeObjectURL(previewUrl)
     const url = URL.createObjectURL(file)
-    objectUrlRef.current = url
-    set('imageUrl', url)
+    setPreviewUrl(url)
+    pendingFile.current = file
   }
 
   useEffect(() => {
@@ -118,11 +119,37 @@ export default function ProductForm() {
     e.preventDefault()
     if (!validate()) return
     setSaving(true)
+
+    let imageUrl = form.imageUrl || null
+    if (pendingFile.current) {
+      try {
+        const body = new FormData()
+        body.append('file', pendingFile.current)
+        body.append('prefix', 'product')
+        const token = localStorage.getItem('wani_auth_token')
+        const res = await fetch('/api/upload', {
+          method: 'POST',
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+          body,
+        })
+        const json = await res.json() as { status: string; data?: { url: string } }
+        if (json.status === 'success' && json.data?.url) {
+          imageUrl = json.data.url
+        } else {
+          throw new Error(json.status === 'failure' ? json.status : 'upload failed')
+        }
+      } catch {
+        toast('Gagal upload gambar', 'error')
+        setSaving(false)
+        return
+      }
+    }
+
     const data: ProductFormData = {
       ...form,
       categoryId: form.categoryId || null,
       description: form.description || null,
-      imageUrl: form.imageUrl || null,
+      imageUrl,
     }
     try {
       if (isEdit && id) {
@@ -169,8 +196,8 @@ export default function ProductForm() {
           <h2 className="mb-4 text-xs font-medium uppercase tracking-wider text-stone-500">Gambar</h2>
           <div className="flex flex-col items-start gap-4 sm:flex-row">
             <div className="flex h-28 w-28 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-stone-200 bg-stone-50">
-              {form.imageUrl ? (
-                <img src={form.imageUrl} alt="Pratinjau produk" className="h-full w-full object-cover" />
+              {previewUrl || form.imageUrl ? (
+                <img src={previewUrl || form.imageUrl || undefined} alt="Pratinjau produk" className="h-full w-full object-cover" />
               ) : (
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-stone-300">
                   <rect x="3" y="3" width="18" height="18" rx="2" />
@@ -185,7 +212,10 @@ export default function ProductForm() {
                 placeholder="https://example.com/image.jpg"
                 hint="Tempel link gambar atau upload file"
                 value={form.imageUrl ?? ''}
-                onChange={(e) => set('imageUrl', e.target.value)}
+                onChange={(e) => {
+                  set('imageUrl', e.target.value)
+                  pendingFile.current = null
+                }}
               />
               <div className="flex items-center gap-3">
                 <span className="text-xs text-stone-400">atau</span>
