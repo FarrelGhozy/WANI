@@ -1,4 +1,5 @@
 import { BaseModel } from "@/src/models/base"
+import { BadRequestError } from "@/src/utils/errors"
 import type { Product, Category } from "@db/client"
 
 export type ProductResponse = {
@@ -185,6 +186,12 @@ export class ProductModel extends BaseModel {
   }
 
   static async deleteProduct(id: string): Promise<void> {
+    const orderCount = await this.db.orderItem.count({ where: { productId: id } })
+    if (orderCount > 0) {
+      throw new BadRequestError(
+        `Produk tidak bisa dihapus karena sudah digunakan di ${orderCount} pesanan. Nonaktifkan produk jika tidak ingin ditampilkan.`,
+      )
+    }
     await this.delegate.delete({ where: { id } })
   }
 }
@@ -237,6 +244,12 @@ export class CategoryModel extends BaseModel {
   }
 
   static async deleteCategory(id: string): Promise<void> {
+    const productCount = await this.db.product.count({ where: { categoryId: id } })
+    if (productCount > 0) {
+      throw new BadRequestError(
+        `Kategori tidak bisa dihapus karena masih memiliki ${productCount} produk. Pindahkan atau hapus produk terlebih dahulu.`,
+      )
+    }
     await this.delegate.delete({ where: { id } })
   }
 }

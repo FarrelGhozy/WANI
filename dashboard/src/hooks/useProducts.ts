@@ -100,6 +100,7 @@ export function useProducts() {
       }
     } catch (e) {
       setError((e as Error).message)
+      throw e
     }
   }, [])
 
@@ -116,6 +117,7 @@ export function useProducts() {
       }
     } catch (e) {
       setError((e as Error).message)
+      throw e
     }
   }, [])
 
@@ -125,6 +127,7 @@ export function useProducts() {
       setAllProducts((prev) => prev.filter((p) => p.id !== id))
     } catch (e) {
       setError((e as Error).message)
+      throw e
     }
   }, [])
 
@@ -141,6 +144,7 @@ export function useProducts() {
       }
     } catch (e) {
       setError((e as Error).message)
+      throw e
     }
   }, [])
 
@@ -157,6 +161,7 @@ export function useProducts() {
       }
     } catch (e) {
       setError((e as Error).message)
+      throw e
     }
   }, [])
 
@@ -166,6 +171,7 @@ export function useProducts() {
       setAllCategories((prev) => prev.filter((c) => c.id !== id))
     } catch (e) {
       setError((e as Error).message)
+      throw e
     }
   }, [])
 
