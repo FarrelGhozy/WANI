@@ -1,9 +1,9 @@
 import { useState, useCallback, useMemo, useEffect } from 'react'
 import { fetchApi } from '@/lib/api.ts'
 import { useProducts } from '@/hooks/useProducts.ts'
-import type { WebsiteConfig, GenerateLog } from '@/types.ts'
+import type { WebsiteConfig, GenerationLog } from '@/types.ts'
 
-export type { WebsiteConfig, GenerateLog }
+export type { WebsiteConfig, GenerationLog }
 
 const defaultConfig: WebsiteConfig = {
   heroHeadline: 'Selamat Datang di Toko Kami',
@@ -17,10 +17,14 @@ const defaultConfig: WebsiteConfig = {
   theme: 'classic',
 }
 
+function getToken(): string | null {
+  return localStorage.getItem('wani_auth_token')
+}
+
 export function useWebsite() {
   const { products } = useProducts()
   const [config, setConfig] = useState<WebsiteConfig>(defaultConfig)
-  const [logs, setLogs] = useState<GenerateLog[]>([])
+  const [logs, setLogs] = useState<GenerationLog[]>([])
   const [loading, setLoading] = useState(true)
   const [generating, setGenerating] = useState(false)
 
@@ -28,9 +32,17 @@ export function useWebsite() {
     let cancelled = false
     ;(async () => {
       try {
-        const res = await fetchApi<Record<string, unknown>>('/api/website')
-        if (!cancelled && res.data) {
-          setConfig((prev) => ({ ...prev, ...res.data as Partial<WebsiteConfig> }))
+        const [cfgRes, genRes] = await Promise.all([
+          fetchApi<Record<string, unknown>>('/api/website'),
+          fetchApi<GenerationLog[]>('/api/website/generations'),
+        ])
+        if (!cancelled) {
+          if (cfgRes.data) {
+            setConfig((prev) => ({ ...prev, ...cfgRes.data as Partial<WebsiteConfig> }))
+          }
+          if (genRes.data) {
+            setLogs(genRes.data)
+          }
         }
       } catch {
         // API not available — use defaults
@@ -57,41 +69,74 @@ export function useWebsite() {
     return products.filter((p) => p.isAvailable)
   }, [products])
 
-  const generate = useCallback(async () => {
+  const latestSlug = useMemo(() => {
+    const success = logs.filter((l) => l.status === 'success')
+    return success.length > 0 ? success[0].slug : null
+  }, [logs])
+
+  const generate = useCallback(async (): Promise<string | null> => {
     setGenerating(true)
     try {
-      const res = await fetchApi<Record<string, unknown>>('/api/website/generate', {
+      const res = await fetchApi<{ slug: string }>('/api/website/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ template: config.template }),
       })
-      setLogs((prev) => [{
-        id: `log-${Date.now()}`,
-        timestamp: new Date().toISOString(),
-        status: res.status === 'success' ? 'success' : 'failed',
-        productCount: config.selectedProductIds.length,
-        message: res.status === 'success' ? 'Website berhasil di-generate' : (res.message ?? 'Gagal generate'),
-      }, ...prev])
+      if (res.data?.slug) {
+        const newLog: GenerationLog = {
+          id: `temp-${Date.now()}`,
+          slug: res.data.slug,
+          status: 'success',
+          productCount: config.selectedProductIds.length,
+          message: `Website berhasil di-generate`,
+          createdAt: new Date().toISOString(),
+        }
+        setLogs((prev) => [newLog, ...prev])
+        return res.data.slug
+      }
+      return null
     } catch (e) {
-      setLogs((prev) => [{
-        id: `log-${Date.now()}`,
-        timestamp: new Date().toISOString(),
-        status: 'failed',
-        productCount: 0,
-        message: (e as Error).message,
-      }, ...prev])
+      return null
     } finally {
       setGenerating(false)
     }
   }, [config.template, config.selectedProductIds.length])
 
-  const downloadZip = useCallback(async () => {
-    const token = localStorage.getItem('wani_auth_token')
-    if (token) {
-      window.open(`/api/website/download?token=${token}`, '_blank')
-      return
+  const refreshLogs = useCallback(async () => {
+    try {
+      const res = await fetchApi<GenerationLog[]>('/api/website/generations')
+      if (res.data) setLogs(res.data)
+    } catch {
+      // ignore
     }
-    window.open('/api/website/download', '_blank')
+  }, [])
+
+  const downloadZip = useCallback(async (slug?: string) => {
+    const token = getToken()
+    const params = slug ? `?slug=${slug}` : ''
+    const res = await fetch(`/api/website/download${params}`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    })
+    if (!res.ok) throw new Error('Download failed')
+    const blob = await res.blob()
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `website-${slug || 'latest'}.zip`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  }, [])
+
+  const deleteGeneration = useCallback(async (id: string) => {
+    const token = getToken()
+    const res = await fetch(`/api/website/generations/${id}`, {
+      method: 'DELETE',
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    })
+    if (!res.ok) throw new Error('Delete failed')
+    setLogs((prev) => prev.filter((l) => l.id !== id))
   }, [])
 
   const publish = useCallback(async () => {
@@ -101,11 +146,14 @@ export function useWebsite() {
   return {
     config,
     logs,
+    latestSlug,
     generating,
     availableProducts,
     updateConfig,
     generate,
+    refreshLogs,
     downloadZip,
+    deleteGeneration,
     publish,
     loading,
   }

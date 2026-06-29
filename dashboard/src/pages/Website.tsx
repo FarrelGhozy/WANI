@@ -1,31 +1,49 @@
+import { useState } from 'react'
 import { useWebsite } from '@/hooks/useWebsite.ts'
 import { useToast } from '@/hooks/useToast.ts'
 import Card from '@/components/ui/Card.tsx'
 import Button from '@/components/ui/Button.tsx'
+import Modal from '@/components/ui/Modal.tsx'
 import Badge from '@/components/ui/Badge.tsx'
 import Spinner from '@/components/ui/Spinner.tsx'
 import { formatDate } from '@/utils/format'
 
 export default function Website() {
-  const { config, logs, generating, availableProducts, updateConfig, generate, downloadZip, publish, loading } = useWebsite()
+  const { config, logs, latestSlug, generating, availableProducts, updateConfig, generate, downloadZip, deleteGeneration, loading } = useWebsite()
   const { toast } = useToast()
+  const [deleting, setDeleting] = useState<string | null>(null)
 
   async function handleGenerate() {
-    try {
-      await generate()
+    const slug = await generate()
+    if (slug) {
       toast('Website berhasil dibuat', 'success')
-    } catch {
+    } else {
       toast('Gagal membuat website', 'error')
     }
   }
 
-  async function handlePublish() {
+  function handlePreview(slug?: string) {
+    const s = slug || latestSlug
+    if (s) window.open(`/s/${s}/`, '_blank')
+    else toast('Belum ada website yang di-generate', 'error')
+  }
+
+  async function handleDownload(slug?: string) {
     try {
-      await publish()
-      toast('Website berhasil dipublikasikan', 'success')
+      await downloadZip(slug)
     } catch {
-      toast('Gagal mempublikasikan website', 'error')
+      toast('Gagal mendownload ZIP', 'error')
     }
+  }
+
+  async function handleDelete(id: string) {
+    try {
+      await deleteGeneration(id)
+      toast('Riwayat berhasil dihapus', 'success')
+    } catch {
+      toast('Gagal menghapus riwayat', 'error')
+    }
+    setDeleting(null)
   }
 
   if (loading) return <Spinner />
@@ -35,7 +53,7 @@ export default function Website() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-stone-900">Website</h1>
-          <p className="mt-1 text-sm text-stone-500">Kelola website toko Anda — generate, preview, dan publish</p>
+          <p className="mt-1 text-sm text-stone-500">Kelola website toko Anda — generate, preview, dan download</p>
         </div>
       </div>
 
@@ -65,7 +83,7 @@ export default function Website() {
                   <textarea
                     value={config.aboutText}
                     onChange={(e) => updateConfig({ aboutText: e.target.value })}
-                    placeholder="Contoh: Toko kami berdiri sejak 2020, menyediakan berbagai produk berkualitas dengan harga terjangkau. Kami melayani pengiriman ke seluruh Indonesia."
+                    placeholder="Contoh: Toko kami berdiri sejak 2020, menyediakan berbagai produk berkualitas dengan harga terjangkau."
                     rows={3}
                     className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 transition-all placeholder:text-stone-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
                   />
@@ -137,7 +155,7 @@ export default function Website() {
                 </select>
               </Field>
               <div className="sm:col-span-2">
-                <Field label={'Pilih Produk (' + config.selectedProductIds.length + ' dipilih)'}>
+                <Field label={`Pilih Produk (${config.selectedProductIds.length} dipilih)`}>
                   <div className="max-h-48 overflow-y-auto rounded-lg border border-stone-200">
                     {availableProducts.map((p) => {
                       const checked = config.selectedProductIds.includes(p.id)
@@ -174,23 +192,55 @@ export default function Website() {
           </Card>
 
           <Card accent="none" padding={false}>
-            <div className="px-4 py-3 sm:px-6">
+            <div className="flex items-center justify-between px-4 py-3 sm:px-6">
               <h2 className="text-lg font-semibold text-stone-900">Log Aktivitas</h2>
+              {logs.length > 0 && (
+                <span className="text-xs text-stone-400">{logs.length} generate</span>
+              )}
             </div>
             <div className="divide-y divide-stone-100 border-t border-stone-200">
               {logs.map((log) => (
-                <div key={log.id} className="flex items-center justify-between px-4 py-3 sm:px-6">
-                  <div className="flex items-center gap-3">
-                    <Badge variant={log.status === 'success' ? 'green' : 'red'} dot>
-                      {log.status === 'success' ? 'Berhasil' : 'Gagal'}
-                    </Badge>
-                    <div>
-                      <p className="text-sm text-stone-700">{log.message}</p>
-                      <p className="text-xs text-stone-400">{formatDate(log.timestamp)}</p>
+                <div key={log.id} className="px-4 py-3 sm:px-6">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-start gap-3 min-w-0">
+                      <Badge variant={log.status === 'success' ? 'green' : 'red'} dot>
+                        {log.status === 'success' ? 'Berhasil' : 'Gagal'}
+                      </Badge>
+                      <div className="min-w-0">
+                        <p className="text-sm text-stone-700 truncate">{log.message}</p>
+                        <p className="text-xs text-stone-400">{formatDate(log.createdAt)}</p>
+                      </div>
                     </div>
+                    {log.status === 'success' && (
+                      <span className="text-xs text-stone-400 shrink-0">{log.productCount} produk</span>
+                    )}
                   </div>
                   {log.status === 'success' && (
-                    <span className="text-xs text-stone-400">{log.productCount} produk</span>
+                    <div className="mt-2 flex items-center gap-2 pl-9">
+                      <button
+                        type="button"
+                        onClick={() => handlePreview(log.slug)}
+                        className="text-xs font-medium text-teal-600 hover:text-teal-700 transition-colors"
+                      >
+                        Lihat Preview
+                      </button>
+                      <span className="text-stone-300">|</span>
+                      <button
+                        type="button"
+                        onClick={() => handleDownload(log.slug)}
+                        className="text-xs font-medium text-teal-600 hover:text-teal-700 transition-colors"
+                      >
+                        Download ZIP
+                      </button>
+                      <span className="text-stone-300">|</span>
+                      <button
+                        type="button"
+                        onClick={() => setDeleting(log.id)}
+                        className="text-xs font-medium text-red-500 hover:text-red-600 transition-colors"
+                      >
+                        Hapus
+                      </button>
+                    </div>
                   )}
                 </div>
               ))}
@@ -217,25 +267,19 @@ export default function Website() {
                 size="md"
                 variant="secondary"
                 className="w-full"
-                onClick={() => window.open('/s/preview/default/', '_blank')}
+                disabled={!latestSlug}
+                onClick={() => handlePreview()}
               >
-                Lihat Preview
+                Lihat Preview (Terbaru)
               </Button>
               <Button
                 size="md"
                 variant="secondary"
                 className="w-full"
-                onClick={downloadZip}
+                disabled={!latestSlug}
+                onClick={() => handleDownload()}
               >
-                Download ZIP
-              </Button>
-              <Button
-                size="md"
-                variant="secondary"
-                className="w-full"
-                onClick={handlePublish}
-              >
-                Publish
+                Download ZIP (Terbaru)
               </Button>
             </div>
           </Card>
@@ -243,14 +287,26 @@ export default function Website() {
           <Card accent="teal">
             <h2 className="mb-3 text-sm font-semibold text-stone-900">Info</h2>
             <div className="space-y-2 text-xs text-stone-500">
-              <p>Hasil generate akan muncul di folder <span className="font-mono text-stone-600">generated-sites/</span></p>
-              <p>Gunakan Preview untuk melihat hasil sebelum publish.</p>
-              <p>Download ZIP untuk menyimpan atau mengirim hasil generate.</p>
+              <p>Setiap generate menyimpan hasil terpisah — riwayat lengkap dengan preview & download.</p>
+              <p>Klik Lihat Preview di log untuk melihat hasil generate tertentu.</p>
               <p>Template bisa ditambahkan di <span className="font-mono text-stone-600">src/templates/</span></p>
             </div>
           </Card>
         </div>
       </div>
+
+      <Modal open={!!deleting} onClose={() => setDeleting(null)} title="Hapus Riwayat">
+        <p className="text-sm text-stone-700">Hapus riwayat generate ini?</p>
+        <p className="mt-1 text-xs text-stone-400">File website terkait juga akan dihapus.</p>
+        <div className="mt-5 flex justify-center gap-3">
+          <Button variant="secondary" size="sm" onClick={() => setDeleting(null)}>
+            Batal
+          </Button>
+          <Button variant="danger" size="sm" onClick={() => handleDelete(deleting!)}>
+            Hapus
+          </Button>
+        </div>
+      </Modal>
     </div>
   )
 }

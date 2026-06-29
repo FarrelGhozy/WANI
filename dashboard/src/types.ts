@@ -168,10 +168,11 @@ export interface WebsiteConfig {
   theme: string
 }
 
-export interface GenerateLog {
+export interface GenerationLog {
   id: string
-  timestamp: string
-  status: 'success' | 'failed'
+  slug: string
+  status: string
   productCount: number
   message: string
+  createdAt: string
 }
