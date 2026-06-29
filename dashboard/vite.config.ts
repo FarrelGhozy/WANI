@@ -24,6 +24,9 @@ export default defineConfig({
           _proxy.on('error', () => {})
         },
       },
+      '/uploads': {
+        target: process.env.VITE_API_URL || 'http://localhost:3001',
+      },
     },
   },
 })
