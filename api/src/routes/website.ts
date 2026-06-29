@@ -9,7 +9,9 @@ const router = Router()
 router.get("/", websiteController.getWebsiteConfig)
 router.put("/", requireJwt, validate({ body: updateWebsiteSchema }), websiteController.updateWebsiteConfig)
 router.post("/generate", requireJwt, validate({ body: generateWebsiteSchema }), websiteController.generateWebsite)
-router.get("/download", requireJwt, websiteController.downloadWebsite)
+router.get("/download", websiteController.downloadWebsite)
 router.post("/publish", requireJwt, websiteController.publishWebsite)
+router.get("/generations", websiteController.listGenerations)
+router.delete("/generations/:id", requireJwt, websiteController.deleteGeneration)
 
 export default router

@@ -1,0 +1,10 @@
+model WebsiteGeneration {
+  id           String   @id @default(uuid())
+  slug         String   @unique
+  status       String
+  productCount Int      @default(0)
+  message      String   @db.Text
+  createdAt    DateTime @default(now())
+
+  @@index([createdAt])
+}

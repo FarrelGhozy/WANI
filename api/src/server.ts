@@ -20,6 +20,11 @@ app.use(express.json())
 app.use("/api", routes)
 
 const generatedDir = path.resolve(import.meta.dir, "..", "generated-sites")
+
+app.use("/s/preview", (_req, res) => {
+  res.redirect("/s/latest/")
+})
+
 app.use("/s", express.static(generatedDir))
 
 const uploadsDir = path.resolve(import.meta.dir, "..", "uploads")
