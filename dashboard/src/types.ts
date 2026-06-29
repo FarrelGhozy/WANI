@@ -166,6 +166,7 @@ export interface WebsiteConfig {
   selectedProductIds: string[]
   template: string
   theme: string
+  socialMedia: Record<string, string>
 }
 
 export interface GenerationLog {
