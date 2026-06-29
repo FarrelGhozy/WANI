@@ -5,11 +5,11 @@ const store = JSON.parse(fs.readFileSync("src/data/store.json", "utf-8"))
 
 <header class="site-header">
   <nav class="site-nav">
-    <a href="/" class="site-logo">{store.businessName}</a>
+    <a href="./" class="site-logo">{store.businessName}</a>
     <div class="nav-links">
-      <a href="/" class="nav-link">Beranda</a>
-      <a href="/produk/" class="nav-link">Produk</a>
-      <a href="/kontak/" class="nav-link">Kontak</a>
+      <a href="./" class="nav-link">Beranda</a>
+      <a href="./produk/" class="nav-link">Produk</a>
+      <a href="./kontak/" class="nav-link">Kontak</a>
     </div>
     <button class="nav-toggle" id="navToggle" aria-label="Menu">
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -17,9 +17,9 @@ const store = JSON.parse(fs.readFileSync("src/data/store.json", "utf-8"))
       </svg>
     </button>
     <div class="mobile-menu" id="mobileMenu">
-      <a href="/" class="nav-link">Beranda</a>
-      <a href="/produk/" class="nav-link">Produk</a>
-      <a href="/kontak/" class="nav-link">Kontak</a>
+      <a href="./" class="nav-link">Beranda</a>
+      <a href="./produk/" class="nav-link">Produk</a>
+      <a href="./kontak/" class="nav-link">Kontak</a>
     </div>
   </nav>
 </header>
