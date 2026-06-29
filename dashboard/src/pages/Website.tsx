@@ -142,16 +142,14 @@ export default function Website() {
                 />
                 <p className="text-xs text-stone-400">Gunakan format internasional, contoh: 6281234567890 (tanpa +)</p>
               </Field>
-              <Field label="Tema">
+              <Field label="Template">
                 <select
-                  value={config.theme}
-                  onChange={(e) => updateConfig({ theme: e.target.value })}
+                  value={config.template}
+                  onChange={(e) => updateConfig({ template: e.target.value })}
                   className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
                 >
-                  <option value="classic">Classic</option>
+                  <option value="default">Default (Astro)</option>
                   <option value="modern">Modern</option>
-                  <option value="vibrant">Vibrant</option>
-                  <option value="elegant">Elegant</option>
                 </select>
               </Field>
               <div className="sm:col-span-2">
