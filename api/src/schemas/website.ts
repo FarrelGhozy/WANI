@@ -1,5 +1,15 @@
 import { z } from "zod"
 
+const socialPlatforms = [
+  "instagram", "facebook", "tiktok", "youtube",
+  "shopee", "tokopedia", "twitter", "linkedin",
+] as const
+
+export const socialMediaSchema = z.record(
+  z.enum(socialPlatforms),
+  z.string().url().optional().or(z.literal("")),
+)
+
 export const updateWebsiteSchema = z.object({
   heroHeadline: z.string().optional(),
   heroSubheadline: z.string().optional(),
@@ -12,6 +22,7 @@ export const updateWebsiteSchema = z.object({
   theme: z.enum(["classic", "modern", "vibrant", "elegant"]).optional(),
   contactEmail: z.string().email().optional(),
   contactMapsUrl: z.string().url().optional(),
+  socialMedia: socialMediaSchema.optional(),
 })
 
 export const generateWebsiteSchema = z.object({
