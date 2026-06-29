@@ -14,9 +14,12 @@ const storage = multer.diskStorage({
     await fs.mkdir(UPLOADS_DIR, { recursive: true })
     cb(null, UPLOADS_DIR)
   },
-  filename: (_req, file, cb) => {
+  filename: (req, file, cb) => {
     const ext = path.extname(file.originalname).toLowerCase() || ".png"
-    cb(null, `qris-${crypto.randomUUID()}${ext}`)
+    const prefix = typeof req.body?.prefix === "string" && /^[a-z0-9]+$/.test(req.body.prefix)
+      ? req.body.prefix
+      : "qris"
+    cb(null, `${prefix}-${crypto.randomUUID()}${ext}`)
   },
 })
 

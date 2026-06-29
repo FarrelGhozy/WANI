@@ -125,6 +125,7 @@ export default function PaymentTab() {
     try {
       const body = new FormData()
       body.append('file', file)
+      body.append('prefix', 'qris')
       const res = await fetch('/api/upload', {
         method: 'POST',
         headers: { Authorization: `Bearer ${localStorage.getItem('wani_auth_token')}` },

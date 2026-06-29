@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import type { Product } from '@/hooks/useProducts.ts'
 import Badge from '@/components/ui/Badge.tsx'
@@ -14,6 +15,22 @@ interface ProductListViewProps {
 function SortArrow({ field, current, dir }: { field: string; current: string; dir: 'asc' | 'desc' }) {
   if (field !== current) return null
   return <span className="ml-1 text-teal-600">{dir === 'asc' ? '\u2191' : '\u2193'}</span>
+}
+
+function Thumbnail({ product }: { product: Product }) {
+  const [imgError, setImgError] = useState(false)
+  if (product.imageUrl && !imgError) {
+    return (
+      <div className="max-sm:hidden flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-lg">
+        <img src={product.imageUrl} alt={product.name} className="h-full w-full object-cover" onError={() => setImgError(true)} />
+      </div>
+    )
+  }
+  return (
+    <div className="max-sm:hidden flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-stone-100 text-xs font-medium text-stone-400">
+      {product.name.charAt(0)}
+    </div>
+  )
 }
 
 function SortTh({ field, label, current, dir, onSort, className }: { field: 'name' | 'category' | 'price' | 'stock' | 'isAvailable'; label: string; current: string; dir: 'asc' | 'desc'; onSort: (f: typeof field) => void; className?: string }) {
@@ -54,9 +71,7 @@ export default function ProductListView({ products, onDelete, sortField, sortDir
             >
               <td className="max-sm:px-2 max-sm:py-2 sm:px-4 sm:py-3">
                 <div className="flex items-center gap-3">
-                  <div className="max-sm:hidden flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-stone-100 text-xs font-medium text-stone-400">
-                    {item.name.charAt(0)}
-                  </div>
+                  <Thumbnail product={item} />
                   <div>
                     <p className="max-sm:text-xs sm:text-sm font-medium text-stone-900">{item.name}</p>
                     {item.description && <p className="text-xs text-stone-400 line-clamp-1">{item.description}</p>}
