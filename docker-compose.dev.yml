@@ -1,0 +1,19 @@
+# Development overrides for docker-compose.yml
+# Usage: docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+
+services:
+
+  api:
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: development
+
+  dashboard:
+    build:
+      context: .
+      dockerfile: dashboard/Dockerfile
+
+  wa-bot:
+    environment:
+      NODE_ENV: development
