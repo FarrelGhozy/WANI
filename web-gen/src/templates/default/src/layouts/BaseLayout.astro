@@ -13,13 +13,45 @@ const pageTitle = title
   ? `${title} | ${store.businessName}`
   : store.businessName
 
+function hexToRgb(hex: string): string {
+  const c = parseInt(hex.replace("#", ""), 16)
+  return `${(c >> 16) & 255}, ${(c >> 8) & 255}, ${c & 255}`
+}
+
+function lighten(hex: string, pct: number): string {
+  const c = parseInt(hex.replace("#", ""), 16)
+  const r = Math.min(255, Math.round(((c >> 16) & 255) + (255 - ((c >> 16) & 255)) * pct))
+  const g = Math.min(255, Math.round(((c >> 8) & 255) + (255 - ((c >> 8) & 255)) * pct))
+  const b = Math.min(255, Math.round((c & 255) + (255 - (c & 255)) * pct))
+  return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, "0")}`
+}
+
+function darken(hex: string, pct: number): string {
+  const c = parseInt(hex.replace("#", ""), 16)
+  const r = Math.round(((c >> 16) & 255) * (1 - pct))
+  const g = Math.round(((c >> 8) & 255) * (1 - pct))
+  const b = Math.round((c & 255) * (1 - pct))
+  return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, "0")}`
+}
+
 const { primary, secondary } = siteConfig.colors ?? {}
+const p = primary ?? "#059669"
+const s = secondary ?? "#f59e0b"
+
 const cssVars = `
 :root {
-  --color-primary: ${primary ?? "#059669"};
-  --color-secondary: ${secondary ?? "#f59e0b"};
+  --color-primary: ${p};
+  --color-primary-rgb: ${hexToRgb(p)};
+  --color-primary-light: ${lighten(p, 0.35)};
+  --color-primary-dark: ${darken(p, 0.2)};
+  --color-secondary: ${s};
+  --color-secondary-rgb: ${hexToRgb(s)};
+  --color-secondary-light: ${lighten(s, 0.35)};
+  --color-secondary-dark: ${darken(s, 0.2)};
 }
 `
+
+const basePath = siteConfig.basePath ?? "./"
 ---
 
 <!doctype html>
@@ -29,13 +61,18 @@ const cssVars = `
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{pageTitle}</title>
     <meta name="description" content={description ?? `Official website ${store.businessName}`} />
-    <meta name="theme-color" content={primary ?? "#059669"} />
+    <base href={basePath} />
+    <meta name="theme-color" content={p} />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description ?? `Official website ${store.businessName}`} />
     <meta property="og:type" content="website" />
+    <meta property="og:url" content={basePath} />
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="./base.css" />
     <link rel="stylesheet" href="./theme.css" />
-    <style>{cssVars}</style>
+    <style set:html={cssVars}></style>
   </head>
   <body>
     <slot />
