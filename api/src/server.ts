@@ -13,7 +13,20 @@ export const app = express()
 app.disable("x-powered-by")
 app.set("etag", false)
 
-app.use(helmet())
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "cdn.tailwindcss.com"],
+        styleSrc: ["'self'", "'unsafe-inline'", "fonts.googleapis.com", "fonts.gstatic.com", "googleapis.com"],
+        fontSrc: ["'self'", "fonts.gstatic.com", "googleapis.com", "fonts.googleapis.com"],
+        imgSrc: ["'self'", "data:", "blob:"],
+        connectSrc: ["'self'"],
+      },
+    },
+  })
+)
 app.use(cors())
 app.use(morgan(":method :url :status :response-time ms", { stream: morganStream }))
 app.use(express.json())
