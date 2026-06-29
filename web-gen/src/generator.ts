@@ -60,7 +60,10 @@ function generateHtml(
   if (existsSync(outDir)) rmSync(outDir, { recursive: true, force: true });
   mkdirSync(outDir, { recursive: true });
   writeFileSync(join(outDir, "index.html"), html);
-  cpSync(join(templatePath, "assets"), join(outDir, "assets"), { recursive: true, force: true });
+  const assetsDir = join(templatePath, "assets");
+  if (existsSync(assetsDir)) {
+    cpSync(assetsDir, join(outDir, "assets"), { recursive: true, force: true });
+  }
   return { success: true, outputPath: outDir };
 }
 
