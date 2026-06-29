@@ -16,13 +16,20 @@ const availableProducts = products.filter((p: { isAvailable: boolean }) => p.isA
   <section class="section">
     <div class="container">
       <h1 class="section-title" style="margin-bottom: .5rem;">Produk Kami</h1>
-      <p class="text-muted text-center" style="margin-bottom: 2rem;">
-        Menampilkan {availableProducts.length} produk tersedia
+      <p class="text-muted text-center" style="margin-bottom: 1.5rem;">
+        <span id="productCount">{availableProducts.length}</span> produk tersedia
       </p>
+
+      <div class="product-search">
+        <svg class="product-search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+        <input type="text" id="productSearch" class="product-search-input" placeholder="Cari produk..." autocomplete="off" />
+      </div>
 
       {availableProducts.length > 0
         ? (
-          <div class="product-grid">
+          <div class="product-grid" id="productGrid">
             {availableProducts.map((product) => <ProductCard product={product} />)}
           </div>
         )
@@ -34,6 +41,28 @@ const availableProducts = products.filter((p: { isAvailable: boolean }) => p.isA
       }
     </div>
   </section>
+
+  {availableProducts.length > 0 && (
+    <script>
+      const search = document.getElementById('productSearch')
+      const grid = document.getElementById('productGrid')
+      const countEl = document.getElementById('productCount')
+      const cards = grid?.querySelectorAll('.product-card') ?? []
+
+      search?.addEventListener('input', () => {
+        const q = search.value.toLowerCase().trim()
+        let visible = 0
+        cards.forEach((card) => {
+          const name = card.querySelector('.product-name')?.textContent?.toLowerCase() ?? ''
+          const desc = card.querySelector('.product-desc')?.textContent?.toLowerCase() ?? ''
+          const match = !q || name.includes(q) || desc.includes(q)
+          card.style.display = match ? '' : 'none'
+          if (match) visible++
+        })
+        if (countEl) countEl.textContent = String(visible)
+      })
+    </script>
+  )}
   <Footer />
   <WaButton />
 </BaseLayout>
