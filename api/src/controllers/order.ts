@@ -67,6 +67,7 @@ export async function updateOrderPayment(
     await MessageModel.append({
       conversationId: conv.id,
       role: "BOT",
+      msgType: "notification",
       content: "Terima kasih! Pembayaran untuk pesanan Anda sudah dikonfirmasi. Pesanan sedang kami proses ya.",
     })
     await ConversationModel.touch(conv.id)

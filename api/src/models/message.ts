@@ -48,7 +48,12 @@ export class MessageModel extends BaseModel {
 
   static async listOutgoing(): Promise<OutgoingItem[]> {
     const messages = await this.delegate.findMany({
-      where: { role: { in: ["HUMAN", "BOT"] }, waMsgId: null },
+      where: {
+        OR: [
+          { role: "HUMAN", waMsgId: null },
+          { msgType: "notification", waMsgId: null },
+        ]
+      },
       include: {
         conversation: {
           select: {
