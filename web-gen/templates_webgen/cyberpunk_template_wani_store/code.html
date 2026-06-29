@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Cyberpunk Template - WANI Store</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary-fixed": "#002022",
+                    "on-tertiary-container": "#c0003e",
+                    "on-surface": "#e5e1e4",
+                    "inverse-primary": "#00696f",
+                    "on-secondary-fixed-variant": "#74009f",
+                    "secondary-fixed-dim": "#ebb2ff",
+                    "outline": "#849495",
+                    "on-secondary": "#520071",
+                    "surface-bright": "#39393b",
+                    "on-secondary-fixed": "#320047",
+                    "inverse-surface": "#e5e1e4",
+                    "on-error-container": "#ffdad6",
+                    "primary-container": "#00f2ff",
+                    "secondary-fixed": "#f8d8ff",
+                    "error": "#ffb4ab",
+                    "surface-container-high": "#2a2a2c",
+                    "surface-container-highest": "#353437",
+                    "primary": "#e1fdff",
+                    "on-primary-container": "#006a71",
+                    "tertiary-container": "#ffcfd2",
+                    "surface-container": "#201f21",
+                    "inverse-on-surface": "#313032",
+                    "surface-container-low": "#1c1b1d",
+                    "outline-variant": "#3a494b",
+                    "primary-fixed": "#74f5ff",
+                    "tertiary-fixed": "#ffdadb",
+                    "surface": "#131315",
+                    "primary-fixed-dim": "#00dbe7",
+                    "on-surface-variant": "#b9cacb",
+                    "on-tertiary": "#67001d",
+                    "tertiary-fixed-dim": "#ffb2b8",
+                    "error-container": "#93000a",
+                    "surface-container-lowest": "#0e0e10",
+                    "on-primary": "#00363a",
+                    "surface-dim": "#131315",
+                    "on-error": "#690005",
+                    "surface-variant": "#353437",
+                    "on-tertiary-fixed": "#40000f",
+                    "on-secondary-container": "#480064",
+                    "secondary": "#ebb2ff",
+                    "secondary-container": "#ce5dff",
+                    "on-background": "#e5e1e4",
+                    "surface-tint": "#00dbe7",
+                    "on-tertiary-fixed-variant": "#91002d",
+                    "background": "#131315",
+                    "tertiary": "#fff5f5",
+                    "on-primary-fixed-variant": "#004f54"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "base": "8px",
+                    "gutter": "24px",
+                    "margin-desktop": "64px",
+                    "margin-mobile": "16px",
+                    "max-width": "1440px"
+            },
+            "fontFamily": {
+                    "label-caps": ["JetBrains Mono"],
+                    "headline-xl": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "data-lg": ["JetBrains Mono"],
+                    "data-md": ["JetBrains Mono"],
+                    "body-md": ["Inter"],
+                    "headline-xl-mobile": ["Inter"],
+                    "body-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                    "headline-xl": ["64px", {"lineHeight": "72px", "letterSpacing": "-0.02em", "fontWeight": "900"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "800"}],
+                    "data-lg": ["20px", {"lineHeight": "24px", "fontWeight": "700"}],
+                    "data-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-xl-mobile": ["40px", {"lineHeight": "44px", "letterSpacing": "-0.01em", "fontWeight": "900"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #131315;
+            color: #e5e1e4;
+            overflow-x: hidden;
+        }
+        .glow-cyan {
+            text-shadow: 0 0 10px rgba(0, 219, 231, 0.6);
+        }
+        .glow-purple {
+            text-shadow: 0 0 10px rgba(235, 178, 255, 0.6);
+        }
+        .border-glow-cyan {
+            box-shadow: 0 0 15px rgba(0, 219, 231, 0.3), inset 0 0 5px rgba(0, 219, 231, 0.3);
+        }
+        .glass-panel {
+            background: rgba(28, 27, 29, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(132, 148, 149, 0.2);
+        }
+        .scanline::before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+            z-index: 2;
+            background-size: 100% 4px, 3px 100%;
+            pointer-events: none;
+        }
+        .neural-bg {
+            background-image: radial-gradient(circle at 2px 2px, rgba(116, 245, 255, 0.05) 1px, transparent 0);
+            background-size: 32px 32px;
+        }
+        .glitch-text:hover {
+            animation: glitch 0.3s cubic-bezier(.25, .46, .45, .94) both infinite;
+        }
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+    </style>
+</head>
+<body class="neural-bg">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-surface/70 backdrop-blur-xl border-b border-primary-fixed/30 shadow-[0_4px_20px_rgba(0,219,231,0.15)]">
+<div class="flex justify-between items-center px-margin-desktop py-4 max-w-max-width mx-auto">
+<div class="font-headline-md text-headline-md text-primary-fixed italic tracking-tighter shadow-[0_0_15px_rgba(116,245,255,0.6)]">
+                NEON_MARKET
+            </div>
+<div class="hidden md:flex gap-8">
+<a class="font-label-caps text-label-caps text-primary-fixed border-b-2 border-primary-fixed pb-1" href="#">STATIONS</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary-fixed transition-colors" href="#">HARDWARE</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary-fixed transition-colors" href="#">MODS</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary-fixed transition-colors" href="#">INTEL</a>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative hidden sm:block">
+<input class="bg-surface-container-low border-b border-outline-variant text-data-md font-data-md px-4 py-1 focus:outline-none focus:border-primary-fixed transition-all w-48 lg:w-64" placeholder="QUERY_DATABASE..." type="text"/>
+<span class="material-symbols-outlined absolute right-2 top-1 text-primary-fixed text-sm">search</span>
+</div>
+<div class="flex gap-4">
+<button class="active:scale-95 duration-100 hover:bg-primary/10 p-2 rounded transition-all">
+<span class="material-symbols-outlined text-primary-fixed">shopping_cart</span>
+</button>
+<button class="active:scale-95 duration-100 hover:bg-primary/10 p-2 rounded transition-all">
+<span class="material-symbols-outlined text-primary-fixed">account_circle</span>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- SideNavBar (Hidden on Mobile) -->
+<aside class="hidden lg:flex h-screen w-64 fixed left-0 top-0 z-40 bg-surface-container-low/80 backdrop-blur-md border-r border-secondary-fixed-dim/20 shadow-[10px_0_15px_rgba(116,0,159,0.1)] flex-col pt-24 pb-8 h-full">
+<div class="px-6 mb-8">
+<div class="flex items-center gap-3 mb-2">
+<div class="w-10 h-10 bg-secondary-container rounded-sm flex items-center justify-center">
+<span class="material-symbols-outlined text-on-secondary-container">terminal</span>
+</div>
+<div>
+<div class="font-data-md text-data-md text-secondary">FILTER_MODULE</div>
+<div class="text-[10px] font-label-caps text-on-surface-variant opacity-60">v4.02.1-STABLE</div>
+</div>
+</div>
+</div>
+<nav class="flex-1">
+<div class="space-y-1">
+<a class="flex items-center gap-3 bg-secondary-container text-on-secondary-container border-l-4 border-secondary-fixed p-3 font-data-md text-data-md hover:translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined">memory</span>
+                    CYBERWARE
+                </a>
+<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-secondary/10 font-data-md text-data-md hover:translate-x-1 duration-200 transition-all" href="#">
+<span class="material-symbols-outlined">developer_board</span>
+                    DECKS
+                </a>
+<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-secondary/10 font-data-md text-data-md hover:translate-x-1 duration-200 transition-all" href="#">
+<span class="material-symbols-outlined">precision_manufacturing</span>
+                    DRONES
+                </a>
+<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-secondary/10 font-data-md text-data-md hover:translate-x-1 duration-200 transition-all" href="#">
+<span class="material-symbols-outlined">sd_card</span>
+                    CHIPS
+                </a>
+<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-secondary/10 font-data-md text-data-md hover:translate-x-1 duration-200 transition-all" href="#">
+<span class="material-symbols-outlined">checkroom</span>
+                    APPAREL
+                </a>
+</div>
+</nav>
+<div class="px-6">
+<button class="w-full bg-secondary-fixed text-on-secondary-fixed py-3 font-label-caps text-label-caps hover:glow-secondary transition-all active:scale-95">
+                APPLY_MODS
+            </button>
+</div>
+</aside>
+<main class="lg:ml-64 pt-24 min-h-screen">
+<!-- Hero Section -->
+<section class="relative px-margin-mobile md:px-margin-desktop py-12 md:py-24 max-w-max-width mx-auto">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter items-center">
+<div class="z-10">
+<div class="inline-block border border-primary-fixed px-3 py-1 mb-6">
+<span class="font-label-caps text-label-caps text-primary-fixed">ENCRYPTED_SALE_LIVE</span>
+</div>
+<h1 class="font-headline-xl text-headline-xl text-primary-fixed mb-4 glow-cyan leading-tight uppercase">
+                        Ascend the <br/> <span class="text-secondary glow-purple">Neon Grid</span>
+</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-8 max-w-lg">
+                        Premium hardware mods and neural-linked apparel for the modern edge-runner. Secure your identity with military-grade encryption hardware.
+                    </p>
+<div class="flex flex-wrap gap-4">
+<button class="px-8 py-4 bg-primary-fixed text-on-primary-fixed font-label-caps text-label-caps hover:shadow-[0_0_20px_rgba(116,245,255,0.8)] transition-all">
+                            INITIALIZE_PURCHASE
+                        </button>
+<button class="px-8 py-4 border border-secondary text-secondary font-label-caps text-label-caps hover:bg-secondary/10 transition-all">
+                            VIEW_MANIFEST
+                        </button>
+</div>
+</div>
+<div class="relative h-[400px] md:h-[600px] w-full group">
+<div class="absolute inset-0 border-2 border-dashed border-primary-fixed/20 animate-pulse"></div>
+<div class="absolute inset-4 overflow-hidden scanline bg-surface-container-lowest">
+<img class="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-700" data-alt="A highly detailed cinematic shot of a high-tech cyberpunk cyberdeck with glowing blue neon circuits and exposed copper wiring on a dark reflective surface. The lighting is dominated by deep cyans and electric purples, creating a moody, futuristic hacking station atmosphere. The image has a sharp, technical aesthetic with extreme macro detail of the hardware components and digital screens displaying cascading code in the background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuARei7qtwuRqHS7EULFm6r0hfAxt2SqlMzBi2NhWSj7nGBoH47uf8fj9WUL1af05VmRuTDKybFsJdIpaW5YP3cq2rLlbLAhbmkZgWjqEhVOMGw2oxKM9w3mjA67EGelSh7PGHrjAxRuY136kLuxImKkW72jHMi4yEp_mvibs5M0R37mYD6Zwg15cnZlm5JicvX04k_YGQyBGpEJaUzhXANjHJnYm8L5x8pD2ZdpzbPDwvwzJtDPF_bkRBBSyPbc9Ae-suRKO3YmEUUL"/>
+</div>
+<div class="absolute bottom-8 -left-8 glass-panel p-6 border-l-4 border-primary-fixed hidden md:block">
+<div class="font-data-md text-data-md text-primary-fixed mb-1">MK-7 CORE_PROCESSOR</div>
+<div class="font-headline-md text-headline-md text-on-surface">99.9% UPTIME</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Bento Product Grid -->
+<section class="px-margin-mobile md:px-margin-desktop py-20 max-w-max-width mx-auto">
+<div class="flex justify-between items-end mb-12">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface uppercase mb-2">NEON_CIRCUIT_CATALOG</h2>
+<div class="h-1 w-24 bg-primary-fixed"></div>
+</div>
+<div class="font-data-md text-data-md text-on-surface-variant">TOTAL_ITEMS: 042</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+<!-- Large Featured Card -->
+<div class="md:col-span-2 md:row-span-2 glass-panel group relative overflow-hidden flex flex-col">
+<div class="absolute top-4 right-4 z-20">
+<span class="bg-error text-on-error font-label-caps text-[10px] px-2 py-1">HOT_DROP</span>
+</div>
+<div class="h-80 relative overflow-hidden scanline">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="A full-body studio shot of a model wearing high-tech streetwear techwear. The outfit includes a matte black tactical jacket with glowing cyan trim, numerous utility pockets, and a matching modular face mask. The background is a dark urban environment with vertical neon light strips in magenta and cyan, emphasizing the futuristic and aggressive silhouette of the apparel." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLDE8xSxyZpxV_up801pPhpygnN3xmRk-zlybkKNNaSDdcfToJYwLWaJYci8_ojtJcFlz04lia7mJzybYwzNRM_XKr4z4HWGSAM5CuyFzpcmWedCtm_pebR-nWdxdTq7YYcCseU0PrpuL_8siNs1vTac_BfaWpZwRVKHqtT69CjwhegWkiV41wSvNpLHaMLW9QcsN-vkoIWm7grVnlmC3KZ-bRQW9VY-8-cxxfrSYgSWcqAX3DRjUpbMUw4GnmL7hdK_nE0R0H8NX5"/>
+</div>
+<div class="p-8 flex-1 flex flex-col justify-between">
+<div>
+<div class="flex justify-between items-start mb-4">
+<h3 class="font-headline-md text-headline-md text-on-surface group-hover:text-primary-fixed transition-colors">VORTEX_T6 HOODIE</h3>
+<div class="font-data-lg text-data-lg text-primary-fixed glow-cyan">₿0.42</div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6">Internal heating elements and neural-link sync capabilities. Water-resistant nano-fiber construction with active camouflage patches.</p>
+</div>
+<div class="flex gap-4">
+<button class="flex-1 py-3 bg-primary-fixed/20 border border-primary-fixed text-primary-fixed font-label-caps text-label-caps hover:bg-primary-fixed hover:text-on-primary-fixed transition-all">ADD_TO_LOADOUT</button>
+</div>
+</div>
+</div>
+<!-- Product Card 2 -->
+<div class="glass-panel group p-4 flex flex-col border-glow-cyan">
+<div class="h-48 mb-4 relative overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover group-hover:opacity-80 transition-opacity" data-alt="Close up photography of a futuristic neural chip hardware module. The chip has a complex array of golden contact points and glowing purple internal lights. It sits on a dark, textured circuit board background. The lighting is dramatic and moody, highlighting the sharp technical edges and advanced engineering feel of the component." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDa3OnKtDyp7iFZ_MMSS5_QoQjO9rlANSfXXYTPITG8q9IfFGFoN3ou-onLlCQNr7zezZwkhefimE1lJiGpNNzVjpzqgWMLB8_zLU_seVqheIkqOYUrpTPNKD_bPfcgpzqgA5UxKVw_E8yIsQkE35fOT3N7NjWhhunRb55lCKgMdkqm-DriTkYRv5VRp8-dueQmsfBsXxShRSMVNKC4rB58h4SJMZQO4npYndD773rKKseNzDh44lhxzdK_7SfkQEuc1ONx52tLeaQW"/>
+</div>
+<div class="font-data-md text-data-md text-secondary mb-1">HARDWARE // CHIPS</div>
+<h3 class="font-headline-md text-[18px] text-on-surface mb-2">NEURAL_LINK_V2</h3>
+<div class="mt-auto flex justify-between items-center">
+<div class="font-data-md text-data-md text-primary-fixed glow-cyan">₿0.12</div>
+<button class="w-10 h-10 border border-outline-variant flex items-center justify-center hover:border-primary-fixed hover:text-primary-fixed transition-all">
+<span class="material-symbols-outlined text-sm">add</span>
+</button>
+</div>
+</div>
+<!-- Product Card 3 -->
+<div class="glass-panel group p-4 flex flex-col">
+<div class="h-48 mb-4 relative overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover group-hover:opacity-80 transition-opacity" data-alt="Futuristic glowing neon goggles with a digital heads-up display reflecting in the lenses. The goggles are sleek and minimalist, finished in a matte black composite material. They are positioned in a three-quarter view against a dark background with blue and red ambient lighting that creates a high-contrast cyberpunk tech look." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDmJh0JgXcaJXMihreavJbB62v6xhRw4PAZ322g6-1Ry0ebi8O92768hdpRmiV7ycWiAU113arCKCPJYUBBFhrer9rWyUYtVZTvXI3GWI1hZixhKTlZKWth59YwLI7ZEjWoxd-VWHvtCGq5FP0OY6OJHo6iFYMtjLp0DSP8fhGBNLVZkyqRwq1K0ra83_Z6yKRsV1e5BQtCjn4iG4A6HQLywbyYUWvTtYoE0xK7mqXdotUZjbnBbS-qJGk1u2Y-qfoxBLONGt-EdtGV"/>
+</div>
+<div class="font-data-md text-data-md text-secondary mb-1">OPTICS // GEAR</div>
+<h3 class="font-headline-md text-[18px] text-on-surface mb-2">GHOST_FRAME_X</h3>
+<div class="mt-auto flex justify-between items-center">
+<div class="font-data-md text-data-md text-primary-fixed glow-cyan">₿0.08</div>
+<button class="w-10 h-10 border border-outline-variant flex items-center justify-center hover:border-primary-fixed hover:text-primary-fixed transition-all">
+<span class="material-symbols-outlined text-sm">add</span>
+</button>
+</div>
+</div>
+<!-- Product Card 4 -->
+<div class="glass-panel group p-4 flex flex-col md:col-span-1">
+<div class="h-48 mb-4 relative overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover group-hover:opacity-80 transition-opacity" data-alt="A compact, rugged futuristic portable data terminal. The device features a small glowing green monochromatic screen with scrolling lines of hex code. The casing is made of worn industrial metal with tactical buttons and a heavy-duty cable connector. The setting is a dimly lit workbench with tools and mechanical parts scattered in the bokeh background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8qwFCiJBYyX5a6te9VQvSkBMZJ2QChr1zlEgBth-4I4nHKG-wnsACuBSOMf6WrZNazk_biNiy07PYhe57Kcq6Ic482VZzRssnmHzkA5lGnY87BpQ8L5YNS-C76MGdNC6t-4Nve81Q8vcb6yXBtOjHSLU_yympG2rphu4y7F1PtQ09HitVbCWuTjsmae4wOaQmfHe_75l63boVrbFwZRwfV4P8ULYbPTvefuroHdQX6qMZIPom5cfhG_LYXrMJsz7XYOSyywdkU1BN"/>
+</div>
+<div class="font-data-md text-data-md text-secondary mb-1">TERMINAL // HANDHELD</div>
+<h3 class="font-headline-md text-[18px] text-on-surface mb-2">DATA_BREACHER_PRO</h3>
+<div class="mt-auto flex justify-between items-center">
+<div class="font-data-md text-data-md text-primary-fixed glow-cyan">₿0.85</div>
+<button class="w-10 h-10 border border-outline-variant flex items-center justify-center hover:border-primary-fixed hover:text-primary-fixed transition-all">
+<span class="material-symbols-outlined text-sm">add</span>
+</button>
+</div>
+</div>
+<!-- Product Card 5 -->
+<div class="glass-panel group p-4 flex flex-col md:col-span-1 border-glow-cyan">
+<div class="h-48 mb-4 relative overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover group-hover:opacity-80 transition-opacity" data-alt="A pair of sleek, high-tech tactical gloves with carbon fiber knuckles and glowing orange fiber optic lines running along the fingers. The gloves are displayed on a dark grey mannequin hand. The background is a minimalist digital grid with subtle smoke effects and cool blue studio lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD0px8BZvcJr8nxVOhW-cbG5xEJZLH_92WbQsReAUEUFt6GkmNugqcTvshlhAwt4VNsFpBByH0cSXMBfEO21YhnYUKUmL8P9iiwNAtg5f_V5yzaBLlpfje_qOwK68GCsoEcHb5ej5UZyenlnUQpaOOGHjRdv8gsmKtLQZp8Ik9Q4g2Vi_E9xyYjqk5n9REb59RXdM7EGiqZuyX69wjiWc_rkgBnbnCVigRdNFmnVQqPAoN_L0RYhFSOOh7u1a7mX69_DWPYjfKUcZ3Y"/>
+</div>
+<div class="font-data-md text-data-md text-secondary mb-1">APPAREL // TACTICAL</div>
+<h3 class="font-headline-md text-[18px] text-on-surface mb-2">SYNERGY_GRIP_MK1</h3>
+<div class="mt-auto flex justify-between items-center">
+<div class="font-data-md text-data-md text-primary-fixed glow-cyan">₿0.05</div>
+<button class="w-10 h-10 border border-outline-variant flex items-center justify-center hover:border-primary-fixed hover:text-primary-fixed transition-all">
+<span class="material-symbols-outlined text-sm">add</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Newsletter / Data-Stream Section -->
+<section class="bg-surface-container-low border-y border-dashed border-outline-variant py-16 px-margin-mobile md:px-margin-desktop">
+<div class="max-w-max-width mx-auto grid grid-cols-1 md:grid-cols-2 gap-gutter items-center">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary-fixed uppercase mb-4 italic">STAY_CONNECTED</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6 max-w-md">Subscribe to our encrypted data stream for priority access to hardware drops and black-market mods.</p>
+</div>
+<div>
+<form class="flex flex-col sm:flex-row gap-4">
+<input class="flex-1 bg-surface-container-highest border-b-2 border-primary-fixed text-on-surface p-4 focus:outline-none focus:bg-surface-container-high transition-all font-data-md text-data-md" placeholder="ENTER_COMMS_ID@NET.LINK" type="email"/>
+<button class="bg-primary-fixed text-on-primary-fixed font-label-caps text-label-caps px-8 py-4 hover:glow-cyan active:scale-95 transition-all">ESTABLISH_LINK</button>
+</form>
+<div class="mt-4 flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-primary-fixed animate-ping"></div>
+<span class="font-data-md text-[10px] text-on-surface-variant opacity-60">SECURE TUNNEL ESTABLISHED: 128-BIT ENCRYPTION</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="bg-surface-container-highest w-full bottom-0 mt-auto border-t border-dashed border-outline-variant">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter px-margin-desktop py-12 max-w-max-width mx-auto">
+<div class="md:col-span-1">
+<div class="font-headline-lg text-headline-lg text-primary-fixed mb-4">NEON_MARKET</div>
+<p class="font-data-md text-data-md text-on-surface-variant">The premiere destination for edge-runners and digital architects since 2098.</p>
+</div>
+<div>
+<div class="font-label-caps text-label-caps text-primary-fixed mb-6">DIRECTORIES</div>
+<ul class="space-y-3">
+<li><a class="font-data-md text-data-md text-on-surface-variant hover:text-primary-fixed transition-all uppercase" href="#">TERMINAL_LOGS</a></li>
+<li><a class="font-data-md text-data-md text-on-surface-variant hover:text-primary-fixed transition-all uppercase" href="#">WARRANTY_VOID</a></li>
+<li><a class="font-data-md text-data-md text-on-surface-variant hover:text-primary-fixed transition-all uppercase" href="#">DEBUG_MODE</a></li>
+<li><a class="font-data-md text-data-md text-on-surface-variant hover:text-primary-fixed transition-all uppercase" href="#">ENCRYPTION_DOCS</a></li>
+</ul>
+</div>
+<div>
+<div class="font-label-caps text-label-caps text-primary-fixed mb-6">SYSTEM_STATUS</div>
+<div class="space-y-3 font-data-md text-data-md text-on-surface-variant">
+<div class="flex justify-between border-b border-outline-variant/30 pb-1">
+<span>GATEWAY_01</span>
+<span class="text-primary-fixed">ONLINE</span>
+</div>
+<div class="flex justify-between border-b border-outline-variant/30 pb-1">
+<span>MARKET_API</span>
+<span class="text-primary-fixed">ACTIVE</span>
+</div>
+<div class="flex justify-between border-b border-outline-variant/30 pb-1">
+<span>LOAD_BALANCER</span>
+<span class="text-error">BUSY</span>
+</div>
+</div>
+</div>
+<div>
+<div class="font-label-caps text-label-caps text-primary-fixed mb-6">DECRYPTED_COMMUNS</div>
+<div class="flex gap-4">
+<a class="w-10 h-10 border border-outline-variant flex items-center justify-center hover:bg-primary-fixed/20 hover:border-primary-fixed hover:text-primary-fixed transition-all" href="#">
+<span class="material-symbols-outlined">hub</span>
+</a>
+<a class="w-10 h-10 border border-outline-variant flex items-center justify-center hover:bg-primary-fixed/20 hover:border-primary-fixed hover:text-primary-fixed transition-all" href="#">
+<span class="material-symbols-outlined">share</span>
+</a>
+<a class="w-10 h-10 border border-outline-variant flex items-center justify-center hover:bg-primary-fixed/20 hover:border-primary-fixed hover:text-primary-fixed transition-all" href="#">
+<span class="material-symbols-outlined">rss_feed</span>
+</a>
+</div>
+</div>
+</div>
+<div class="border-t border-outline-variant/20 py-6 px-margin-desktop max-w-max-width mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+<div class="font-data-md text-data-md uppercase text-on-tertiary-fixed-variant">© 2104 NEURAL_NET_COMMERCE. ALL RIGHTS RESERVED.</div>
+<div class="flex gap-6 font-data-md text-[10px] text-on-surface-variant/40">
+<span>IP_AUTH: 192.168.4.1</span>
+<span>LATENCY: 42MS</span>
+<span>SESSION: RX-990</span>
+</div>
+</div>
+</footer>
+</main>
+<!-- Floating Action Button (FAB) - Suppression Logic: Rendered here as it aligns with Main/Home intent -->
+<button class="fixed bottom-8 right-8 w-16 h-16 bg-primary-container text-on-primary-container rounded-full shadow-[0_0_20px_rgba(0,219,231,0.5)] flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-50">
+<span class="material-symbols-outlined text-3xl">bolt</span>
+</button>
+<script>
+        // Micro-interaction for glitched cursor or ambient effects
+        document.addEventListener('mousemove', (e) => {
+            const neuralBg = document.querySelector('.neural-bg');
+            if (neuralBg) {
+                const x = (e.clientX / window.innerWidth) * 100;
+                const y = (e.clientY / window.innerHeight) * 100;
+                neuralBg.style.backgroundPosition = `${x * 0.2}px ${y * 0.2}px`;
+            }
+        });
+
+        // Add scanline hover effect logic if needed
+        const productCards = document.querySelectorAll('.glass-panel');
+        productCards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                const img = card.querySelector('img');
+                if (img) img.style.filter = 'none';
+            });
+            card.addEventListener('mouseleave', () => {
+                const img = card.querySelector('img');
+                if (img) img.style.filter = '';
+            });
+        });
+    </script>
+</body></html>

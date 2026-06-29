@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>WANI Store | Minimalist Boutique</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=Playfair+Display:ital,wght@0,400;0,700;1,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed-variant": "#38485d",
+                    "primary": "#004ac6",
+                    "background": "#faf8ff",
+                    "primary-container": "#2563eb",
+                    "secondary": "#505f76",
+                    "on-primary-fixed-variant": "#003ea8",
+                    "on-primary-fixed": "#00174b",
+                    "tertiary": "#784b00",
+                    "secondary-container": "#d0e1fb",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-tint": "#0053db",
+                    "on-surface": "#131b2e",
+                    "surface-container-low": "#f2f3ff",
+                    "tertiary-container": "#996100",
+                    "on-surface-variant": "#434655",
+                    "on-background": "#131b2e",
+                    "on-tertiary-fixed-variant": "#653e00",
+                    "surface": "#faf8ff",
+                    "tertiary-fixed-dim": "#ffb95f",
+                    "surface-dim": "#d2d9f4",
+                    "outline-variant": "#c3c6d7",
+                    "on-primary": "#ffffff",
+                    "on-tertiary-fixed": "#2a1700",
+                    "surface-container": "#eaedff",
+                    "on-secondary-container": "#54647a",
+                    "on-error": "#ffffff",
+                    "primary-fixed-dim": "#b4c5ff",
+                    "on-secondary": "#ffffff",
+                    "inverse-primary": "#b4c5ff",
+                    "error-container": "#ffdad6",
+                    "surface-container-high": "#e2e7ff",
+                    "surface-bright": "#faf8ff",
+                    "secondary-fixed": "#d3e4fe",
+                    "on-tertiary-container": "#ffeedd",
+                    "surface-variant": "#dae2fd",
+                    "primary-fixed": "#dbe1ff",
+                    "tertiary-fixed": "#ffddb8",
+                    "on-secondary-fixed": "#0b1c30",
+                    "error": "#ba1a1a",
+                    "inverse-surface": "#283044",
+                    "on-error-container": "#93000a",
+                    "secondary-fixed-dim": "#b7c8e1",
+                    "surface-container-highest": "#dae2fd",
+                    "on-tertiary": "#ffffff",
+                    "on-primary-container": "#eeefff",
+                    "outline": "#737686",
+                    "inverse-on-surface": "#eef0ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "base": "4px",
+                    "lg": "24px",
+                    "margin-mobile": "16px",
+                    "2xl": "64px",
+                    "xs": "4px",
+                    "sm": "8px",
+                    "md": "16px",
+                    "margin-desktop": "auto",
+                    "xl": "40px",
+                    "gutter": "20px",
+                    "3xl": "80px"
+            },
+            "fontFamily": {
+                    "serif": ["Playfair Display", "serif"],
+                    "display-lg-mobile": ["Plus Jakarta Sans"],
+                    "label-sm": ["Inter"],
+                    "display-lg": ["Plus Jakarta Sans"],
+                    "headline-md": ["Plus Jakarta Sans"],
+                    "label-md": ["JetBrains Mono"],
+                    "body-md": ["Inter"],
+                    "headline-sm": ["Plus Jakarta Sans"],
+                    "body-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "display-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "800"}],
+                    "label-sm": ["12px", {"lineHeight": "1.0", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "headline-md": ["30px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "label-md": ["14px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "headline-sm": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #faf8ff;
+            color: #131b2e;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+        .serif-italic { font-family: 'Playfair Display', serif; font-style: italic; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .fade-in { animation: fadeIn 1.2s ease-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .line-draw {
+            position: relative;
+        }
+        .line-draw::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: currentColor;
+            transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .line-draw:hover::after {
+            width: 100%;
+        }
+        .glass-nav {
+            backdrop-filter: blur(12px);
+            background: rgba(250, 248, 255, 0.85);
+        }
+    </style>
+</head>
+<body class="font-body-md text-on-surface">
+<!-- TopNavBar (Shared Component) -->
+<nav class="w-full sticky top-0 z-50 bg-surface glass-nav border-b border-outline-variant shadow-sm transition-all duration-300">
+<div class="flex justify-between items-center max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop h-16">
+<!-- Brand -->
+<div class="font-headline-sm text-headline-sm font-bold text-primary">WANI Store</div>
+<!-- Navigation Links -->
+<div class="hidden md:flex items-center gap-xl font-body-md text-body-md">
+<a class="text-primary font-bold border-b-2 border-primary pb-1 active:scale-95 transition-transform" href="#">Home</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-200 active:scale-95 transition-transform" href="#">Products</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-200 active:scale-95 transition-transform" href="#">Categories</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-200 active:scale-95 transition-transform" href="#">About Us</a>
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-md">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors duration-200">
+<span class="material-symbols-outlined">shopping_cart</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors duration-200">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+<button class="md:hidden p-2 text-on-surface-variant">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+</div>
+</nav>
+<main>
+<!-- Artistic Hero Section -->
+<section class="relative h-[921px] flex items-center overflow-hidden px-margin-mobile md:px-margin-desktop">
+<div class="max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-12 gap-xl relative z-10">
+<div class="md:col-span-6 flex flex-col justify-center space-y-lg fade-in">
+<span class="font-label-md text-label-md tracking-widest text-primary uppercase">Curation 01</span>
+<h1 class="font-serif text-6xl md:text-8xl text-on-surface leading-tight">
+                        Quiet <br/>
+<span class="serif-italic">Elegance.</span>
+</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-md">
+                        A minimalist sanctuary for the modern connoisseur. Discover pieces that speak without raising their voice.
+                    </p>
+<div class="pt-md">
+<a class="inline-flex items-center gap-sm font-label-md text-label-md border border-on-surface px-xl py-md hover:bg-on-surface hover:text-surface transition-all duration-300" href="#arrivals">
+                            EXPLORE COLLECTION
+                            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</a>
+</div>
+</div>
+<div class="md:col-span-6 flex justify-end relative">
+<div class="relative w-full aspect-[4/5] md:w-[85%] group overflow-hidden">
+<img class="w-full h-full object-cover grayscale-[20%] group-hover:scale-105 transition-transform duration-1000" data-alt="A high-end minimalist lifestyle photo of a single handcrafted ceramic vase on a light wood plinth. The lighting is soft, natural daylight coming from the side, creating long, gentle shadows. The room is a pristine off-white gallery space, conveying a sense of quiet luxury, calm, and artisanal quality." src="https://lh3.googleusercontent.com/aida-public/AB6AXuClOspbhmnrYqm0RlZqpFM-C1KMtbCRCRvNOsq3FPK1ZVsffbO7Sys_WT3exG4pX6GGLdBqjnaemnISMC-wA8iBRZ8YkyRXzJVOjZxvH9Us82ATiL6xDMT-2gG_RAFy82XvPs6izENwWjUK1HaEnHssiVnUB7wktdHOXo0zkbLUcQAfg7o2WOE-uLEPkij-SCk-Tj9Mf0f8QAcnNrRq39v6Rxnj_xgZ96rnOJZxQpXYa41Hm76FPYIeJxxheF-5ITU-jFIxpT9i3sZ2"/>
+<div class="absolute -bottom-4 -left-4 bg-surface p-xl border border-outline-variant hidden md:block">
+<p class="font-serif italic text-headline-sm">"Beauty in restraint"</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Decorative circle -->
+<div class="absolute top-1/2 right-0 -translate-y-1/2 w-[500px] h-[500px] border border-outline-variant rounded-full opacity-20 -mr-64 pointer-events-none"></div>
+</section>
+<!-- New Arrivals (Single Focused Carousel Pattern) -->
+<section class="py-3xl px-margin-mobile md:px-margin-desktop bg-surface-container-low" id="arrivals">
+<div class="max-w-7xl mx-auto">
+<div class="flex justify-between items-end mb-2xl">
+<div class="space-y-sm">
+<h2 class="font-serif text-headline-sm text-4xl">New Arrivals</h2>
+<div class="w-12 h-px bg-primary"></div>
+</div>
+<a class="font-label-md text-label-md line-draw" href="#">VIEW ALL PRODUCTS</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-xl">
+<!-- Product 1 -->
+<div class="group cursor-pointer">
+<div class="aspect-[1/1] overflow-hidden bg-white border border-outline-variant mb-md">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="A studio shot of a minimalist matte black sculptural candle holder. The lighting is dramatic yet soft, highlighting the smooth curves and texture of the object. The background is a warm beige neutral tone. The composition is clean, centered, and sophisticated, reflecting a boutique UMKM aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD3aM-cGkbWZEa7JlWotSEKCJmjQOgpmHXsXfY5U3USLZjLO5Q8TLsiQI8DFt71SoTGsZaLb6mVm-fdNjkFTjySk9Dm-mI0d8_KEe7u9d35QaPG3k-1OUSZi29smQW9hI7zUYQHGEApicY2T4bJi5UllJgvKLWH07iPJ0fQroErmc9dQWFeps4_fQOg0caFxUHK77bnIE0xKzOH51ZomOcAzxJfVMlaMLgLVKzNxZcQTAca3bj3X8kQBLmxysTK2KVKyCYcD_8kI1bg"/>
+</div>
+<div class="space-y-xs">
+<p class="font-label-sm text-on-surface-variant opacity-60">LIVING</p>
+<h3 class="font-body-lg text-body-lg group-hover:text-primary transition-colors">Obsidian Vessel</h3>
+<p class="font-label-md text-label-md text-primary">$120.00</p>
+</div>
+</div>
+<!-- Product 2 -->
+<div class="group cursor-pointer md:mt-12">
+<div class="aspect-[1/1] overflow-hidden bg-white border border-outline-variant mb-md">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="Close-up of a high-quality, beige linen throw blanket draped over a minimalist lounge chair. The fabric texture is crisp and natural. Soft evening light creates a cozy and elegant atmosphere. Neutral grey and white color palette, professional product photography for a luxury store." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNQvccCeSqksc-izikpIW7do6fqHme7XOQOskz5uCVt8S6M_dIbfCzSDmQh2Vsq5kdEH_VfJwfsBdo7SNz-sNQPKpAsIYQ0OIecl_FKVaXboblFvKj8pBPemV0JgR5-JIXv67dcoBvZFVX0OrMElXtV3M-OcxIzEbBRtu0ol9nUDDARAIRht9pVHRaovqYqPK7Yf6QewnFZzGcf_biVbkSJJm2FTEkpO16NAC0Nex7ufeP0E04xSOYbfaA26Go6XEFBMSXTmIkFCE7"/>
+</div>
+<div class="space-y-xs">
+<p class="font-label-sm text-on-surface-variant opacity-60">TEXTILES</p>
+<h3 class="font-body-lg text-body-lg group-hover:text-primary transition-colors">Raw Linen Throw</h3>
+<p class="font-label-md text-label-md text-primary">$85.00</p>
+</div>
+</div>
+<!-- Product 3 -->
+<div class="group cursor-pointer">
+<div class="aspect-[1/1] overflow-hidden bg-white border border-outline-variant mb-md">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" data-alt="A minimalist set of white stoneware bowls stacked neatly on a limestone countertop. The lighting is bright and high-key, creating a clean and modern professional look. Soft shadows and a monochromatic white-on-white aesthetic. Elegant kitchenware for a refined lifestyle boutique." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB4Il9Pv0Im8F7u-7zhqHJiSFZKe6dfJm610qLfPRmZJyPsNUvIuEPtY-TvLgKCaSWzhz2IKB_qbTGklrbhPzCDN83j3uD9Jtc47ng25g_VYMzY-LBwyJ5QqcF7YUgOMqcD-FWPvsK-ZPtL-4Mr3c2Ig9b4PR0XeEMyq2nBePx5vVYiWqiaCZRHkEDVk6DrLv3iVsqt_ElldiTuyqnnWqYfViYTJDqKpgeezkzXRgvwT6Pq_QtCgvHrKMnjQ42GRftbwe5aUALf8As5"/>
+</div>
+<div class="space-y-xs">
+<p class="font-label-sm text-on-surface-variant opacity-60">DINING</p>
+<h3 class="font-body-lg text-body-lg group-hover:text-primary transition-colors">Limestone Plate Set</h3>
+<p class="font-label-md text-label-md text-primary">$150.00</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Minimalist Gallery (Asymmetric Bento) -->
+<section class="py-3xl px-margin-mobile md:px-margin-desktop">
+<div class="max-w-7xl mx-auto">
+<div class="text-center mb-2xl space-y-md">
+<h2 class="font-serif text-5xl">The Gallery</h2>
+<p class="font-body-md text-on-surface-variant max-w-xl mx-auto">A visual exploration of form and texture through the lens of WANI Store.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-md h-auto md:h-[800px]">
+<div class="md:col-span-2 md:row-span-2 relative overflow-hidden group">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000" data-alt="A wide-angle artistic interior shot of a minimalist living room with a single floor-to-ceiling window. The space features a low-profile sofa, a circular jute rug, and a large abstract painting in muted earth tones. The morning sun casts long, architectural shadows across the floor. Sophisticated and calm atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2v2Pr31U-2C5mBsz8PAZu080AnCs0VQUvR1oIjKmz-3vGPOh0R9l_xjJoUxTrRg4LZJPHmYLWZRFanRy4l7xr8dXmyZinlpf6xy8E4hBG1WWwdNCoIHKE0MFHkTmTN8U-ApBnhENOEr239Uci84Dn1_GrAKd1BUN1LlSMaQfvkbufT-4wUiYAHwFAIx3xcd_0H8NW24BNCQvzNEJ3hYAdDKf6poK-ApjtqZwI1d5KxiF3zuG0e327hvSLxQzausEE1sVwXVybyEg8"/>
+<div class="absolute inset-0 bg-on-surface/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+</div>
+<div class="md:col-span-2 relative overflow-hidden group">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000" data-alt="Macro detail of a hand-woven artisan basket, showing the intricate natural fibers and textures. The lighting is soft and focused, highlighting the craftsmanship. Neutral beige and tan color palette. Modern professional aesthetic for a boutique store." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqcMtM0dpmRbyeGmahwDQzHBZpsroK0ficsQA0Eu0fUYdibyFzKegjtykwyFpIlHJ7KAEZDk1yO3A1CEfA0OsR-DPwO6FTFmujsKD4HWTQs6jMU1n8CzalU7NC9Mur8Ne1jvwDcIVZNLTeGwPxo6dQJzMZJK8R1i8w9jqyLM5aE7ugXFpuzQRmLFy_tTyYnTcG6kgg1aBlx3riLADghL66q5c8UdTmSrMWRexKw27KOXcFWnIE2WObPfbKHYYJEpPXy2sjhrWGLXv0"/>
+</div>
+<div class="relative overflow-hidden group">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000" data-alt="A minimalist artistic arrangement of dried pampas grass in a white ceramic vase, set against a soft grey background. Clean, elegant, and peaceful visual for a modern lifestyle brand." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDW7ap1_RMLJhgpHwA5A_evxznaueBllLPMUzaKa7PjE4K8XOnSLqhWZTXb9u9Q4AOiWwpNKytw7hri1gycazzSZ5QXxtsYcjl-y5Uh7hzBYh_JoLa3Zar6nl_EkSTQxBOaiy4K8xYVSRfTeTzsynbpCxGwrgSW-gh5BeUMwpFyNSYePLnGCjOXNSIyF2eITy8gSAhcZ9Ssw4hqqCVgajVXjC7b2xy4-ZxpvvSgkfOv5i3vQ92r_7p3thDSDelyoHPasn_ro9PXgLQM"/>
+</div>
+<div class="relative overflow-hidden group">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000" data-alt="Still life photography of a stack of coffee table books with neutral covers, topped with a small brass object. Soft, diffused lighting in an elegant studio setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqWF3B7PBmcNxY-aLvtclixD2VI_F1UgB-UoyBrMXKeiNdma-tRxP2yMyr6mlEfPfoFK2PVVpMQN9CwJ--qGkaEOhFxalfINGyOzKg-0Tw5gS1uf68jfyfKWp5Eii2DDICqJH8LFUcWhFNIhAtR60Qyn8nLFGKf_7pGsL6N-Vntf7YZofCeWwUqeCIsxGH26o3yc4SGs4wRkhAdVOP1EoPrrW7JtkRR-bb3tKHDO37J9DnfVyVABTIRh8TDTPwPswjknOUsFlB_y1i"/>
+</div>
+</div>
+</div>
+</section>
+<!-- Store Philosophy (Boutique Style) -->
+<section class="py-3xl bg-surface-container text-on-surface relative overflow-hidden">
+<div class="max-w-5xl mx-auto px-margin-mobile md:px-margin-desktop text-center relative z-10">
+<span class="material-symbols-outlined text-4xl mb-xl text-primary opacity-40">eco</span>
+<h2 class="font-serif text-4xl md:text-5xl mb-xl italic">"We believe that a well-designed home is a foundation for a well-lived life."</h2>
+<p class="font-body-lg text-body-lg max-w-2xl mx-auto mb-2xl opacity-80 leading-relaxed">
+                    WANI Store was founded on the principle of intentional living. Every item in our boutique is curated for its quality, its story, and its ability to bring a sense of calm to your daily rituals. We prioritize sustainable UMKM artisans who share our vision of beauty through simplicity.
+                </p>
+<div class="flex flex-wrap justify-center gap-xl">
+<div class="flex flex-col items-center">
+<span class="font-serif text-3xl font-bold">100%</span>
+<span class="font-label-sm uppercase tracking-widest opacity-60">Artisanal</span>
+</div>
+<div class="w-px h-12 bg-outline-variant hidden md:block"></div>
+<div class="flex flex-col items-center">
+<span class="font-serif text-3xl font-bold">Sustain</span>
+<span class="font-label-sm uppercase tracking-widest opacity-60">Sourced</span>
+</div>
+<div class="w-px h-12 bg-outline-variant hidden md:block"></div>
+<div class="flex flex-col items-center">
+<span class="font-serif text-3xl font-bold">Global</span>
+<span class="font-label-sm uppercase tracking-widest opacity-60">Shipping</span>
+</div>
+</div>
+</div>
+<!-- Background Decoration -->
+<div class="absolute inset-0 pointer-events-none opacity-5">
+
+</div>
+</section>
+</main>
+<!-- Footer (Shared Component) -->
+<footer class="w-full border-t border-outline-variant bg-surface-container-low">
+<div class="flex flex-col md:flex-row justify-between items-start py-xl px-margin-mobile md:px-margin-desktop max-w-7xl mx-auto gap-xl">
+<div class="space-y-md">
+<div class="font-headline-sm text-headline-sm font-bold text-on-surface">WANI Store</div>
+<p class="font-body-md text-on-surface-variant max-w-xs">Curating elegance for your sanctuary since 2024.</p>
+<div class="flex gap-md">
+<a class="w-10 h-10 border border-outline-variant flex items-center justify-center rounded-full hover:bg-primary hover:text-white hover:border-primary transition-all" href="#">
+<span class="material-symbols-outlined text-sm">public</span>
+</a>
+<a class="w-10 h-10 border border-outline-variant flex items-center justify-center rounded-full hover:bg-primary hover:text-white hover:border-primary transition-all" href="#">
+<span class="material-symbols-outlined text-sm">chat</span>
+</a>
+</div>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-2 gap-xl w-full md:w-auto">
+<div class="space-y-sm">
+<p class="font-label-md text-label-md font-bold mb-md uppercase tracking-wider">Help</p>
+<ul class="space-y-sm">
+<li><a class="font-label-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer" href="#">WhatsApp Support</a></li>
+<li><a class="font-label-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer" href="#">Store Location</a></li>
+</ul>
+</div>
+<div class="space-y-sm">
+<p class="font-label-md text-label-md font-bold mb-md uppercase tracking-wider">Company</p>
+<ul class="space-y-sm">
+<li><a class="font-label-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer" href="#">Payment Methods</a></li>
+<li><a class="font-label-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer" href="#">Privacy Policy</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="border-t border-outline-variant py-md px-margin-mobile md:px-margin-desktop max-w-7xl mx-auto">
+<p class="font-label-sm text-label-sm text-on-surface-variant text-center md:text-left">© 2024 WANI Ecosystem. All rights reserved.</p>
+</div>
+</footer>
+<!-- Custom Cursor Effect -->
+<div class="fixed w-8 h-8 border border-primary rounded-full pointer-events-none z-[9999] transition-transform duration-100 ease-out hidden md:block" id="cursor"></div>
+<script>
+        // Custom Cursor
+        const cursor = document.getElementById('cursor');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.transform = `translate(${e.clientX - 16}px, ${e.clientY - 16}px)`;
+        });
+
+        document.querySelectorAll('a, button').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursor.classList.add('scale-150', 'bg-primary/10');
+            });
+            el.addEventListener('mouseleave', () => {
+                cursor.classList.remove('scale-150', 'bg-primary/10');
+            });
+        });
+
+        // Sticky Nav Blur Change
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.classList.add('py-1');
+            } else {
+                nav.classList.remove('py-1');
+            }
+        });
+
+        // Simple intersection observer for reveal animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('section > div').forEach(div => observer.observe(div));
+    </script>
+</body></html>

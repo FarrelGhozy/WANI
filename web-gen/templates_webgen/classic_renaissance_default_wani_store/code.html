@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>WANI Store | Timeless Elegance</title>
+<!-- Google Fonts: Bodoni Moda for headlines, Plus Jakarta Sans for body -->
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&amp;family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+                  "tertiary-fixed": "#d2e4ff",
+                  "tertiary": "#085ea2",
+                  "surface-container": "#f7ecdf",
+                  "tertiary-fixed-dim": "#a1c9ff",
+                  "on-primary-container": "#fffbff",
+                  "outline-variant": "#d3c4af",
+                  "primary-container": "#986d00",
+                  "surface-container-highest": "#ece1d4",
+                  "on-secondary-fixed": "#1b1c1c",
+                  "error-container": "#ffdad6",
+                  "background": "#fff8f3",
+                  "inverse-on-surface": "#faefe2",
+                  "on-surface-variant": "#4f4535",
+                  "surface-container-high": "#f1e7d9",
+                  "on-secondary-fixed-variant": "#474747",
+                  "surface-dim": "#e3d8cc",
+                  "on-primary-fixed-variant": "#5d4200",
+                  "primary-fixed": "#ffdea6",
+                  "secondary-fixed-dim": "#c8c6c6",
+                  "on-tertiary": "#ffffff",
+                  "surface": "#fff8f3",
+                  "inverse-surface": "#353027",
+                  "surface-tint": "#7b5800",
+                  "surface-variant": "#ece1d4",
+                  "secondary-container": "#e4e2e1",
+                  "secondary-fixed": "#e4e2e1",
+                  "on-background": "#201b13",
+                  "surface-container-lowest": "#ffffff",
+                  "on-tertiary-fixed": "#001c37",
+                  "secondary": "#5f5e5e",
+                  "inverse-primary": "#f7bd48",
+                  "outline": "#817563",
+                  "tertiary-container": "#3477bc",
+                  "on-surface": "#201b13",
+                  "on-tertiary-container": "#fdfcff",
+                  "on-error-container": "#93000a",
+                  "on-tertiary-fixed-variant": "#004880",
+                  "on-secondary": "#ffffff",
+                  "error": "#ba1a1a",
+                  "on-error": "#ffffff",
+                  "primary": "#785600",
+                  "on-secondary-container": "#656464",
+                  "primary-fixed-dim": "#f7bd48",
+                  "surface-container-low": "#fdf2e5",
+                  "on-primary-fixed": "#271900",
+                  "on-primary": "#ffffff",
+                  "surface-bright": "#fff8f3"
+          },
+          "borderRadius": {
+                  "DEFAULT": "0.125rem",
+                  "lg": "0.25rem",
+                  "xl": "0.5rem",
+                  "full": "0.75rem"
+          },
+          "spacing": {
+                  "xs": "4px",
+                  "lg": "48px",
+                  "xl": "80px",
+                  "sm": "12px",
+                  "md": "24px",
+                  "base": "8px",
+                  "margin": "max(40px, 5vw)",
+                  "gutter": "32px"
+          },
+          "fontFamily": {
+                  "headline-md": ["Bodoni Moda"],
+                  "body-lg": ["Plus Jakarta Sans"],
+                  "display-lg-mobile": ["Bodoni Moda"],
+                  "label-sm": ["Plus Jakarta Sans"],
+                  "headline-lg": ["Bodoni Moda"],
+                  "display-lg": ["Bodoni Moda"],
+                  "body-md": ["Plus Jakarta Sans"]
+          },
+          "fontSize": {
+                  "headline-md": ["32px", {"lineHeight": "1.3", "fontWeight": "500"}],
+                  "body-lg": ["18px", {"lineHeight": "1.6", "letterSpacing": "0.01em", "fontWeight": "400"}],
+                  "display-lg-mobile": ["40px", {"lineHeight": "1.2", "fontWeight": "600"}],
+                  "label-sm": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                  "headline-lg": ["48px", {"lineHeight": "1.2", "fontWeight": "500"}],
+                  "display-lg": ["64px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                  "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .renaissance-border {
+      border: 1px solid rgba(120, 86, 0, 0.2);
+    }
+    .glass-nav {
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background font-body-md selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- Top Navigation Bar -->
+<header class="w-full sticky top-0 z-50 bg-surface shadow-sm border-b border-outline-variant">
+<div class="flex justify-between items-center max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop h-16">
+<!-- Brand Logo -->
+<div class="font-headline-sm text-headline-sm font-bold text-primary">WANI Store</div>
+<!-- Navigation Links -->
+<nav class="hidden md:flex gap-lg">
+<a class="text-primary font-bold border-b-2 border-primary pb-1 font-body-md text-body-md transition-colors duration-200" href="#">Home</a>
+<a class="text-on-surface-variant hover:text-primary font-body-md text-body-md transition-colors duration-200" href="#">Products</a>
+<a class="text-on-surface-variant hover:text-primary font-body-md text-body-md transition-colors duration-200" href="#">Categories</a>
+<a class="text-on-surface-variant hover:text-primary font-body-md text-body-md transition-colors duration-200" href="#">About Us</a>
+</nav>
+<!-- Action Icons -->
+<div class="flex items-center gap-md">
+<button class="active:scale-95 transition-transform text-on-surface-variant hover:text-primary">
+<span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+</button>
+<button class="active:scale-95 transition-transform text-on-surface-variant hover:text-primary">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+<button class="md:hidden active:scale-95 transition-transform">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+</div>
+</div>
+</header>
+<main>
+<!-- Hero Section -->
+<section class="relative overflow-hidden bg-surface-container-low py-xl">
+<div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop grid grid-cols-1 md:grid-cols-12 gap-xl items-center">
+<div class="md:col-span-5 text-center md:text-left z-10">
+<h1 class="font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mb-md">
+            Timeless Elegance for the Modern Connoisseur
+          </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-lg max-w-lg">
+            Discover a curated selection of artisanal masterpieces, where classical Renaissance beauty meets the sophisticated utility of the contemporary world.
+          </p>
+<div class="flex flex-col sm:flex-row gap-md justify-center md:justify-start">
+<button class="bg-primary text-on-primary px-lg py-sm font-label-sm text-label-sm rounded uppercase active:scale-95 transition-all">
+              Explore Collection
+            </button>
+<button class="border border-primary text-primary px-lg py-sm font-label-sm text-label-sm rounded uppercase hover:bg-primary-fixed-dim transition-all">
+              Our Story
+            </button>
+</div>
+</div>
+<div class="md:col-span-7 relative">
+<div class="aspect-[4/5] md:aspect-square renaissance-border p-sm bg-surface">
+<div class="w-full h-full overflow-hidden">
+<img class="w-full h-full object-cover grayscale-[20%] hover:scale-105 transition-transform duration-700" data-alt="A high-end cinematic photograph of handcrafted leather journals, gold fountain pens, and marble desk accessories arranged on an antique oak table. The lighting is soft and directional, reminiscent of a Caravaggio painting, highlighting textures and metallic glints. The color palette is dominated by warm ivories, rich ambers, and polished gold accents against a minimalist, cream-colored wall." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC4vJs17YZYv-HFGpvSMXzzZtfqydgr2_O7K2c1mcT5yNHWT-2BK0brGj3xJzvs_KxXlA3J0XN3VJvFW76kqA5Ys_88k7Zrckh64ZVI8Tt3nLqGqJ88n-I2ActMLNjgI2xx0TrgMxXc18P0ib_2eCpA7or7ftrTBwuQIhjq7UAPWeCrVKx73N4cEGWPEsS2NOiJghzgJueKS06Fhs0q7DxgdTLuxT3oNk9N-d6IXv2QBdJZLkxzCGns2zRjgn7NLA8W87-6_lK1zMCX"/>
+</div>
+</div>
+<!-- Decorative Architectural Element -->
+<div class="absolute -bottom-base -right-base w-32 h-32 border-r-2 border-b-2 border-primary opacity-30"></div>
+</div>
+</div>
+</section>
+<!-- New Arrivals Section (Product Grid) -->
+<section class="py-xl bg-background">
+<div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop">
+<div class="flex justify-between items-end mb-xl border-b border-outline-variant pb-md">
+<div>
+<span class="font-label-sm text-label-sm text-primary uppercase tracking-widest mb-xs block">Seasonal Selection</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">New Arrivals</h2>
+</div>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors pb-xs" href="#">View All →</a>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<!-- Product Card 1 -->
+<div class="group cursor-pointer">
+<div class="aspect-[3/4] renaissance-border bg-surface-container-high mb-md overflow-hidden relative">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="A minimalist studio shot of a hand-blown crystal carafe with a subtle gold rim, standing elegantly on a white marble plinth. The lighting is bright and ethereal, creating delicate shadows that emphasize the organic shape. The overall aesthetic is clean, luxurious, and high-renaissance inspired with ivory and gold tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC9LR-pX6WWDN57l2fi9SGzOr392S0RfzI1ozenX_A-8hILJB1xurXR2wnN3pOfVnyTcKH666nxHuaym7IvGaZawNRwBWG7PJQfOsFAIpwYaQmR86x1pHLV7LJSumk75T-qoRJzsYlGSauHWKHHbCVyd965sCy2KLBvwpMYnXx-efS0xQKeWleFGgBazljr46Cqs3N3Hj9KD1bhtKter-zPa_ngU4cuc6Pnsovb2iyugSexg4acLnMZO6afsfa3Hb3ba0NfxWqUdc9X"/>
+<div class="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-xs">
+<span class="bg-surface text-on-surface px-md py-xs font-label-sm text-label-sm uppercase">Quick View</span>
+</div>
+</div>
+<div class="text-center">
+<h3 class="font-headline-md text-headline-md text-on-surface text-lg">The Florentine Carafe</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">$240.00</p>
+</div>
+</div>
+<!-- Product Card 2 -->
+<div class="group cursor-pointer">
+<div class="aspect-[3/4] renaissance-border bg-surface-container-high mb-md overflow-hidden relative">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="A pair of artisanal leather loafers in a rich chestnut hue, featuring a discreet gold buckle detail. They are displayed against a clean, ivory-textured background with soft, ambient lighting that highlights the premium grain of the leather. The mood is sophisticated and timeless, adhering to a classical luxury style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9r_Ch8QKiwsZsiekMrbg7pmX8xpH1dGJDkTvPOkMRFHRIia55arhzKRje-ZJoruxUZscjj6CEGeUbn3s2M-xIPihZ-OwlcKiIqoZs6SfBxhfCj-B2lfA57AQAjG4ic_m1cmfPbgSTMhz3sBTpmGCUhCtv6Uc-R8-LEmYB7q9afUkgGeAjfeHxd2__Gs9URt9CaXRxoY_OD7ThuACgPyp8q3EjvFhAU0t6TRYkyFMHeqfkY5uk_nZpsgK90_gM4WSb408Bqw2MsZv_"/>
+<div class="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-xs">
+<span class="bg-surface text-on-surface px-md py-xs font-label-sm text-label-sm uppercase">Quick View</span>
+</div>
+</div>
+<div class="text-center">
+<h3 class="font-headline-md text-headline-md text-on-surface text-lg">Sienna Leather Loafers</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">$385.00</p>
+</div>
+</div>
+<!-- Product Card 3 -->
+<div class="group cursor-pointer">
+<div class="aspect-[3/4] renaissance-border bg-surface-container-high mb-md overflow-hidden relative">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="An exquisite piece of jewelry, a gold cuff bracelet with intricate classical engravings, presented in a minimalist velvet box of ivory color. High-key lighting creates a brilliant sparkle on the gold surface. The image is clean, high-contrast, and evokes a sense of curated excellence and historical depth." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUg6FAvg3WO3cApYlzwaaEpcBsRHXq4fTSrOaiT6UZS5tDbwwf1NgvLZ0x-PWHfVNcksB2icKLANVbnCupZqyyEA4k17hNLh451GPWlg0-NHRPyZZw67wSmud9iBUC9tPUhdaXAG-ClS0kwNtJdIQNi-CQXSMmuDPG74RwZHji2SlUlTAJdq68j9WVUZoca27hyb7UN448PFBrhKP4rNJEn51GlhBuijDh22JrtkcuKU6cjfP4Tl1lZl0NTLJfRpxn8BGK1ebwxEwy"/>
+<div class="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-xs">
+<span class="bg-surface text-on-surface px-md py-xs font-label-sm text-label-sm uppercase">Quick View</span>
+</div>
+</div>
+<div class="text-center">
+<h3 class="font-headline-md text-headline-md text-on-surface text-lg">Engraved Aurum Cuff</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">$520.00</p>
+</div>
+</div>
+<!-- Product Card 4 -->
+<div class="group cursor-pointer">
+<div class="aspect-[3/4] renaissance-border bg-surface-container-high mb-md overflow-hidden relative">
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" data-alt="A collection of premium organic candles in ceramic jars with gold-foil labels. The candles are arranged in an asymmetrical, editorial layout on a limestone surface. The scene is bathed in natural, warm sunlight, creating a serene and luxurious atmosphere typical of a boutique lifestyle brand." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2c0hONgrX-j1W8h7wGrQOMrP0Ij806z0tlmNvitQUtVgCGAd5vIoI0zgDtJQXD9MhbJkhwK-Vx6p7TNUF3jtAMV83F4US-CU3Wk1zTRG21G0PjUVtlZT4wlWBY_k1iWIaoueK_9oeNFp5K9V6oXgaYwUHWIvElDwzemlcmeCz-qTje3oJMwX0aRF9rMfxjn8TJxSfUqH9PyjzS9wOZSrcRcLhJYy-kAjIHOVEIQeGUXGnJsha39AyWGMscfEtYPprOYKFo0tip7Kh"/>
+<div class="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-xs">
+<span class="bg-surface text-on-surface px-md py-xs font-label-sm text-label-sm uppercase">Quick View</span>
+</div>
+</div>
+<div class="text-center">
+<h3 class="font-headline-md text-headline-md text-on-surface text-lg">Vesperal Candle Suite</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">$115.00</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- WhatsApp CTA Section (Asymmetric Bento) -->
+<section class="py-xl max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-md items-stretch">
+<div class="md:col-span-8 bg-surface-container p-lg flex flex-col justify-center renaissance-border">
+<span class="font-label-sm text-label-sm text-primary uppercase mb-base">Personalized Shopping</span>
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-md">Concierge Service</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-lg max-w-xl">
+            Experience the pinnacle of boutique service. Connect with our curators directly to curate your personal collection or source rare pieces from our global network.
+          </p>
+<div>
+<a class="inline-flex items-center gap-base bg-primary text-on-primary px-lg py-sm font-label-sm text-label-sm rounded uppercase active:scale-95 transition-transform" href="https://wa.me/wani">
+<span class="material-symbols-outlined" data-icon="chat">chat</span>
+              Order via WhatsApp
+            </a>
+</div>
+</div>
+<div class="md:col-span-4 min-h-[300px]">
+<div class="w-full h-full renaissance-border bg-surface-container-highest flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover grayscale-[10%] opacity-80" data-alt="A close-up shot of a smartphone lying next to a pair of luxury sunglasses on a marble tabletop. The phone screen shows a sophisticated chat interface. The aesthetic is clean, modern, and high-end, utilizing the brand's ivory and gold color palette to suggest a seamless integration of technology and luxury." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD1s-YtmPXlMXZMg-3yjCxuUfn1ztq_-D858kSrrkZ_sSkDuMxdSbaARLaLWzCajhq_6jeLMGple0UFC9XxAaO08W6jXQTUyHP1SNuu46yckzP8prvm1Z7iJTceZv3BT7XBLzsP3AFOP9cOHoWS7TlOXG7zMlxWxXZ1jGczwU1CQVpKXG2uAOt9w4NqXQ3_I97QXUSN2IPoGnY0QrQOX_fXYQsALk4ndDXSO0pgMaktCJ6kHdKlAMhLENItCaWoL_FSD4XxQYSgyXPW"/>
+</div>
+</div>
+</div>
+</section>
+<!-- Aesthetic Atmosphere Section (Full Width Image) -->
+<section class="relative h-[614px] flex items-center justify-center overflow-hidden mt-xl">
+<div class="absolute inset-0 bg-cover bg-fixed bg-center" data-alt="An expansive, wide-angle shot of a grand, minimalist library with soaring ceilings and arched windows. Soft morning light streams through the glass, illuminating dust motes in the air. The space is filled with high-renaissance architectural details like subtle cornices and polished stone floors, reflecting a sense of timeless intellectual luxury and calm." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAsB6_KzD0v3xQP3dTuL8JPFkRXbcID63cPyjF2wEJoBsmUChCIuJxQZ6E4b7BdehZ0xepPqj2CmPpmKBQsUlMHCto0pzLkKtrntwVwKOJ2N7FRTWMrH0TBioBFZ2hZSOF2TqqHCn8RUZf_7sWG3a-9ezCdmLJJvfWNpzF7ixHHZUDDqRT0IpjYdxfk3cHWbuCzYo6rGFgxhG3uLzuIsW7WkczP4lO5zCdxju2rQvQxcFVitSmyHtP33jI7grx5AqXYmKSHdvJLiBGm')"></div>
+<div class="absolute inset-0 bg-on-background/30 backdrop-blur-[2px]"></div>
+<div class="relative z-10 text-center max-w-3xl px-margin-mobile">
+<h2 class="font-display-lg text-display-lg-mobile md:text-display-lg text-surface mb-md italic">"Beauty is the splendor of truth."</h2>
+<p class="font-label-sm text-label-sm text-surface-variant uppercase tracking-widest">— Plato</p>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full border-t border-outline-variant bg-surface-container-low">
+<div class="flex flex-col md:flex-row justify-between items-center py-xl px-margin-mobile md:px-margin-desktop max-w-7xl mx-auto gap-md">
+<div class="flex flex-col items-center md:items-start gap-xs">
+<div class="font-headline-sm text-headline-sm font-bold text-on-surface">WANI Store</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant">© 2024 WANI Ecosystem. All rights reserved.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-lg">
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer" href="#">WhatsApp Support</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer" href="#">Store Location</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer" href="#">Payment Methods</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer" href="#">Privacy Policy</a>
+</div>
+<div class="flex gap-md">
+<span class="material-symbols-outlined text-primary cursor-pointer" data-icon="language">language</span>
+<span class="material-symbols-outlined text-primary cursor-pointer" data-icon="share">share</span>
+</div>
+</div>
+</footer>
+<!-- Micro-interactions Script -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Reveal animations on scroll
+      const observerOptions = {
+        threshold: 0.1
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('opacity-100', 'translate-y-0');
+            entry.target.classList.remove('opacity-0', 'translate-y-8');
+          }
+        });
+      }, observerOptions);
+
+      document.querySelectorAll('section').forEach(section => {
+        section.classList.add('transition-all', 'duration-1000', 'ease-out', 'opacity-0', 'translate-y-8');
+        observer.observe(section);
+      });
+
+      // Sticky Header glass effect transition
+      const header = document.querySelector('header');
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 20) {
+          header.classList.add('glass-nav', 'bg-surface/90');
+          header.classList.remove('bg-surface');
+        } else {
+          header.classList.remove('glass-nav', 'bg-surface/90');
+          header.classList.add('bg-surface');
+        }
+      });
+    });
+  </script>
+</body></html>
