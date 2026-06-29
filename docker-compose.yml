@@ -22,9 +22,7 @@ services:
         max-file: "3"
 
   api:
-    build:
-      context: .
-      dockerfile: api/Dockerfile
+    image: ghcr.io/farrelghozy/wani-api:latest
     depends_on:
       db:
         condition: service_healthy
@@ -94,9 +92,7 @@ services:
         max-file: "3"
 
   wa-bot:
-    build:
-      context: .
-      dockerfile: wa-bot/Dockerfile
+    image: ghcr.io/farrelghozy/wani-wa-bot:latest
     depends_on:
       db:
         condition: service_healthy
