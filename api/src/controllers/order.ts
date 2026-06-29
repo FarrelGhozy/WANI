@@ -1,6 +1,8 @@
 import type { Request, Response } from "express"
 import type { z } from "zod"
 import { OrderModel } from "@/src/models/order"
+import { ConversationModel } from "@/src/models/conversation"
+import { MessageModel } from "@/src/models/message"
 import { sendResponse } from "@/src/utils/response"
 import { NotFoundError } from "@/src/utils/errors"
 import {
@@ -59,5 +61,16 @@ export async function updateOrderPayment(
     status: req.body.status as $Enums.PaymentStatus,
     paidAt: req.body.paidAt ?? null,
   })
+
+  if (order.status === "CONFIRMED") {
+    const conv = await ConversationModel.findOrCreateActive(order.customerId)
+    await MessageModel.append({
+      conversationId: conv.id,
+      role: "BOT",
+      content: "Terima kasih! Pembayaran untuk pesanan Anda sudah dikonfirmasi. Pesanan sedang kami proses ya.",
+    })
+    await ConversationModel.touch(conv.id)
+  }
+
   sendResponse(res, 200, "payment updated", order)
 }

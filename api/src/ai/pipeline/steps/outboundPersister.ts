@@ -8,11 +8,12 @@ import type { PipelineStep } from "../types"
 export const outboundPersisterStep: PipelineStep = {
   name: "persist_outbound",
   async run(ctx) {
-    await MessageModel.append({
+    const msg = await MessageModel.append({
       conversationId: ctx.conversationId!,
       role: "BOT",
       content: ctx.finalReply!,
     })
+    await MessageModel.markDelivered(msg.id)
     await ConversationModel.touch(ctx.conversationId!)
     return { kind: "continue" }
   },
