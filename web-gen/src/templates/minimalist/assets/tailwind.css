@@ -39,14 +39,14 @@
     --default-font-family: var(--font-sans);
     --default-mono-font-family: var(--font-mono);
     --color-on-secondary-fixed-variant: #38485d;
-    --color-primary: var(--twc-primary, #cccccc);
+    --color-primary: var(--twc-primary, #004ac6);
     --color-background: #faf8ff;
-    --color-primary-container: #2563eb;
-    --color-secondary: var(--twc-secondary, #cccccc);
+    --color-primary-container: var(--twc-primary-container, #2563eb);
+    --color-secondary: var(--twc-secondary, #505f76);
     --color-on-primary-fixed-variant: #003ea8;
     --color-on-primary-fixed: #00174b;
     --color-tertiary: #784b00;
-    --color-secondary-container: #d0e1fb;
+    --color-secondary-container: var(--twc-secondary-container, #d0e1fb);
     --color-surface-container-lowest: #ffffff;
     --color-surface-tint: #0053db;
     --color-on-surface: #131b2e;
@@ -59,13 +59,13 @@
     --color-tertiary-fixed-dim: #ffb95f;
     --color-surface-dim: #d2d9f4;
     --color-outline-variant: #c3c6d7;
-    --color-on-primary: #ffffff;
+    --color-on-primary: var(--twc-on-primary, #ffffff);
     --color-on-tertiary-fixed: #2a1700;
     --color-surface-container: #eaedff;
     --color-on-secondary-container: #54647a;
     --color-on-error: #ffffff;
-    --color-primary-fixed-dim: #b4c5ff;
-    --color-on-secondary: #ffffff;
+    --color-primary-fixed-dim: var(--twc-primary-fixed-dim, #b4c5ff);
+    --color-on-secondary: var(--twc-on-secondary, #ffffff);
     --color-inverse-primary: #b4c5ff;
     --color-error-container: #ffdad6;
     --color-surface-container-high: #e2e7ff;
@@ -85,9 +85,6 @@
     --color-on-primary-container: #eeefff;
     --color-outline: #737686;
     --color-inverse-on-surface: #eef0ff;
-    --color-lineHeight: 1.6;
-    --color-fontWeight: 400;
-    --color-letterSpacing: 0.05em;
   }
 }
 @layer base {
@@ -433,15 +430,6 @@
       border-color: color-mix(in oklab, var(--color-error) 50%, transparent);
     }
   }
-  .border-fontWeight {
-    border-color: var(--color-fontWeight);
-  }
-  .border-fontWeight\/50 {
-    border-color: color-mix(in srgb, 400 50%, transparent);
-    @supports (color: color-mix(in lab, red, red)) {
-      border-color: color-mix(in oklab, var(--color-fontWeight) 50%, transparent);
-    }
-  }
   .border-inverse-on-surface {
     border-color: var(--color-inverse-on-surface);
   }
@@ -467,24 +455,6 @@
     border-color: color-mix(in srgb, #283044 50%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
       border-color: color-mix(in oklab, var(--color-inverse-surface) 50%, transparent);
-    }
-  }
-  .border-letterSpacing {
-    border-color: var(--color-letterSpacing);
-  }
-  .border-letterSpacing\/50 {
-    border-color: color-mix(in srgb, 0.05em 50%, transparent);
-    @supports (color: color-mix(in lab, red, red)) {
-      border-color: color-mix(in oklab, var(--color-letterSpacing) 50%, transparent);
-    }
-  }
-  .border-lineHeight {
-    border-color: var(--color-lineHeight);
-  }
-  .border-lineHeight\/50 {
-    border-color: color-mix(in srgb, 1.6 50%, transparent);
-    @supports (color: color-mix(in lab, red, red)) {
-      border-color: color-mix(in oklab, var(--color-lineHeight) 50%, transparent);
     }
   }
   .border-on-background {
@@ -545,7 +515,7 @@
     }
   }
   .border-on-primary\/50 {
-    border-color: color-mix(in srgb, #ffffff 50%, transparent);
+    border-color: var(--color-on-primary);
     @supports (color: color-mix(in lab, red, red)) {
       border-color: color-mix(in oklab, var(--color-on-primary) 50%, transparent);
     }
@@ -581,7 +551,7 @@
     }
   }
   .border-on-secondary\/50 {
-    border-color: color-mix(in srgb, #ffffff 50%, transparent);
+    border-color: var(--color-on-secondary);
     @supports (color: color-mix(in lab, red, red)) {
       border-color: color-mix(in oklab, var(--color-on-secondary) 50%, transparent);
     }
@@ -665,7 +635,7 @@
     border-color: var(--color-primary-container);
   }
   .border-primary-container\/50 {
-    border-color: color-mix(in srgb, #2563eb 50%, transparent);
+    border-color: var(--color-primary-container);
     @supports (color: color-mix(in lab, red, red)) {
       border-color: color-mix(in oklab, var(--color-primary-container) 50%, transparent);
     }
@@ -677,7 +647,7 @@
     border-color: var(--color-primary-fixed-dim);
   }
   .border-primary-fixed-dim\/50 {
-    border-color: color-mix(in srgb, #b4c5ff 50%, transparent);
+    border-color: var(--color-primary-fixed-dim);
     @supports (color: color-mix(in lab, red, red)) {
       border-color: color-mix(in oklab, var(--color-primary-fixed-dim) 50%, transparent);
     }
@@ -701,7 +671,7 @@
     border-color: var(--color-secondary-container);
   }
   .border-secondary-container\/50 {
-    border-color: color-mix(in srgb, #d0e1fb 50%, transparent);
+    border-color: var(--color-secondary-container);
     @supports (color: color-mix(in lab, red, red)) {
       border-color: color-mix(in oklab, var(--color-secondary-container) 50%, transparent);
     }
@@ -883,15 +853,6 @@
       background-color: color-mix(in oklab, var(--color-error) 20%, transparent);
     }
   }
-  .bg-fontWeight {
-    background-color: var(--color-fontWeight);
-  }
-  .bg-fontWeight\/20 {
-    background-color: color-mix(in srgb, 400 20%, transparent);
-    @supports (color: color-mix(in lab, red, red)) {
-      background-color: color-mix(in oklab, var(--color-fontWeight) 20%, transparent);
-    }
-  }
   .bg-inverse-on-surface {
     background-color: var(--color-inverse-on-surface);
   }
@@ -917,24 +878,6 @@
     background-color: color-mix(in srgb, #283044 20%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
       background-color: color-mix(in oklab, var(--color-inverse-surface) 20%, transparent);
-    }
-  }
-  .bg-letterSpacing {
-    background-color: var(--color-letterSpacing);
-  }
-  .bg-letterSpacing\/20 {
-    background-color: color-mix(in srgb, 0.05em 20%, transparent);
-    @supports (color: color-mix(in lab, red, red)) {
-      background-color: color-mix(in oklab, var(--color-letterSpacing) 20%, transparent);
-    }
-  }
-  .bg-lineHeight {
-    background-color: var(--color-lineHeight);
-  }
-  .bg-lineHeight\/20 {
-    background-color: color-mix(in srgb, 1.6 20%, transparent);
-    @supports (color: color-mix(in lab, red, red)) {
-      background-color: color-mix(in oklab, var(--color-lineHeight) 20%, transparent);
     }
   }
   .bg-on-background {
@@ -995,7 +938,7 @@
     }
   }
   .bg-on-primary\/20 {
-    background-color: color-mix(in srgb, #ffffff 20%, transparent);
+    background-color: var(--color-on-primary);
     @supports (color: color-mix(in lab, red, red)) {
       background-color: color-mix(in oklab, var(--color-on-primary) 20%, transparent);
     }
@@ -1031,7 +974,7 @@
     }
   }
   .bg-on-secondary\/20 {
-    background-color: color-mix(in srgb, #ffffff 20%, transparent);
+    background-color: var(--color-on-secondary);
     @supports (color: color-mix(in lab, red, red)) {
       background-color: color-mix(in oklab, var(--color-on-secondary) 20%, transparent);
     }
@@ -1115,7 +1058,7 @@
     background-color: var(--color-primary-container);
   }
   .bg-primary-container\/20 {
-    background-color: color-mix(in srgb, #2563eb 20%, transparent);
+    background-color: var(--color-primary-container);
     @supports (color: color-mix(in lab, red, red)) {
       background-color: color-mix(in oklab, var(--color-primary-container) 20%, transparent);
     }
@@ -1127,7 +1070,7 @@
     background-color: var(--color-primary-fixed-dim);
   }
   .bg-primary-fixed-dim\/20 {
-    background-color: color-mix(in srgb, #b4c5ff 20%, transparent);
+    background-color: var(--color-primary-fixed-dim);
     @supports (color: color-mix(in lab, red, red)) {
       background-color: color-mix(in oklab, var(--color-primary-fixed-dim) 20%, transparent);
     }
@@ -1157,7 +1100,7 @@
     background-color: var(--color-secondary-container);
   }
   .bg-secondary-container\/20 {
-    background-color: color-mix(in srgb, #d0e1fb 20%, transparent);
+    background-color: var(--color-secondary-container);
     @supports (color: color-mix(in lab, red, red)) {
       background-color: color-mix(in oklab, var(--color-secondary-container) 20%, transparent);
     }
@@ -1394,15 +1337,6 @@
       color: color-mix(in oklab, var(--color-error) 80%, transparent);
     }
   }
-  .text-fontWeight {
-    color: var(--color-fontWeight);
-  }
-  .text-fontWeight\/80 {
-    color: color-mix(in srgb, 400 80%, transparent);
-    @supports (color: color-mix(in lab, red, red)) {
-      color: color-mix(in oklab, var(--color-fontWeight) 80%, transparent);
-    }
-  }
   .text-inverse-on-surface {
     color: var(--color-inverse-on-surface);
   }
@@ -1428,24 +1362,6 @@
     color: color-mix(in srgb, #283044 80%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
       color: color-mix(in oklab, var(--color-inverse-surface) 80%, transparent);
-    }
-  }
-  .text-letterSpacing {
-    color: var(--color-letterSpacing);
-  }
-  .text-letterSpacing\/80 {
-    color: color-mix(in srgb, 0.05em 80%, transparent);
-    @supports (color: color-mix(in lab, red, red)) {
-      color: color-mix(in oklab, var(--color-letterSpacing) 80%, transparent);
-    }
-  }
-  .text-lineHeight {
-    color: var(--color-lineHeight);
-  }
-  .text-lineHeight\/80 {
-    color: color-mix(in srgb, 1.6 80%, transparent);
-    @supports (color: color-mix(in lab, red, red)) {
-      color: color-mix(in oklab, var(--color-lineHeight) 80%, transparent);
     }
   }
   .text-on-background {
@@ -1506,7 +1422,7 @@
     }
   }
   .text-on-primary\/80 {
-    color: color-mix(in srgb, #ffffff 80%, transparent);
+    color: var(--color-on-primary);
     @supports (color: color-mix(in lab, red, red)) {
       color: color-mix(in oklab, var(--color-on-primary) 80%, transparent);
     }
@@ -1542,7 +1458,7 @@
     }
   }
   .text-on-secondary\/80 {
-    color: color-mix(in srgb, #ffffff 80%, transparent);
+    color: var(--color-on-secondary);
     @supports (color: color-mix(in lab, red, red)) {
       color: color-mix(in oklab, var(--color-on-secondary) 80%, transparent);
     }
@@ -1626,7 +1542,7 @@
     color: var(--color-primary-container);
   }
   .text-primary-container\/80 {
-    color: color-mix(in srgb, #2563eb 80%, transparent);
+    color: var(--color-primary-container);
     @supports (color: color-mix(in lab, red, red)) {
       color: color-mix(in oklab, var(--color-primary-container) 80%, transparent);
     }
@@ -1638,7 +1554,7 @@
     color: var(--color-primary-fixed-dim);
   }
   .text-primary-fixed-dim\/80 {
-    color: color-mix(in srgb, #b4c5ff 80%, transparent);
+    color: var(--color-primary-fixed-dim);
     @supports (color: color-mix(in lab, red, red)) {
       color: color-mix(in oklab, var(--color-primary-fixed-dim) 80%, transparent);
     }
@@ -1662,7 +1578,7 @@
     color: var(--color-secondary-container);
   }
   .text-secondary-container\/80 {
-    color: color-mix(in srgb, #d0e1fb 80%, transparent);
+    color: var(--color-secondary-container);
     @supports (color: color-mix(in lab, red, red)) {
       color: color-mix(in oklab, var(--color-secondary-container) 80%, transparent);
     }
@@ -1856,12 +1772,6 @@
       --tw-shadow-color: color-mix(in oklab, var(--color-error-container) var(--tw-shadow-alpha), transparent);
     }
   }
-  .shadow-fontWeight {
-    --tw-shadow-color: 400;
-    @supports (color: color-mix(in lab, red, red)) {
-      --tw-shadow-color: color-mix(in oklab, var(--color-fontWeight) var(--tw-shadow-alpha), transparent);
-    }
-  }
   .shadow-inverse-on-surface {
     --tw-shadow-color: #eef0ff;
     @supports (color: color-mix(in lab, red, red)) {
@@ -1878,18 +1788,6 @@
     --tw-shadow-color: #283044;
     @supports (color: color-mix(in lab, red, red)) {
       --tw-shadow-color: color-mix(in oklab, var(--color-inverse-surface) var(--tw-shadow-alpha), transparent);
-    }
-  }
-  .shadow-letterSpacing {
-    --tw-shadow-color: 0.05em;
-    @supports (color: color-mix(in lab, red, red)) {
-      --tw-shadow-color: color-mix(in oklab, var(--color-letterSpacing) var(--tw-shadow-alpha), transparent);
-    }
-  }
-  .shadow-lineHeight {
-    --tw-shadow-color: 1.6;
-    @supports (color: color-mix(in lab, red, red)) {
-      --tw-shadow-color: color-mix(in oklab, var(--color-lineHeight) var(--tw-shadow-alpha), transparent);
     }
   }
   .shadow-on-background {
@@ -1911,7 +1809,7 @@
     }
   }
   .shadow-on-primary {
-    --tw-shadow-color: #ffffff;
+    --tw-shadow-color: var(--color-on-primary);
     @supports (color: color-mix(in lab, red, red)) {
       --tw-shadow-color: color-mix(in oklab, var(--color-on-primary) var(--tw-shadow-alpha), transparent);
     }
@@ -1935,7 +1833,7 @@
     }
   }
   .shadow-on-secondary {
-    --tw-shadow-color: #ffffff;
+    --tw-shadow-color: var(--color-on-secondary);
     @supports (color: color-mix(in lab, red, red)) {
       --tw-shadow-color: color-mix(in oklab, var(--color-on-secondary) var(--tw-shadow-alpha), transparent);
     }
@@ -2013,7 +1911,7 @@
     }
   }
   .shadow-primary-container {
-    --tw-shadow-color: #2563eb;
+    --tw-shadow-color: var(--color-primary-container);
     @supports (color: color-mix(in lab, red, red)) {
       --tw-shadow-color: color-mix(in oklab, var(--color-primary-container) var(--tw-shadow-alpha), transparent);
     }
@@ -2025,7 +1923,7 @@
     }
   }
   .shadow-primary-fixed-dim {
-    --tw-shadow-color: #b4c5ff;
+    --tw-shadow-color: var(--color-primary-fixed-dim);
     @supports (color: color-mix(in lab, red, red)) {
       --tw-shadow-color: color-mix(in oklab, var(--color-primary-fixed-dim) var(--tw-shadow-alpha), transparent);
     }
@@ -2037,7 +1935,7 @@
     }
   }
   .shadow-secondary-container {
-    --tw-shadow-color: #d0e1fb;
+    --tw-shadow-color: var(--color-secondary-container);
     @supports (color: color-mix(in lab, red, red)) {
       --tw-shadow-color: color-mix(in oklab, var(--color-secondary-container) var(--tw-shadow-alpha), transparent);
     }
@@ -2147,9 +2045,6 @@
   .ring-error-container {
     --tw-ring-color: var(--color-error-container);
   }
-  .ring-fontWeight {
-    --tw-ring-color: var(--color-fontWeight);
-  }
   .ring-inverse-on-surface {
     --tw-ring-color: var(--color-inverse-on-surface);
   }
@@ -2158,12 +2053,6 @@
   }
   .ring-inverse-surface {
     --tw-ring-color: var(--color-inverse-surface);
-  }
-  .ring-letterSpacing {
-    --tw-ring-color: var(--color-letterSpacing);
-  }
-  .ring-lineHeight {
-    --tw-ring-color: var(--color-lineHeight);
   }
   .ring-on-background {
     --tw-ring-color: var(--color-on-background);
@@ -2288,10 +2177,6 @@
   .ring-tertiary-fixed-dim {
     --tw-ring-color: var(--color-tertiary-fixed-dim);
   }
-  .outline {
-    outline-style: var(--tw-outline-style);
-    outline-width: 1px;
-  }
   .outline-background {
     outline-color: var(--color-background);
   }
@@ -2301,9 +2186,6 @@
   .outline-error-container {
     outline-color: var(--color-error-container);
   }
-  .outline-fontWeight {
-    outline-color: var(--color-fontWeight);
-  }
   .outline-inverse-on-surface {
     outline-color: var(--color-inverse-on-surface);
   }
@@ -2312,12 +2194,6 @@
   }
   .outline-inverse-surface {
     outline-color: var(--color-inverse-surface);
-  }
-  .outline-letterSpacing {
-    outline-color: var(--color-letterSpacing);
-  }
-  .outline-lineHeight {
-    outline-color: var(--color-lineHeight);
   }
   .outline-on-background {
     outline-color: var(--color-on-background);
@@ -2548,13 +2424,6 @@
       }
     }
   }
-  .hover\:bg-fontWeight {
-    &:hover {
-      @media (hover: hover) {
-        background-color: var(--color-fontWeight);
-      }
-    }
-  }
   .hover\:bg-inverse-on-surface {
     &:hover {
       @media (hover: hover) {
@@ -2573,20 +2442,6 @@
     &:hover {
       @media (hover: hover) {
         background-color: var(--color-inverse-surface);
-      }
-    }
-  }
-  .hover\:bg-letterSpacing {
-    &:hover {
-      @media (hover: hover) {
-        background-color: var(--color-letterSpacing);
-      }
-    }
-  }
-  .hover\:bg-lineHeight {
-    &:hover {
-      @media (hover: hover) {
-        background-color: var(--color-lineHeight);
       }
     }
   }
@@ -2898,13 +2753,6 @@
       }
     }
   }
-  .hover\:text-fontWeight {
-    &:hover {
-      @media (hover: hover) {
-        color: var(--color-fontWeight);
-      }
-    }
-  }
   .hover\:text-inverse-on-surface {
     &:hover {
       @media (hover: hover) {
@@ -2923,20 +2771,6 @@
     &:hover {
       @media (hover: hover) {
         color: var(--color-inverse-surface);
-      }
-    }
-  }
-  .hover\:text-letterSpacing {
-    &:hover {
-      @media (hover: hover) {
-        color: var(--color-letterSpacing);
-      }
-    }
-  }
-  .hover\:text-lineHeight {
-    &:hover {
-      @media (hover: hover) {
-        color: var(--color-lineHeight);
       }
     }
   }
@@ -3249,11 +3083,6 @@
       border-color: var(--color-error-container);
     }
   }
-  .focus\:border-fontWeight {
-    &:focus {
-      border-color: var(--color-fontWeight);
-    }
-  }
   .focus\:border-inverse-on-surface {
     &:focus {
       border-color: var(--color-inverse-on-surface);
@@ -3267,16 +3096,6 @@
   .focus\:border-inverse-surface {
     &:focus {
       border-color: var(--color-inverse-surface);
-    }
-  }
-  .focus\:border-letterSpacing {
-    &:focus {
-      border-color: var(--color-letterSpacing);
-    }
-  }
-  .focus\:border-lineHeight {
-    &:focus {
-      border-color: var(--color-lineHeight);
     }
   }
   .focus\:border-on-background {
@@ -3499,11 +3318,6 @@
       --tw-ring-color: var(--color-error-container);
     }
   }
-  .focus\:ring-fontWeight {
-    &:focus {
-      --tw-ring-color: var(--color-fontWeight);
-    }
-  }
   .focus\:ring-inverse-on-surface {
     &:focus {
       --tw-ring-color: var(--color-inverse-on-surface);
@@ -3517,16 +3331,6 @@
   .focus\:ring-inverse-surface {
     &:focus {
       --tw-ring-color: var(--color-inverse-surface);
-    }
-  }
-  .focus\:ring-letterSpacing {
-    &:focus {
-      --tw-ring-color: var(--color-letterSpacing);
-    }
-  }
-  .focus\:ring-lineHeight {
-    &:focus {
-      --tw-ring-color: var(--color-lineHeight);
     }
   }
   .focus\:ring-on-background {
@@ -3757,11 +3561,6 @@
       background-color: var(--color-error-container);
     }
   }
-  .active\:bg-fontWeight {
-    &:active {
-      background-color: var(--color-fontWeight);
-    }
-  }
   .active\:bg-inverse-on-surface {
     &:active {
       background-color: var(--color-inverse-on-surface);
@@ -3775,16 +3574,6 @@
   .active\:bg-inverse-surface {
     &:active {
       background-color: var(--color-inverse-surface);
-    }
-  }
-  .active\:bg-letterSpacing {
-    &:active {
-      background-color: var(--color-letterSpacing);
-    }
-  }
-  .active\:bg-lineHeight {
-    &:active {
-      background-color: var(--color-lineHeight);
     }
   }
   .active\:bg-on-background {
@@ -4079,11 +3868,6 @@
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
-  .dark\:bg-on-background {
-    @media (prefers-color-scheme: dark) {
-      background-color: var(--color-on-background);
-    }
-  }
 }
 @property --tw-translate-x {
   syntax: "*";
@@ -4217,11 +4001,6 @@
   inherits: false;
   initial-value: 0 0 #0000;
 }
-@property --tw-outline-style {
-  syntax: "*";
-  inherits: false;
-  initial-value: solid;
-}
 @property --tw-blur {
   syntax: "*";
   inherits: false;
@@ -4351,7 +4130,6 @@
       --tw-ring-offset-width: 0px;
       --tw-ring-offset-color: #fff;
       --tw-ring-offset-shadow: 0 0 #0000;
-      --tw-outline-style: solid;
       --tw-blur: initial;
       --tw-brightness: initial;
       --tw-contrast: initial;

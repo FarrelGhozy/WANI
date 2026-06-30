@@ -257,7 +257,7 @@ function buildContext(params: GenerateParams): Record<string, unknown> {
     "contact.mapsUrl": config.contact.mapsUrl ?? "",
     "color.primary": p,
     "color.secondary": s,
-    "color.vars": `--twc-primary:${p};--twc-primary-container:${p}33;--twc-primary-fixed-dim:${p}66;--twc-on-primary:#ffffff;--twc-secondary:${s};--twc-secondary-container:${s}33;--twc-on-secondary:#ffffff;--twc-tertiary:#784b00;--twc-tertiary-container:#996100;--twc-error:#ba1a1a;--twc-error-container:#ffdad6;--twc-on-error:#ffffff;`,
+    "color.vars": `--twc-primary:${p};--twc-primary-container:${p}33;--twc-primary-fixed-dim:${p}66;--twc-on-primary:#ffffff;--twc-secondary:${s};--twc-secondary-container:${s}33;--twc-on-secondary:#ffffff;`,
     "stats.totalOrders": String(stats.totalOrders),
     "stats.completed": String(stats.completed),
     "stats.pending": String(stats.pending),
