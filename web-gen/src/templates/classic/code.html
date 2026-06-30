@@ -1,176 +1,404 @@
 <!DOCTYPE html>
-
-<html class="light" lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>{{store.name}} | Timeless Elegance</title>
-<!-- Google Fonts: Bodoni Moda for headlines, Plus Jakarta Sans for body -->
-<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&amp;family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&amp;display=swap" rel="stylesheet"/>
-<!-- Material Symbols Outlined -->
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="./assets/tailwind.css" rel="stylesheet" />
-<style>:root{ {{color.vars}} }
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #c0c0c080; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #a0a0a0b0; }
-    </style>
-<style>
+<html class="light" lang="id">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>{{store.businessName}} | Timeless Elegance</title>
+  <!-- Google Fonts: Bodoni Moda for headlines, Plus Jakarta Sans for body -->
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&amp;family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&amp;display=swap" rel="stylesheet"/>
+  <!-- Material Symbols Outlined -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+  <link href="./assets/tailwind.css" rel="stylesheet" />
+  <style>:root{ {{color.vars}} --color-secondary: {{color.secondary}}; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(184,134,11,0.3); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(184,134,11,0.5); }
+  </style>
+  <style>
     .material-symbols-outlined {
       font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
     }
     .renaissance-border {
-      border: 1px solid rgba(120, 86, 0, 0.2);
+      border: 1px solid rgba(184,134,11,0.2);
+      box-shadow: 0 2px 20px rgba(184,134,11,0.06);
     }
-    .glass-nav {
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
+    .renaissance-border-thick {
+      border: 2px solid rgba(184,134,11,0.15);
+      box-shadow: 0 4px 30px rgba(184,134,11,0.08);
+    }
+    .ornate-divider {
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(184,134,11,0.3), transparent);
+    }
+    .text-shadow-gold {
+      text-shadow: 0 2px 20px rgba(184,134,11,0.15);
+    }
+    .floating-wa {
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+    .scrolly-reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    }
+    .scrolly-reveal.revealed {
+      opacity: 1;
+      transform: translateY(0);
     }
   </style>
 </head>
-<body class="bg-background text-on-background font-body-md selection:bg-primary-fixed selection:text-on-primary-fixed">
+<body class="bg-background text-on-background font-body-md selection:bg-[{{color.primary}}]/20 selection:text-on-background">
+
 {{>navbar}}
+
 <main>
-<!-- Hero Section -->
-<section class="relative overflow-hidden bg-surface-container-low py-xl">
-<div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop grid grid-cols-1 md:grid-cols-12 gap-xl items-center">
-<div class="md:col-span-5 text-center md:text-left z-10">
-<h1 class="font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mb-md">
-            {{hero.headline}}
-          </h1>
-<p class="font-body-lg text-body-lg text-on-surface-variant mb-lg max-w-lg">
-            {{hero.subheadline}}
-          </p>
-<div class="flex flex-col sm:flex-row gap-md justify-center md:justify-start">
-<button class="bg-primary text-on-primary px-lg py-sm font-label-sm text-label-sm rounded uppercase active:scale-95 transition-all">
-              Explore Collection
-            </button>
-<button class="border border-primary text-primary px-lg py-sm font-label-sm text-label-sm rounded uppercase hover:bg-primary-fixed-dim transition-all">
-              Our Story
-            </button>
-</div>
-</div>
-<div class="md:col-span-7 relative">
-<div class="aspect-[4/5] md:aspect-square renaissance-border p-sm bg-surface">
-<div class="w-full h-full overflow-hidden">
-<img class="w-full h-full object-cover grayscale-[20%] hover:scale-105 transition-transform duration-700" alt="" src="{{store.logoUrl}}"/>
-</div>
-</div>
-<!-- Decorative Architectural Element -->
-<div class="absolute -bottom-base -right-base w-32 h-32 border-r-2 border-b-2 border-primary opacity-30"></div>
-</div>
-</div>
-</section>
-<!-- New Arrivals Section (Product Grid) -->
-<section class="py-xl bg-background">
-<div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop">
-<div class="flex justify-between items-end mb-xl border-b border-outline-variant pb-md">
-<div>
-<span class="font-label-sm text-label-sm text-primary uppercase tracking-widest mb-xs block">Seasonal Selection</span>
-<h2 class="font-headline-lg text-headline-lg text-on-surface">New Arrivals</h2>
-</div>
-<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors pb-xs" href="#">View All →</a>
-</div>
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
-{{#products}}
-<div class="group cursor-pointer">
-<div class="aspect-[3/4] renaissance-border bg-surface-container-high mb-md overflow-hidden relative">
-<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="{{.name}}" src="{{.imageUrl}}"/>
-<div class="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-xs">
-<span class="bg-surface text-on-surface px-md py-xs font-label-sm text-label-sm uppercase">Quick View</span>
-</div>
-</div>
-<div class="text-center">
-<h3 class="font-headline-md text-headline-md text-on-surface text-lg">{{.name}}</h3>
-<p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">Rp {{.price}}</p>
-<p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">{{.description}}</p>
-</div>
-</div>
-{{/products}}
-{{^products}}
-<div class="col-span-full flex flex-col items-center justify-center py-3xl text-center">
-<div class="w-20 h-20 bg-surface-container-highest rounded-full flex items-center justify-center mb-6 border border-dashed border-outline-variant">
-<span class="material-symbols-outlined text-4xl text-outline-variant">inventory_2</span>
-</div>
-<h3 class="font-headline-md text-headline-md text-on-surface/60 mb-2">Belum Ada Produk</h3>
-<p class="font-body-md text-body-md text-on-surface-variant/60 mb-6 max-w-sm">Belum ada produk yang tersedia. Silakan cek kembali nanti atau hubungi kami untuk informasi lebih lanjut.</p>
-<a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="px-8 py-4 bg-primary text-on-primary font-label-sm text-label-sm rounded-full hover:bg-primary-fixed hover:text-on-primary-fixed transition-all inline-flex items-center gap-2">
-<span class="material-symbols-outlined text-sm">chat</span>
-Hubungi Kami
-</a>
-</div>
-{{/products}}
-</div>
-</div>
-</section>
-<!-- WhatsApp CTA Section (Asymmetric Bento) -->
-<section class="py-xl max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop">
-<div class="grid grid-cols-1 md:grid-cols-12 gap-md items-stretch">
-<div class="md:col-span-8 bg-surface-container p-lg flex flex-col justify-center renaissance-border">
-<span class="font-label-sm text-label-sm text-primary uppercase mb-base">Personalized Shopping</span>
-<h2 class="font-headline-lg text-headline-lg text-on-surface mb-md">Concierge Service</h2>
-<p class="font-body-lg text-body-lg text-on-surface-variant mb-lg max-w-xl">
-            Experience the pinnacle of boutique service. Connect with our curators directly to curate your personal collection or source rare pieces from our global network.
-          </p>
-<div>
-<a class="inline-flex items-center gap-base bg-primary text-on-primary px-lg py-sm font-label-sm text-label-sm rounded uppercase active:scale-95 transition-transform" href="{{whatsapp.url}}" target="_blank" rel="noopener">
-<span class="material-symbols-outlined" data-icon="chat">chat</span>
-              Order via WhatsApp
-            </a>
-</div>
-</div>
-<div class="md:col-span-4 min-h-[300px]">
-<div class="w-full h-full renaissance-border bg-surface-container-highest flex items-center justify-center overflow-hidden">
-<img class="w-full h-full object-cover grayscale-[10%] opacity-80" alt="" src=""/>
-</div>
-</div>
-</div>
-</section>
-<!-- Aesthetic Atmosphere Section (Full Width Image) -->
-<section class="relative h-[614px] flex items-center justify-center overflow-hidden mt-xl">
-<div class="absolute inset-0 bg-cover bg-fixed bg-center" style="background-image: url('')"></div>
-<div class="absolute inset-0 bg-on-background/30 backdrop-blur-[2px]"></div>
-<div class="relative z-10 text-center max-w-3xl px-margin-mobile">
-<h2 class="font-display-lg text-display-lg-mobile md:text-display-lg text-surface mb-md italic">{{hero.aboutText}}</h2>
-<p class="font-label-sm text-label-sm text-surface-variant uppercase tracking-widest">— {{store.name}}</p>
-</div>
-</section>
+  <!-- ============================================================ -->
+  <!-- HERO SECTION — Editorial with Large Serif Headline & Framed Image -->
+  <!-- ============================================================ -->
+  <section class="relative min-h-screen flex items-center pt-24 overflow-hidden">
+    <!-- Subtle background texture -->
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(184,134,11,0.04),transparent_60%),radial-gradient(ellipse_at_bottom_left,rgba(128,0,32,0.03),transparent_60%)]"></div>
+    <!-- Decorative corner frames -->
+    <div class="absolute top-20 left-8 w-16 h-16 border-l-2 border-t-2 border-[rgba(184,134,11,0.12)] hidden md:block"></div>
+    <div class="absolute bottom-20 right-8 w-16 h-16 border-r-2 border-b-2 border-[rgba(184,134,11,0.12)] hidden md:block"></div>
+
+    <div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop w-full py-12">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8 items-center">
+        <!-- Text Column -->
+        <div class="md:col-span-5 md:col-start-1 z-10">
+          <div class="space-y-6">
+            <div class="flex items-center gap-3">
+              <span class="w-8 h-px bg-gradient-to-r from-[{{color.primary}}] to-transparent"></span>
+              <span class="font-label-sm text-label-sm uppercase tracking-[0.2em] text-[{{color.primary}}]">{{store.businessName}}</span>
+            </div>
+            <h1 class="font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface leading-[1.05] tracking-tight text-shadow-gold">
+              {{hero.headline}}
+            </h1>
+            <p class="font-body-lg text-body-lg text-on-surface-variant leading-relaxed max-w-lg">
+              {{hero.subheadline}}
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 pt-2">
+              <a href="#produk" class="inline-flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-[{{color.primary}}] to-[rgba(184,134,11,0.7)] text-on-primary font-label-sm text-label-sm uppercase tracking-wider rounded-full hover:shadow-lg hover:shadow-[{{color.primary}}]/25 transition-all duration-300 active:scale-95">
+                {{hero.ctaText}}
+                <span class="material-symbols-outlined text-sm">arrow_forward</span>
+              </a>
+              <a href="./tentang.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 border border-[{{color.primary}}]/30 text-[{{color.primary}}] font-label-sm text-label-sm uppercase tracking-wider rounded-full hover:bg-[{{color.primary}}]/5 transition-all duration-300 active:scale-95">
+                Cerita Kami
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Image Column -->
+        <div class="md:col-span-6 md:col-start-7 relative">
+          <!-- Ornate frame decoration -->
+          <div class="absolute -top-4 -left-4 w-full h-full border-2 border-[rgba(184,134,11,0.15)] rounded-sm hidden md:block"></div>
+          <div class="absolute -bottom-4 -right-4 w-full h-full border border-[rgba(184,134,11,0.1)] rounded-sm hidden md:block"></div>
+
+          {{#hero.hasImage}}
+          <div class="relative renaissance-border-thick overflow-hidden rounded-sm bg-surface-container-high group">
+            <div class="aspect-[4/5] md:aspect-square overflow-hidden">
+              <img src="{{hero.imageUrl}}" alt="{{hero.headline}}" class="w-full h-full object-cover transition-all duration-700 group-hover:scale-105 group-hover:grayscale-0" style="filter: grayscale(15%);" />
+            </div>
+            <!-- Image caption overlay -->
+            <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-surface/80 via-surface/20 to-transparent p-6">
+              <p class="font-label-sm text-label-sm text-on-surface italic">{{hero.subheadline}}</p>
+            </div>
+          </div>
+          {{/hero.hasImage}}
+          {{^hero.hasImage}}
+          <div class="relative renaissance-border-thick overflow-hidden rounded-sm bg-gradient-to-br from-surface-container-high to-surface-container min-h-[400px] flex items-center justify-center">
+            <div class="text-center p-12">
+              <div class="w-24 h-24 mx-auto mb-6 rounded-full border-2 border-dashed border-[rgba(184,134,11,0.2)] flex items-center justify-center">
+                <span class="material-symbols-outlined text-5xl text-[rgba(184,134,11,0.3)]">image</span>
+              </div>
+              <p class="font-display-md text-display-md text-on-surface/40">{{store.businessName}}</p>
+              <div class="w-12 h-px bg-[rgba(184,134,11,0.2)] mx-auto mt-4"></div>
+            </div>
+          </div>
+          {{/hero.hasImage}}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- ORNATE DIVIDER -->
+  <!-- ============================================================ -->
+  <div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop">
+    <div class="ornate-divider"></div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- STATS SECTION — Luxury Editorial Stats -->
+  <!-- ============================================================ -->
+  <section class="py-20 bg-background relative">
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(184,134,11,0.03),transparent_60%)]"></div>
+    <div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop">
+      <div class="text-center mb-12">
+        <span class="font-label-sm text-label-sm uppercase tracking-[0.2em] text-[rgba(184,134,11,0.5)]">Angka Kami</span>
+        <div class="w-8 h-px bg-gradient-to-r from-transparent via-[rgba(184,134,11,0.3)] to-transparent mx-auto mt-3"></div>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div class="text-center p-8 rounded-sm bg-surface border border-[rgba(184,134,11,0.08)] hover:border-[rgba(184,134,11,0.2)] transition-all duration-500 group">
+          <p class="font-display-lg text-display-lg-mobile md:text-display-lg text-[{{color.primary}}] mb-2 group-hover:scale-110 transition-transform duration-500">✦</p>
+          <p class="font-display-md text-display-md text-on-surface mb-1">{{stats.totalOrders}}</p>
+          <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Total Pesanan</p>
+        </div>
+        <div class="text-center p-8 rounded-sm bg-surface border border-[rgba(184,134,11,0.08)] hover:border-[rgba(184,134,11,0.2)] transition-all duration-500 group">
+          <p class="font-display-lg text-display-lg-mobile md:text-display-lg text-[{{color.primary}}] mb-2 group-hover:scale-110 transition-transform duration-500">◆</p>
+          <p class="font-display-md text-display-md text-on-surface mb-1">{{stats.completed}}</p>
+          <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Selesai</p>
+        </div>
+        <div class="text-center p-8 rounded-sm bg-surface border border-[rgba(184,134,11,0.08)] hover:border-[rgba(184,134,11,0.2)] transition-all duration-500 group">
+          <p class="font-display-lg text-display-lg-mobile md:text-display-lg text-[{{color.primary}}] mb-2 group-hover:scale-110 transition-transform duration-500">◈</p>
+          <p class="font-display-md text-display-md text-on-surface mb-1">{{stats.pending}}</p>
+          <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Diproses</p>
+        </div>
+        <div class="text-center p-8 rounded-sm bg-surface border border-[rgba(184,134,11,0.08)] hover:border-[rgba(184,134,11,0.2)] transition-all duration-500 group">
+          <p class="font-display-lg text-display-lg-mobile md:text-display-lg text-[{{color.primary}}] mb-2 group-hover:scale-110 transition-transform duration-500">♛</p>
+          <p class="font-display-md text-display-md text-on-surface mb-1">100%</p>
+          <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Kepuasan</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- FEATURED PRODUCTS — Editorial Grid with Hover Overlay -->
+  <!-- ============================================================ -->
+  <section id="produk" class="py-24 bg-surface-container-low relative">
+    <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[rgba(184,134,11,0.15)] to-transparent"></div>
+
+    <div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop">
+      <!-- Section Header -->
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-6">
+        <div>
+          <div class="flex items-center gap-3 mb-4">
+            <span class="w-8 h-px bg-gradient-to-r from-[{{color.primary}}] to-transparent"></span>
+            <span class="font-label-sm text-label-sm uppercase tracking-[0.2em] text-[{{color.primary}}]">Koleksi Pilihan</span>
+          </div>
+          <h2 class="font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface">Produk Unggulan</h2>
+          <p class="font-body-lg text-body-lg text-on-surface-variant mt-3 max-w-xl">Setiap produk dalam koleksi ini dipilih dengan cermat untuk menghadirkan pengalaman terbaik.</p>
+        </div>
+        <a href="./produk.html" class="flex items-center gap-2 font-label-sm text-label-sm text-[{{color.primary}}] hover:text-[{{color.primary}}]/70 transition-colors duration-300 uppercase tracking-wider whitespace-nowrap">
+          Lihat Semua
+          <span class="material-symbols-outlined text-sm">arrow_forward</span>
+        </a>
+      </div>
+
+      <!-- Product Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+        {{#products}}
+        <div class="group cursor-pointer scrolly-reveal">
+          <div class="relative overflow-hidden bg-surface renaissance-border mb-4">
+            <div class="aspect-[3/4] overflow-hidden">
+              {{#.imageUrl}}
+              <img src="{{.imageUrl}}" alt="{{.name}}" class="w-full h-full object-cover transition-all duration-700 group-hover:scale-110" />
+              {{/.imageUrl}}
+              {{^.imageUrl}}
+              <div class="w-full h-full bg-gradient-to-br from-surface-container-high to-surface-container flex items-center justify-center">
+                <div class="text-center">
+                  <span class="material-symbols-outlined text-5xl text-[rgba(184,134,11,0.15)]">image</span>
+                  <p class="font-label-sm text-label-sm text-[rgba(184,134,11,0.2)] mt-2 uppercase tracking-wider">Belum Ada Gambar</p>
+                </div>
+              </div>
+              {{/.imageUrl}}
+            </div>
+            <!-- Stock Badge -->
+            <div class="absolute top-3 left-3">
+              {{^.isAvailable}}
+              <span class="px-3 py-1 text-xs uppercase tracking-wider font-semibold text-surface/90 backdrop-blur-sm" style="background: var(--color-secondary);">Habis</span>
+              {{/.isAvailable}}
+              {{#.isAvailable}}
+              <span class="px-3 py-1 text-xs uppercase tracking-wider font-semibold bg-[rgba(184,134,11,0.85)] text-surface backdrop-blur-sm">Tersedia</span>
+              {{/.isAvailable}}
+            </div>
+            <!-- Quick View Overlay -->
+            <div class="absolute inset-0 bg-gradient-to-t from-surface/90 via-surface/30 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center">
+              <div class="text-center transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                <div class="w-16 h-16 mx-auto mb-3 rounded-full border-2 border-[{{color.primary}}]/50 flex items-center justify-center bg-surface/20 backdrop-blur-sm">
+                  <span class="material-symbols-outlined text-[{{color.primary}}]">visibility</span>
+                </div>
+                <p class="font-label-sm text-label-sm text-surface uppercase tracking-wider">Quick View</p>
+              </div>
+            </div>
+          </div>
+          <div class="px-1">
+            <h3 class="font-display-md text-display-md text-on-surface group-hover:text-[{{color.primary}}] transition-colors duration-300">{{.name}}</h3>
+            <p class="font-body-md text-body-md text-on-surface-variant mt-1.5">{{.description}}</p>
+            <div class="flex items-center justify-between mt-3 pt-3 border-t border-[rgba(184,134,11,0.08)]">
+              <span class="font-display-sm text-display-sm text-[{{color.primary}}]">Rp {{.price}}</span>
+              <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Stok: {{.stock}}</span>
+            </div>
+          </div>
+        </div>
+        {{/products}}
+        {{^products}}
+        <div class="col-span-full flex flex-col items-center justify-center py-20 text-center">
+          <div class="w-24 h-24 mx-auto mb-8 rounded-full border-2 border-dashed border-[rgba(184,134,11,0.15)] flex items-center justify-center">
+            <span class="material-symbols-outlined text-5xl text-[rgba(184,134,11,0.2)]">inventory_2</span>
+          </div>
+          <h3 class="font-display-md text-display-md text-on-surface/50 mb-3">Belum Ada Produk</h3>
+          <p class="font-body-md text-body-md text-on-surface-variant/60 mb-8 max-w-md">Koleksi kami sedang dalam persiapan. Nantikan kehadiran produk-produk eksklusif yang akan sehadir.</p>
+          <a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[{{color.primary}}] to-[rgba(184,134,11,0.7)] text-on-primary font-label-sm text-label-sm uppercase tracking-wider rounded-full hover:shadow-lg transition-all duration-300">
+            <span class="material-symbols-outlined text-sm">chat</span>
+            Hubungi Kami
+          </a>
+        </div>
+        {{/products}}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- ABOUT QUOTE — Parallax Editorial Quote Section -->
+  <!-- ============================================================ -->
+  {{#about.description}}
+  <section class="relative min-h-[500px] flex items-center justify-center overflow-hidden bg-surface-container-high">
+    <!-- Parallax background -->
+    {{#about.hasImage}}
+    <div class="absolute inset-0 bg-cover bg-fixed bg-center bg-no-repeat" style="background-image: url('{{about.imageUrl}}');"></div>
+    <div class="absolute inset-0 bg-gradient-to-r from-surface/95 via-surface/70 to-surface/90 backdrop-blur-[1px]"></div>
+    {{/about.hasImage}}
+    {{^about.hasImage}}
+    <div class="absolute inset-0 bg-gradient-to-br from-surface via-surface-container to-surface-container-low"></div>
+    <div class="absolute inset-0 opacity-[0.03]" style="background-image: radial-gradient(circle at 25% 50%, rgba(184,134,11,1) 1px, transparent 1px); background-size: 40px 40px;"></div>
+    {{/about.hasImage}}
+
+    <div class="relative z-10 max-w-4xl mx-auto px-margin-mobile md:px-margin-desktop text-center py-24">
+      <!-- Decorative opening quote -->
+      <div class="mb-8">
+        <span class="font-display-lg text-display-lg text-[rgba(184,134,11,0.15)] leading-none" style="font-size: clamp(4rem, 10vw, 8rem);">&ldquo;</span>
+      </div>
+      <blockquote class="font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface leading-[1.15] italic mb-10">
+        {{about.description}}
+      </blockquote>
+      <div class="flex items-center justify-center gap-4">
+        <span class="w-8 h-px bg-gradient-to-r from-transparent via-[{{color.primary}}] to-transparent"></span>
+        <span class="font-display-sm text-display-sm text-[{{color.primary}}]">&mdash; {{store.businessName}}</span>
+        <span class="w-8 h-px bg-gradient-to-r from-transparent via-[{{color.primary}}] to-transparent"></span>
+      </div>
+      <div class="mt-10">
+        <a href="./tentang.html" class="inline-flex items-center gap-2 font-label-sm text-label-sm text-on-surface-variant hover:text-[{{color.primary}}] transition-colors duration-300 uppercase tracking-wider">
+          Baca Cerita Lengkap
+          <span class="material-symbols-outlined text-sm">arrow_forward</span>
+        </a>
+      </div>
+    </div>
+  </section>
+  {{/about.description}}
+
+  <!-- ============================================================ -->
+  <!-- CONCIERGE CTA — WhatsApp Editorial CTA -->
+  <!-- ============================================================ -->
+  <section class="py-24 bg-background relative overflow-hidden">
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(184,134,11,0.06),transparent_50%),radial-gradient(ellipse_at_top_left,rgba(128,0,32,0.03),transparent_50%)]"></div>
+    <!-- Decorative lines -->
+    <div class="absolute left-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-[rgba(184,134,11,0.1)] to-transparent hidden lg:block" style="left: 8%;"></div>
+    <div class="absolute right-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-[rgba(184,134,11,0.1)] to-transparent hidden lg:block" style="right: 8%;"></div>
+
+    <div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-10 items-center">
+        <div class="md:col-span-7">
+          <div class="relative p-10 md:p-14 renaissance-border-thick bg-surface rounded-sm">
+            <!-- Inner decorative border -->
+            <div class="absolute inset-2 border border-[rgba(184,134,11,0.06)] rounded-sm pointer-events-none"></div>
+            <div class="relative z-10">
+              <span class="font-label-sm text-label-sm uppercase tracking-[0.2em] text-[{{color.primary}}]">Concierge Service</span>
+              <h2 class="font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mt-4 mb-6">Pengalaman Berbelanja Personal</h2>
+              <p class="font-body-lg text-body-lg text-on-surface-variant mb-8 max-w-xl leading-relaxed">
+                Nikmati pengalaman konsultasi personal dengan kurator kami. Dapatkan rekomendasi produk yang sesuai dengan gaya dan kebutuhan Anda.
+              </p>
+              <div class="flex flex-col sm:flex-row gap-4">
+                <a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-[{{color.primary}}] to-[rgba(184,134,11,0.7)] text-on-primary font-label-sm text-label-sm uppercase tracking-wider rounded-full hover:shadow-lg hover:shadow-[{{color.primary}}]/25 transition-all duration-300 active:scale-95">
+                  <span class="material-symbols-outlined text-sm">chat</span>
+                  Konsultasi via WhatsApp
+                </a>
+                <a href="./kontak.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 border border-[rgba(184,134,11,0.2)] text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider rounded-full hover:border-[{{color.primary}}] hover:text-[{{color.primary}}] transition-all duration-300">
+                  Kontak Lainnya
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="md:col-span-5">
+          {{#store.hasLogo}}
+          <div class="relative flex items-center justify-center">
+            <div class="absolute w-64 h-64 rounded-full bg-[rgba(184,134,11,0.06)] blur-3xl"></div>
+            <div class="w-48 h-48 rounded-full overflow-hidden ring-4 ring-[rgba(184,134,11,0.1)] shadow-2xl">
+              <img src="{{store.logoUrl}}" alt="{{store.businessName}}" class="w-full h-full object-cover grayscale-[20%]" />
+            </div>
+          </div>
+          {{/store.hasLogo}}
+          {{^store.hasLogo}}
+          <div class="flex items-center justify-center">
+            <div class="w-48 h-48 rounded-full bg-gradient-to-br from-[{{color.primary}}]/20 to-[rgba(184,134,11,0.1)] border-2 border-[rgba(184,134,11,0.15)] flex items-center justify-center">
+              <span class="font-display-lg text-display-lg text-[rgba(184,134,11,0.3)]">{{store.businessName}}</span>
+            </div>
+          </div>
+          {{/store.hasLogo}}
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
+
 {{>footer}}
-<!-- Micro-interactions Script -->
+
+<!-- Floating WhatsApp Button -->
+<a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gradient-to-br from-[rgba(37,211,102,1)] to-[rgba(37,211,102,0.8)] shadow-lg shadow-[rgba(37,211,102,0.3)] flex items-center justify-center text-white hover:scale-110 active:scale-95 transition-all duration-300 floating-wa">
+  <span class="material-symbols-outlined text-2xl">chat</span>
+</a>
+
+<!-- JavaScript: Scroll Reveal & Navbar Glass Effect -->
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // Reveal animations on scroll
-      const observerOptions = {
-        threshold: 0.1
-      };
-
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('opacity-100', 'translate-y-0');
-            entry.target.classList.remove('opacity-0', 'translate-y-8');
-          }
-        });
-      }, observerOptions);
-
-      document.querySelectorAll('section').forEach(section => {
-        section.classList.add('transition-all', 'duration-1000', 'ease-out', 'opacity-0', 'translate-y-8');
-        observer.observe(section);
-      });
-
-      // Sticky Header glass effect transition
-      const header = document.querySelector('header');
-      window.addEventListener('scroll', () => {
-        if (window.scrollY > 20) {
-          header.classList.add('glass-nav', 'bg-surface/90');
-          header.classList.remove('bg-surface');
-        } else {
-          header.classList.remove('glass-nav', 'bg-surface/90');
-          header.classList.add('bg-surface');
+  document.addEventListener('DOMContentLoaded', () => {
+    // IntersectionObserver for scroll reveal
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed');
         }
       });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+    document.querySelectorAll('.scrolly-reveal').forEach(el => observer.observe(el));
+
+    // Also reveal sections as they enter viewport
+    document.querySelectorAll('section').forEach(section => {
+      section.classList.add('scrolly-reveal');
+      observer.observe(section);
     });
-  </script>
-</body></html>
+
+    // Navbar glass effect on scroll
+    const header = document.querySelector('header');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 20) {
+        header.classList.add('shadow-[0_4px_30px_rgba(0,0,0,0.12)]');
+      } else {
+        header.classList.remove('shadow-[0_4px_30px_rgba(0,0,0,0.12)]');
+      }
+    });
+
+    // Counter animation for stats
+    const animateValue = (el, start, end, duration) => {
+      let startTimestamp = null;
+      const step = (timestamp) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        el.textContent = Math.floor(progress * (end - start) + start);
+        if (progress < 1) window.requestAnimationFrame(step);
+      };
+      window.requestAnimationFrame(step);
+    };
+  });
+</script>
+
+</body>
+</html>
