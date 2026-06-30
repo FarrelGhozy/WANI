@@ -1,131 +1,223 @@
 <!DOCTYPE html>
+<html class="dark" lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Produk — {{store.name}}</title>
 
-<html class="dark" lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Produk — {{store.name}}</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="./assets/tailwind.css" rel="stylesheet" />
-<style>:root{ {{color.vars}} }</style>
-<style>
-        body {
-            background-color: #131315;
-            color: #e5e1e4;
-            overflow-x: hidden;
-        }
-        .glow-cyan {
-            text-shadow: 0 0 10px rgba(0, 219, 231, 0.6);
-        }
-        .glass-panel {
-            background: rgba(28, 27, 29, 0.7);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(132, 148, 149, 0.2);
-        }
-        .neural-bg {
-            background-image: radial-gradient(circle at 2px 2px, rgba(116, 245, 255, 0.05) 1px, transparent 0);
-            background-size: 32px 32px;
-        }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #131315; }
-        ::-webkit-scrollbar-thumb { background: #2a2a30; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #3a3a45; }
-    </style>
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind & Color Vars -->
+  <link href="./assets/tailwind.css" rel="stylesheet" />
+  <style>:root{ {{color.vars}} }</style>
+
+  <!-- Cyberpunk Theme Styles -->
+  <style>
+    body {
+      background-color: #0a0a0f;
+      color: #e8e8f0;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: #0a0a0f; }
+    ::-webkit-scrollbar-thumb { background: #2a2a3a; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #00d4ff; }
+
+    .neural-bg {
+      background-image:
+        linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+    .scanline-overlay::after {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: repeating-linear-gradient(
+        0deg, transparent, transparent 2px,
+        rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+    .cyber-card {
+      background: rgba(18,18,26,0.75);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(0,212,255,0.08);
+      transition: all 0.3s ease;
+    }
+    .cyber-card:hover {
+      border-color: rgba(0,212,255,0.35);
+      box-shadow: 0 0 20px rgba(0,212,255,0.08);
+    }
+    .product-img-placeholder {
+      background: linear-gradient(135deg, #12121a 0%, #1a1a28 100%);
+    }
+    .stock-badge {
+      background: rgba(255,77,77,0.15);
+      color: #ff4d4d;
+      border: 1px solid rgba(255,77,77,0.3);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      padding: 2px 8px;
+      border-radius: 2px;
+      text-transform: uppercase;
+    }
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+  </style>
 </head>
-<body class="neural-bg">
+<body class="neural-bg scanline-overlay">
 
-{{>navbar}}
+  {{>navbar}}
 
-<!-- SideNavBar (Hidden on Mobile) -->
-<aside class="hidden lg:flex h-screen w-52 fixed left-0 top-0 z-40 bg-surface-container-low/80 backdrop-blur-md border-r border-secondary-fixed-dim/20 shadow-[10px_0_15px_rgba(116,0,159,0.1)] flex-col pt-24 pb-8 h-full">
-<div class="px-6 mb-8">
-<div class="flex items-center gap-3 mb-2">
-<div class="w-10 h-10 bg-secondary-container rounded-sm flex items-center justify-center">
-<span class="material-symbols-outlined text-on-secondary-container">terminal</span>
-</div>
-<div>
-<div class="font-data-md text-data-md text-secondary">FILTER_MODULE</div>
-<div class="text-[10px] font-label-caps text-on-surface-variant opacity-60">v4.02.1-STABLE</div>
-</div>
-</div>
-</div>
-<nav class="flex-1">
-<div class="space-y-1">
-<a class="flex items-center gap-3 bg-secondary-container text-on-secondary-container border-l-4 border-secondary-fixed p-3 font-data-md text-data-md hover:translate-x-1 duration-200" href="#">
-<span class="material-symbols-outlined">memory</span>
-                    CYBERWARE
-                </a>
-<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-secondary/10 font-data-md text-data-md hover:translate-x-1 duration-200 transition-all" href="#">
-<span class="material-symbols-outlined">developer_board</span>
-                    DECKS
-                </a>
-<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-secondary/10 font-data-md text-data-md hover:translate-x-1 duration-200 transition-all" href="#">
-<span class="material-symbols-outlined">precision_manufacturing</span>
-                    DRONES
-                </a>
-<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-secondary/10 font-data-md text-data-md hover:translate-x-1 duration-200 transition-all" href="#">
-<span class="material-symbols-outlined">sd_card</span>
-                    CHIPS
-                </a>
-<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-secondary/10 font-data-md text-data-md hover:translate-x-1 duration-200 transition-all" href="#">
-<span class="material-symbols-outlined">checkroom</span>
-                    APPAREL
-                </a>
-</div>
-</nav>
-<div class="px-6">
-<button class="w-full bg-secondary-fixed text-on-secondary-fixed py-3 font-label-caps text-label-caps hover:glow-secondary transition-all active:scale-95">
-                APPLY_MODS
-            </button>
-</div>
-</aside>
-<main class="lg:ml-52 pt-24 min-h-screen">
-<section class="px-margin-mobile md:px-margin-desktop py-20 max-w-max-width mx-auto">
-<div class="flex justify-between items-end mb-12">
-<div>
-<h2 class="font-headline-lg text-headline-lg text-on-surface uppercase mb-2">PRODUK KAMI</h2>
-<div class="h-1 w-24 bg-primary-fixed"></div>
-</div>
-<div class="font-data-md text-data-md text-on-surface-variant">TOTAL_ITEMS: {{#products}}N{{/products}}{{^products}}0{{/products}}</div>
-</div>
-<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-{{#products}}
-<div class="glass-panel group p-4 flex flex-col {{^.imageUrl}}border-glow-cyan{{/.imageUrl}}">
-<div class="h-48 mb-4 relative overflow-hidden bg-surface-container">
-<img class="w-full h-full object-cover group-hover:opacity-80 transition-opacity" alt="{{.name}}" src="{{.imageUrl}}"/>
-</div>
-<div class="font-data-md text-data-md text-secondary mb-1">{{.description}}</div>
-<h3 class="font-headline-md text-[18px] text-on-surface mb-2">{{.name}}</h3>
-<div class="mt-auto flex justify-between items-center">
-<div class="font-data-md text-data-md text-primary-fixed glow-cyan">Rp {{.price}}</div>
-<button class="w-10 h-10 border border-outline-variant flex items-center justify-center hover:border-primary-fixed hover:text-primary-fixed transition-all">
-<span class="material-symbols-outlined text-sm">add</span>
-</button>
-</div>
-</div>
-{{/products}}
-{{^products}}
-<div class="col-span-full flex flex-col items-center justify-center py-20 text-center">
-<div class="w-20 h-20 bg-surface-container-highest rounded-full flex items-center justify-center mb-6 border border-dashed border-outline-variant">
-<span class="material-symbols-outlined text-4xl text-outline-variant">inventory_2</span>
-</div>
-<h3 class="font-headline-md text-headline-md text-on-surface/60 mb-2 uppercase">INVENTORY_EMPTY</h3>
-<p class="font-data-md text-data-md text-on-surface-variant/60 mb-6 max-w-sm">Belum ada produk yang tersedia. Silakan cek kembali nanti atau hubungi kami untuk informasi lebih lanjut.</p>
-<a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="px-6 py-3 bg-secondary-fixed text-on-secondary-fixed font-label-caps text-label-caps hover:bg-secondary-fixed/80 transition-all inline-flex items-center gap-2">
-<span class="material-symbols-outlined text-sm">chat</span>
-HUBUNGI_KAMI
-</a>
-</div>
-{{/products}}
-</div>
-</section>
-</main>
+  <!-- ============================================================
+       MAIN
+       ============================================================ -->
+  <main class="pt-16 lg:pt-18 min-h-screen">
 
-{{>footer}}
+    <!-- Page Header -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 lg:pt-16 pb-4">
+      <div class="reveal">
+        <div class="inline-flex items-center gap-2 border border-[#00d4ff]/30 px-3 py-1 mb-4">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#00d4ff] animate-pulse"></span>
+          <span class="text-[11px] font-['JetBrains_Mono'] text-[#00d4ff] tracking-[0.15em] uppercase">INVENTORY.SYS</span>
+        </div>
+        <h1 class="text-3xl lg:text-4xl font-['Plus_Jakarta_Sans'] font-bold text-[#e8e8f0] uppercase tracking-tight">
+          Produk Kami
+        </h1>
+        <div class="h-0.5 w-24 bg-gradient-to-r from-[#00d4ff] to-[#b388ff] mt-3"></div>
+      </div>
+    </section>
 
-<!-- Floating Action Button (FAB) -->
-<a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="fixed bottom-8 right-8 w-16 h-16 bg-primary-container text-on-primary-container rounded-full shadow-[0_0_20px_rgba(0,219,231,0.5)] flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-50">
-<span class="material-symbols-outlined text-3xl">bolt</span>
-</a>
-</body></html>
+    <!-- Products Grid -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+      <!-- Item Count -->
+      <div class="flex items-center justify-end mb-6 text-xs font-['JetBrains_Mono'] text-[#555568] reveal">
+        <span class="text-[#00d4ff]">TOTAL_ITEMS:</span>&nbsp;
+        {{#products}}<span class="text-[#b388ff]">N</span>{{/products}}{{^products}}<span class="text-[#555568]">0</span>{{/products}}
+      </div>
+
+      <!-- Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-5">
+        {{#products}}
+        <div class="cyber-card rounded-lg overflow-hidden group reveal transition-all duration-300 hover:-translate-y-1">
+          <!-- Image -->
+          <div class="relative aspect-[4/3] overflow-hidden bg-[#12121a]">
+            {{#.imageUrl}}
+            <img src="{{.imageUrl}}" alt="{{.name}}"
+                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+            {{/.imageUrl}}
+            {{^.imageUrl}}
+            <div class="w-full h-full flex items-center justify-center product-img-placeholder">
+              <span class="material-symbols-outlined text-4xl text-[#2a2a3a]">image</span>
+            </div>
+            {{/.imageUrl}}
+            {{^.isAvailable}}
+            <div class="absolute top-2 right-2 stock-badge">Habis</div>
+            {{/.isAvailable}}
+          </div>
+          <!-- Info -->
+          <div class="p-4">
+            <p class="text-xs font-['JetBrains_Mono'] text-[#00d4ff]/70 mb-1 truncate">{{.description}}</p>
+            <h3 class="text-sm font-['Inter'] font-semibold text-[#e8e8f0] mb-2 line-clamp-2">{{.name}}</h3>
+            <div class="flex items-center justify-between mt-auto pt-2 border-t border-[#00d4ff]/10">
+              <span class="text-base font-['JetBrains_Mono'] font-bold text-[#00d4ff]">Rp {{.price}}</span>
+              <button class="w-8 h-8 flex items-center justify-center border border-[#00d4ff]/20 text-[#8888a0] hover:text-[#00d4ff] hover:border-[#00d4ff]/60 hover:bg-[#00d4ff]/10 rounded transition-all duration-200 active:scale-90">
+                <span class="material-symbols-outlined text-sm">add</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        {{/products}}
+
+        <!-- Empty State -->
+        {{^products}}
+        <div class="col-span-full flex flex-col items-center justify-center py-16 lg:py-24 text-center">
+          <div class="w-20 h-20 rounded-full border border-dashed border-[#2a2a3a] flex items-center justify-center mb-5 bg-[#12121a]">
+            <span class="material-symbols-outlined text-4xl text-[#2a2a3a]">inventory_2</span>
+          </div>
+          <h3 class="text-lg font-['Inter'] font-semibold text-[#555568] mb-2 uppercase tracking-wider">Inventory Kosong</h3>
+          <p class="text-sm font-['Inter'] text-[#555568] max-w-md mb-6">Belum ada produk yang tersedia. Silakan cek kembali nanti atau hubungi kami untuk informasi lebih lanjut.</p>
+          <a href="{{whatsapp.url}}" target="_blank" rel="noopener"
+             class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#00d4ff] text-[#0a0a0f] font-['Inter'] font-semibold text-sm uppercase tracking-wider rounded hover:shadow-[0_0_20px_rgba(0,212,255,0.3)] transition-all duration-200">
+            <span class="material-symbols-outlined text-sm">chat</span>
+            Hubungi Kami
+          </a>
+        </div>
+        {{/products}}
+      </div>
+    </section>
+
+    <!-- ============================================================
+         BOTTOM CTA
+         ============================================================ -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 reveal">
+      <div class="bg-[#0d0d14] border border-[#00d4ff]/15 rounded-lg p-6 lg:p-10 text-center">
+        <span class="text-xs font-['JetBrains_Mono'] text-[#555568] block mb-2">$ TIDAK_MENEMUKAN_YANG_DICARI</span>
+        <h2 class="text-xl lg:text-2xl font-['Plus_Jakarta_Sans'] font-bold text-[#e8e8f0] mb-3">Tidak menemukan yang Anda cari?</h2>
+        <p class="text-sm font-['Inter'] text-[#8888a0] mb-6 max-w-md mx-auto">Hubungi kami langsung untuk menanyakan ketersediaan produk atau pemesanan khusus.</p>
+        <a href="{{whatsapp.url}}" target="_blank" rel="noopener"
+           class="inline-flex items-center gap-2 px-6 py-3 bg-[#00d4ff] text-[#0a0a0f] font-['Inter'] font-semibold text-sm uppercase tracking-wider rounded hover:bg-[#00e5ff] hover:shadow-[0_0_25px_rgba(0,212,255,0.4)] transition-all duration-200 active:scale-95">
+          <span class="material-symbols-outlined text-base">chat</span>
+          Chat WhatsApp
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  {{>footer}}
+
+  <!-- Floating WA Button -->
+  <a href="{{whatsapp.url}}" target="_blank" rel="noopener"
+     class="fixed bottom-6 right-6 w-14 h-14 lg:w-16 lg:h-16 bg-[#00d4ff] text-[#0a0a0f] rounded-full flex items-center justify-center hover:scale-110 active:scale-90 transition-all duration-200 z-50"
+     style="box-shadow: 0 0 20px rgba(0,212,255,0.3), 0 0 40px rgba(0,212,255,0.1);">
+    <span class="material-symbols-outlined text-2xl lg:text-3xl">bolt</span>
+  </a>
+
+  <script>
+    // Scroll Reveal
+    (function() {
+      const els = document.querySelectorAll('.reveal');
+      if (!els.length) return;
+      const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+      els.forEach(function(el) { observer.observe(el); });
+    })();
+
+    // Mobile menu close on link click
+    (function() {
+      var menu = document.getElementById('cyber-mobile-menu');
+      if (menu) {
+        menu.querySelectorAll('a').forEach(function(link) {
+          link.addEventListener('click', function() {
+            menu.classList.add('hidden');
+          });
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
