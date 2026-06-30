@@ -8,7 +8,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="./assets/tailwind.css" rel="stylesheet" />
-<style>:root{ {{color.vars}} }</style>
+<style>:root{ {{color.vars}} }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #131315; }
+::-webkit-scrollbar-thumb { background: #2a2a30; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #3a3a45; }
+    </style>
 <style>
         body {
             background-color: #131315;
@@ -34,7 +39,7 @@
 {{>navbar}}
 
 <!-- SideNavBar (Hidden on Mobile) -->
-<aside class="hidden lg:flex h-screen w-64 fixed left-0 top-0 z-40 bg-surface-container-low/80 backdrop-blur-md border-r border-secondary-fixed-dim/20 shadow-[10px_0_15px_rgba(116,0,159,0.1)] flex-col pt-24 pb-8 h-full">
+<aside class="hidden lg:flex h-screen w-52 fixed left-0 top-0 z-40 bg-surface-container-low/80 backdrop-blur-md border-r border-secondary-fixed-dim/20 shadow-[10px_0_15px_rgba(116,0,159,0.1)] flex-col pt-24 pb-8 h-full">
 <div class="px-6 mb-8">
 <div class="flex items-center gap-3 mb-2">
 <div class="w-10 h-10 bg-secondary-container rounded-sm flex items-center justify-center">
@@ -76,7 +81,7 @@
             </button>
 </div>
 </aside>
-<main class="lg:ml-64 pt-24 min-h-screen">
+<main class="lg:ml-52 pt-24 min-h-screen">
 <section class="px-margin-mobile md:px-margin-desktop py-20 max-w-max-width mx-auto">
 <div class="max-w-4xl mx-auto">
 <div class="text-center mb-16">
