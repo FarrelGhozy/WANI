@@ -5,14 +5,14 @@
     "": {
       "name": "web-gen",
       "dependencies": {
+        "@tailwindcss/cli": "^4.3.2",
         "archiver": "^7",
         "astro": "^7",
+        "tailwindcss": "^4.3.2",
       },
       "devDependencies": {
-        "@tailwindcss/cli": "^4.3.2",
         "@types/archiver": "^6",
         "@types/bun": "latest",
-        "tailwindcss": "^4.3.2",
         "typescript": "^5",
       },
     },
