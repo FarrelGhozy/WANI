@@ -26,6 +26,7 @@ export const updateWebsiteSchema = z.object({
   heroImageUrl: z.string().nullable().optional(),
   aboutImageUrl: z.string().nullable().optional(),
   logoUrl: z.string().nullable().optional(),
+  faviconUrl: z.string().nullable().optional(),
   ctaText: z.string().optional(),
 })
 
