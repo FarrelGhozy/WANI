@@ -118,6 +118,7 @@ export async function generateWebsite(
       },
       waOrderTemplate: null,
       logoUrl: getConfigValue(config, "logoUrl", store.logoUrl),
+      faviconUrl: getConfigValue(config, "faviconUrl", null),
     },
     stats: {
       totalOrders,
