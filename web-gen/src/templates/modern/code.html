@@ -90,33 +90,33 @@
 <section class="py-2xl bg-surface">
   <div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop">
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-lg">
-      <div class="group bg-surface-container-low rounded-2xl p-lg border border-outline-variant hover:border-primary/20 hover:shadow-lg transition-all reveal">
+      <div class="group bg-surface-container-low rounded-2xl p-lg border border-outline-variant hover:border-primary/20 hover:shadow-lg transition-all reveal overflow-hidden h-full">
         <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
           <span class="material-symbols-outlined text-primary text-2xl">schedule</span>
         </div>
         <h3 class="font-bold text-sm text-on-surface mb-1">Jam Operasional</h3>
-        <p class="text-xs text-on-surface-variant leading-relaxed">{{store.businessHours}}</p>
+        <p class="text-xs text-on-surface-variant leading-relaxed line-clamp-2 break-words">{{store.businessHours}}</p>
       </div>
-      <div class="group bg-surface-container-low rounded-2xl p-lg border border-outline-variant hover:border-primary/20 hover:shadow-lg transition-all reveal">
+      <div class="group bg-surface-container-low rounded-2xl p-lg border border-outline-variant hover:border-primary/20 hover:shadow-lg transition-all reveal overflow-hidden h-full">
         <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
           <span class="material-symbols-outlined text-primary text-2xl">payments</span>
         </div>
         <h3 class="font-bold text-sm text-on-surface mb-1">Pembayaran</h3>
-        <p class="text-xs text-on-surface-variant leading-relaxed">{{store.paymentMethods}}</p>
+        <p class="text-xs text-on-surface-variant leading-relaxed line-clamp-2 break-words">{{store.paymentMethods}}</p>
       </div>
-      <div class="group bg-surface-container-low rounded-2xl p-lg border border-outline-variant hover:border-primary/20 hover:shadow-lg transition-all reveal">
+      <div class="group bg-surface-container-low rounded-2xl p-lg border border-outline-variant hover:border-primary/20 hover:shadow-lg transition-all reveal overflow-hidden h-full">
         <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
           <span class="material-symbols-outlined text-primary text-2xl">local_shipping</span>
         </div>
         <h3 class="font-bold text-sm text-on-surface mb-1">Pengiriman</h3>
-        <p class="text-xs text-on-surface-variant leading-relaxed">{{store.shippingInfo}}</p>
+        <p class="text-xs text-on-surface-variant leading-relaxed line-clamp-2 break-words">{{store.shippingInfo}}</p>
       </div>
-      <div class="group bg-surface-container-low rounded-2xl p-lg border border-outline-variant hover:border-primary/20 hover:shadow-lg transition-all reveal">
+      <div class="group bg-surface-container-low rounded-2xl p-lg border border-outline-variant hover:border-primary/20 hover:shadow-lg transition-all reveal overflow-hidden h-full">
         <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
           <span class="material-symbols-outlined text-primary text-2xl">verified</span>
         </div>
         <h3 class="font-bold text-sm text-on-surface mb-1">Garansi</h3>
-        <p class="text-xs text-on-surface-variant leading-relaxed">{{store.returnPolicy}}</p>
+        <p class="text-xs text-on-surface-variant leading-relaxed line-clamp-2 break-words">{{store.returnPolicy}}</p>
       </div>
     </div>
   </div>
@@ -237,10 +237,10 @@
 </section>
 
 <!-- WhatsApp CTA -->
-<section class="py-2xl bg-gradient-to-r from-primary to-primary-fixed-dim">
-  <div class="max-w-3xl mx-auto px-margin-mobile md:px-margin-desktop text-center">
-    <h2 class="font-display-lg text-2xl md:text-3xl font-extrabold text-on-primary mb-4">Pesan Langsung via WhatsApp</h2>
-    <p class="text-on-primary/80 mb-8 max-w-lg mx-auto">Butuh bantuan atau ingin order? Chat kami sekarang, respon cepat!</p>
+<section class="py-16 md:py-28 bg-gradient-to-r from-primary to-primary-fixed-dim">
+  <div class="max-w-4xl mx-auto px-margin-mobile md:px-margin-desktop text-center">
+    <h2 class="font-display-lg text-2xl md:text-3xl font-extrabold text-on-primary mb-5">Pesan Langsung via WhatsApp</h2>
+    <p class="text-on-primary/80 mb-10 max-w-xl text-sm md:text-base mx-auto">Butuh bantuan atau ingin order? Chat kami sekarang, respon cepat!</p>
     <a href="{{whatsapp.url}}?text={{wa.text}}" target="_blank" rel="noopener" class="inline-flex items-center gap-3 px-10 py-5 bg-white text-primary rounded-2xl font-extrabold text-sm hover:scale-105 active:scale-95 transition-all shadow-2xl">
       <span class="material-symbols-outlined text-2xl">chat</span>
       Chat WhatsApp Sekarang
