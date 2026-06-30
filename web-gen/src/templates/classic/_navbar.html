@@ -18,9 +18,18 @@
 <button class="active:scale-95 transition-transform text-on-surface-variant hover:text-primary">
 <span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
 </button>
-<button class="md:hidden active:scale-95 transition-transform">
-<span class="material-symbols-outlined" data-icon="menu">menu</span>
-</button>
+            <button onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" class="md:hidden active:scale-95 transition-transform text-on-surface-variant hover:text-primary">
+              <span class="material-symbols-outlined" data-icon="menu">menu</span>
+            </button>
 </div>
+</div>
+<div id="mobile-menu" class="hidden md:hidden border-t border-outline-variant bg-surface">
+  <div class="flex flex-col px-margin-mobile py-md space-y-sm">
+    <a href="./" class="p-3 rounded-lg transition-colors {{#page.beranda}}bg-primary/10 text-primary font-bold{{/page.beranda}}{{^page.beranda}}text-on-surface-variant hover:bg-surface-container-low{{/page.beranda}}">Beranda</a>
+    <a href="./produk.html" class="p-3 rounded-lg transition-colors {{#page.produk}}bg-primary/10 text-primary font-bold{{/page.produk}}{{^page.produk}}text-on-surface-variant hover:bg-surface-container-low{{/page.produk}}">Produk</a>
+    <a href="./tentang.html" class="p-3 rounded-lg transition-colors {{#page.tentang}}bg-primary/10 text-primary font-bold{{/page.tentang}}{{^page.tentang}}text-on-surface-variant hover:bg-surface-container-low{{/page.tentang}}">Tentang</a>
+    <a href="./kontak.html" class="p-3 rounded-lg transition-colors {{#page.kontak}}bg-primary/10 text-primary font-bold{{/page.kontak}}{{^page.kontak}}text-on-surface-variant hover:bg-surface-container-low{{/page.kontak}}">Kontak</a>
+    <a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="p-3 rounded-lg text-primary font-bold hover:bg-surface-container-low transition-colors">Chat WhatsApp</a>
+  </div>
 </div>
 </header>

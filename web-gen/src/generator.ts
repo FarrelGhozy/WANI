@@ -229,6 +229,8 @@ function writeDataFile(workingDir: string, filename: string, data: unknown) {
 function buildContext(params: GenerateParams): Record<string, unknown> {
   const { store, config, stats } = params;
   const fmtPrice = (n: number) => `Rp ${n.toLocaleString("id-ID")}`;
+  const p = config.colors.primary;
+  const s = config.colors.secondary;
   return {
     "store.businessName": store.businessName,
     "store.name": store.businessName,
@@ -253,8 +255,9 @@ function buildContext(params: GenerateParams): Record<string, unknown> {
     "social.linkedin": config.socialMedia.linkedin ?? "",
     "contact.email": config.contact.email ?? "",
     "contact.mapsUrl": config.contact.mapsUrl ?? "",
-    "color.primary": config.colors.primary,
-    "color.secondary": config.colors.secondary,
+    "color.primary": p,
+    "color.secondary": s,
+    "color.vars": `--twc-primary:${p};--twc-primary-container:${p}33;--twc-primary-fixed-dim:${p}66;--twc-on-primary:#ffffff;--twc-secondary:${s};--twc-secondary-container:${s}33;--twc-on-secondary:#ffffff;--twc-tertiary:#784b00;--twc-tertiary-container:#996100;--twc-error:#ba1a1a;--twc-error-container:#ffdad6;--twc-on-error:#ffffff;`,
     "stats.totalOrders": String(stats.totalOrders),
     "stats.completed": String(stats.completed),
     "stats.pending": String(stats.pending),

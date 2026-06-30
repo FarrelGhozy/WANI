@@ -3,54 +3,10 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Kontak — {{store.businessName}}</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script>
-tailwind.config = {
-  darkMode: "class",
-  theme: { extend: {
-    colors: {
-      primary: "{{color.primary}}",
-      "primary-container": "{{color.primary}}33",
-      "primary-fixed-dim": "{{color.primary}}66",
-      "on-primary": "#ffffff",
-      background: "#faf8ff", "on-background": "#131b2e",
-      surface: "#faf8ff", "surface-container": "#eaedff",
-      "surface-container-low": "#f2f3ff", "surface-container-high": "#e2e7ff",
-      "on-surface": "#131b2e", "on-surface-variant": "#434655",
-      "outline-variant": "#c3c6d7", outline: "#737686",
-      secondary: "{{color.secondary}}",
-      "secondary-container": "{{color.secondary}}33",
-      "on-secondary": "#ffffff",
-      tertiary: "#784b00", "tertiary-container": "#996100",
-      error: "#ba1a1a", "error-container": "#ffdad6", "on-error": "#ffffff",
-    },
-    borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
-    spacing: {
-      xs: "4px", sm: "8px", md: "16px", base: "4px", lg: "24px",
-      xl: "40px", "2xl": "64px", "3xl": "80px",
-      gutter: "20px", "margin-mobile": "16px", "margin-desktop": "auto",
-    },
-    fontFamily: {
-      "display-lg": ["Plus Jakarta Sans"], "headline-md": ["Plus Jakarta Sans"],
-      "headline-sm": ["Plus Jakarta Sans"],
-      "body-md": ["Inter"], "body-lg": ["Inter"], "label-sm": ["Inter"],
-      "label-md": ["JetBrains Mono"],
-    },
-    fontSize: {
-      "display-lg-mobile": ["32px", { lineHeight: "1.2", fontWeight: "800" }],
-      "display-lg": ["48px", { lineHeight: "1.1", letterSpacing: "-0.02em", fontWeight: "800" }],
-      "headline-md": ["30px", { lineHeight: "1.2", fontWeight: "700" }],
-      "headline-sm": ["24px", { lineHeight: "1.3", fontWeight: "600" }],
-      "body-lg": ["18px", { lineHeight: "1.6", fontWeight: "400" }],
-      "body-md": ["16px", { lineHeight: "1.5", fontWeight: "400" }],
-      "label-md": ["14px", { lineHeight: "1.2", letterSpacing: "0.05em", fontWeight: "500" }],
-      "label-sm": ["12px", { lineHeight: "1.0", fontWeight: "600" }],
-    },
-  }},
-}
-</script>
+<link href="./assets/tailwind.css" rel="stylesheet" />
+<style>:root{ {{color.vars}} }</style>
 <style>
   .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
   ::-webkit-scrollbar { width: 8px; }

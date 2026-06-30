@@ -4,3 +4,5 @@ generated-sites/*
 !generated-sites/.gitkeep
 .astro
 dist
+.DS_Store
+tmp-css-build
