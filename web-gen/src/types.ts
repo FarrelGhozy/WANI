@@ -60,6 +60,7 @@ export interface SiteConfig {
   }
   waOrderTemplate: string | null
   logoUrl?: string | null
+  faviconUrl?: string | null
 }
 
 export interface GenerateParams {
