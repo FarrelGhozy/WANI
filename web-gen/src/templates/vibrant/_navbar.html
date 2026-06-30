@@ -1,34 +1,102 @@
-<!-- TopNavBar -->
-<nav class="w-full sticky top-0 z-50 bg-surface border-b border-outline-variant shadow-sm h-16">
-<div class="flex justify-between items-center max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop h-full">
-<div class="flex items-center gap-md">
-<a href="./" class="font-headline-sm text-headline-sm font-bold text-primary">{{store.name}}</a>
-</div>
-<div class="hidden md:flex items-center gap-xl">
-<a href="./" class="font-body-md text-body-md transition-colors duration-200 active:scale-95 pb-1 {{#page.beranda}}text-primary font-bold border-b-2 border-primary{{/page.beranda}}{{^page.beranda}}text-on-surface-variant hover:text-primary{{/page.beranda}}">Beranda</a>
-<a href="./produk.html" class="font-body-md text-body-md transition-colors duration-200 active:scale-95 pb-1 {{#page.produk}}text-primary font-bold border-b-2 border-primary{{/page.produk}}{{^page.produk}}text-on-surface-variant hover:text-primary{{/page.produk}}">Produk</a>
-<a href="./tentang.html" class="font-body-md text-body-md transition-colors duration-200 active:scale-95 pb-1 {{#page.tentang}}text-primary font-bold border-b-2 border-primary{{/page.tentang}}{{^page.tentang}}text-on-surface-variant hover:text-primary{{/page.tentang}}">Tentang</a>
-<a href="./kontak.html" class="font-body-md text-body-md transition-colors duration-200 active:scale-95 pb-1 {{#page.kontak}}text-primary font-bold border-b-2 border-primary{{/page.kontak}}{{^page.kontak}}text-on-surface-variant hover:text-primary{{/page.kontak}}">Kontak</a>
-</div>
-<div class="flex items-center gap-md">
-<button class="p-2 rounded-full hover:bg-surface-container transition-colors active:scale-95">
-<span class="material-symbols-outlined text-primary" data-icon="shopping_cart">shopping_cart</span>
-</button>
-<button class="p-2 rounded-full hover:bg-surface-container transition-colors active:scale-95">
-<span class="material-symbols-outlined text-primary" data-icon="account_circle">account_circle</span>
-</button>
-            <button onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" class="md:hidden p-2 active:scale-95 transition-transform">
-              <span class="material-symbols-outlined text-on-surface" data-icon="menu">menu</span>
-            </button>
-</div>
-</div>
-<div id="mobile-menu" class="hidden md:hidden border-t border-outline-variant bg-surface">
-  <div class="flex flex-col px-margin-mobile py-md space-y-sm">
-    <a href="./" class="p-3 rounded-lg transition-colors {{#page.beranda}}bg-primary/10 text-primary font-bold{{/page.beranda}}{{^page.beranda}}text-on-surface-variant hover:bg-surface-container-low{{/page.beranda}}">Beranda</a>
-    <a href="./produk.html" class="p-3 rounded-lg transition-colors {{#page.produk}}bg-primary/10 text-primary font-bold{{/page.produk}}{{^page.produk}}text-on-surface-variant hover:bg-surface-container-low{{/page.produk}}">Produk</a>
-    <a href="./tentang.html" class="p-3 rounded-lg transition-colors {{#page.tentang}}bg-primary/10 text-primary font-bold{{/page.tentang}}{{^page.tentang}}text-on-surface-variant hover:bg-surface-container-low{{/page.tentang}}">Tentang</a>
-    <a href="./kontak.html" class="p-3 rounded-lg transition-colors {{#page.kontak}}bg-primary/10 text-primary font-bold{{/page.kontak}}{{^page.kontak}}text-on-surface-variant hover:bg-surface-container-low{{/page.kontak}}">Kontak</a>
-    <a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="p-3 rounded-lg text-primary font-bold hover:bg-surface-container-low transition-colors">Chat WhatsApp</a>
+<nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-500 bg-transparent">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16 md:h-20">
+      <!-- Logo -->
+      <a href="./" class="flex items-center gap-3 group">
+        {{#store.hasLogo}}
+        <img src="{{store.logoUrl}}" alt="{{store.name}}" class="h-9 md:h-11 w-auto transition-transform duration-300 group-hover:scale-105" />
+        {{/store.hasLogo}}
+        {{^store.hasLogo}}
+        <span class="text-xl md:text-2xl font-black bg-gradient-to-r from-vibrant-orange via-vibrant-purple to-vibrant-green bg-clip-text text-transparent">{{store.name}}</span>
+        {{/store.hasLogo}}
+      </a>
+
+      <!-- Desktop Navigation -->
+      <div class="hidden md:flex items-center gap-1">
+        <a href="./" class="px-4 py-2 rounded-xl font-semibold text-sm transition-all duration-300 {{#page.beranda}}bg-primary/10 text-primary font-bold shadow-sm{{/page.beranda}}{{^page.beranda}}text-on-surface-variant hover:text-primary hover:bg-primary/5{{/page.beranda}}">
+          Beranda
+        </a>
+        <a href="./produk.html" class="px-4 py-2 rounded-xl font-semibold text-sm transition-all duration-300 {{#page.produk}}bg-primary/10 text-primary font-bold shadow-sm{{/page.produk}}{{^page.produk}}text-on-surface-variant hover:text-primary hover:bg-primary/5{{/page.produk}}">
+          Produk
+        </a>
+        <a href="./tentang.html" class="px-4 py-2 rounded-xl font-semibold text-sm transition-all duration-300 {{#page.tentang}}bg-primary/10 text-primary font-bold shadow-sm{{/page.tentang}}{{^page.tentang}}text-on-surface-variant hover:text-primary hover:bg-primary/5{{/page.tentang}}">
+          Tentang
+        </a>
+        <a href="./kontak.html" class="px-4 py-2 rounded-xl font-semibold text-sm transition-all duration-300 {{#page.kontak}}bg-primary/10 text-primary font-bold shadow-sm{{/page.kontak}}{{^page.kontak}}text-on-surface-variant hover:text-primary hover:bg-primary/5{{/page.kontak}}">
+          Kontak
+        </a>
+      </div>
+
+      <!-- Right Actions -->
+      <div class="flex items-center gap-2 md:gap-3">
+        <a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="hidden md:inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-on-primary rounded-xl font-bold text-sm hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg shadow-primary/25">
+          <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1">chat</span>
+          Chat
+        </a>
+        <button id="mobile-menu-btn" class="md:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors active:scale-95" aria-label="Toggle menu">
+          <span id="menu-icon" class="material-symbols-outlined text-on-surface">menu</span>
+        </button>
+      </div>
+    </div>
   </div>
-</div>
+
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" class="hidden md:hidden border-t border-outline-variant bg-surface/95 backdrop-blur-xl shadow-xl">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 space-y-1">
+      <a href="./" class="flex items-center gap-3 p-3 rounded-xl transition-all duration-200 {{#page.beranda}}bg-primary/10 text-primary font-bold{{/page.beranda}}{{^page.beranda}}text-on-surface-variant hover:bg-surface-container hover:text-on-surface{{/page.beranda}}">
+        <span class="material-symbols-outlined">home</span>
+        <span>Beranda</span>
+      </a>
+      <a href="./produk.html" class="flex items-center gap-3 p-3 rounded-xl transition-all duration-200 {{#page.produk}}bg-primary/10 text-primary font-bold{{/page.produk}}{{^page.produk}}text-on-surface-variant hover:bg-surface-container hover:text-on-surface{{/page.produk}}">
+        <span class="material-symbols-outlined">inventory_2</span>
+        <span>Produk</span>
+      </a>
+      <a href="./tentang.html" class="flex items-center gap-3 p-3 rounded-xl transition-all duration-200 {{#page.tentang}}bg-primary/10 text-primary font-bold{{/page.tentang}}{{^page.tentang}}text-on-surface-variant hover:bg-surface-container hover:text-on-surface{{/page.tentang}}">
+        <span class="material-symbols-outlined">info</span>
+        <span>Tentang</span>
+      </a>
+      <a href="./kontak.html" class="flex items-center gap-3 p-3 rounded-xl transition-all duration-200 {{#page.kontak}}bg-primary/10 text-primary font-bold{{/page.kontak}}{{^page.kontak}}text-on-surface-variant hover:bg-surface-container hover:text-on-surface{{/page.kontak}}">
+        <span class="material-symbols-outlined">contact_support</span>
+        <span>Kontak</span>
+      </a>
+      <hr class="border-outline-variant my-3" />
+      <a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="flex items-center gap-3 p-3 rounded-xl bg-primary text-on-primary font-bold hover:bg-primary/90 transition-all active:scale-[0.98]">
+        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">chat</span>
+        <span>Chat WhatsApp</span>
+      </a>
+      <a href="tel:{{store.phone}}" class="flex items-center gap-3 p-3 rounded-xl text-on-surface-variant hover:bg-surface-container transition-all">
+        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">call</span>
+        <span>{{store.phone}}</span>
+      </a>
+    </div>
+  </div>
 </nav>
+
+<script>
+  (function() {
+    var navbar = document.getElementById('navbar');
+    var menuBtn = document.getElementById('mobile-menu-btn');
+    var menu = document.getElementById('mobile-menu');
+    var menuIcon = document.getElementById('menu-icon');
+
+    // Scroll handler
+    function onScroll() {
+      if (window.pageYOffset > 50) {
+        navbar.classList.add('bg-surface/85', 'backdrop-blur-xl', 'shadow-lg', 'shadow-black/5');
+      } else {
+        navbar.classList.remove('bg-surface/85', 'backdrop-blur-xl', 'shadow-lg', 'shadow-black/5');
+      }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    // Mobile menu toggle
+    if (menuBtn && menu) {
+      menuBtn.addEventListener('click', function() {
+        var isHidden = menu.classList.contains('hidden');
+        menu.classList.toggle('hidden');
+        menuIcon.textContent = isHidden ? 'close' : 'menu';
+      });
+    }
+  })();
+</script>
