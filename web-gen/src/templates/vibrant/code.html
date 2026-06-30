@@ -451,21 +451,21 @@
 </section>
 
 <!-- ========== CTA WHATSAPP SECTION ========== -->
-<section class="relative overflow-hidden">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 lg:pb-32">
-    <div class="relative rounded-[2.5rem] overflow-hidden bg-gradient-to-br from-vibrant-orange via-vibrant-purple to-vibrant-green p-10 md:p-16 lg:p-20 reveal-scale">
+<section class="relative overflow-hidden py-12 md:py-20">
+  <div class="max-w-7xl mx-auto px-6 md:px-12 lg:px-16">
+    <div class="relative rounded-[2.5rem] overflow-hidden bg-gradient-to-br from-vibrant-orange via-vibrant-purple to-vibrant-green p-12 md:p-20 lg:p-24 reveal-scale">
       <div class="absolute top-0 right-0 w-80 h-80 bg-white/10 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none"></div>
       <div class="absolute bottom-0 left-0 w-60 h-60 bg-white/10 rounded-full blur-3xl -ml-24 -mb-24 pointer-events-none"></div>
       <div class="absolute inset-0 opacity-[0.08] pointer-events-none" style="background-image: radial-gradient(circle at 25% 25%, white 1px, transparent 1px); background-size: 30px 30px;"></div>
 
-      <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left">
-        <div>
-          <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-white leading-tight">
-            Ada Pertanyaan? <span class="block md:inline"><span class="underline decoration-4 decoration-white/20 underline-offset-8">Chat WhatsApp</span> Sekarang!</span>
+      <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-10 md:gap-16 text-center md:text-left">
+        <div class="flex-1">
+          <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-white leading-tight mb-4">
+            Ada Pertanyaan? <span class="md:whitespace-nowrap"><span class="underline decoration-4 decoration-white/20 underline-offset-8">Chat WhatsApp</span> Sekarang!</span>
           </h2>
-          <p class="text-white/80 text-lg mt-4 max-w-lg">Tim kami siap membantu Anda dari Senin - Jumat, 09:00 - 18:00 WIB</p>
+          <p class="text-white/80 text-base md:text-lg max-w-xl">Tim kami siap membantu Anda dari Senin - Jumat, 09:00 - 18:00 WIB</p>
         </div>
-        <a href="{{whatsapp.url}}?text={{wa.text}}" target="_blank" rel="noopener" class="inline-flex items-center gap-3 px-10 py-5 bg-white text-on-surface rounded-2xl font-bold text-lg hover:scale-105 active:scale-95 transition-all duration-300 shadow-2xl group whitespace-nowrap">
+        <a href="{{whatsapp.url}}?text={{wa.text}}" target="_blank" rel="noopener" class="shrink-0 inline-flex items-center gap-3 px-10 py-5 bg-white text-on-surface rounded-2xl font-bold text-lg hover:scale-105 active:scale-95 transition-all duration-300 shadow-2xl group whitespace-nowrap">
           <span class="material-symbols-outlined text-vibrant-green group-hover:scale-110 transition-transform" style="font-family: 'Material Symbols Outlined'; font-variation-settings: 'FILL' 1">chat</span>
           Hubungi Kami
           <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
@@ -474,7 +474,6 @@
     </div>
   </div>
 </section>
-
 {{>footer}}
 
 <!-- ========== FLOATING WHATSAPP BUTTON ========== -->
