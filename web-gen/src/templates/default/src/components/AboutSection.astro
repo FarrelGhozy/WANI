@@ -2,50 +2,122 @@
 import * as fs from "node:fs"
 const store = JSON.parse(fs.readFileSync("src/data/store.json", "utf-8"))
 const siteConfig = JSON.parse(fs.readFileSync("src/data/site-config.json", "utf-8"))
+
+const aboutImage = siteConfig.about?.imageUrl ?? null
+const logoUrl = siteConfig.logoUrl ?? store.logoUrl ?? null
 ---
 
-<section class="section text-center">
-  <div class="container-sm">
-    <h2 class="section-title">Tentang Kami</h2>
-    <div class="card">
-      <p style="color: var(--color-text); line-height: 1.7; margin-bottom: 1rem;">
-        {siteConfig.about.description}
-      </p>
-      {siteConfig.about.mission && (
-        <p style="color: var(--color-muted); line-height: 1.7; font-style: italic;">
-          &ldquo;{siteConfig.about.mission}&rdquo;
-        </p>
+<section class="section">
+  <div class="container">
+    <div class={`about-layout${aboutImage ? ' about-layout--image' : ''}`}>
+      {aboutImage && (
+        <div class="about-image-col">
+          <div class="about-image-wrap">
+            <img src={aboutImage} alt={`Tentang ${store.businessName}`} class="about-image" loading="lazy" />
+          </div>
+        </div>
       )}
-      <div class="about-grid">
-        <div class="about-item">
-          <div class="about-item-icon">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
+      <div class="about-text-col">
+        <h2 class="section-title">Tentang Kami</h2>
+        <div class="card about-card">
+          {logoUrl && (
+            <div class="about-logo">
+              <img src={logoUrl} alt={store.businessName} class="about-logo-img" />
+            </div>
+          )}
+          <p class="about-description">{siteConfig.about.description}</p>
+          {siteConfig.about.mission && (
+            <p class="about-mission">&ldquo;{siteConfig.about.mission}&rdquo;</p>
+          )}
+          <div class="about-grid">
+            <div class="about-item">
+              <div class="about-item-icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <p class="about-item-label">Jam Operasional</p>
+              <p class="about-item-value">{store.businessHours ?? "-"}</p>
+            </div>
+            <div class="about-item">
+              <div class="about-item-icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </div>
+              <p class="about-item-label">Alamat</p>
+              <p class="about-item-value">{store.address ?? "-"}</p>
+            </div>
+            <div class="about-item">
+              <div class="about-item-icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                </svg>
+              </div>
+              <p class="about-item-label">Pembayaran</p>
+              <p class="about-item-value">{store.paymentMethods ?? "-"}</p>
+            </div>
           </div>
-          <p class="about-item-label">Jam Operasional</p>
-          <p class="about-item-value">{store.businessHours ?? "-"}</p>
-        </div>
-        <div class="about-item">
-          <div class="about-item-icon">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-          </div>
-          <p class="about-item-label">Alamat</p>
-          <p class="about-item-value">{store.address ?? "-"}</p>
-        </div>
-        <div class="about-item">
-          <div class="about-item-icon">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-            </svg>
-          </div>
-          <p class="about-item-label">Pembayaran</p>
-          <p class="about-item-value">{store.paymentMethods ?? "-"}</p>
         </div>
       </div>
     </div>
   </div>
 </section>
+
+<style>
+  .about-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    align-items: start;
+  }
+  .about-layout--image {
+    grid-template-columns: 1fr 1fr;
+  }
+  @media (max-width: 768px) {
+    .about-layout--image {
+      grid-template-columns: 1fr;
+    }
+  }
+  .about-image-col {
+    order: 2;
+  }
+  .about-image-wrap {
+    aspect-ratio: 4/3;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+  }
+  .about-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .about-text-col {
+    order: 1;
+  }
+  .about-description {
+    color: var(--color-text);
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+    font-size: 1.05rem;
+  }
+  .about-mission {
+    color: var(--color-muted);
+    line-height: 1.7;
+    font-style: italic;
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    padding-left: 1rem;
+    border-left: 3px solid var(--color-primary);
+  }
+  .about-logo {
+    margin-bottom: 1.5rem;
+  }
+  .about-logo-img {
+    height: 3rem;
+    width: auto;
+    border-radius: 0.5rem;
+  }
+</style>
