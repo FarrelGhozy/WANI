@@ -26,9 +26,9 @@
 <div>
 <h3 class="font-bold text-sm text-on-surface mb-4">Informasi</h3>
 <ul class="space-y-2.5 text-sm text-on-surface-variant">
-<li>{{store.address}}</li>
-<li>{{store.businessHours}}</li>
-<li>{{store.paymentMethods}}</li>
+{{#store.address}}<li>{{store.address}}</li>{{/store.address}}
+{{#store.businessHours}}<li>{{store.businessHours}}</li>{{/store.businessHours}}
+{{#store.paymentMethods}}<li>{{store.paymentMethods}}</li>{{/store.paymentMethods}}
 </ul>
 </div>
 <div>
