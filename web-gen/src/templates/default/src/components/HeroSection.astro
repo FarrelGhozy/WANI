@@ -2,10 +2,18 @@
 import * as fs from "node:fs"
 const siteConfig = JSON.parse(fs.readFileSync("src/data/site-config.json", "utf-8"))
 const stats = JSON.parse(fs.readFileSync("src/data/orders-stats.json", "utf-8"))
+
+const heroImage = siteConfig.hero?.imageUrl ?? null
 ---
 
-<section class="hero text-center">
-  <div class="container-sm">
+<section class={`hero text-center${heroImage ? ' hero--image' : ''}`}>
+  {heroImage && (
+    <div class="hero-bg">
+      <img src={heroImage} alt="" class="hero-bg-img" loading="eager" />
+      <div class="hero-overlay"></div>
+    </div>
+  )}
+  <div class="container-sm hero-content">
     <h1 class="hero-title">{siteConfig.hero.headline}</h1>
     {siteConfig.hero.subheadline && (
       <p class="hero-subtitle">{siteConfig.hero.subheadline}</p>
@@ -22,8 +30,54 @@ const stats = JSON.parse(fs.readFileSync("src/data/orders-stats.json", "utf-8"))
     </div>
     {stats.totalOrders > 0 && (
       <p class="hero-stats">
-        {stats.totalOrders}+ pesanan selesai &bull; {stats.completed} pelanggan puas
+        <span>{stats.totalOrders}+ pesanan</span>
+        <span class="hero-stats-sep">&bull;</span>
+        <span>{stats.completed} selesai</span>
       </p>
     )}
   </div>
 </section>
+
+<style>
+  .hero--image {
+    position: relative;
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+  .hero-bg-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.3) 60%, rgba(0,0,0,0.5) 100%);
+  }
+  .hero--image .hero-content {
+    position: relative;
+    z-index: 1;
+  }
+  .hero--image .hero-title {
+    color: white;
+    text-shadow: 0 2px 24px rgba(0,0,0,0.3);
+  }
+  .hero--image .hero-subtitle {
+    color: rgba(255,255,255,0.85);
+  }
+  .hero--image .hero-stats {
+    color: rgba(255,255,255,0.7);
+  }
+  .hero-stats-sep {
+    margin: 0 0.5rem;
+    opacity: 0.4;
+  }
+</style>

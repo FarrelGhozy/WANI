@@ -1,40 +1,100 @@
-<!-- TopNavBar -->
-<nav class="fixed top-0 w-full z-50 bg-surface/70 backdrop-blur-xl border-b border-primary-fixed/30 shadow-[0_4px_20px_rgba(0,219,231,0.15)]">
-<div class="flex justify-between items-center px-margin-desktop py-4 max-w-max-width mx-auto">
-<div class="font-headline-md text-headline-md text-primary-fixed italic tracking-tighter shadow-[0_0_15px_rgba(116,245,255,0.6)]">
-<a href="./" class="text-primary-fixed no-underline">{{store.name}}</a>
-</div>
-<div class="hidden md:flex gap-8">
-<a href="./" class="font-label-caps text-label-caps transition-colors pb-1 {{#page.beranda}}text-primary-fixed border-b-2 border-primary-fixed{{/page.beranda}}{{^page.beranda}}text-on-surface-variant hover:text-primary-fixed{{/page.beranda}}">BERANDA</a>
-<a href="./produk.html" class="font-label-caps text-label-caps transition-colors pb-1 {{#page.produk}}text-primary-fixed border-b-2 border-primary-fixed{{/page.produk}}{{^page.produk}}text-on-surface-variant hover:text-primary-fixed{{/page.produk}}">PRODUK</a>
-<a href="./tentang.html" class="font-label-caps text-label-caps transition-colors pb-1 {{#page.tentang}}text-primary-fixed border-b-2 border-primary-fixed{{/page.tentang}}{{^page.tentang}}text-on-surface-variant hover:text-primary-fixed{{/page.tentang}}">TENTANG</a>
-<a href="./kontak.html" class="font-label-caps text-label-caps transition-colors pb-1 {{#page.kontak}}text-primary-fixed border-b-2 border-primary-fixed{{/page.kontak}}{{^page.kontak}}text-on-surface-variant hover:text-primary-fixed{{/page.kontak}}">KONTAK</a>
-</div>
-<div class="flex items-center gap-6">
-<div class="relative hidden sm:block">
-<input class="bg-surface-container-low border-b border-outline-variant text-data-md font-data-md px-4 py-1 focus:outline-none focus:border-primary-fixed transition-all w-48 lg:w-64" placeholder="QUERY_DATABASE..." type="text"/>
-<span class="material-symbols-outlined absolute right-2 top-1 text-primary-fixed text-sm">search</span>
-</div>
-<div class="flex gap-2">
-<button class="active:scale-95 duration-100 hover:bg-primary/10 p-2 rounded transition-all cursor-pointer">
-<span class="material-symbols-outlined text-primary-fixed">shopping_cart</span>
-</button>
-            <button class="active:scale-95 duration-100 hover:bg-primary/10 p-2 rounded transition-all cursor-pointer">
-              <span class="material-symbols-outlined text-primary-fixed">account_circle</span>
-            </button>
-            <button onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" class="md:hidden active:scale-95 duration-100 hover:bg-primary/10 p-2 rounded transition-all cursor-pointer">
-              <span class="material-symbols-outlined text-primary-fixed">menu</span>
-            </button>
-          </div>
-</div>
-</div>
-<div id="mobile-menu" class="hidden md:hidden border-t border-primary-fixed/30 bg-surface/70 backdrop-blur-xl">
-  <div class="flex flex-col px-margin-desktop py-4 space-y-2">
-    <a href="./" class="p-3 rounded font-label-caps text-label-caps transition-colors {{#page.beranda}}text-primary-fixed border-l-2 border-primary-fixed bg-primary/10{{/page.beranda}}{{^page.beranda}}text-on-surface-variant hover:text-primary-fixed hover:bg-primary/10{{/page.beranda}}">BERANDA</a>
-    <a href="./produk.html" class="p-3 rounded font-label-caps text-label-caps transition-colors {{#page.produk}}text-primary-fixed border-l-2 border-primary-fixed bg-primary/10{{/page.produk}}{{^page.produk}}text-on-surface-variant hover:text-primary-fixed hover:bg-primary/10{{/page.produk}}">PRODUK</a>
-    <a href="./tentang.html" class="p-3 rounded font-label-caps text-label-caps transition-colors {{#page.tentang}}text-primary-fixed border-l-2 border-primary-fixed bg-primary/10{{/page.tentang}}{{^page.tentang}}text-on-surface-variant hover:text-primary-fixed hover:bg-primary/10{{/page.tentang}}">TENTANG</a>
-    <a href="./kontak.html" class="p-3 rounded font-label-caps text-label-caps transition-colors {{#page.kontak}}text-primary-fixed border-l-2 border-primary-fixed bg-primary/10{{/page.kontak}}{{^page.kontak}}text-on-surface-variant hover:text-primary-fixed hover:bg-primary/10{{/page.kontak}}">KONTAK</a>
-    <a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="p-3 rounded font-label-caps text-label-caps text-primary-fixed font-bold hover:bg-primary/10 transition-colors">CHAT WHATSAPP</a>
+<!-- ============================================================
+     CYBERPUNK NAVBAR — Fixed top nav with functional mobile menu
+     ============================================================ -->
+<nav class="fixed top-0 left-0 w-full z-50 bg-[#0a0a0f]/85 backdrop-blur-xl border-b border-[#00d4ff]/20">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16 lg:h-18">
+
+      <!-- Brand / Logo -->
+      <div class="flex-shrink-0">
+        <a href="./" class="flex items-center gap-2">
+          {{#store.hasLogo}}
+          <img src="{{store.logoUrl}}" alt="{{store.name}}" class="h-8 lg:h-9 w-auto" />
+          {{/store.hasLogo}}
+          {{^store.hasLogo}}
+          <span class="text-xl lg:text-2xl font-['Plus_Jakarta_Sans'] font-extrabold tracking-tight text-[#00d4ff] hover:text-[#00e5ff] transition-colors duration-200" style="text-shadow: 0 0 12px rgba(0,212,255,0.4);">
+            {{store.name}}
+          </span>
+          {{/store.hasLogo}}
+        </a>
+      </div>
+
+      <!-- Desktop Nav Links -->
+      <div class="hidden md:flex items-center gap-1 lg:gap-2">
+        <a href="./"
+           class="px-3 py-2 text-sm font-['Inter'] font-medium tracking-wider uppercase transition-all duration-200 rounded
+                  {{#page.beranda}}text-[#00d4ff] bg-[#00d4ff]/10 border-b-2 border-[#00d4ff]{{/page.beranda}}
+                  {{^page.beranda}}text-[#8888a0] hover:text-[#00d4ff] hover:bg-[#00d4ff]/5{{/page.beranda}}">
+          Beranda
+        </a>
+        <a href="./produk.html"
+           class="px-3 py-2 text-sm font-['Inter'] font-medium tracking-wider uppercase transition-all duration-200 rounded
+                  {{#page.produk}}text-[#b388ff] bg-[#b388ff]/10 border-b-2 border-[#b388ff]{{/page.produk}}
+                  {{^page.produk}}text-[#8888a0] hover:text-[#b388ff] hover:bg-[#b388ff]/5{{/page.produk}}">
+          Produk
+        </a>
+        <a href="./tentang.html"
+           class="px-3 py-2 text-sm font-['Inter'] font-medium tracking-wider uppercase transition-all duration-200 rounded
+                  {{#page.tentang}}text-[#b388ff] bg-[#b388ff]/10 border-b-2 border-[#b388ff]{{/page.tentang}}
+                  {{^page.tentang}}text-[#8888a0] hover:text-[#b388ff] hover:bg-[#b388ff]/5{{/page.tentang}}">
+          Tentang
+        </a>
+        <a href="./kontak.html"
+           class="px-3 py-2 text-sm font-['Inter'] font-medium tracking-wider uppercase transition-all duration-200 rounded
+                  {{#page.kontak}}text-[#b388ff] bg-[#b388ff]/10 border-b-2 border-[#b388ff]{{/page.kontak}}
+                  {{^page.kontak}}text-[#8888a0] hover:text-[#b388ff] hover:bg-[#b388ff]/5{{/page.kontak}}">
+          Kontak
+        </a>
+      </div>
+
+      <!-- Right side: WhatsApp CTA + Mobile Toggle -->
+      <div class="flex items-center gap-3">
+        <a href="{{whatsapp.url}}" target="_blank" rel="noopener"
+           class="hidden sm:flex items-center gap-1.5 px-4 py-2 text-xs font-['Inter'] font-bold uppercase tracking-wider text-[#0a0a0f] bg-[#00d4ff] rounded hover:bg-[#00e5ff] hover:shadow-[0_0_12px_rgba(0,212,255,0.4)] active:scale-95 transition-all duration-200">
+          <span class="material-symbols-outlined text-sm">chat</span>Order
+        </a>
+
+        <!-- Mobile menu toggle -->
+        <button onclick="document.getElementById('cyber-mobile-menu').classList.toggle('hidden')"
+                class="md:hidden p-2 text-[#8888a0] hover:text-[#00d4ff] hover:bg-[#00d4ff]/10 rounded transition-all duration-200 active:scale-95">
+          <span class="material-symbols-outlined text-xl">menu</span>
+        </button>
+      </div>
+    </div>
   </div>
-</div>
+
+  <!-- Mobile Menu -->
+  <div id="cyber-mobile-menu" class="hidden md:hidden border-t border-[#00d4ff]/10 bg-[#0a0a0f]/95 backdrop-blur-xl">
+    <div class="max-w-7xl mx-auto px-4 py-4 space-y-1">
+      <a href="./"
+         class="block px-4 py-3 rounded text-sm font-['Inter'] font-medium tracking-wider uppercase transition-all duration-200
+                {{#page.beranda}}text-[#00d4ff] bg-[#00d4ff]/10 border-l-2 border-[#00d4ff]{{/page.beranda}}
+                {{^page.beranda}}text-[#8888a0] hover:text-[#00d4ff] hover:bg-[#00d4ff]/5{{/page.beranda}}">
+        <span class="material-symbols-outlined text-sm align-middle mr-2">home</span>Beranda
+      </a>
+      <a href="./produk.html"
+         class="block px-4 py-3 rounded text-sm font-['Inter'] font-medium tracking-wider uppercase transition-all duration-200
+                {{#page.produk}}text-[#b388ff] bg-[#b388ff]/10 border-l-2 border-[#b388ff]{{/page.produk}}
+                {{^page.produk}}text-[#8888a0] hover:text-[#b388ff] hover:bg-[#b388ff]/5{{/page.produk}}">
+        <span class="material-symbols-outlined text-sm align-middle mr-2">inventory_2</span>Produk
+      </a>
+      <a href="./tentang.html"
+         class="block px-4 py-3 rounded text-sm font-['Inter'] font-medium tracking-wider uppercase transition-all duration-200
+                {{#page.tentang}}text-[#b388ff] bg-[#b388ff]/10 border-l-2 border-[#b388ff]{{/page.tentang}}
+                {{^page.tentang}}text-[#8888a0] hover:text-[#b388ff] hover:bg-[#b388ff]/5{{/page.tentang}}">
+        <span class="material-symbols-outlined text-sm align-middle mr-2">info</span>Tentang
+      </a>
+      <a href="./kontak.html"
+         class="block px-4 py-3 rounded text-sm font-['Inter'] font-medium tracking-wider uppercase transition-all duration-200
+                {{#page.kontak}}text-[#b388ff] bg-[#b388ff]/10 border-l-2 border-[#b388ff]{{/page.kontak}}
+                {{^page.kontak}}text-[#8888a0] hover:text-[#b388ff] hover:bg-[#b388ff]/5{{/page.kontak}}">
+        <span class="material-symbols-outlined text-sm align-middle mr-2">contact_mail</span>Kontak
+      </a>
+      <hr class="border-[#00d4ff]/10 my-3" />
+      <a href="{{whatsapp.url}}" target="_blank" rel="noopener"
+         class="block px-4 py-3 rounded text-sm font-['Inter'] font-medium tracking-wider uppercase text-[#00d4ff] hover:bg-[#00d4ff]/10 transition-all duration-200">
+        <span class="material-symbols-outlined text-sm align-middle mr-2">chat</span>Chat WhatsApp
+      </a>
+    </div>
+  </div>
 </nav>

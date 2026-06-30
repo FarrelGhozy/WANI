@@ -83,6 +83,7 @@ export async function generateWebsite(
       paymentMethods: store.paymentMethods,
       shippingInfo: store.shippingInfo,
       returnPolicy: store.returnPolicy,
+      logoUrl: store.logoUrl,
     },
     products: selectedProducts.map((p: any) => ({
       id: p.id,
@@ -97,11 +98,13 @@ export async function generateWebsite(
       hero: {
         headline: getConfigValue(config, "heroHeadline", store.businessName),
         subheadline: getConfigValue(config, "heroSubheadline", null),
-        ctaText: null,
+        ctaText: getConfigValue(config, "ctaText", null),
+        imageUrl: getConfigValue(config, "heroImageUrl", null),
       },
       about: {
         description: getConfigValue(config, "aboutText", ""),
         mission: null,
+        imageUrl: getConfigValue(config, "aboutImageUrl", null),
       },
       socialMedia: getConfigValue(config, "socialMedia", {}),
       contact: {
@@ -114,6 +117,8 @@ export async function generateWebsite(
         secondary: getConfigValue(config, "secondaryColor", "#f59e0b"),
       },
       waOrderTemplate: null,
+      logoUrl: getConfigValue(config, "logoUrl", store.logoUrl),
+      faviconUrl: getConfigValue(config, "faviconUrl", null),
     },
     stats: {
       totalOrders,

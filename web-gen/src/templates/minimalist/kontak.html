@@ -1,84 +1,40 @@
 <!DOCTYPE html>
-
-<html class="light" lang="en"><head>
+<html class="light" lang="id"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Kontak — {{store.name}}</title>
-<!-- Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=Playfair+Display:ital,wght@0,400;0,700;1,400&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<title>Kontak — {{store.businessName}}</title>
+  {{#favicon.has}}<link rel="icon" href="{{favicon.url}}" />{{/favicon.has}}{{^favicon.has}}<link rel="icon" href="{{favicon.svg}}" />{{/favicon.has}}
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <link href="./assets/tailwind.css" rel="stylesheet" />
-<style>:root{ {{color.vars}} }
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #c0c0c080; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #a0a0a0b0; }
-    </style>
-<style>
-        body {
-            background-color: #faf8ff;
-            color: #131b2e;
-            overflow-x: hidden;
-            scroll-behavior: smooth;
-        }
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
-        }
-    </style>
+<style>:root{ {{color.vars}} }</style>
+<style>.material-symbols-outlined{font-variation-settings:'FILL'0,'wght'300,'GRAD'0,'opsz'24}::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#d6d3d1;border-radius:2px}.font-serif{font-family:'Playfair Display',Georgia,serif}.reveal{opacity:0;transform:translateY(24px);transition:all .9s cubic-bezier(0.16,1,0.3,1)}.reveal.visible{opacity:1;transform:translateY(0)}</style>
 </head>
-<body class="font-body-md text-on-surface">
+<body class="bg-stone-50 text-stone-800">
 
 {{>navbar}}
 
-<main>
-<section class="py-3xl px-margin-mobile md:px-margin-desktop">
-<div class="max-w-4xl mx-auto space-y-xl">
-<div class="text-center space-y-md">
-<h1 class="font-serif text-5xl">Hubungi Kami</h1>
-<p class="font-body-md text-on-surface-variant max-w-xl mx-auto">Ada pertanyaan? Jangan ragu untuk menghubungi kami.</p>
+<main class="pt-20">
+<section class="py-24">
+<div class="max-w-5xl mx-auto px-8 md:px-16">
+<div class="mb-16 text-center reveal"><p class="text-xs text-stone-400 uppercase tracking-[0.2em] mb-4">Kontak</p><h1 class="font-serif text-4xl md:text-6xl text-stone-900">Hubungi Kami</h1><p class="text-stone-500 mt-4 max-w-xl mx-auto text-sm md:text-base leading-relaxed">Ada pertanyaan? Jangan ragu menghubungi kami.</p></div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="space-y-6">
+<div class="border border-stone-200 p-6 reveal"><div class="flex items-start gap-4"><span class="material-symbols-outlined text-stone-400 mt-0.5">location_on</span><div><p class="text-xs text-stone-400 mb-1">Alamat</p><p class="text-sm text-stone-700">{{store.address}}</p></div></div></div>
+<div class="border border-stone-200 p-6 reveal"><div class="flex items-start gap-4"><span class="material-symbols-outlined text-stone-400 mt-0.5">schedule</span><div><p class="text-xs text-stone-400 mb-1">Jam Operasional</p><p class="text-sm text-stone-700">{{store.businessHours}}</p></div></div></div>
+<div class="border border-stone-200 p-6 reveal"><div class="flex items-start gap-4"><span class="material-symbols-outlined text-stone-400 mt-0.5">call</span><div><p class="text-xs text-stone-400 mb-1">WhatsApp</p><a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="text-sm text-stone-700 hover:text-stone-900">{{store.phone}}</a></div></div></div>
+{{#contact.email}}<div class="border border-stone-200 p-6 reveal"><div class="flex items-start gap-4"><span class="material-symbols-outlined text-stone-400 mt-0.5">mail</span><div><p class="text-xs text-stone-400 mb-1">Email</p><a href="mailto:{{contact.email}}" class="text-sm text-stone-700 hover:text-stone-900">{{contact.email}}</a></div></div></div>{{/contact.email}}
 </div>
-<div class="grid md:grid-cols-2 gap-xl">
-<div class="space-y-md">
-<div class="border border-outline-variant p-xl flex items-start gap-md">
-<span class="material-symbols-outlined text-primary">location_on</span>
-<div>
-<h3 class="font-label-md text-label-md font-bold uppercase tracking-wider">Alamat</h3>
-<p class="font-body-md text-on-surface-variant">{{store.address}}</p>
+
+<div class="reveal">
+<div class="bg-stone-900 text-white p-10 text-center">
+<div class="w-12 h-12 bg-white/10 flex items-center justify-center mx-auto mb-6"><span class="material-symbols-outlined text-white">chat</span></div>
+<h2 class="font-serif text-2xl mb-3">Pesan Sekarang</h2>
+<p class="text-white/60 text-sm mb-8">Chat kami via WhatsApp untuk order atau pertanyaan.</p>
+<a href="{{whatsapp.url}}?text={{wa.text}}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 w-full justify-center px-6 py-4 bg-white text-stone-900 font-semibold text-sm hover:bg-stone-100 transition-colors">Chat WhatsApp</a>
+<div class="mt-8 pt-8 border-t border-white/20 text-xs text-white/40 space-y-1"><p>{{store.businessHours}}</p><p>{{store.paymentMethods}}</p></div>
 </div>
-</div>
-<div class="border border-outline-variant p-xl flex items-start gap-md">
-<span class="material-symbols-outlined text-primary">schedule</span>
-<div>
-<h3 class="font-label-md text-label-md font-bold uppercase tracking-wider">Jam Operasional</h3>
-<p class="font-body-md text-on-surface-variant">{{store.businessHours}}</p>
-</div>
-</div>
-<div class="border border-outline-variant p-xl flex items-start gap-md">
-<span class="material-symbols-outlined text-primary">call</span>
-<div>
-<h3 class="font-label-md text-label-md font-bold uppercase tracking-wider">WhatsApp</h3>
-<a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="text-primary hover:underline">{{store.phone}}</a>
-</div>
-</div>
-{{#contact.email}}
-<div class="border border-outline-variant p-xl flex items-start gap-md">
-<span class="material-symbols-outlined text-primary">mail</span>
-<div>
-<h3 class="font-label-md text-label-md font-bold uppercase tracking-wider">Email</h3>
-<a href="mailto:{{contact.email}}" class="text-primary hover:underline">{{contact.email}}</a>
-</div>
-</div>
-{{/contact.email}}
-</div>
-<div class="border border-outline-variant p-xl bg-surface-container-low flex flex-col items-center justify-center text-center">
-<span class="material-symbols-outlined text-4xl text-primary mb-md">send</span>
-<h2 class="font-label-md text-label-md font-bold uppercase tracking-wider mb-md">Kirim Pesan</h2>
-<p class="font-body-md text-on-surface-variant mb-lg">Klik tombol di bawah untuk chat via WhatsApp.</p>
-<a href="{{whatsapp.url}}?text={{wa.text}}" target="_blank" rel="noopener" class="inline-flex items-center gap-sm px-xl py-md border border-on-surface hover:bg-on-surface hover:text-surface transition-all font-label-md text-label-md">
-Chat WhatsApp
-<span class="material-symbols-outlined text-sm">arrow_forward</span>
-</a>
 </div>
 </div>
 </div>
@@ -87,4 +43,5 @@ Chat WhatsApp
 
 {{>footer}}
 
+<script>(function(){var o=new IntersectionObserver(function(e){e.forEach(function(e){if(e.isIntersecting)e.target.classList.add('visible')})},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});document.querySelectorAll('.reveal').forEach(function(e){o.observe(e)})})();</script>
 </body></html>

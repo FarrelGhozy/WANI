@@ -3,48 +3,128 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Tentang — {{store.businessName}}</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+  {{#favicon.has}}<link rel="icon" href="{{favicon.url}}" />{{/favicon.has}}{{^favicon.has}}<link rel="icon" href="{{favicon.svg}}" />{{/favicon.has}}
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <link href="./assets/tailwind.css" rel="stylesheet" />
 <style>:root{ {{color.vars}} }</style>
 <style>
-  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-  ::-webkit-scrollbar { width: 8px; }
-  ::-webkit-scrollbar-track { background: #faf8ff; }
-  ::-webkit-scrollbar-thumb { background: #c3c6d7; border-radius: 4px; }
+  .material-symbols-outlined { font-family: 'Material Symbols Outlined' !important; font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #c3c6d7; border-radius: 3px; }
   ::-webkit-scrollbar-thumb:hover { background: #737686; }
+  .reveal { opacity: 0; transform: translateY(32px); transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1); }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
 </style>
 </head>
-<body class="bg-surface text-on-surface font-body-md">
+<body class="bg-surface text-on-surface">
 
 {{>navbar}}
 
-<main>
-<section class="py-2xl">
-<div class="max-w-4xl mx-auto px-margin-mobile md:px-margin-desktop">
-<div class="text-center max-w-2xl mx-auto mb-xl">
-<h1 class="font-headline-md text-headline-md text-on-surface mb-md">Tentang {{store.businessName}}</h1>
-<p class="text-on-surface-variant">{{hero.subheadline}}</p>
+<main class="pt-20">
+<!-- Page Header -->
+<section class="py-2xl bg-surface-container-low">
+<div class="max-w-4xl mx-auto px-margin-mobile md:px-margin-desktop text-center">
+<span class="text-xs font-semibold text-primary uppercase tracking-widest mb-3 block">Tentang Kami</span>
+<h1 class="font-display-lg text-3xl md:text-5xl font-extrabold text-on-surface mb-4">{{store.businessName}}</h1>
+<p class="text-on-surface-variant max-w-xl mx-auto">{{hero.subheadline}}</p>
 </div>
-<div class="bg-surface-container-low rounded-xl p-xl space-y-md">
-<p class="text-body-md text-on-surface leading-relaxed">{{hero.aboutText}}</p>
+</section>
+
+<!-- About Content -->
+<section class="py-2xl bg-surface">
+<div class="max-w-5xl mx-auto px-margin-mobile md:px-margin-desktop">
+<div class="grid grid-cols-1 lg:grid-cols-5 gap-xl items-center">
+<div class="lg:col-span-3 reveal">
+<p class="text-on-surface leading-relaxed text-sm md:text-base">{{about.description}}</p>
+<div class="mt-8 grid grid-cols-2 gap-6">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-green-600">check_circle</span>
 </div>
-<div class="grid grid-cols-1 md:grid-cols-2 gap-xl mt-xl">
-<div class="bg-surface border border-outline-variant rounded-xl p-lg">
-<h2 class="font-headline-sm text-headline-sm text-on-surface mb-md">Informasi Toko</h2>
-<ul class="space-y-sm text-sm text-on-surface-variant">
-<li><strong class="text-on-surface">Alamat:</strong> {{store.address}}</li>
-<li><strong class="text-on-surface">Jam Operasional:</strong> {{store.businessHours}}</li>
-<li><strong class="text-on-surface">Pembayaran:</strong> {{store.paymentMethods}}</li>
+<div><div class="font-bold text-sm text-on-surface">Produk Berkualitas</div><div class="text-xs text-on-surface-variant">Kurasi terbaik</div></div>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-blue-600">local_shipping</span>
+</div>
+<div><div class="font-bold text-sm text-on-surface">Pengiriman Cepat</div><div class="text-xs text-on-surface-variant">Ke seluruh Indonesia</div></div>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-amber-600">headset_mic</span>
+</div>
+<div><div class="font-bold text-sm text-on-surface">Support 24/7</div><div class="text-xs text-on-surface-variant">Via WhatsApp</div></div>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-purple-600">verified</span>
+</div>
+<div><div class="font-bold text-sm text-on-surface">Terpercaya</div><div class="text-xs text-on-surface-variant">{{stats.totalOrders}}+ pesanan</div></div>
+</div>
+</div>
+</div>
+<div class="lg:col-span-2 reveal">
+{{#about.hasImage}}
+<div class="aspect-[3/4] rounded-3xl overflow-hidden shadow-2xl">
+<img src="{{about.imageUrl}}" alt="Tentang {{store.businessName}}" class="w-full h-full object-cover" loading="lazy" />
+</div>
+{{/about.hasImage}}
+{{^about.hasImage}}
+<div class="aspect-[3/4] rounded-3xl overflow-hidden bg-gradient-to-br from-primary/15 via-surface-container-low to-secondary/10 flex items-center justify-center shadow-lg">
+<div class="text-center">
+<span class="material-symbols-outlined text-8xl text-primary/20">store</span>
+<p class="text-primary/30 text-sm mt-4 font-medium">{{store.businessName}}</p>
+</div>
+</div>
+{{/about.hasImage}}
+</div>
+</div>
+</div>
+</section>
+
+<!-- Store Info + Stats -->
+<section class="py-2xl bg-surface-container-low">
+<div class="max-w-5xl mx-auto px-margin-mobile md:px-margin-desktop">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+<div class="bg-surface rounded-2xl p-xl border border-outline-variant reveal">
+<h2 class="font-bold text-lg text-on-surface mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">info</span> Informasi Toko
+</h2>
+<ul class="space-y-4">
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary/60 mt-0.5 text-lg">location_on</span>
+<div><div class="text-xs text-on-surface-variant">Alamat</div><div class="text-sm text-on-surface font-medium">{{store.address}}</div></div>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary/60 mt-0.5 text-lg">schedule</span>
+<div><div class="text-xs text-on-surface-variant">Jam Operasional</div><div class="text-sm text-on-surface font-medium">{{store.businessHours}}</div></div>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary/60 mt-0.5 text-lg">payments</span>
+<div><div class="text-xs text-on-surface-variant">Pembayaran</div><div class="text-sm text-on-surface font-medium">{{store.paymentMethods}}</div></div>
+</li>
 </ul>
 </div>
-<div class="bg-surface border border-outline-variant rounded-xl p-lg">
-<h2 class="font-headline-sm text-headline-sm text-on-surface mb-md">Statistik</h2>
-<ul class="space-y-sm text-sm text-on-surface-variant">
-<li><strong class="text-on-surface">Total Pesanan:</strong> {{stats.totalOrders}}</li>
-<li><strong class="text-on-surface">Pesanan Selesai:</strong> {{stats.completed}}</li>
-<li><strong class="text-on-surface">Pesanan Diproses:</strong> {{stats.pending}}</li>
-</ul>
+<div class="bg-surface rounded-2xl p-xl border border-outline-variant reveal">
+<h2 class="font-bold text-lg text-on-surface mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">bar_chart</span> Statistik
+</h2>
+<div class="grid grid-cols-3 gap-4 text-center">
+<div class="bg-surface-container-low rounded-xl p-4">
+<div class="text-3xl font-extrabold text-primary">{{stats.totalOrders}}</div>
+<div class="text-xs text-on-surface-variant mt-1">Total Pesanan</div>
+</div>
+<div class="bg-surface-container-low rounded-xl p-4">
+<div class="text-3xl font-extrabold text-green-600">{{stats.completed}}</div>
+<div class="text-xs text-on-surface-variant mt-1">Selesai</div>
+</div>
+<div class="bg-surface-container-low rounded-xl p-4">
+<div class="text-3xl font-extrabold text-amber-500">{{stats.pending}}</div>
+<div class="text-xs text-on-surface-variant mt-1">Diproses</div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -53,4 +133,14 @@
 
 {{>footer}}
 
+<script>
+(function() {
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(function(el) { observer.observe(el); });
+})();
+</script>
 </body></html>

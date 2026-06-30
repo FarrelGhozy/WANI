@@ -73,8 +73,18 @@ function generateHtml(
   if (existsSync(outDir)) rmSync(outDir, { recursive: true, force: true });
   mkdirSync(outDir, { recursive: true });
 
+  // Copy images and merge their resolved paths into the context
+  const imageMap = copyAssetImages(params, outDir);
+  const fullCtx = { ...ctx, ...imageMap };
+
   // shared fonts dir (per-template fallback to shared)
   const fontsSrc = join(dirname(TEMPLATES_DIR), "assets", "fonts");
+
+  // Resolve product image URLs to local copies where available
+  const resolvedProducts = params.products.map((p) => ({
+    ...p,
+    imageUrl: imageMap[`product.${p.id}.imageUrl`] ?? p.imageUrl,
+  }));
 
   for (const page of pages) {
     let html = readFileSync(join(templatePath, page), "utf-8");
@@ -91,26 +101,29 @@ function generateHtml(
     // product loop
     html = html.replace(
       /{{#products}}([\s\S]*?){{\/products}}/g,
-      (_, block) => params.products.map((p) => renderItem(block, p)).join("\n"),
+      (_, block) => resolvedProducts.map((p) => renderItem(block, p)).join("\n"),
     );
 
     // {{^products}} fallback
     html = html.replace(
       /{{\^products}}([\s\S]*?){{\/products}}/g,
-      (_, block) => params.products.length === 0 ? block : "",
+      (_, block) => resolvedProducts.length === 0 ? block : "",
     );
 
     // page context for active nav highlighting
-    const pageCtx: Record<string, string> = { "page.name": page.replace(/\.html$/, "") };
+    const rawName = page.replace(/\.html$/, "");
+    const pageCtx: Record<string, string> = { "page.name": rawName };
+    // "code" page is the home page (beranda)
+    const pageKey = rawName === "code" ? "beranda" : rawName;
     for (const p of ["beranda", "produk", "tentang", "kontak"]) {
-      pageCtx[`page.${p}`] = pageCtx["page.name"] === p ? "1" : "";
+      pageCtx[`page.${p}`] = pageKey === p ? "1" : "";
     }
 
     // conditional sections {{#key}}...{{/key}}
     html = html.replace(
       /{{#([a-zA-Z.]+)}}([\s\S]*?){{\/\1}}/g,
       (_, key, block) => {
-        const val = ctx[key] ?? pageCtx[key];
+        const val = fullCtx[key] ?? pageCtx[key];
         return val && String(val).length > 0 ? block : "";
       },
     );
@@ -119,13 +132,13 @@ function generateHtml(
     html = html.replace(
       /{{\^([a-zA-Z.]+)}}([\s\S]*?){{\/\1}}/g,
       (_, key, block) => {
-        const val = ctx[key] ?? pageCtx[key];
+        const val = fullCtx[key] ?? pageCtx[key];
         return (val && String(val).length > 0) ? "" : block;
       },
     );
 
     // simple replacements
-    for (const [k, v] of Object.entries({ ...ctx, ...pageCtx })) {
+    for (const [k, v] of Object.entries({ ...fullCtx, ...pageCtx })) {
       html = html.replaceAll(`{{${k}}}`, String(v ?? ""));
     }
 
@@ -143,6 +156,13 @@ function generateHtml(
   if (existsSync(fontsSrc)) {
     cpSync(fontsSrc, join(outDir, "assets"), { recursive: true, force: true });
   }
+
+  // Write asset manifest
+  const manifestEntries = Object.entries(imageMap).filter(([k]) => k.startsWith("product.") || k === "hero.imageUrl" || k === "about.imageUrl" || k === "store.logoUrl");
+  if (manifestEntries.length > 0) {
+    writeFileSync(join(outDir, "assets-manifest.json"), JSON.stringify(Object.fromEntries(manifestEntries), null, 2));
+  }
+
   return { success: true, outputPath: outDir };
 }
 
@@ -243,20 +263,37 @@ function buildContext(params: GenerateParams): Record<string, unknown> {
   const fmtPrice = (n: number) => `Rp ${n.toLocaleString("id-ID")}`;
   const p = config.colors.primary;
   const s = config.colors.secondary;
+  const logoUrl = config.logoUrl ?? store.logoUrl ?? "";
+  const faviconUrl = config.faviconUrl ?? logoUrl ?? null;
+  const hasHeroImage = !!(config.hero.imageUrl);
+  const hasAboutImage = !!(config.about.imageUrl);
+  const hasLogo = !!logoUrl;
+  const hasFavicon = !!faviconUrl;
+  const initial = store.businessName?.charAt(0)?.toUpperCase() ?? "S";
   return {
     "store.businessName": store.businessName,
     "store.name": store.businessName,
     "store.phone": store.phone,
     "store.address": store.address ?? "",
     "store.businessHours": store.businessHours ?? "",
-    "store.hours": store.businessHours ?? "",
     "store.paymentMethods": store.paymentMethods ?? "",
-    "store.logoUrl": "",
+    "store.shippingInfo": store.shippingInfo ?? "",
+    "store.returnPolicy": store.returnPolicy ?? "",
+    "store.logoUrl": logoUrl,
+    // deprecated aliases kept for backward compatibility
+    "hero.aboutText": config.about.description,
     "hero.headline": config.hero.headline,
     "hero.subheadline": config.hero.subheadline ?? "",
-    "hero.aboutText": config.about.description,
     "hero.ctaText": config.hero.ctaText ?? "Lihat Produk",
+    "hero.imageUrl": config.hero.imageUrl ?? "",
+    "hero.hasImage": hasHeroImage ? "1" : "",
     "about.description": config.about.description,
+    "about.imageUrl": config.about.imageUrl ?? "",
+    "about.hasImage": hasAboutImage ? "1" : "",
+    "store.hasLogo": hasLogo ? "1" : "",
+    "favicon.url": faviconUrl ?? "",
+    "favicon.has": hasFavicon ? "1" : "",
+    "favicon.svg": makeFaviconSvg(initial, p),
     "social.instagram": config.socialMedia.instagram ?? "",
     "social.facebook": config.socialMedia.facebook ?? "",
     "social.tiktok": config.socialMedia.tiktok ?? "",
@@ -277,19 +314,110 @@ function buildContext(params: GenerateParams): Record<string, unknown> {
     "wa.text": encodeURIComponent(
       config.waOrderTemplate ?? buildDefaultWaTemplate(),
     ),
-    "wa.phone": store.phone,
+    "placeholders.hero": makePlaceholderSvg(p, s, "Hero"),
+    "placeholders.about": makePlaceholderSvg(p, s, "Tentang"),
+    "placeholders.product": makePlaceholderSvg("#f5f5f4", "#e7e5e4", "Produk"),
+    "placeholders.logo": makePlaceholderSvg(p, p, store.businessName.charAt(0).toUpperCase()),
   };
 }
 
 function buildDefaultWaTemplate(): string {
   return [
-    `Halo {store.businessName}, saya tertarik dengan produk berikut:`,
+    `Halo, saya tertarik dengan produk yang ada di katalog.`,
     ``,
-    `\u2022 {product.name}`,
-    `\u2022 Harga: Rp {product.price}`,
-    ``,
-    `Apakah produk ini tersedia? Mohon info cara pemesanan dan pembayaran. Terima kasih.`,
+    `Mohon info cara pemesanan dan pembayaran. Terima kasih.`,
   ].join("\n");
+}
+
+function makePlaceholderSvg(primary: string, secondary: string, label: string): string {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+<defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" style="stop-color:${escapeXml(primary)}33"/>
+<stop offset="100%" style="stop-color:${escapeXml(secondary)}44"/>
+</linearGradient></defs>
+<rect fill="url(#g)" width="800" height="600"/>
+<rect fill="none" stroke="${escapeXml(primary)}22" stroke-width="1" x="40" y="40" width="720" height="520"/>
+<text x="400" y="310" text-anchor="middle" dominant-baseline="middle" font-family="system-ui,sans-serif" font-size="28" font-weight="600" fill="${escapeXml(primary)}66">${escapeXml(label)}</text>
+</svg>`;
+  return `data:image/svg+xml,${encodeURIComponent(svg)}`;
+}
+
+function escapeXml(s: string): string {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+function makeFaviconSvg(initial: string, color: string): string {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+<rect width="32" height="32" rx="6" fill="${escapeXml(color)}"/>
+<text x="16" y="22" text-anchor="middle" font-family="system-ui,sans-serif" font-size="18" font-weight="700" fill="white">${escapeXml(initial)}</text>
+</svg>`;
+  return `data:image/svg+xml,${encodeURIComponent(svg)}`;
+}
+
+type ImageMap = Record<string, string>;
+
+function copyAssetImages(params: GenerateParams, outDir: string): ImageMap {
+  const imagesDir = join(outDir, "assets", "images");
+  mkdirSync(imagesDir, { recursive: true });
+
+  const imageMap: ImageMap = {};
+
+  function resolveImage(sourceUrl: string | null | undefined, destName: string): string | null {
+    if (!sourceUrl) return null;
+
+    // Local uploads: resolve from the uploads directory
+    if (sourceUrl.startsWith("/uploads/")) {
+      const uploadsDir = join(dirname(TEMPLATES_DIR), "..", "api", "uploads");
+      const filename = sourceUrl.split("/").pop() ?? destName;
+      const sourcePath = join(uploadsDir, filename);
+      if (existsSync(sourcePath)) {
+        const ext = sourcePath.includes(".") ? `.${sourcePath.split(".").pop()}` : ".jpg";
+        const dest = join(imagesDir, `${destName}${ext}`);
+        copyFileSync(sourcePath, dest);
+        return `./assets/images/${destName}${ext}`;
+      }
+      return null;
+    }
+
+    // External URLs: keep as-is
+    if (sourceUrl.startsWith("http://") || sourceUrl.startsWith("https://")) {
+      return sourceUrl;
+    }
+
+    // Relative or other paths: try to copy if file exists, otherwise return null
+    return null;
+  }
+
+  // Hero image
+  const heroLocal = resolveImage(params.config.hero.imageUrl, "hero");
+  if (heroLocal) imageMap["hero.imageUrl"] = heroLocal;
+
+  // About image
+  const aboutLocal = resolveImage(params.config.about.imageUrl, "about");
+  if (aboutLocal) imageMap["about.imageUrl"] = aboutLocal;
+
+  // Logo
+  const logoSource = params.config.logoUrl ?? params.store.logoUrl;
+  const logoLocal = resolveImage(logoSource, "logo");
+  if (logoLocal) imageMap["store.logoUrl"] = logoLocal;
+
+  // Favicon — fallback: faviconUrl → logoUrl → SVG (handled in template via favicon.svg)
+  const faviconSource = params.config.faviconUrl ?? params.config.logoUrl ?? params.store.logoUrl;
+  const faviconLocal = resolveImage(faviconSource, "favicon");
+  if (faviconLocal) imageMap["favicon.url"] = faviconLocal;
+
+  // Product images
+  for (const product of params.products) {
+    if (product.imageUrl) {
+      const productLocal = resolveImage(product.imageUrl, `product-${product.id}`);
+      if (productLocal) {
+        // Inject into the product data so renderItem picks it up
+        imageMap[`product.${product.id}.imageUrl`] = productLocal;
+      }
+    }
+  }
+
+  return imageMap;
 }
 
 // ponytail: CLI demo mode
@@ -306,6 +434,7 @@ if (import.meta.main) {
       paymentMethods: "Tunai, Transfer Bank, QRIS",
       shippingInfo: "JNE, J&T, SiCepat",
       returnPolicy: "Barang dapat dikembalikan dalam 7 hari",
+      logoUrl: null,
     },
     products: [
       {

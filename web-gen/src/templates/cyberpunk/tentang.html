@@ -1,122 +1,309 @@
 <!DOCTYPE html>
+<html class="dark" lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tentang — {{store.name}}</title>
+  {{#favicon.has}}<link rel="icon" href="{{favicon.url}}" />{{/favicon.has}}{{^favicon.has}}<link rel="icon" href="{{favicon.svg}}" />{{/favicon.has}}
 
-<html class="dark" lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Tentang — {{store.name}}</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="./assets/tailwind.css" rel="stylesheet" />
-<style>:root{ {{color.vars}} }
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #131315; }
-::-webkit-scrollbar-thumb { background: #2a2a30; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #3a3a45; }
-    </style>
-<style>
-        body {
-            background-color: #131315;
-            color: #e5e1e4;
-            overflow-x: hidden;
-        }
-        .glow-cyan {
-            text-shadow: 0 0 10px rgba(0, 219, 231, 0.6);
-        }
-        .glass-panel {
-            background: rgba(28, 27, 29, 0.7);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(132, 148, 149, 0.2);
-        }
-        .neural-bg {
-            background-image: radial-gradient(circle at 2px 2px, rgba(116, 245, 255, 0.05) 1px, transparent 0);
-            background-size: 32px 32px;
-        }
-    </style>
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind & Color Vars -->
+  <link href="./assets/tailwind.css" rel="stylesheet" />
+  <style>:root{ {{color.vars}} }</style>
+
+  <!-- Cyberpunk Theme Styles -->
+  <style>
+    body {
+      background-color: #0a0a0f;
+      color: #e8e8f0;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: #0a0a0f; }
+    ::-webkit-scrollbar-thumb { background: #2a2a3a; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #b388ff; }
+
+    .neural-bg {
+      background-image:
+        linear-gradient(rgba(179,136,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(179,136,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+    .scanline-overlay::after {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: repeating-linear-gradient(
+        0deg, transparent, transparent 2px,
+        rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+    .cyber-card {
+      background: rgba(18,18,26,0.75);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(179,136,255,0.08);
+      transition: all 0.3s ease;
+    }
+    .cyber-card:hover {
+      border-color: rgba(179,136,255,0.35);
+      box-shadow: 0 0 20px rgba(179,136,255,0.08);
+    }
+    .glitch-hover:hover {
+      animation: glitch-skew 0.3s cubic-bezier(.25,.46,.45,.94) both;
+    }
+    @keyframes glitch-skew {
+      0%   { transform: translate(0); }
+      20%  { transform: translate(-1px, 1px) skewX(-1deg); }
+      40%  { transform: translate(-2px, -1px) skewX(0.5deg); }
+      60%  { transform: translate(1px, 2px) skewX(-0.5deg); }
+      80%  { transform: translate(2px, -2px) skewX(1deg); }
+      100% { transform: translate(0); }
+    }
+    .stat-value {
+      font-family: 'JetBrains Mono', monospace;
+      background: linear-gradient(135deg, #b388ff, #00d4ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+  </style>
 </head>
-<body class="neural-bg">
+<body class="neural-bg scanline-overlay">
 
-{{>navbar}}
+  {{>navbar}}
 
-<!-- SideNavBar (Hidden on Mobile) -->
-<aside class="hidden lg:flex h-screen w-52 fixed left-0 top-0 z-40 bg-surface-container-low/80 backdrop-blur-md border-r border-secondary-fixed-dim/20 shadow-[10px_0_15px_rgba(116,0,159,0.1)] flex-col pt-24 pb-8 h-full">
-<div class="px-6 mb-8">
-<div class="flex items-center gap-3 mb-2">
-<div class="w-10 h-10 bg-secondary-container rounded-sm flex items-center justify-center">
-<span class="material-symbols-outlined text-on-secondary-container">terminal</span>
-</div>
-<div>
-<div class="font-data-md text-data-md text-secondary">FILTER_MODULE</div>
-<div class="text-[10px] font-label-caps text-on-surface-variant opacity-60">v4.02.1-STABLE</div>
-</div>
-</div>
-</div>
-<nav class="flex-1">
-<div class="space-y-1">
-<a class="flex items-center gap-3 bg-secondary-container text-on-secondary-container border-l-4 border-secondary-fixed p-3 font-data-md text-data-md hover:translate-x-1 duration-200" href="#">
-<span class="material-symbols-outlined">memory</span>
-                    CYBERWARE
-                </a>
-<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-secondary/10 font-data-md text-data-md hover:translate-x-1 duration-200 transition-all" href="#">
-<span class="material-symbols-outlined">developer_board</span>
-                    DECKS
-                </a>
-<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-secondary/10 font-data-md text-data-md hover:translate-x-1 duration-200 transition-all" href="#">
-<span class="material-symbols-outlined">precision_manufacturing</span>
-                    DRONES
-                </a>
-<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-secondary/10 font-data-md text-data-md hover:translate-x-1 duration-200 transition-all" href="#">
-<span class="material-symbols-outlined">sd_card</span>
-                    CHIPS
-                </a>
-<a class="flex items-center gap-3 text-on-surface-variant p-3 hover:bg-secondary/10 font-data-md text-data-md hover:translate-x-1 duration-200 transition-all" href="#">
-<span class="material-symbols-outlined">checkroom</span>
-                    APPAREL
-                </a>
-</div>
-</nav>
-<div class="px-6">
-<button class="w-full bg-secondary-fixed text-on-secondary-fixed py-3 font-label-caps text-label-caps hover:glow-secondary transition-all active:scale-95">
-                APPLY_MODS
-            </button>
-</div>
-</aside>
-<main class="lg:ml-52 pt-24 min-h-screen">
-<section class="px-margin-mobile md:px-margin-desktop py-20 max-w-max-width mx-auto">
-<div class="max-w-4xl mx-auto">
-<div class="text-center mb-16">
-<div class="inline-block border border-primary-fixed px-3 py-1 mb-6">
-<span class="font-label-caps text-label-caps text-primary-fixed">SYS_INFO</span>
-</div>
-<h1 class="font-headline-xl text-headline-xl text-primary-fixed mb-4 glow-cyan uppercase leading-tight">Tentang {{store.name}}</h1>
-<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto">{{hero.aboutText}}</p>
-</div>
-<div class="grid md:grid-cols-2 gap-8">
-<div class="glass-panel p-8">
-<div class="font-label-caps text-label-caps text-primary-fixed mb-6 uppercase">INFORMASI_TOKO</div>
-<ul class="space-y-4 font-data-md text-data-md text-on-surface-variant">
-<li><span class="text-primary-fixed">ALAMAT:</span> {{store.address}}</li>
-<li><span class="text-primary-fixed">JAM:</span> {{store.businessHours}}</li>
-<li><span class="text-primary-fixed">PEMBAYARAN:</span> {{store.paymentMethods}}</li>
-</ul>
-</div>
-<div class="glass-panel p-8">
-<div class="font-label-caps text-label-caps text-primary-fixed mb-6 uppercase">STATISTIK</div>
-<ul class="space-y-4 font-data-md text-data-md text-on-surface-variant">
-<li><span class="text-primary-fixed">TOTAL_PESANAN:</span> {{stats.totalOrders}}</li>
-<li><span class="text-primary-fixed">SELESAI:</span> {{stats.completed}}</li>
-<li><span class="text-primary-fixed">DIPROSES:</span> {{stats.pending}}</li>
-</ul>
-</div>
-</div>
-</div>
-</section>
-</main>
+  <!-- ============================================================
+       MAIN
+       ============================================================ -->
+  <main class="pt-16 lg:pt-18 min-h-screen">
 
-{{>footer}}
+    <!-- Page Header -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 lg:pt-16 pb-4 text-center reveal">
+      <div class="inline-flex items-center gap-2 border border-[#b388ff]/30 px-3 py-1 mb-5">
+        <span class="text-[11px] font-['JetBrains_Mono'] text-[#b388ff] tracking-[0.15em] uppercase">SYS.INFO</span>
+      </div>
+      <h1 class="text-3xl lg:text-5xl font-['Plus_Jakarta_Sans'] font-bold text-[#e8e8f0] uppercase tracking-tight glitch-hover">
+        Tentang {{store.name}}
+      </h1>
+      <div class="h-0.5 w-24 bg-gradient-to-r from-[#b388ff] to-[#00d4ff] mx-auto mt-4"></div>
+    </section>
 
-<!-- Floating Action Button (FAB) -->
-<a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="fixed bottom-8 right-8 w-16 h-16 bg-primary-container text-on-primary-container rounded-full shadow-[0_0_20px_rgba(0,219,231,0.5)] flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-50">
-<span class="material-symbols-outlined text-3xl">bolt</span>
-</a>
-</body></html>
+    <!-- About Description -->
+    {{#about.description}}
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+      <div class="max-w-4xl mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          <!-- Image -->
+          <div class="relative reveal">
+            <div class="relative aspect-[4/3] rounded-lg overflow-hidden">
+              <div class="absolute -inset-[2px] rounded-lg bg-gradient-to-br from-[#b388ff]/30 via-transparent to-[#00d4ff]/30 opacity-60"></div>
+              <div class="relative w-full h-full rounded-lg overflow-hidden bg-[#12121a]">
+                {{#about.hasImage}}
+                <img src="{{about.imageUrl}}" alt="Tentang {{store.name}}"
+                     class="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
+                {{/about.hasImage}}
+                {{^about.hasImage}}
+                <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#0a0a0f] via-[#12121a] to-[#1a1a28]">
+                  <span class="material-symbols-outlined text-6xl text-[#b388ff]/20">info</span>
+                </div>
+                {{/about.hasImage}}
+              </div>
+            </div>
+          </div>
+
+          <!-- Text -->
+          <div class="reveal reveal-delay-1">
+            <p class="text-base font-['Inter'] text-[#8888a0] leading-relaxed">
+              {{about.description}}
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+    {{/about.description}}
+    {{^about.description}}
+    <!-- Fallback if no description -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12 reveal">
+      <div class="max-w-2xl mx-auto text-center">
+        <p class="text-base font-['Inter'] text-[#8888a0] leading-relaxed">
+          {{hero.aboutText}}
+        </p>
+      </div>
+    </section>
+    {{/about.description}}
+
+    <!-- Store Info + Stats -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 max-w-4xl mx-auto">
+        <!-- Store Info Card -->
+        <div class="cyber-card rounded-lg p-6 lg:p-8 reveal">
+          <div class="inline-flex items-center gap-2 mb-5">
+            <span class="material-symbols-outlined text-[#b388ff]">store</span>
+            <span class="text-xs font-['JetBrains_Mono'] text-[#b388ff] tracking-[0.15em] uppercase">Informasi Toko</span>
+          </div>
+          <div class="space-y-4 text-sm font-['Inter'] text-[#8888a0]">
+            {{#store.address}}
+            <div class="flex items-start gap-3">
+              <span class="material-symbols-outlined text-sm text-[#b388ff] mt-0.5">location_on</span>
+              <div>
+                <span class="text-xs font-['JetBrains_Mono'] text-[#555568] uppercase block mb-0.5">Alamat</span>
+                <span>{{store.address}}</span>
+              </div>
+            </div>
+            {{/store.address}}
+            {{#store.businessHours}}
+            <div class="flex items-start gap-3">
+              <span class="material-symbols-outlined text-sm text-[#00d4ff] mt-0.5">schedule</span>
+              <div>
+                <span class="text-xs font-['JetBrains_Mono'] text-[#555568] uppercase block mb-0.5">Jam Operasional</span>
+                <span>{{store.businessHours}}</span>
+              </div>
+            </div>
+            {{/store.businessHours}}
+            {{#store.paymentMethods}}
+            <div class="flex items-start gap-3">
+              <span class="material-symbols-outlined text-sm text-[#b388ff] mt-0.5">credit_card</span>
+              <div>
+                <span class="text-xs font-['JetBrains_Mono'] text-[#555568] uppercase block mb-0.5">Pembayaran</span>
+                <span>{{store.paymentMethods}}</span>
+              </div>
+            </div>
+            {{/store.paymentMethods}}
+            {{#contact.email}}
+            <div class="flex items-start gap-3">
+              <span class="material-symbols-outlined text-sm text-[#00d4ff] mt-0.5">mail</span>
+              <div>
+                <span class="text-xs font-['JetBrains_Mono'] text-[#555568] uppercase block mb-0.5">Email</span>
+                <a href="mailto:{{contact.email}}" class="hover:text-[#b388ff] transition-colors">{{contact.email}}</a>
+              </div>
+            </div>
+            {{/contact.email}}
+          </div>
+        </div>
+
+        <!-- Stats Card -->
+        <div class="cyber-card rounded-lg p-6 lg:p-8 reveal reveal-delay-1">
+          <div class="inline-flex items-center gap-2 mb-5">
+            <span class="material-symbols-outlined text-[#00d4ff]">monitoring</span>
+            <span class="text-xs font-['JetBrains_Mono'] text-[#00d4ff] tracking-[0.15em] uppercase">Statistik</span>
+          </div>
+          <div class="space-y-5">
+            <div class="flex items-center justify-between border-b border-[#b388ff]/10 pb-3">
+              <span class="text-sm font-['Inter'] text-[#8888a0]">Total Pesanan</span>
+              <span class="text-lg font-['JetBrains_Mono'] font-bold stat-value">{{stats.totalOrders}}{{^stats.totalOrders}}0{{/stats.totalOrders}}</span>
+            </div>
+            <div class="flex items-center justify-between border-b border-[#b388ff]/10 pb-3">
+              <span class="text-sm font-['Inter'] text-[#8888a0]">Selesai</span>
+              <span class="text-lg font-['JetBrains_Mono'] font-bold stat-value">{{stats.completed}}{{^stats.completed}}0{{/stats.completed}}</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-['Inter'] text-[#8888a0]">Diproses</span>
+              <span class="text-lg font-['JetBrains_Mono'] font-bold stat-value">{{stats.pending}}{{^stats.pending}}0{{/stats.pending}}</span>
+            </div>
+          </div>
+          <!-- Terminal decoration -->
+          <div class="mt-6 pt-4 border-t border-[#b388ff]/10 flex items-center gap-2">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#b388ff] animate-pulse"></span>
+            <span class="text-[11px] font-['JetBrains_Mono'] text-[#555568]">DATA_AKTIF // last sync: realtime</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Shipping & Return Info -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6 max-w-4xl mx-auto">
+        {{#store.shippingInfo}}
+        <div class="cyber-card rounded-lg p-6 reveal">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="material-symbols-outlined text-[#00d4ff]">local_shipping</span>
+            <h3 class="text-sm font-['Inter'] font-semibold text-[#e8e8f0] uppercase tracking-wider">Informasi Pengiriman</h3>
+          </div>
+          <p class="text-sm font-['Inter'] text-[#8888a0] leading-relaxed">{{store.shippingInfo}}</p>
+        </div>
+        {{/store.shippingInfo}}
+        {{#store.returnPolicy}}
+        <div class="cyber-card rounded-lg p-6 reveal reveal-delay-1">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="material-symbols-outlined text-[#b388ff]">autorenew</span>
+            <h3 class="text-sm font-['Inter'] font-semibold text-[#e8e8f0] uppercase tracking-wider">Kebijakan Retur</h3>
+          </div>
+          <p class="text-sm font-['Inter'] text-[#8888a0] leading-relaxed">{{store.returnPolicy}}</p>
+        </div>
+        {{/store.returnPolicy}}
+      </div>
+    </section>
+
+    <!-- WhatsApp CTA -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 reveal">
+      <div class="max-w-2xl mx-auto text-center bg-[#0d0d14] border border-[#b388ff]/15 rounded-lg p-8 lg:p-12">
+        <span class="material-symbols-outlined text-4xl text-[#b388ff]/60 mb-4">chat</span>
+        <h2 class="text-xl lg:text-2xl font-['Plus_Jakarta_Sans'] font-bold text-[#e8e8f0] mb-3">Ada pertanyaan?</h2>
+        <p class="text-sm font-['Inter'] text-[#8888a0] mb-6">Tim kami siap membantu Anda melalui WhatsApp.</p>
+        <a href="{{whatsapp.url}}?text={{wa.text}}" target="_blank" rel="noopener"
+           class="inline-flex items-center gap-2 px-6 py-3 bg-[#b388ff] text-[#0a0a0f] font-['Inter'] font-semibold text-sm uppercase tracking-wider rounded hover:bg-[#c084fc] hover:shadow-[0_0_25px_rgba(179,136,255,0.4)] transition-all duration-200 active:scale-95">
+          <span class="material-symbols-outlined text-base">chat</span>
+          Hubungi Via WhatsApp
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  {{>footer}}
+
+  <!-- Floating WA Button -->
+  <a href="{{whatsapp.url}}" target="_blank" rel="noopener"
+     class="fixed bottom-6 right-6 w-14 h-14 lg:w-16 lg:h-16 bg-[#b388ff] text-[#0a0a0f] rounded-full flex items-center justify-center hover:scale-110 active:scale-90 transition-all duration-200 z-50"
+     style="box-shadow: 0 0 20px rgba(179,136,255,0.3), 0 0 40px rgba(179,136,255,0.1);">
+    <svg class="w-7 h-7 lg:w-8 lg:h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/></svg>
+  </a>
+
+  <script>
+    (function() {
+      var els = document.querySelectorAll('.reveal');
+      if (!els.length) return;
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+      els.forEach(function(el) { observer.observe(el); });
+    })();
+
+    (function() {
+      var menu = document.getElementById('cyber-mobile-menu');
+      if (menu) {
+        menu.querySelectorAll('a').forEach(function(link) {
+          link.addEventListener('click', function() {
+            menu.classList.add('hidden');
+          });
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -6,6 +6,7 @@ import Button from '@/components/ui/Button.tsx'
 import Modal from '@/components/ui/Modal.tsx'
 import Badge from '@/components/ui/Badge.tsx'
 import Spinner from '@/components/ui/Spinner.tsx'
+import ImageUpload from '@/components/ui/ImageUpload.tsx'
 import { formatDate } from '@/utils/format'
 
 export default function Website() {
@@ -62,6 +63,14 @@ export default function Website() {
           <Card accent="teal">
             <h2 className="mb-5 text-lg font-semibold text-stone-900">Konfigurasi Konten</h2>
             <div className="grid gap-5 sm:grid-cols-2">
+              <div className="sm:col-span-2">
+                <ImageUpload
+                  label="Gambar Hero"
+                  value={config.heroImageUrl ?? null}
+                  onChange={(url) => updateConfig({ heroImageUrl: url })}
+                  prefix="hero"
+                />
+              </div>
               <Field label="Judul Hero">
                 <input
                   value={config.heroHeadline}
@@ -78,6 +87,14 @@ export default function Website() {
                   className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all placeholder:text-stone-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
                 />
               </Field>
+              <Field label="Teks Tombol CTA">
+                <input
+                  value={config.ctaText ?? 'Lihat Produk'}
+                  onChange={(e) => updateConfig({ ctaText: e.target.value })}
+                  placeholder="Lihat Produk"
+                  className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all placeholder:text-stone-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+                />
+              </Field>
               <div className="sm:col-span-2">
                 <Field label="Teks Tentang">
                   <textarea
@@ -88,6 +105,14 @@ export default function Website() {
                     className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 transition-all placeholder:text-stone-400 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
                   />
                 </Field>
+              </div>
+              <div className="sm:col-span-2">
+                <ImageUpload
+                  label="Gambar Tentang"
+                  value={config.aboutImageUrl ?? null}
+                  onChange={(url) => updateConfig({ aboutImageUrl: url })}
+                  prefix="about"
+                />
               </div>
               <Field label="Warna Utama">
                 <div className="flex items-center gap-3">
@@ -111,6 +136,45 @@ export default function Website() {
                   <span className="font-mono text-xs text-stone-500">{config.secondaryColor}</span>
                 </div>
               </Field>
+              <div className="sm:col-span-2">
+                <div className="rounded-xl border border-stone-200 overflow-hidden">
+                  <div className="flex h-3" style={{ background: `linear-gradient(to right, ${config.primaryColor}, ${config.secondaryColor})` }} />
+                  <div className="grid grid-cols-2 divide-x divide-stone-200 bg-white">
+                    <div className="px-3 py-2">
+                      <div className="flex items-center gap-2">
+                        <span className="h-3 w-3 rounded-full border border-stone-200" style={{ background: config.primaryColor }} />
+                        <span className="text-xs font-medium text-stone-600">Primary</span>
+                      </div>
+                      <p className="mt-0.5 font-mono text-[10px] text-stone-400">{config.primaryColor}</p>
+                    </div>
+                    <div className="px-3 py-2">
+                      <div className="flex items-center gap-2">
+                        <span className="h-3 w-3 rounded-full border border-stone-200" style={{ background: config.secondaryColor }} />
+                        <span className="text-xs font-medium text-stone-600">Secondary</span>
+                      </div>
+                      <p className="mt-0.5 font-mono text-[10px] text-stone-400">{config.secondaryColor}</p>
+                    </div>
+                  </div>
+                </div>
+                <p className="mt-1 text-[10px] text-stone-400">Preview skema warna website Anda</p>
+              </div>
+              <div className="sm:col-span-2">
+                <ImageUpload
+                  label="Logo Toko (untuk Website)"
+                  value={config.logoUrl ?? null}
+                  onChange={(url) => updateConfig({ logoUrl: url })}
+                  prefix="logo"
+                />
+              </div>
+              <div className="sm:col-span-2">
+                <ImageUpload
+                  label="Favicon (Icon Tab Browser)"
+                  value={config.faviconUrl ?? null}
+                  onChange={(url) => updateConfig({ faviconUrl: url })}
+                  prefix="favicon"
+                />
+                <p className="mt-1 text-[10px] text-stone-400">Kalau tidak diisi, logo toko akan jadi favicon. Ukuran disarankan persegi (1:1).</p>
+              </div>
 
               <Field label="Nomor WhatsApp">
                 <input
@@ -380,12 +444,12 @@ const SOCIAL_PLATFORMS = [
 ]
 
 const TEMPLATES = [
-  { id: 'default',   label: 'Default (Astro)', primary: '#059669', secondary: '#f59e0b' },
-  { id: 'modern',    label: 'Modern',           primary: '#004ac6', secondary: '#505f76' },
-  { id: 'vibrant',   label: 'Vibrant',          primary: '#004ac6', secondary: '#505f76' },
-  { id: 'cyberpunk', label: 'Cyberpunk',        primary: '#e1fdff', secondary: '#ebb2ff' },
-  { id: 'minimalist',label: 'Minimalist',       primary: '#004ac6', secondary: '#505f76' },
-  { id: 'classic',   label: 'Classic',          primary: '#785600', secondary: '#5f5e5e' },
+  { id: 'default',   label: 'Default (Astro)', desc: 'Fleksibel, tema classy & modern', primary: '#059669', secondary: '#f59e0b' },
+  { id: 'modern',    label: 'Modern',          desc: 'Profesional, bersih, corporate', primary: '#004ac6', secondary: '#505f76' },
+  { id: 'vibrant',   label: 'Vibrant',         desc: 'Bold, playful, warna-warni', primary: '#f97316', secondary: '#8b5cf6' },
+  { id: 'cyberpunk', label: 'Cyberpunk',       desc: 'Dark, neon, futuristic', primary: '#06b6d4', secondary: '#d946ef' },
+  { id: 'minimalist',label: 'Minimalist',      desc: 'Elegan, whitespace, tipografi', primary: '#1c1917', secondary: '#78716c' },
+  { id: 'classic',   label: 'Classic',         desc: 'Luxury, renaissance, editorial', primary: '#785600', secondary: '#5f5e5e' },
 ]
 
 const TEMPLATE_DEFAULTS: Record<string, { primary: string; secondary: string }> = {}

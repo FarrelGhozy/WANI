@@ -167,6 +167,11 @@ export interface WebsiteConfig {
   template: string
   theme: string
   socialMedia: Record<string, string>
+  heroImageUrl?: string | null
+  aboutImageUrl?: string | null
+  logoUrl?: string | null
+  faviconUrl?: string | null
+  ctaText?: string
 }
 
 export interface GenerationLog {

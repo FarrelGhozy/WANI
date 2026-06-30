@@ -16,6 +16,11 @@ const defaultConfig: WebsiteConfig = {
   template: 'default',
   theme: 'classic',
   socialMedia: {},
+  heroImageUrl: null,
+  aboutImageUrl: null,
+  logoUrl: null,
+  faviconUrl: null,
+  ctaText: 'Lihat Produk',
 }
 
 function getToken(): string | null {

@@ -1,111 +1,356 @@
 <!DOCTYPE html>
-
-<html class="light" lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Kontak — {{store.name}}</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=JetBrains+Mono:wght@100..900&amp;family=Plus+Jakarta+Sans:wght@100..900&amp;display=swap" rel="stylesheet"/>
-<link href="./assets/tailwind.css" rel="stylesheet" />
-<style>:root{ {{color.vars}} }
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #c0c0c080; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #a0a0a0b0; }
-    </style>
-<style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-            display: inline-block;
-            line-height: 1;
-        }
-        .bento-shadow {
-            box-shadow: 0px 8px 30px rgba(0, 74, 198, 0.08);
-        }
-    </style>
+<html class="light" lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Kontak — {{store.name}}</title>
+  {{#favicon.has}}<link rel="icon" href="{{favicon.url}}" />{{/favicon.has}}{{^favicon.has}}<link rel="icon" href="{{favicon.svg}}" />{{/favicon.has}}
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=JetBrains+Mono:wght@100..900&amp;family=Plus+Jakarta+Sans:wght@100..900&amp;display=swap" rel="stylesheet" />
+  <link href="./assets/tailwind.css" rel="stylesheet" />
+  <style>
+    :root{ {{color.vars}} }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--accent-orange, #FF6B00), var(--accent-purple, #8B5CF6)); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #a0a0a0b0; }
+  </style>
+  <style>
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined' !important; font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      line-height: 1;
+    }
+    .vibrant-gradient-text {
+      background: linear-gradient(135deg, #FF6B00, #8B5CF6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    .floating {
+      animation: floating 3s ease-in-out infinite;
+    }
+    @keyframes floating {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-12px); }
+    }
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-left {
+      opacity: 0;
+      transform: translateX(-40px);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal-left.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    .reveal-right {
+      opacity: 0;
+      transform: translateX(40px);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal-right.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    .reveal-scale {
+      opacity: 0;
+      transform: scale(0.92);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal-scale.visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .floating { animation: none; }
+      .reveal, .reveal-left, .reveal-right, .reveal-scale { opacity: 1; transform: none; }
+    }
+  </style>
 </head>
-<body class="bg-background text-on-background font-body-md selection:bg-primary-fixed selection:text-on-primary-fixed overflow-x-hidden">
+<body class="bg-background text-on-background font-body-md selection:bg-primary selection:text-on-primary overflow-x-hidden">
 
 {{>navbar}}
 
-<main>
-<section class="py-3xl">
-<div class="max-w-5xl mx-auto px-margin-mobile md:px-margin-desktop">
-<div class="text-center mb-2xl">
-<h1 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface">Hubungi Kami</h1>
-<p class="font-body-lg text-body-lg text-on-surface-variant">Ada pertanyaan? Hubungi kami melalui WhatsApp atau datang langsung ke toko.</p>
-</div>
-<div class="grid md:grid-cols-2 gap-xl">
-<div class="space-y-lg">
-<div class="bento-shadow rounded-2xl p-lg bg-surface-container-low flex items-start gap-md">
-<span class="material-symbols-outlined text-vibrant-purple text-3xl" style="font-variation-settings: 'FILL' 1;">location_on</span>
-<div>
-<h3 class="font-headline-sm text-headline-sm text-on-surface">Alamat</h3>
-<p class="text-on-surface-variant">{{store.address}}</p>
-</div>
-</div>
-<div class="bento-shadow rounded-2xl p-lg bg-surface-container-low flex items-start gap-md">
-<span class="material-symbols-outlined text-vibrant-teal text-3xl" style="font-variation-settings: 'FILL' 1;">schedule</span>
-<div>
-<h3 class="font-headline-sm text-headline-sm text-on-surface">Jam Operasional</h3>
-<p class="text-on-surface-variant">{{store.businessHours}}</p>
-</div>
-</div>
-<div class="bento-shadow rounded-2xl p-lg bg-surface-container-low flex items-start gap-md">
-<span class="material-symbols-outlined text-vibrant-orange text-3xl" style="font-variation-settings: 'FILL' 1;">call</span>
-<div>
-<h3 class="font-headline-sm text-headline-sm text-on-surface">WhatsApp</h3>
-<a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="text-on-surface-variant hover:text-primary">{{store.phone}}</a>
-</div>
-</div>
-{{#contact.email}}
-<div class="bento-shadow rounded-2xl p-lg bg-surface-container-low flex items-start gap-md">
-<span class="material-symbols-outlined text-vibrant-purple text-3xl" style="font-variation-settings: 'FILL' 1;">mail</span>
-<div>
-<h3 class="font-headline-sm text-headline-sm text-on-surface">Email</h3>
-<a href="mailto:{{contact.email}}" class="text-on-surface-variant hover:text-primary">{{contact.email}}</a>
-</div>
-</div>
-{{/contact.email}}
-</div>
-<div class="bento-shadow rounded-2xl p-lg bg-vibrant-orange text-white flex flex-col items-center justify-center text-center">
-<span class="material-symbols-outlined text-5xl mb-md" style="font-variation-settings: 'FILL' 1;">chat_bubble</span>
-<h2 class="font-headline-md text-headline-md mb-md">Kirim Pesan</h2>
-<p class="mb-lg">Klik tombol di bawah untuk chat langsung via WhatsApp.</p>
-<a href="{{whatsapp.url}}?text={{wa.text}}" target="_blank" rel="noopener" class="px-8 py-4 bg-white text-vibrant-orange rounded-2xl font-bold hover:scale-105 active:scale-95 transition-all bento-shadow">
-Chat WhatsApp
-</a>
-</div>
-</div>
-</div>
-</section>
+<main class="pt-20">
+  <!-- ========== PAGE HERO ========== -->
+  <section class="relative overflow-hidden py-16 md:py-24 bg-surface-container-low">
+    <div class="absolute top-0 right-0 w-80 h-80 bg-vibrant-purple/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute bottom-0 left-0 w-96 h-96 bg-vibrant-orange/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute inset-0 opacity-[0.03] pointer-events-none" style="background-image: radial-gradient(circle, currentColor 1px, transparent 1px); background-size: 40px 40px;"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center reveal">
+      <div class="inline-flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full border border-primary/20 mb-6">
+        <span class="material-symbols-outlined text-primary text-sm" style="font-family: 'Material Symbols Outlined' !important; font-variation-settings: 'FILL' 1">contact_support</span>
+        <span class="text-primary font-semibold text-sm uppercase tracking-wider">Hubungi Kami</span>
+      </div>
+      <h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-on-surface mb-4 leading-tight">
+        Ada <span class="vibrant-gradient-text">Pertanyaan</span>?
+      </h1>
+      <p class="text-lg text-on-surface-variant max-w-2xl mx-auto">Tim {{store.name}} siap membantu Anda. Pilih cara termudah untuk menghubungi kami.</p>
+    </div>
+  </section>
+
+  <!-- ========== CONTACT GRID ========== -->
+  <section class="py-16 md:py-24 relative overflow-hidden">
+    <div class="absolute top-1/3 right-0 w-64 h-64 bg-vibrant-green/10 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-3 gap-6 lg:gap-8 mb-16">
+        <!-- WhatsApp Card -->
+        <div class="reveal p-8 rounded-3xl bg-gradient-to-br from-vibrant-green/10 to-vibrant-green/5 border border-vibrant-green/20 shadow-lg lg:col-span-1">
+          <div class="flex flex-col items-center text-center">
+            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-vibrant-green to-emerald-600 flex items-center justify-center mb-5 shadow-lg shadow-vibrant-green/30">
+              <span class="material-symbols-outlined text-white text-3xl" style="font-family: 'Material Symbols Outlined' !important; font-variation-settings: 'FILL' 1">chat</span>
+            </div>
+            <h3 class="text-xl font-bold text-on-surface mb-2">WhatsApp</h3>
+            <p class="text-on-surface-variant text-sm mb-4">Respons cepat untuk pertanyaan dan pemesanan</p>
+            <a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="w-full py-3.5 bg-gradient-to-r from-vibrant-green to-emerald-600 text-white rounded-xl font-bold text-sm hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 shadow-lg shadow-vibrant-green/30 inline-flex items-center justify-center gap-2">
+              <span class="material-symbols-outlined text-sm" style="font-family: 'Material Symbols Outlined' !important; font-variation-settings: 'FILL' 1">chat</span>
+              {{store.phone}}
+            </a>
+            <p class="text-xs text-on-surface-variant mt-3">Sen - Jum, 09:00 - 18:00 WIB</p>
+          </div>
+        </div>
+
+        <!-- Email Card -->
+        {{#contact.email}}
+        <div class="reveal p-8 rounded-3xl bg-gradient-to-br from-vibrant-purple/10 to-vibrant-purple/5 border border-vibrant-purple/20 shadow-lg lg:col-span-1" style="transition-delay: 100ms">
+          <div class="flex flex-col items-center text-center">
+            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-vibrant-purple to-vibrant-purple/80 flex items-center justify-center mb-5 shadow-lg shadow-vibrant-purple/30">
+              <span class="material-symbols-outlined text-white text-3xl" style="font-family: 'Material Symbols Outlined' !important; font-variation-settings: 'FILL' 1">mail</span>
+            </div>
+            <h3 class="text-xl font-bold text-on-surface mb-2">Email</h3>
+            <p class="text-on-surface-variant text-sm mb-4">Kirim pertanyaan via email</p>
+            <a href="mailto:{{contact.email}}" class="w-full py-3.5 bg-gradient-to-r from-vibrant-purple to-vibrant-purple/80 text-white rounded-xl font-bold text-sm hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 shadow-lg shadow-vibrant-purple/30 inline-flex items-center justify-center gap-2">
+              <span class="material-symbols-outlined text-sm" style="font-family: 'Material Symbols Outlined' !important; font-variation-settings: 'FILL' 1">mail</span>
+              Kirim Email
+            </a>
+            <p class="text-xs text-on-surface-variant mt-3">{{contact.email}}</p>
+          </div>
+        </div>
+        {{/contact.email}}
+
+        <!-- Address Card -->
+        <div class="reveal p-8 rounded-3xl bg-gradient-to-br from-vibrant-orange/10 to-vibrant-orange/5 border border-vibrant-orange/20 shadow-lg lg:col-span-1" style="transition-delay: 200ms">
+          <div class="flex flex-col items-center text-center">
+            <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-vibrant-orange to-vibrant-orange/80 flex items-center justify-center mb-5 shadow-lg shadow-vibrant-orange/30">
+              <span class="material-symbols-outlined text-white text-3xl" style="font-family: 'Material Symbols Outlined' !important; font-variation-settings: 'FILL' 1">location_on</span>
+            </div>
+            <h3 class="text-xl font-bold text-on-surface mb-2">Kunjungi Toko</h3>
+            <p class="text-on-surface-variant text-sm mb-4">Datang langsung ke lokasi kami</p>
+            <p class="text-sm font-semibold text-on-surface">{{store.address}}</p>
+            {{#contact.mapsUrl}}
+            <a href="{{contact.mapsUrl}}" target="_blank" rel="noopener" class="mt-4 text-primary font-bold text-sm inline-flex items-center gap-1.5 hover:gap-2 transition-all group">
+              <span class="material-symbols-outlined text-sm">map</span>
+              Buka Google Maps
+              <span class="material-symbols-outlined text-sm group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+            </a>
+            {{/contact.mapsUrl}}
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== MORE CONTACT INFO BENTO ========== -->
+      <div class="grid md:grid-cols-2 gap-6 lg:gap-8 mb-16">
+        <!-- Business Hours -->
+        <div class="reveal-left p-8 rounded-3xl bg-surface border border-outline-variant shadow-lg">
+          <div class="flex items-start gap-4">
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-vibrant-purple to-vibrant-purple/80 flex items-center justify-center flex-shrink-0 shadow-lg shadow-vibrant-purple/30">
+              <span class="material-symbols-outlined text-white text-2xl" style="font-family: 'Material Symbols Outlined' !important; font-variation-settings: 'FILL' 1">schedule</span>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold text-on-surface mb-2">Jam Operasional</h3>
+              <p class="text-on-surface-variant">{{store.businessHours}}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Social Media -->
+        <div class="reveal-right p-8 rounded-3xl bg-surface border border-outline-variant shadow-lg" style="transition-delay: 100ms">
+          <div class="flex items-start gap-4">
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-vibrant-orange to-vibrant-purple flex items-center justify-center flex-shrink-0 shadow-lg shadow-vibrant-purple/30">
+              <span class="material-symbols-outlined text-white text-2xl" style="font-family: 'Material Symbols Outlined' !important; font-variation-settings: 'FILL' 1">share</span>
+            </div>
+            <div class="flex-1">
+              <h3 class="text-xl font-bold text-on-surface mb-3">Media Sosial</h3>
+              <div class="flex flex-wrap gap-2">
+                {{#social.instagram}}
+                <a href="{{social.instagram}}" target="_blank" rel="noopener" class="w-10 h-10 rounded-xl bg-gradient-to-br from-vibrant-orange to-pink-500 text-white flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-200 shadow-md">
+                  <span class="material-symbols-outlined text-sm" style="font-family: 'Material Symbols Outlined' !important; font-variation-settings: 'FILL' 1">camera</span>
+                </a>
+                {{/social.instagram}}
+                {{#social.facebook}}
+                <a href="{{social.facebook}}" target="_blank" rel="noopener" class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-blue-800 text-white flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-200 shadow-md">
+                  <span class="material-symbols-outlined text-sm" style="font-family: 'Material Symbols Outlined' !important; font-variation-settings: 'FILL' 1">public</span>
+                </a>
+                {{/social.facebook}}
+                {{#social.tiktok}}
+                <a href="{{social.tiktok}}" target="_blank" rel="noopener" class="w-10 h-10 rounded-xl bg-gradient-to-br from-pink-500 to-purple-600 text-white flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-200 shadow-md">
+                  <span class="material-symbols-outlined text-sm" style="font-family: 'Material Symbols Outlined' !important; font-variation-settings: 'FILL' 1">music_note</span>
+                </a>
+                {{/social.tiktok}}
+                {{#social.youtube}}
+                <a href="{{social.youtube}}" target="_blank" rel="noopener" class="w-10 h-10 rounded-xl bg-gradient-to-br from-red-600 to-red-800 text-white flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-200 shadow-md">
+                  <span class="material-symbols-outlined text-sm" style="font-family: 'Material Symbols Outlined' !important; font-variation-settings: 'FILL' 1">play_circle</span>
+                </a>
+                {{/social.youtube}}
+                {{#social.shopee}}
+                <a href="{{social.shopee}}" target="_blank" rel="noopener" class="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-orange-700 text-white flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-200 shadow-md">
+                  <span class="material-symbols-outlined text-sm" style="font-family: 'Material Symbols Outlined' !important; font-variation-settings: 'FILL' 1">shopping_cart</span>
+                </a>
+                {{/social.shopee}}
+                {{#social.tokopedia}}
+                <a href="{{social.tokopedia}}" target="_blank" rel="noopener" class="w-10 h-10 rounded-xl bg-gradient-to-br from-green-500 to-green-700 text-white flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-200 shadow-md">
+                  <span class="material-symbols-outlined text-sm" style="font-family: 'Material Symbols Outlined' !important; font-variation-settings: 'FILL' 1">store</span>
+                </a>
+                {{/social.tokopedia}}
+                {{^social.instagram}}{{^social.facebook}}{{^social.tiktok}}{{^social.youtube}}{{^social.shopee}}{{^social.tokopedia}}
+                <p class="text-on-surface-variant text-sm">Belum ada media sosial</p>
+                {{/social.tokopedia}}{{/social.shopee}}{{/social.youtube}}{{/social.tiktok}}{{/social.facebook}}{{/social.instagram}}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== SHIPPING & PAYMENTS INFO ========== -->
+      <div class="grid md:grid-cols-2 gap-6 lg:gap-8 mb-16">
+        <!-- Shipping -->
+        <div class="reveal p-8 rounded-3xl bg-gradient-to-br from-vibrant-orange/10 to-vibrant-orange/5 border border-vibrant-orange/20 shadow-lg">
+          <div class="flex items-start gap-4">
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-vibrant-orange to-vibrant-orange/80 flex items-center justify-center flex-shrink-0 shadow-lg shadow-vibrant-orange/30">
+              <span class="material-symbols-outlined text-white text-2xl" style="font-family: 'Material Symbols Outlined' !important; font-variation-settings: 'FILL' 1">local_shipping</span>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold text-on-surface mb-2">Informasi Pengiriman</h3>
+              <p class="text-on-surface-variant leading-relaxed">
+                {{#store.shippingInfo}}{{store.shippingInfo}}{{/store.shippingInfo}}
+                {{^store.shippingInfo}}Kami mengirimkan pesanan Anda dengan cepat dan aman ke seluruh Indonesia. Estimasi pengiriman 2-7 hari kerja tergantung lokasi.{{/store.shippingInfo}}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Returns -->
+        <div class="reveal p-8 rounded-3xl bg-gradient-to-br from-vibrant-green/10 to-vibrant-green/5 border border-vibrant-green/20 shadow-lg" style="transition-delay: 100ms">
+          <div class="flex items-start gap-4">
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-vibrant-green to-vibrant-green/80 flex items-center justify-center flex-shrink-0 shadow-lg shadow-vibrant-green/30">
+              <span class="material-symbols-outlined text-white text-2xl" style="font-family: 'Material Symbols Outlined' !important; font-variation-settings: 'FILL' 1">verified</span>
+            </div>
+            <div>
+              <h3 class="text-xl font-bold text-on-surface mb-2">Kebijakan Retur</h3>
+              <p class="text-on-surface-variant leading-relaxed">
+                {{#store.returnPolicy}}{{store.returnPolicy}}{{/store.returnPolicy}}
+                {{^store.returnPolicy}}Kepuasan pelanggan adalah prioritas kami. Jika ada masalah dengan pesanan Anda, hubungi kami dalam 3 hari setelah penerimaan barang.{{/store.returnPolicy}}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== BIG WHATSAPP CTA ========== -->
+  <section class="relative overflow-hidden pb-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="relative rounded-[2.5rem] overflow-hidden bg-gradient-to-br from-vibrant-green via-vibrant-purple to-vibrant-orange p-10 md:p-16 lg:p-20 reveal-scale">
+        <div class="absolute top-0 left-0 w-80 h-80 bg-white/10 rounded-full blur-3xl -ml-32 -mt-32 pointer-events-none"></div>
+        <div class="absolute bottom-0 right-0 w-60 h-60 bg-white/10 rounded-full blur-3xl -mr-24 -mb-24 pointer-events-none"></div>
+        <div class="absolute inset-0 opacity-[0.08] pointer-events-none" style="background-image: radial-gradient(circle at 25% 25%, white 1px, transparent 1px); background-size: 30px 30px;"></div>
+
+        <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left">
+          <div>
+            <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-white leading-tight">
+              Siap <span class="underline decoration-4 decoration-white/30 underline-offset-8">Chat</span> dengan Kami?
+            </h2>
+            <p class="text-white/80 text-lg mt-4 max-w-lg">Klik tombol di bawah untuk langsung terhubung dengan tim {{store.name}} via WhatsApp.</p>
+          </div>
+          <div class="flex flex-col sm:flex-row gap-4">
+            <a href="{{whatsapp.url}}?text={{wa.text}}" target="_blank" rel="noopener" class="inline-flex items-center gap-3 px-10 py-5 bg-white text-on-surface rounded-2xl font-bold text-lg hover:scale-105 active:scale-95 transition-all duration-300 shadow-2xl group">
+              <span class="material-symbols-outlined text-vibrant-green group-hover:scale-110 transition-transform" style="font-family: 'Material Symbols Outlined' !important; font-variation-settings: 'FILL' 1">chat</span>
+              Chat WhatsApp
+              <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+            </a>
+            <a href="tel:{{store.phone}}" class="inline-flex items-center gap-3 px-10 py-5 bg-white/20 backdrop-blur text-white rounded-2xl font-bold text-lg hover:bg-white/30 active:scale-95 transition-all duration-300 border border-white/20">
+              <span class="material-symbols-outlined" style="font-family: 'Material Symbols Outlined' !important; font-variation-settings: 'FILL' 1">call</span>
+              Telepon
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
 
 {{>footer}}
 
-<!-- Mobile Navigation Shell (Conditional) -->
-<div class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-surface/80 backdrop-blur-lg border-t border-outline-variant px-margin-mobile h-16 flex justify-around items-center">
-<button class="flex flex-col items-center text-primary">
-<span class="material-symbols-outlined" data-icon="home" style="font-variation-settings: 'FILL' 1;">home</span>
-<span class="text-[10px] font-bold">Home</span>
-</button>
-<button class="flex flex-col items-center text-on-surface-variant">
-<span class="material-symbols-outlined" data-icon="category">category</span>
-<span class="text-[10px] font-bold">Catalog</span>
-</button>
-<button class="flex flex-col items-center text-on-surface-variant relative">
-<span class="material-symbols-outlined" data-icon="shopping_basket">shopping_basket</span>
-<span class="absolute -top-1 -right-1 bg-vibrant-orange text-[8px] text-white w-4 h-4 rounded-full flex items-center justify-center">2</span>
-<span class="text-[10px] font-bold">Cart</span>
-</button>
-<button class="flex flex-col items-center text-on-surface-variant">
-<span class="material-symbols-outlined" data-icon="person">person</span>
-<span class="text-[10px] font-bold">Profile</span>
-</button>
-</div>
-<!-- Floating FAB -->
-<a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="fixed bottom-24 right-6 w-14 h-14 bg-vibrant-teal text-white rounded-full bento-shadow flex items-center justify-center hover:scale-110 active:scale-95 transition-transform z-40">
-<span class="material-symbols-outlined" data-icon="chat_bubble" style="font-variation-settings: 'FILL' 1;">chat_bubble</span>
+<!-- Floating WhatsApp -->
+<a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="fixed bottom-6 right-6 z-40 w-14 h-14 bg-gradient-to-br from-vibrant-green to-emerald-600 text-white rounded-2xl shadow-2xl shadow-vibrant-green/40 flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-300" aria-label="Chat WhatsApp">
+  <span class="material-symbols-outlined text-2xl" style="font-family: 'Material Symbols Outlined' !important; font-variation-settings: 'FILL' 1">chat</span>
 </a>
-</body></html>
+
+<!-- Mobile Bottom Nav -->
+<div class="md:hidden fixed bottom-0 left-0 right-0 z-30 bg-surface/95 backdrop-blur-xl border-t border-outline-variant px-4 h-16 flex justify-around items-center">
+  <a href="./" class="flex flex-col items-center text-on-surface-variant gap-0.5">
+    <span class="material-symbols-outlined">home</span>
+    <span class="text-[10px] font-bold">Beranda</span>
+  </a>
+  <a href="./produk.html" class="flex flex-col items-center text-on-surface-variant gap-0.5">
+    <span class="material-symbols-outlined">inventory_2</span>
+    <span class="text-[10px] font-bold">Produk</span>
+  </a>
+  <a href="./tentang.html" class="flex flex-col items-center text-on-surface-variant gap-0.5">
+    <span class="material-symbols-outlined">info</span>
+    <span class="text-[10px] font-bold">Tentang</span>
+  </a>
+  <a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="flex flex-col items-center text-on-surface-variant gap-0.5 relative -top-3">
+    <span class="w-12 h-12 rounded-2xl bg-gradient-to-br from-vibrant-green to-emerald-600 text-white flex items-center justify-center shadow-lg shadow-vibrant-green/30">
+      <span class="material-symbols-outlined text-sm" style="font-family: 'Material Symbols Outlined' !important; font-variation-settings: 'FILL' 1">chat</span>
+    </span>
+    <span class="text-[10px] font-bold">Chat</span>
+  </a>
+  <a href="./kontak.html" class="flex flex-col items-center text-primary gap-0.5">
+    <span class="material-symbols-outlined" style="font-family: 'Material Symbols Outlined' !important; font-variation-settings: 'FILL' 1">contact_support</span>
+    <span class="text-[10px] font-bold">Kontak</span>
+  </a>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var elements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          setTimeout(function() {
+            entry.target.classList.add('visible');
+          }, 100);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+    elements.forEach(function(el, i) {
+      if (!el.style.transitionDelay) {
+        el.style.transitionDelay = (i * 80) + 'ms';
+      }
+      observer.observe(el);
+    });
+  });
+</script>
+
+</body>
+</html>
