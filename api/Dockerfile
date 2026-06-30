@@ -32,6 +32,7 @@ COPY --from=build /app/api/prisma.config.ts ./
 COPY --from=build /app/api/docker-entrypoint.sh /
 COPY --from=build /app/api/generated ./generated
 COPY --from=build /app/web-gen/src/templates ./dist/templates
+COPY --from=build /app/web-gen/src/assets ./dist/assets
 
 RUN chmod +x /docker-entrypoint.sh
 
