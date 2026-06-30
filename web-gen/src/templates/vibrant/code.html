@@ -1,326 +1,547 @@
 <!DOCTYPE html>
-
-<html class="light" lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>{{store.name}} | Official Store</title>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=JetBrains+Mono:wght@100..900&amp;family=Plus+Jakarta+Sans:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<html class="light" lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>{{store.name}} | Official Store</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=JetBrains+Mono:wght@100..900&amp;family=Plus+Jakarta+Sans:wght@100..900&amp;display=swap" rel="stylesheet" />
   <link href="./assets/tailwind.css" rel="stylesheet" />
-  <style>:root{ {{color.vars}} }
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #c0c0c080; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #a0a0a0b0; }
-    </style>
-<style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-            display: inline-block;
-            line-height: 1;
-        }
-        .bento-shadow {
-            box-shadow: 0px 8px 30px rgba(0, 74, 198, 0.08);
-        }
-        .vibrant-gradient {
-            background: linear-gradient(135deg, #FF8A00 0%, #AD00FF 100%);
-        }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-        .floating {
-            animation: floating 3s ease-in-out infinite;
-        }
-        @keyframes floating {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
-            100% { transform: translateY(0px); }
-        }
-        .stagger-item {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-        }
-        .stagger-item.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    </style>
+  <style>
+    :root{ {{color.vars}} }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--accent-orange, #FF6B00), var(--accent-purple, #8B5CF6)); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #a0a0a0b0; }
+  </style>
+  <style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      line-height: 1;
+    }
+    .vibrant-gradient {
+      background: linear-gradient(135deg, #FF6B00, #8B5CF6, #10B981);
+    }
+    .vibrant-gradient-text {
+      background: linear-gradient(135deg, #FF6B00, #8B5CF6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    .floating {
+      animation: floating 3s ease-in-out infinite;
+    }
+    .floating-delayed {
+      animation: floating 4s ease-in-out infinite 1s;
+    }
+    @keyframes floating {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-15px) rotate(2deg); }
+    }
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-left {
+      opacity: 0;
+      transform: translateX(-40px);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal-left.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    .reveal-right {
+      opacity: 0;
+      transform: translateX(40px);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal-right.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    .reveal-scale {
+      opacity: 0;
+      transform: scale(0.92);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal-scale.visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+    .text-balance {
+      text-wrap: balance;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .floating, .floating-delayed { animation: none; }
+      .reveal, .reveal-left, .reveal-right, .reveal-scale { opacity: 1; transform: none; }
+    }
+  </style>
 </head>
-<body class="bg-background text-on-background font-body-md selection:bg-primary-fixed selection:text-on-primary-fixed overflow-x-hidden">
+<body class="bg-background text-on-background font-body-md selection:bg-primary selection:text-on-primary overflow-x-hidden">
+
 {{>navbar}}
-<!-- Hero Section -->
-<section class="relative min-h-[870px] flex items-center overflow-hidden py-2xl">
 
-<div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop relative z-10 grid lg:grid-cols-2 gap-xl items-center">
-<div class="space-y-lg">
-<div class="inline-flex items-center gap-2 bg-vibrant-teal/10 px-4 py-2 rounded-full border border-vibrant-teal/20">
-<span class="material-symbols-outlined text-vibrant-teal text-sm" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="text-vibrant-teal font-label-md text-label-md uppercase tracking-widest">New Arrivals Out Now</span>
-</div>
-<h1 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface">
-                    {{hero.headline}}
-                </h1>
-<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl">
-                    {{hero.subheadline}}
-                </p>
-<div class="flex flex-wrap gap-md pt-md">
-<button class="px-8 py-4 bg-primary text-on-primary rounded-2xl font-bold text-lg bento-shadow hover:bg-primary-container transition-all hover:scale-105 active:scale-95 flex items-center gap-2">
-                        Shop Now <span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
-</button>
-<button class="px-8 py-4 border-2 border-outline text-on-surface rounded-2xl font-bold text-lg hover:bg-surface-variant transition-all active:scale-95">
-                        View Lookbook
-                    </button>
-</div>
-</div>
-<div class="relative group">
-<div class="absolute -inset-4 bg-vibrant-purple/20 rounded-[3rem] blur-2xl group-hover:bg-vibrant-orange/20 transition-colors duration-700"></div>
-<div class="relative rounded-2xl overflow-hidden bento-shadow rotate-3 group-hover:rotate-0 transition-transform duration-500">
-<img class="w-full aspect-[4/5] object-cover" alt="" src="{{store.logoUrl}}"/>
-</div>
-<!-- Floating Element -->
-<div class="absolute -bottom-10 -left-10 glass-card p-6 rounded-2xl bento-shadow floating hidden md:block">
-<div class="flex items-center gap-4">
-<div class="w-12 h-12 rounded-full bg-vibrant-orange flex items-center justify-center">
-<span class="material-symbols-outlined text-white" data-icon="local_fire_department" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
-</div>
-<div>
-<p class="font-bold text-on-surface">Trending Now</p>
-<p class="text-sm text-on-surface-variant">{{hero.aboutText}}</p>
-</div>
-</div>
-</div>
-</div>
-</div>
+<!-- ========== HERO SECTION ========== -->
+<section class="relative min-h-screen flex items-center overflow-hidden">
+  <!-- Background -->
+  {{#hero.hasImage}}
+  <div class="absolute inset-0">
+    <img src="{{hero.imageUrl}}" alt="" class="w-full h-full object-cover" />
+    <div class="absolute inset-0 bg-gradient-to-r from-background/95 via-background/80 to-background/60"></div>
+  </div>
+  {{/hero.hasImage}}
+  {{^hero.hasImage}}
+  <div class="absolute inset-0 bg-gradient-to-br from-vibrant-orange/10 via-background to-vibrant-purple/15"></div>
+  {{/hero.hasImage}}
+
+  <!-- Decorative blur elements -->
+  <div class="absolute top-20 right-20 w-72 h-72 bg-vibrant-purple/20 rounded-full blur-3xl floating pointer-events-none"></div>
+  <div class="absolute bottom-40 left-10 w-96 h-96 bg-vibrant-orange/10 rounded-full blur-3xl floating-delayed pointer-events-none"></div>
+  <div class="absolute top-1/4 right-1/4 w-64 h-64 bg-vibrant-green/10 rounded-full blur-3xl floating pointer-events-none" style="animation-delay: 0.5s;"></div>
+
+  <!-- Dot grid overlay -->
+  <div class="absolute inset-0 opacity-[0.04] pointer-events-none" style="background-image: radial-gradient(circle, currentColor 1px, transparent 1px); background-size: 40px 40px;"></div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full pt-28 pb-16">
+    <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+      <!-- Left Content -->
+      <div class="space-y-8 reveal">
+        <!-- Badge -->
+        <div class="inline-flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full border border-primary/20">
+          <span class="w-2 h-2 rounded-full bg-vibrant-green animate-pulse"></span>
+          <span class="text-primary font-semibold text-sm uppercase tracking-wider">Selamat Datang di {{store.name}}</span>
+        </div>
+
+        <!-- Headline -->
+        <h1 class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black leading-[0.88] tracking-tight text-balance">
+          <span class="bg-gradient-to-r from-vibrant-orange via-vibrant-purple to-vibrant-green bg-clip-text text-transparent">
+            {{hero.headline}}
+          </span>
+        </h1>
+
+        <!-- Subheadline -->
+        <p class="text-lg md:text-xl text-on-surface-variant max-w-xl leading-relaxed">
+          {{hero.subheadline}}
+        </p>
+
+        <!-- CTA Buttons -->
+        <div class="flex flex-wrap gap-4">
+          <a href="#products" class="group inline-flex items-center gap-3 px-8 py-4 bg-primary text-on-primary rounded-2xl font-bold text-lg hover:scale-105 active:scale-95 transition-all duration-300 shadow-xl shadow-primary/30">
+            <span>{{hero.ctaText}}</span>
+            <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform" style="font-variation-settings: 'FILL' 1">arrow_forward</span>
+          </a>
+          <a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="inline-flex items-center gap-3 px-8 py-4 border-2 border-outline text-on-surface rounded-2xl font-bold text-lg hover:bg-surface-container hover:border-primary transition-all duration-300 active:scale-95">
+            <span class="material-symbols-outlined">chat</span>
+            Hubungi Kami
+          </a>
+        </div>
+
+        <!-- Stats Bar -->
+        <div class="flex flex-wrap gap-8 pt-4 border-t border-outline-variant/50">
+          <div>
+            <span class="text-3xl font-black text-on-surface">{{stats.completed}}</span>
+            <span class="text-on-surface-variant text-sm block">Pesanan Selesai</span>
+          </div>
+          <div>
+            <span class="text-3xl font-black text-on-surface">{{stats.totalOrders}}</span>
+            <span class="text-on-surface-variant text-sm block">Total Pesanan</span>
+          </div>
+          <div>
+            <span class="text-3xl font-black text-on-surface">{{stats.pending}}</span>
+            <span class="text-on-surface-variant text-sm block">Diproses</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Visual -->
+      <div class="relative reveal-right">
+        {{#hero.hasImage}}
+        <div class="relative group">
+          <div class="absolute -inset-4 bg-gradient-to-r from-vibrant-orange via-vibrant-purple to-vibrant-green rounded-[3rem] blur-2xl opacity-60 group-hover:opacity-80 transition-opacity duration-700"></div>
+          <div class="relative rounded-2xl overflow-hidden shadow-2xl rotate-2 group-hover:rotate-0 transition-transform duration-500">
+            <img src="{{hero.imageUrl}}" alt="{{hero.headline}}" class="w-full aspect-[4/5] object-cover" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
+          </div>
+        </div>
+        {{/hero.hasImage}}
+        {{^hero.hasImage}}
+        <!-- Decorative visual placeholder -->
+        <div class="relative">
+          <div class="aspect-square rounded-[2rem] bg-gradient-to-br from-vibrant-orange/20 via-vibrant-purple/20 to-vibrant-green/20 flex items-center justify-center border-2 border-dashed border-outline-variant">
+            <div class="text-center">
+              <span class="material-symbols-outlined text-8xl text-primary/30" style="font-variation-settings: 'FILL' 1">store</span>
+              <h3 class="text-2xl font-bold text-on-surface/40 mt-4">{{store.name}}</h3>
+              <p class="text-on-surface-variant/30 text-sm mt-2">{{store.businessName}}</p>
+            </div>
+          </div>
+          <!-- Floating decorative cards -->
+          <div class="absolute -bottom-6 -left-6 glass-card p-4 rounded-2xl shadow-xl floating hidden md:block">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-vibrant-orange to-vibrant-orange/80 flex items-center justify-center">
+                <span class="material-symbols-outlined text-white text-sm" style="font-variation-settings: 'FILL' 1">local_fire_department</span>
+              </div>
+              <div>
+                <p class="font-bold text-on-surface text-sm">Best Seller</p>
+                <p class="text-xs text-on-surface-variant">Terlaris bulan ini</p>
+              </div>
+            </div>
+          </div>
+          <div class="absolute -top-4 -right-4 glass-card p-4 rounded-2xl shadow-xl floating-delayed hidden md:block">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-vibrant-purple to-vibrant-purple/80 flex items-center justify-center">
+                <span class="material-symbols-outlined text-white text-sm" style="font-variation-settings: 'FILL' 1">star</span>
+              </div>
+              <div>
+                <p class="font-bold text-on-surface text-sm">Top Rated</p>
+                <p class="text-xs text-on-surface-variant">Rating tertinggi</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        {{/hero.hasImage}}
+      </div>
+    </div>
+  </div>
 </section>
-<!-- Daily Deals (Bento Grid Style) -->
-<section class="py-2xl bg-surface-container-low">
-<div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop">
-<div class="flex justify-between items-end mb-xl">
-<div>
-<h2 class="font-headline-md text-headline-md text-on-surface">Daily <span class="text-vibrant-purple underline decoration-4 underline-offset-8">Sparklers</span></h2>
-<p class="text-on-surface-variant mt-2">Catch 'em before they vanish!</p>
-</div>
-<div class="flex gap-2">
-<button class="p-3 bg-white border border-outline-variant rounded-full hover:bg-surface transition-colors">
-<span class="material-symbols-outlined" data-icon="chevron_left">chevron_left</span>
-</button>
-<button class="p-3 bg-white border border-outline-variant rounded-full hover:bg-surface transition-colors">
-<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
-</button>
-</div>
-</div>
-<div class="grid grid-cols-1 md:grid-cols-4 gap-md md:h-[600px]">
-<!-- Large Highlight Deal -->
-<div class="md:col-span-2 md:row-span-2 group relative overflow-hidden rounded-2xl bento-shadow bg-vibrant-teal">
-<img class="absolute inset-0 w-full h-full object-cover mix-blend-overlay group-hover:scale-110 transition-transform duration-700" alt="" src=""/>
-<div class="relative h-full p-lg flex flex-col justify-end text-white bg-gradient-to-t from-black/60 to-transparent">
-<span class="bg-vibrant-orange text-white px-3 py-1 rounded-full font-bold text-sm w-fit mb-2">HOT DEAL - 40% OFF</span>
-<h3 class="text-3xl font-extrabold mb-2">Cosmic Glazed Set</h3>
-<p class="text-white/80 mb-4 font-medium">Limited batch of our signature treats</p>
-<button class="bg-white text-vibrant-teal px-6 py-3 rounded-xl font-bold w-fit active:scale-95 transition-transform">Grab it Now</button>
-</div>
-</div>
-<!-- Secondary Deal 1 -->
-<div class="md:col-span-2 group relative overflow-hidden rounded-2xl bento-shadow bg-vibrant-purple">
-<div class="flex h-full">
-<div class="w-1/2 p-lg flex flex-col justify-center text-white">
-<h3 class="text-2xl font-bold mb-2">Neon Tote Bag</h3>
-<p class="text-white/70 mb-4">Express yourself with color</p>
-<span class="text-xl font-black text-vibrant-teal">$24.00 <span class="line-through text-sm text-white/50">$39.00</span></span>
-</div>
-<div class="w-1/2 relative">
-<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="" src=""/>
-</div>
-</div>
-</div>
-<!-- Secondary Deal 2 -->
-<div class="group relative overflow-hidden rounded-2xl bento-shadow bg-surface border border-outline-variant">
-<img class="w-full h-48 object-cover" alt="" src=""/>
-<div class="p-md text-center">
-<p class="font-bold text-on-surface">Whimsical Pins</p>
-<p class="text-vibrant-orange font-black">$5.99</p>
-</div>
-</div>
-<!-- Secondary Deal 3 -->
-<div class="group relative overflow-hidden rounded-2xl bento-shadow bg-surface border border-outline-variant">
-<img class="w-full h-48 object-cover" alt="" src=""/>
-<div class="p-md text-center">
-<p class="font-bold text-on-surface">Typo Mugs</p>
-<p class="text-vibrant-teal font-black">$12.50</p>
-</div>
-</div>
-</div>
-</div>
+
+<!-- ========== PRODUCTS SECTION (Bento Grid) ========== -->
+<section id="products" class="py-24 lg:py-32 relative overflow-hidden">
+  <div class="absolute top-0 right-0 w-96 h-96 bg-vibrant-purple/5 rounded-full blur-3xl pointer-events-none"></div>
+  <div class="absolute bottom-0 left-0 w-80 h-80 bg-vibrant-orange/5 rounded-full blur-3xl pointer-events-none"></div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Section Header -->
+    <div class="text-center mb-16 reveal">
+      <div class="inline-flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full border border-primary/20 mb-6">
+        <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1">inventory_2</span>
+        <span class="text-primary font-semibold text-sm">Koleksi Terbaru</span>
+      </div>
+      <h2 class="text-4xl md:text-5xl lg:text-6xl font-black text-on-surface mb-4 leading-tight">
+        Produk <span class="vibrant-gradient-text">Kami</span>
+      </h2>
+      <p class="text-lg text-on-surface-variant max-w-2xl mx-auto">Temukan koleksi terbaik dari {{store.name}} untuk gaya dan kebutuhan Anda</p>
+    </div>
+
+    <!-- Product Bento Grid -->
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+      {{#products}}
+      <div class="group reveal {{^.isAvailable}}opacity-70{{/.isAvailable}}">
+        <div class="relative rounded-2xl overflow-hidden bg-surface-container-high aspect-square mb-3 shadow-lg shadow-black/5 group-hover:shadow-xl group-hover:shadow-black/10 transition-all duration-500">
+          <!-- Image -->
+          {{#.imageUrl}}
+          <img src="{{.imageUrl}}" alt="{{.name}}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+          {{/.imageUrl}}
+          {{^.imageUrl}}
+          <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-surface-container to-surface-container-high">
+            <span class="material-symbols-outlined text-5xl text-outline-variant" style="font-variation-settings: 'FILL' 1">image</span>
+          </div>
+          {{/.imageUrl}}
+
+          <!-- Hover overlay -->
+          <div class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
+            <a href="{{whatsapp.url}}?text={{wa.text}}" target="_blank" rel="noopener" class="translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300 px-6 py-3 bg-primary text-on-primary rounded-xl font-bold text-sm shadow-xl flex items-center gap-2">
+              <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1">chat</span>
+              Beli Sekarang
+            </a>
+          </div>
+
+          <!-- Stock Badge -->
+          {{^.isAvailable}}
+          <div class="absolute top-3 right-3 px-3 py-1.5 bg-gradient-to-r from-vibrant-orange to-red-500 text-white text-xs font-bold rounded-lg shadow-lg">
+            <span class="flex items-center gap-1">
+              <span class="material-symbols-outlined text-xs">close</span>
+              Habis
+            </span>
+          </div>
+          {{/.isAvailable}}
+
+          <!-- Favorite button -->
+          <button class="absolute top-3 left-3 w-9 h-9 bg-white/80 backdrop-blur rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white shadow-lg" aria-label="Favorite">
+            <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1">favorite</span>
+          </button>
+        </div>
+
+        <!-- Product Info -->
+        <h3 class="font-bold text-on-surface group-hover:text-primary transition-colors">{{.name}}</h3>
+        <p class="text-sm text-on-surface-variant line-clamp-1">{{.description}}</p>
+        <div class="flex items-center justify-between mt-1">
+          <span class="font-black text-lg bg-gradient-to-r from-vibrant-orange to-vibrant-purple bg-clip-text text-transparent">Rp {{.price}}</span>
+          {{#.stock}}
+          <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-vibrant-green/10 text-vibrant-green">Stok: {{.stock}}</span>
+          {{/.stock}}
+        </div>
+      </div>
+      {{/products}}
+      {{^products}}
+      <!-- Empty State -->
+      <div class="col-span-full flex flex-col items-center justify-center py-24 text-center reveal">
+        <div class="w-24 h-24 rounded-3xl bg-surface-container-high flex items-center justify-center mb-6 border-2 border-dashed border-outline-variant">
+          <span class="material-symbols-outlined text-5xl text-outline-variant">inventory_2</span>
+        </div>
+        <h3 class="text-2xl font-bold text-on-surface/60 mb-3">Belum Ada Produk</h3>
+        <p class="text-on-surface-variant mb-8 max-w-md">Belum ada produk yang tersedia. Silakan cek kembali nanti atau hubungi kami untuk informasi lebih lanjut.</p>
+        <a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 px-8 py-4 bg-primary text-on-primary rounded-2xl font-bold hover:scale-105 active:scale-95 transition-all shadow-xl shadow-primary/30">
+          <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1">chat</span>
+          Hubungi Kami
+        </a>
+      </div>
+      {{/products}}
+    </div>
+
+    <!-- View All Link -->
+    <div class="mt-12 text-center reveal">
+      <a href="./produk.html" class="inline-flex items-center gap-2 px-8 py-3.5 border-2 border-primary text-primary rounded-2xl font-bold hover:bg-primary hover:text-on-primary transition-all duration-300 active:scale-95 group">
+        Lihat Semua Produk
+        <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+      </a>
+    </div>
+  </div>
 </section>
-<!-- Interactive Product Grid -->
-<section class="py-3xl">
-<div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop">
-<div class="text-center mb-2xl">
-<h2 class="font-headline-md text-headline-md text-on-surface">Explore the <span class="text-primary italic">Goodies</span></h2>
-<div class="flex flex-wrap justify-center gap-sm mt-md">
-<button class="px-6 py-2 bg-primary text-white rounded-full font-bold bento-shadow">All Items</button>
-<button class="px-6 py-2 bg-neutral-100 hover:bg-neutral-200 rounded-full font-medium transition-colors">TREATS</button>
-<button class="px-6 py-2 bg-neutral-100 hover:bg-neutral-200 rounded-full font-medium transition-colors">APPAREL</button>
-<button class="px-6 py-2 bg-neutral-100 hover:bg-neutral-200 rounded-full font-medium transition-colors">DECOR</button>
-</div>
-</div>
-<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-lg">
-{{#products}}
-<div class="group stagger-item">
-<div class="aspect-square rounded-2xl overflow-hidden bg-surface-container-high relative mb-md bento-shadow">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="{{.name}}" src="{{.imageUrl}}"/>
-<button class="absolute top-4 right-4 w-10 h-10 bg-white/80 backdrop-blur rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-<span class="material-symbols-outlined text-primary" data-icon="favorite">favorite</span>
-</button>
-<div class="absolute bottom-0 inset-x-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-<button class="w-full bg-primary text-white py-2 rounded-xl font-bold flex items-center justify-center gap-2">
-<span class="material-symbols-outlined text-sm" data-icon="add_shopping_cart">add_shopping_cart</span> Add to Cart
-                            </button>
-</div>
-</div>
-<h3 class="font-bold text-on-surface">{{.name}}</h3>
-<p class="text-on-surface-variant font-label-md text-sm">{{.description}}</p>
-<p class="font-black text-vibrant-purple text-lg mt-1">Rp {{.price}}</p>
-</div>
-{{/products}}
-{{^products}}
-<div class="col-span-full flex flex-col items-center justify-center py-3xl text-center">
-<div class="w-20 h-20 bg-surface-container-highest rounded-full flex items-center justify-center mb-6 border border-dashed border-outline-variant">
-<span class="material-symbols-outlined text-4xl text-outline-variant">inventory_2</span>
-</div>
-<h3 class="font-headline-md text-headline-md text-on-surface/60 mb-2">Belum Ada Produk</h3>
-<p class="font-body-md text-body-md text-on-surface-variant/60 mb-6 max-w-sm">Belum ada produk yang tersedia. Silakan cek kembali nanti atau hubungi kami untuk informasi lebih lanjut.</p>
-<a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="px-8 py-4 bg-primary text-on-primary font-label-sm text-label-sm rounded-full hover:bg-primary-fixed hover:text-on-primary-fixed transition-all inline-flex items-center gap-2">
-<span class="material-symbols-outlined text-sm">chat</span>
-Hubungi Kami
-</a>
-</div>
-{{/products}}
-</div>
-<div class="mt-2xl text-center">
-<button class="px-12 py-4 bg-white border-2 border-primary text-primary rounded-2xl font-bold hover:bg-primary hover:text-white transition-all duration-300">
-                    Load More Magic
-                </button>
-</div>
-</div>
+
+<!-- ========== ABOUT SECTION ========== -->
+<section class="py-24 lg:py-32 relative overflow-hidden bg-surface-container-low">
+  <div class="absolute top-1/2 -translate-y-1/2 left-0 w-64 h-64 bg-vibrant-purple/10 rounded-full blur-3xl pointer-events-none"></div>
+  <div class="absolute bottom-0 right-0 w-96 h-96 bg-vibrant-orange/10 rounded-full blur-3xl pointer-events-none"></div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+      <!-- Image Side -->
+      <div class="reveal-left">
+        {{#about.hasImage}}
+        <div class="relative group">
+          <div class="absolute -inset-4 bg-gradient-to-r from-vibrant-orange to-vibrant-purple rounded-[3rem] blur-2xl opacity-40 group-hover:opacity-60 transition-opacity duration-700"></div>
+          <div class="relative rounded-2xl overflow-hidden shadow-2xl">
+            <img src="{{about.imageUrl}}" alt="Tentang {{store.name}}" class="w-full aspect-[4/3] object-cover" />
+          </div>
+          <div class="absolute -bottom-6 -right-6 w-24 h-24 bg-vibrant-green/30 rounded-2xl -z-10 floating"></div>
+        </div>
+        {{/about.hasImage}}
+        {{^about.hasImage}}
+        <div class="relative">
+          <div class="aspect-[4/3] rounded-2xl bg-gradient-to-br from-vibrant-orange/10 via-vibrant-purple/10 to-vibrant-green/10 flex items-center justify-center border-2 border-dashed border-outline-variant">
+            <div class="text-center">
+              <span class="material-symbols-outlined text-7xl text-outline-variant" style="font-variation-settings: 'FILL' 1">store</span>
+              <p class="text-on-surface-variant mt-4 font-semibold">{{store.name}}</p>
+            </div>
+          </div>
+          <div class="absolute -bottom-6 -right-6 w-24 h-24 bg-vibrant-green/20 rounded-2xl -z-10 floating"></div>
+        </div>
+        {{/about.hasImage}}
+      </div>
+
+      <!-- Text Side -->
+      <div class="reveal-right space-y-6">
+        <div class="inline-flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full border border-primary/20">
+          <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1">info</span>
+          <span class="text-primary font-semibold text-sm">Tentang Kami</span>
+        </div>
+        <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-on-surface leading-tight">
+          Kenalan dengan <span class="vibrant-gradient-text">{{store.name}}</span>
+        </h2>
+        <p class="text-lg text-on-surface-variant leading-relaxed">{{about.description}}</p>
+
+        <!-- Quick Info Cards -->
+        <div class="grid grid-cols-2 gap-4 pt-4">
+          <div class="p-5 rounded-2xl bg-surface border border-outline-variant shadow-lg shadow-black/5">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-vibrant-orange to-vibrant-orange/80 flex items-center justify-center mb-3">
+              <span class="material-symbols-outlined text-white text-sm" style="font-variation-settings: 'FILL' 1">location_on</span>
+            </div>
+            <h4 class="font-bold text-on-surface text-sm">Alamat</h4>
+            <p class="text-on-surface-variant text-sm mt-1">{{store.address}}</p>
+          </div>
+          <div class="p-5 rounded-2xl bg-surface border border-outline-variant shadow-lg shadow-black/5">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-vibrant-purple to-vibrant-purple/80 flex items-center justify-center mb-3">
+              <span class="material-symbols-outlined text-white text-sm" style="font-variation-settings: 'FILL' 1">schedule</span>
+            </div>
+            <h4 class="font-bold text-on-surface text-sm">Jam Kerja</h4>
+            <p class="text-on-surface-variant text-sm mt-1">{{store.businessHours}}</p>
+          </div>
+        </div>
+
+        <a href="./tentang.html" class="inline-flex items-center gap-2 text-primary font-bold hover:gap-3 transition-all mt-2 group">
+          Pelajari Lebih Lanjut
+          <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+        </a>
+      </div>
+    </div>
+  </div>
 </section>
-<!-- Happy Customers -->
-<section class="py-2xl bg-vibrant-purple relative overflow-hidden">
-<div class="absolute top-0 right-0 w-64 h-64 bg-vibrant-teal/30 rounded-full blur-3xl -mr-32 -mt-32"></div>
-<div class="absolute bottom-0 left-0 w-64 h-64 bg-vibrant-orange/30 rounded-full blur-3xl -ml-32 -mb-32"></div>
-<div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop relative z-10 text-center">
-<h2 class="font-headline-md text-headline-md text-white mb-xl">The Happy <span class="text-vibrant-teal italic">Squad</span></h2>
-<div class="grid md:grid-cols-3 gap-lg">
-<!-- Testimonial 1 -->
-<div class="glass-card p-lg rounded-2xl text-left border-none bento-shadow">
-<div class="flex gap-1 text-vibrant-orange mb-md">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
-</div>
-<p class="text-on-surface font-medium italic mb-lg">"Absolutely obsessed with the quality of the Cosmic Glazed Set! The packaging was so cute too. Total vibe!"</p>
-<div class="flex items-center gap-4">
-<div class="w-12 h-12 rounded-full overflow-hidden bg-white border-2 border-vibrant-teal">
-<img class="w-full h-full object-cover" alt="" src=""/>
-</div>
-<div>
-<p class="font-bold text-on-surface">Lola Blue</p>
-<p class="text-xs text-on-surface-variant font-label-sm">VERIFIED BUYER</p>
-</div>
-</div>
-</div>
-<!-- Testimonial 2 -->
-<div class="glass-card p-lg rounded-2xl text-left border-none bento-shadow md:translate-y-8">
-<div class="flex gap-1 text-vibrant-orange mb-md">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
-</div>
-<p class="text-on-surface font-medium italic mb-lg">"{{store.name}} is my go-to for gifts. Everything is so unique and makes people smile. Shipping was lightning fast!"</p>
-<div class="flex items-center gap-4">
-<div class="w-12 h-12 rounded-full overflow-hidden bg-white border-2 border-vibrant-orange">
-<img class="w-full h-full object-cover" alt="" src=""/>
-</div>
-<div>
-<p class="font-bold text-on-surface">Marcus Creative</p>
-<p class="text-xs text-on-surface-variant font-label-sm">REPEAT CUSTOMER</p>
-</div>
-</div>
-</div>
-<!-- Testimonial 3 -->
-<div class="glass-card p-lg rounded-2xl text-left border-none bento-shadow">
-<div class="flex gap-1 text-vibrant-orange mb-md">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
-</div>
-<p class="text-on-surface font-medium italic mb-lg">"Finally found a shop that matches my energy. The sunnies are high quality and look exactly like the photos!"</p>
-<div class="flex items-center gap-4">
-<div class="w-12 h-12 rounded-full overflow-hidden bg-white border-2 border-primary">
-<img class="w-full h-full object-cover" alt="" src=""/>
-</div>
-<div>
-<p class="font-bold text-on-surface">Alex Shine</p>
-<p class="text-xs text-on-surface-variant font-label-sm">FASHION BLOGGER</p>
-</div>
-</div>
-</div>
-</div>
-</div>
+
+<!-- ========== STORE INFO SECTION (Bento Cards) ========== -->
+<section class="py-24 lg:py-32 relative overflow-hidden">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16 reveal">
+      <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-on-surface mb-4">
+        Kenapa Belanja di <span class="vibrant-gradient-text">{{store.name}}</span>?
+      </h2>
+      <p class="text-lg text-on-surface-variant">Kami memberikan yang terbaik untuk setiap pelanggan</p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-6 lg:gap-8">
+      {{#store.shippingInfo}}
+      <div class="reveal p-8 rounded-3xl bg-gradient-to-br from-vibrant-orange/10 to-vibrant-orange/5 border border-vibrant-orange/20 shadow-lg">
+        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-vibrant-orange to-vibrant-orange/80 flex items-center justify-center mb-6 shadow-lg shadow-vibrant-orange/30">
+          <span class="material-symbols-outlined text-white text-2xl" style="font-variation-settings: 'FILL' 1">local_shipping</span>
+        </div>
+        <h3 class="text-xl font-bold text-on-surface mb-3">Pengiriman</h3>
+        <p class="text-on-surface-variant leading-relaxed">{{store.shippingInfo}}</p>
+      </div>
+      {{/store.shippingInfo}}
+      {{^store.shippingInfo}}
+      <div class="reveal p-8 rounded-3xl bg-gradient-to-br from-vibrant-orange/10 to-vibrant-orange/5 border border-vibrant-orange/20 shadow-lg">
+        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-vibrant-orange to-vibrant-orange/80 flex items-center justify-center mb-6 shadow-lg shadow-vibrant-orange/30">
+          <span class="material-symbols-outlined text-white text-2xl" style="font-variation-settings: 'FILL' 1">local_shipping</span>
+        </div>
+        <h3 class="text-xl font-bold text-on-surface mb-3">Pengiriman Cepat</h3>
+        <p class="text-on-surface-variant leading-relaxed">Kami mengirimkan pesanan Anda dengan cepat dan aman ke seluruh Indonesia.</p>
+      </div>
+      {{/store.shippingInfo}}
+
+      {{#store.returnPolicy}}
+      <div class="reveal p-8 rounded-3xl bg-gradient-to-br from-vibrant-purple/10 to-vibrant-purple/5 border border-vibrant-purple/20 shadow-lg" style="transition-delay: 100ms">
+        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-vibrant-purple to-vibrant-purple/80 flex items-center justify-center mb-6 shadow-lg shadow-vibrant-purple/30">
+          <span class="material-symbols-outlined text-white text-2xl" style="font-variation-settings: 'FILL' 1">verified</span>
+        </div>
+        <h3 class="text-xl font-bold text-on-surface mb-3">Kebijakan Retur</h3>
+        <p class="text-on-surface-variant leading-relaxed">{{store.returnPolicy}}</p>
+      </div>
+      {{/store.returnPolicy}}
+      {{^store.returnPolicy}}
+      <div class="reveal p-8 rounded-3xl bg-gradient-to-br from-vibrant-purple/10 to-vibrant-purple/5 border border-vibrant-purple/20 shadow-lg" style="transition-delay: 100ms">
+        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-vibrant-purple to-vibrant-purple/80 flex items-center justify-center mb-6 shadow-lg shadow-vibrant-purple/30">
+          <span class="material-symbols-outlined text-white text-2xl" style="font-variation-settings: 'FILL' 1">verified</span>
+        </div>
+        <h3 class="text-xl font-bold text-on-surface mb-3">Garansi Kepuasan</h3>
+        <p class="text-on-surface-variant leading-relaxed">Kepuasan pelanggan adalah prioritas kami. Kami siap membantu jika ada masalah.</p>
+      </div>
+      {{/store.returnPolicy}}
+
+      {{#store.paymentMethods}}
+      <div class="reveal p-8 rounded-3xl bg-gradient-to-br from-vibrant-green/10 to-vibrant-green/5 border border-vibrant-green/20 shadow-lg" style="transition-delay: 200ms">
+        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-vibrant-green to-vibrant-green/80 flex items-center justify-center mb-6 shadow-lg shadow-vibrant-green/30">
+          <span class="material-symbols-outlined text-white text-2xl" style="font-variation-settings: 'FILL' 1">payments</span>
+        </div>
+        <h3 class="text-xl font-bold text-on-surface mb-3">Pembayaran</h3>
+        <p class="text-on-surface-variant leading-relaxed">{{store.paymentMethods}}</p>
+      </div>
+      {{/store.paymentMethods}}
+      {{^store.paymentMethods}}
+      <div class="reveal p-8 rounded-3xl bg-gradient-to-br from-vibrant-green/10 to-vibrant-green/5 border border-vibrant-green/20 shadow-lg" style="transition-delay: 200ms">
+        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-vibrant-green to-vibrant-green/80 flex items-center justify-center mb-6 shadow-lg shadow-vibrant-green/30">
+          <span class="material-symbols-outlined text-white text-2xl" style="font-variation-settings: 'FILL' 1">payments</span>
+        </div>
+        <h3 class="text-xl font-bold text-on-surface mb-3">Pembayaran Mudah</h3>
+        <p class="text-on-surface-variant leading-relaxed">Berbagai metode pembayaran tersedia untuk memudahkan transaksi Anda.</p>
+      </div>
+      {{/store.paymentMethods}}
+    </div>
+  </div>
 </section>
+
+<!-- ========== CTA WHATSAPP SECTION ========== -->
+<section class="relative overflow-hidden">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 lg:pb-32">
+    <div class="relative rounded-[2.5rem] overflow-hidden bg-gradient-to-br from-vibrant-orange via-vibrant-purple to-vibrant-green p-10 md:p-16 lg:p-20 reveal-scale">
+      <div class="absolute top-0 right-0 w-80 h-80 bg-white/10 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none"></div>
+      <div class="absolute bottom-0 left-0 w-60 h-60 bg-white/10 rounded-full blur-3xl -ml-24 -mb-24 pointer-events-none"></div>
+      <div class="absolute inset-0 opacity-[0.08] pointer-events-none" style="background-image: radial-gradient(circle at 25% 25%, white 1px, transparent 1px); background-size: 30px 30px;"></div>
+
+      <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left">
+        <div>
+          <h2 class="text-3xl md:text-4xl lg:text-5xl font-black text-white leading-tight">
+            Ada Pertanyaan? <span class="block md:inline"><span class="underline decoration-4 decoration-white/20 underline-offset-8">Chat WhatsApp</span> Sekarang!</span>
+          </h2>
+          <p class="text-white/80 text-lg mt-4 max-w-lg">Tim kami siap membantu Anda dari Senin - Jumat, 09:00 - 18:00 WIB</p>
+        </div>
+        <a href="{{whatsapp.url}}?text={{wa.text}}" target="_blank" rel="noopener" class="inline-flex items-center gap-3 px-10 py-5 bg-white text-on-surface rounded-2xl font-bold text-lg hover:scale-105 active:scale-95 transition-all duration-300 shadow-2xl group whitespace-nowrap">
+          <span class="material-symbols-outlined text-vibrant-green group-hover:scale-110 transition-transform" style="font-variation-settings: 'FILL' 1">chat</span>
+          Hubungi Kami
+          <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
 {{>footer}}
-<!-- Mobile Navigation Shell (Conditional) -->
-<div class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-surface/80 backdrop-blur-lg border-t border-outline-variant px-margin-mobile h-16 flex justify-around items-center">
-<button class="flex flex-col items-center text-primary">
-<span class="material-symbols-outlined" data-icon="home" style="font-variation-settings: 'FILL' 1;">home</span>
-<span class="text-[10px] font-bold">Home</span>
-</button>
-<button class="flex flex-col items-center text-on-surface-variant">
-<span class="material-symbols-outlined" data-icon="category">category</span>
-<span class="text-[10px] font-bold">Catalog</span>
-</button>
-<button class="flex flex-col items-center text-on-surface-variant relative">
-<span class="material-symbols-outlined" data-icon="shopping_basket">shopping_basket</span>
-<span class="absolute -top-1 -right-1 bg-vibrant-orange text-[8px] text-white w-4 h-4 rounded-full flex items-center justify-center">2</span>
-<span class="text-[10px] font-bold">Cart</span>
-</button>
-<button class="flex flex-col items-center text-on-surface-variant">
-<span class="material-symbols-outlined" data-icon="person">person</span>
-<span class="text-[10px] font-bold">Profile</span>
-</button>
-</div>
-<!-- Floating FAB -->
-<a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="fixed bottom-24 right-6 w-14 h-14 bg-vibrant-teal text-white rounded-full bento-shadow flex items-center justify-center hover:scale-110 active:scale-95 transition-transform z-40">
-<span class="material-symbols-outlined" data-icon="chat_bubble" style="font-variation-settings: 'FILL' 1;">chat_bubble</span>
-</a>
-<script>
-        // Micro-interactions and appearance logic
-        document.addEventListener('DOMContentLoaded', () => {
-            const items = document.querySelectorAll('.stagger-item');
-            
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach((entry, index) => {
-                    if (entry.isIntersecting) {
-                        setTimeout(() => {
-                            entry.target.classList.add('visible');
-                        }, index * 100);
-                    }
-                });
-            }, { threshold: 0.1 });
 
-            items.forEach(item => {
-                observer.observe(item);
-            });
-        });
-    </script>
-</body></html>
+<!-- ========== FLOATING WHATSAPP BUTTON ========== -->
+<a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="fixed bottom-6 right-6 z-40 w-14 h-14 bg-gradient-to-br from-vibrant-green to-emerald-600 text-white rounded-2xl shadow-2xl shadow-vibrant-green/40 flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-300 hover:shadow-vibrant-green/60" aria-label="Chat WhatsApp">
+  <span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1">chat</span>
+</a>
+
+<!-- ========== MOBILE BOTTOM NAV ========== -->
+<div class="md:hidden fixed bottom-0 left-0 right-0 z-30 bg-surface/95 backdrop-blur-xl border-t border-outline-variant px-4 h-16 flex justify-around items-center safe-area-bottom">
+  <a href="./" class="flex flex-col items-center text-primary gap-0.5">
+    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">home</span>
+    <span class="text-[10px] font-bold">Beranda</span>
+  </a>
+  <a href="./produk.html" class="flex flex-col items-center text-on-surface-variant gap-0.5">
+    <span class="material-symbols-outlined">inventory_2</span>
+    <span class="text-[10px] font-bold">Produk</span>
+  </a>
+  <a href="./tentang.html" class="flex flex-col items-center text-on-surface-variant gap-0.5">
+    <span class="material-symbols-outlined">info</span>
+    <span class="text-[10px] font-bold">Tentang</span>
+  </a>
+  <a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="flex flex-col items-center text-on-surface-variant gap-0.5 relative -top-3">
+    <span class="w-12 h-12 rounded-2xl bg-gradient-to-br from-vibrant-green to-emerald-600 text-white flex items-center justify-center shadow-lg shadow-vibrant-green/30">
+      <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1">chat</span>
+    </span>
+    <span class="text-[10px] font-bold">Chat</span>
+  </a>
+  <a href="./kontak.html" class="flex flex-col items-center text-on-surface-variant gap-0.5">
+    <span class="material-symbols-outlined">contact_support</span>
+    <span class="text-[10px] font-bold">Kontak</span>
+  </a>
+</div>
+
+<!-- ========== SCROLL REVEAL SCRIPT ========== -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
+
+    var revealObserver = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          var delay = entry.target.getAttribute('data-delay') || '';
+          var inlineDelay = entry.target.style.transitionDelay || '';
+          var timeout = 0;
+          if (delay) { timeout = parseInt(delay) * 1000; }
+          else if (inlineDelay) {
+            var ms = parseInt(inlineDelay);
+            timeout = isNaN(ms) ? 0 : ms;
+          }
+          setTimeout(function() {
+            entry.target.classList.add('visible');
+          }, timeout);
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+    revealElements.forEach(function(el, index) {
+      if (!el.style.transitionDelay) {
+        el.style.transitionDelay = (index * 80) + 'ms';
+      }
+      revealObserver.observe(el);
+    });
+  });
+</script>
+
+</body>
+</html>
