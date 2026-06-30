@@ -3,106 +3,269 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>{{store.businessName}} | Official Store</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <link href="./assets/tailwind.css" rel="stylesheet" />
 <style>:root{ {{color.vars}} }</style>
 <style>
   .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-  .hero-gradient { background: linear-gradient(135deg, #faf8ff 0%, #e2e7ff 100%); }
-  .glass-card { background: rgba(255,255,255,0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3); }
-  ::-webkit-scrollbar { width: 8px; }
-  ::-webkit-scrollbar-track { background: #faf8ff; }
-  ::-webkit-scrollbar-thumb { background: #c3c6d7; border-radius: 4px; }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #c3c6d7; border-radius: 3px; }
   ::-webkit-scrollbar-thumb:hover { background: #737686; }
+  .hero-overlay { background: linear-gradient(135deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.25) 60%, rgba(0,0,0,0.55) 100%); }
+  .glass { background: rgba(255,255,255,0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+  .text-balance { text-wrap: balance; }
+  .reveal { opacity: 0; transform: translateY(32px); transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1); }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .fab { box-shadow: 0 4px 24px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.08); }
+  @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+  .float { animation: float 4s ease-in-out infinite; }
 </style>
 </head>
-<body class="bg-surface text-on-surface font-body-md selection:bg-primary-fixed-dim selection:text-on-primary-fixed">
+<body class="bg-surface text-on-surface selection:bg-primary-fixed-dim selection:text-on-primary-fixed">
 
 {{>navbar}}
 
 <main>
 <!-- Hero Section -->
-<section class="hero-gradient relative overflow-hidden py-2xl">
-<div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop grid grid-cols-1 md:grid-cols-2 items-center gap-xl">
-<div class="relative z-10 space-y-md">
-<h1 class="font-display-lg text-display-lg md:text-display-lg text-on-surface">{{hero.headline}}</h1>
-<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl">{{hero.subheadline}}</p>
-<div class="flex flex-wrap gap-md pt-md">
-<a href="./produk.html" class="px-lg h-12 bg-primary text-on-primary rounded-lg font-bold flex items-center gap-sm hover:brightness-110 active:scale-95 transition-all shadow-lg shadow-primary/20">
-{{hero.ctaText}}
-<span class="material-symbols-outlined">arrow_forward</span>
-</a>
-<a href="./kontak.html" class="px-lg h-12 border-2 border-primary text-primary rounded-lg font-bold hover:bg-primary/5 active:scale-95 transition-all">
-Hubungi Kami
-</a>
-</div>
-<div class="flex items-center gap-lg pt-lg border-t border-outline-variant">
-<div>
-<div class="font-headline-sm text-headline-sm text-on-surface">{{stats.completed}}+</div>
-<div class="font-label-sm text-label-sm text-on-surface-variant">Pesanan Selesai</div>
-</div>
-<div>
-<div class="font-headline-sm text-headline-sm text-on-surface">{{stats.totalOrders}}</div>
-<div class="font-label-sm text-label-sm text-on-surface-variant">Total Pesanan</div>
-</div>
-</div>
-</div>
-<div class="relative">
-<div class="aspect-square rounded-2xl overflow-hidden shadow-2xl relative z-10 group bg-surface-variant flex items-center justify-center">
-<span class="material-symbols-outlined text-8xl text-on-surface-variant opacity-30">store</span>
-</div>
-<div class="absolute -top-12 -right-12 w-64 h-64 bg-primary/10 rounded-full blur-3xl -z-0"></div>
-<div class="absolute -bottom-12 -left-12 w-48 h-48 bg-secondary-container/30 rounded-full blur-2xl -z-0"></div>
-</div>
-</div>
+<section class="relative min-h-[85vh] flex items-center overflow-hidden">
+  {{#hero.hasImage}}
+  <div class="absolute inset-0">
+    <img src="{{hero.imageUrl}}" alt="{{store.businessName}}" class="w-full h-full object-cover" />
+    <div class="hero-overlay absolute inset-0"></div>
+  </div>
+  {{/hero.hasImage}}
+  {{^hero.hasImage}}
+  <div class="absolute inset-0 bg-gradient-to-br from-primary/8 via-surface to-secondary/8">
+    <div class="absolute top-20 right-20 w-96 h-96 bg-primary/5 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-20 left-20 w-72 h-72 bg-secondary/8 rounded-full blur-3xl"></div>
+  </div>
+  {{/hero.hasImage}}
+  <div class="relative z-10 max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop w-full">
+    <div class="max-w-2xl">
+      <h1 class="text-display-lg md:text-[clamp(2.5rem,5vw,4rem)] font-extrabold leading-[1.1] tracking-tight text-balance {{#hero.hasImage}}text-white{{/hero.hasImage}}{{^hero.hasImage}}text-on-surface{{/hero.hasImage}} mb-6">
+        {{hero.headline}}
+      </h1>
+      <p class="text-lg md:text-xl leading-relaxed {{#hero.hasImage}}text-white/85{{/hero.hasImage}}{{^hero.hasImage}}text-on-surface-variant{{/hero.hasImage}} mb-8 max-w-lg">
+        {{hero.subheadline}}
+      </p>
+      <div class="flex flex-wrap gap-4">
+        <a href="./produk.html" class="inline-flex items-center gap-2 px-8 h-14 bg-primary text-on-primary rounded-xl font-bold text-sm hover:brightness-110 active:scale-95 transition-all shadow-xl shadow-primary/25">
+          {{hero.ctaText}}
+          <span class="material-symbols-outlined text-lg">arrow_forward</span>
+        </a>
+        <a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 px-8 h-14 border-2 {{#hero.hasImage}}border-white/40 text-white hover:bg-white/10{{/hero.hasImage}}{{^hero.hasImage}}border-primary/30 text-primary hover:bg-primary/5{{/hero.hasImage}} rounded-xl font-bold text-sm active:scale-95 transition-all">
+          <span class="material-symbols-outlined text-lg">chat</span>
+          Hubungi Kami
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-surface to-transparent"></div>
 </section>
 
-<!-- Products -->
+<!-- Stats Bar -->
+<section class="relative -mt-16 z-20">
+  <div class="max-w-4xl mx-auto px-margin-mobile md:px-margin-desktop">
+    <div class="glass rounded-2xl border border-white/20 p-6 md:p-8 grid grid-cols-3 divide-x divide-stone-200">
+      <div class="text-center px-4">
+        <div class="font-display-lg text-3xl md:text-4xl font-extrabold text-primary">{{stats.completed}}+</div>
+        <div class="text-xs md:text-sm text-on-surface-variant mt-1">Pesanan Selesai</div>
+      </div>
+      <div class="text-center px-4">
+        <div class="font-display-lg text-3xl md:text-4xl font-extrabold text-primary">{{stats.totalOrders}}</div>
+        <div class="text-xs md:text-sm text-on-surface-variant mt-1">Total Pesanan</div>
+      </div>
+      <div class="text-center px-4">
+        <div class="font-display-lg text-3xl md:text-4xl font-extrabold text-primary">{{stats.pending}}</div>
+        <div class="text-xs md:text-sm text-on-surface-variant mt-1">Sedang Diproses</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Store Info Cards -->
+<section class="py-2xl bg-surface">
+  <div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-lg">
+      <div class="group bg-surface-container-low rounded-2xl p-lg border border-outline-variant hover:border-primary/20 hover:shadow-lg transition-all reveal">
+        <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
+          <span class="material-symbols-outlined text-primary text-2xl">schedule</span>
+        </div>
+        <h3 class="font-bold text-sm text-on-surface mb-1">Jam Operasional</h3>
+        <p class="text-xs text-on-surface-variant leading-relaxed">{{store.businessHours}}</p>
+      </div>
+      <div class="group bg-surface-container-low rounded-2xl p-lg border border-outline-variant hover:border-primary/20 hover:shadow-lg transition-all reveal">
+        <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
+          <span class="material-symbols-outlined text-primary text-2xl">payments</span>
+        </div>
+        <h3 class="font-bold text-sm text-on-surface mb-1">Pembayaran</h3>
+        <p class="text-xs text-on-surface-variant leading-relaxed">{{store.paymentMethods}}</p>
+      </div>
+      <div class="group bg-surface-container-low rounded-2xl p-lg border border-outline-variant hover:border-primary/20 hover:shadow-lg transition-all reveal">
+        <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
+          <span class="material-symbols-outlined text-primary text-2xl">local_shipping</span>
+        </div>
+        <h3 class="font-bold text-sm text-on-surface mb-1">Pengiriman</h3>
+        <p class="text-xs text-on-surface-variant leading-relaxed">{{store.shippingInfo}}</p>
+      </div>
+      <div class="group bg-surface-container-low rounded-2xl p-lg border border-outline-variant hover:border-primary/20 hover:shadow-lg transition-all reveal">
+        <div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
+          <span class="material-symbols-outlined text-primary text-2xl">verified</span>
+        </div>
+        <h3 class="font-bold text-sm text-on-surface mb-1">Garansi</h3>
+        <p class="text-xs text-on-surface-variant leading-relaxed">{{store.returnPolicy}}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Products Section -->
 <section class="py-2xl bg-surface-container-low">
-<div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop">
-<div class="text-center max-w-2xl mx-auto mb-xl space-y-sm">
-<h2 class="font-headline-md text-headline-md text-on-surface">Produk Kami</h2>
-<p class="text-on-surface-variant">Temukan produk terbaik untuk kebutuhan Anda.</p>
-</div>
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-lg">
-{{#products}}
-<div class="bg-surface rounded-xl overflow-hidden border border-outline-variant hover:shadow-xl transition-shadow group flex flex-col">
-<div class="aspect-square relative overflow-hidden bg-surface-variant">
-<div class="w-full h-full flex items-center justify-center">
-<span class="material-symbols-outlined text-6xl text-on-surface-variant opacity-20">inventory_2</span>
-</div>
-</div>
-<div class="p-md flex-grow flex flex-col">
-<div class="flex justify-between items-start mb-sm gap-2">
-<h3 class="font-bold text-on-surface text-sm leading-tight">{{.name}}</h3>
-<span class="font-label-md text-label-md text-primary whitespace-nowrap">Rp {{.price}}</span>
-</div>
-<p class="text-xs text-on-surface-variant line-clamp-2">{{.description}}</p>
-</div>
-</div>
-{{/products}}
-{{^products}}
-<div class="col-span-full flex flex-col items-center justify-center py-3xl text-center">
-<div class="w-20 h-20 bg-surface-container-highest rounded-full flex items-center justify-center mb-6 border border-dashed border-outline-variant">
-<span class="material-symbols-outlined text-4xl text-outline-variant">inventory_2</span>
-</div>
-<h3 class="font-headline-md text-headline-md text-on-surface/60 mb-2">Belum Ada Produk</h3>
-<p class="font-body-md text-body-md text-on-surface-variant/60 mb-6 max-w-sm">Belum ada produk yang tersedia. Silakan cek kembali nanti atau hubungi kami untuk informasi lebih lanjut.</p>
-<a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="px-8 py-4 bg-primary text-on-primary font-label-sm text-label-sm rounded-full hover:bg-primary-fixed hover:text-on-primary-fixed transition-all inline-flex items-center gap-2">
-<span class="material-symbols-outlined text-sm">chat</span>
-Hubungi Kami
-</a>
-</div>
-{{/products}}
-</div>
-<div class="text-center mt-xl">
-<a href="./produk.html" class="inline-flex items-center gap-sm text-primary font-bold hover:underline">Lihat Semua Produk &rarr;</a>
-</div>
-</div>
+  <div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop">
+    <div class="flex flex-col md:flex-row md:items-end justify-between mb-xl gap-4">
+      <div>
+        <span class="text-xs font-semibold text-primary uppercase tracking-widest mb-2 block">Katalog</span>
+        <h2 class="font-display-lg text-3xl md:text-4xl font-extrabold text-on-surface">Produk Unggulan</h2>
+      </div>
+      <a href="./produk.html" class="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:gap-2 transition-all">
+        Lihat Semua <span class="material-symbols-outlined text-lg">arrow_forward</span>
+      </a>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-lg">
+      {{#products}}
+      <a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="group bg-surface rounded-2xl overflow-hidden border border-outline-variant hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col reveal">
+        <div class="aspect-square relative overflow-hidden bg-surface-variant">
+          {{#.imageUrl}}
+          <img src="{{.imageUrl}}" alt="{{.name}}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+          {{/.imageUrl}}
+          {{^.imageUrl}}
+          <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/5 to-secondary/10">
+            <span class="material-symbols-outlined text-5xl text-on-surface-variant/25">inventory_2</span>
+          </div>
+          {{/.imageUrl}}
+          {{^.isAvailable}}
+          <div class="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-red-500 text-white text-xs font-semibold">Habis</div>
+          {{/.isAvailable}}
+        </div>
+        <div class="p-md flex-grow flex flex-col">
+          <h3 class="font-bold text-on-surface text-sm leading-tight line-clamp-2 group-hover:text-primary transition-colors">{{.name}}</h3>
+          <p class="text-xs text-on-surface-variant mt-1 line-clamp-2 flex-grow">{{.description}}</p>
+          <div class="flex items-center justify-between mt-3 pt-3 border-t border-outline-variant">
+            <span class="font-extrabold text-primary text-sm">Rp {{.price}}</span>
+            <span class="text-xs text-on-surface-variant flex items-center gap-1">
+              <span class="material-symbols-outlined text-sm">inventory</span> {{.stock}}
+            </span>
+          </div>
+        </div>
+      </a>
+      {{/products}}
+      {{^products}}
+      <div class="col-span-full flex flex-col items-center justify-center py-3xl text-center reveal">
+        <div class="w-24 h-24 bg-surface-container-highest rounded-3xl flex items-center justify-center mb-6 border-2 border-dashed border-outline-variant">
+          <span class="material-symbols-outlined text-5xl text-outline-variant">inventory_2</span>
+        </div>
+        <h3 class="font-display-lg text-2xl font-bold text-on-surface/50 mb-2">Belum Ada Produk</h3>
+        <p class="text-on-surface-variant/60 mb-8 max-w-sm">Belum ada produk yang tersedia. Silakan cek kembali nanti atau hubungi kami untuk informasi lebih lanjut.</p>
+        <a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 px-8 py-4 bg-primary text-on-primary font-semibold text-sm rounded-xl hover:brightness-110 active:scale-95 transition-all shadow-lg shadow-primary/25">
+          <span class="material-symbols-outlined">chat</span>
+          Hubungi Kami
+        </a>
+      </div>
+      {{/products}}
+    </div>
+  </div>
+</section>
+
+<!-- About Section -->
+<section class="py-2xl bg-surface">
+  <div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-xl items-center">
+      <div class="reveal">
+        {{#about.hasImage}}
+        <div class="aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl">
+          <img src="{{about.imageUrl}}" alt="Tentang {{store.businessName}}" class="w-full h-full object-cover" loading="lazy" />
+        </div>
+        {{/about.hasImage}}
+        {{^about.hasImage}}
+        <div class="aspect-[4/3] rounded-3xl overflow-hidden bg-gradient-to-br from-primary/10 via-primary/5 to-secondary/10 flex items-center justify-center">
+          <span class="material-symbols-outlined text-8xl text-primary/20">store</span>
+        </div>
+        {{/about.hasImage}}
+      </div>
+      <div class="reveal">
+        <span class="text-xs font-semibold text-primary uppercase tracking-widest mb-2 block">Tentang Kami</span>
+        <h2 class="font-display-lg text-3xl md:text-4xl font-extrabold text-on-surface mb-6">{{store.businessName}}</h2>
+        <p class="text-on-surface-variant leading-relaxed text-sm md:text-base">{{about.description}}</p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          {{#social.instagram}}
+          <a href="{{social.instagram}}" target="_blank" rel="noopener" class="w-10 h-10 rounded-xl bg-surface-container-low border border-outline-variant flex items-center justify-center hover:bg-primary/10 hover:border-primary/30 transition-colors" title="Instagram">
+            <svg class="w-5 h-5 text-on-surface-variant" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+          </a>
+          {{/social.instagram}}
+          {{#social.facebook}}
+          <a href="{{social.facebook}}" target="_blank" rel="noopener" class="w-10 h-10 rounded-xl bg-surface-container-low border border-outline-variant flex items-center justify-center hover:bg-primary/10 hover:border-primary/30 transition-colors" title="Facebook">
+            <svg class="w-5 h-5 text-on-surface-variant" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          </a>
+          {{/social.facebook}}
+          {{#social.tiktok}}
+          <a href="{{social.tiktok}}" target="_blank" rel="noopener" class="w-10 h-10 rounded-xl bg-surface-container-low border border-outline-variant flex items-center justify-center hover:bg-primary/10 hover:border-primary/30 transition-colors" title="TikTok">
+            <svg class="w-5 h-5 text-on-surface-variant" fill="currentColor" viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+          </a>
+          {{/social.tiktok}}
+          {{#social.youtube}}
+          <a href="{{social.youtube}}" target="_blank" rel="noopener" class="w-10 h-10 rounded-xl bg-surface-container-low border border-outline-variant flex items-center justify-center hover:bg-primary/10 hover:border-primary/30 transition-colors" title="YouTube">
+            <svg class="w-5 h-5 text-on-surface-variant" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          </a>
+          {{/social.youtube}}
+          {{#social.shopee}}
+          <a href="{{social.shopee}}" target="_blank" rel="noopener" class="w-10 h-10 rounded-xl bg-surface-container-low border border-outline-variant flex items-center justify-center hover:bg-primary/10 hover:border-primary/30 transition-colors" title="Shopee">
+            <span class="material-symbols-outlined text-on-surface-variant text-xl">storefront</span>
+          </a>
+          {{/social.shopee}}
+          {{#social.tokopedia}}
+          <a href="{{social.tokopedia}}" target="_blank" rel="noopener" class="w-10 h-10 rounded-xl bg-surface-container-low border border-outline-variant flex items-center justify-center hover:bg-primary/10 hover:border-primary/30 transition-colors" title="Tokopedia">
+            <span class="material-symbols-outlined text-on-surface-variant text-xl">shopping_bag</span>
+          </a>
+          {{/social.tokopedia}}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WhatsApp CTA -->
+<section class="py-2xl bg-gradient-to-r from-primary to-primary-fixed-dim">
+  <div class="max-w-3xl mx-auto px-margin-mobile md:px-margin-desktop text-center">
+    <h2 class="font-display-lg text-2xl md:text-3xl font-extrabold text-on-primary mb-4">Pesan Langsung via WhatsApp</h2>
+    <p class="text-on-primary/80 mb-8 max-w-lg mx-auto">Butuh bantuan atau ingin order? Chat kami sekarang, respon cepat!</p>
+    <a href="{{whatsapp.url}}?text={{wa.text}}" target="_blank" rel="noopener" class="inline-flex items-center gap-3 px-10 py-5 bg-white text-primary rounded-2xl font-extrabold text-sm hover:scale-105 active:scale-95 transition-all shadow-2xl">
+      <span class="material-symbols-outlined text-2xl">chat</span>
+      Chat WhatsApp Sekarang
+    </a>
+  </div>
 </section>
 </main>
 
 {{>footer}}
 
+<!-- Floating WhatsApp Button -->
+<a href="{{whatsapp.url}}?text={{wa.text}}" target="_blank" rel="noopener" class="fixed bottom-6 right-6 z-50 w-14 h-14 bg-[#25D366] text-white rounded-2xl flex items-center justify-center fab hover:scale-110 active:scale-95 transition-all float" title="Chat WhatsApp">
+  <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+
+<!-- Scroll Reveal -->
+<script>
+  (function() {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.reveal').forEach(function(el) { observer.observe(el); });
+  })();
+</script>
 </body></html>
