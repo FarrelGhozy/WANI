@@ -152,7 +152,7 @@
         &copy; 2026 {{store.businessName}}. All rights reserved.
       </p>
       <div class="flex gap-6 font-label-sm text-label-sm text-on-surface-variant">
-        <a href="{{contact.mapsUrl}}" target="_blank" rel="noopener" class="hover:text-[{{color.primary}}] transition-colors duration-300">Lokasi</a>
+        {{#contact.mapsUrl}}<a href="{{contact.mapsUrl}}" target="_blank" rel="noopener" class="hover:text-[{{color.primary}}] transition-colors duration-300">Lokasi</a>{{/contact.mapsUrl}}
         <a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="hover:text-[{{color.primary}}] transition-colors duration-300">Dukungan</a>
         {{#store.shippingInfo}}
         <span class="hover:text-[{{color.primary}}] transition-colors duration-300 cursor-default">Pengiriman</span>
