@@ -166,6 +166,15 @@ export default function Website() {
                   prefix="logo"
                 />
               </div>
+              <div className="sm:col-span-2">
+                <ImageUpload
+                  label="Favicon (Icon Tab Browser)"
+                  value={config.faviconUrl ?? null}
+                  onChange={(url) => updateConfig({ faviconUrl: url })}
+                  prefix="favicon"
+                />
+                <p className="mt-1 text-[10px] text-stone-400">Kalau tidak diisi, logo toko akan jadi favicon. Ukuran disarankan persegi (1:1).</p>
+              </div>
 
               <Field label="Nomor WhatsApp">
                 <input
