@@ -1,5 +1,4 @@
 import { useState, useCallback } from 'react'
-import { useSearchParams } from 'react-router'
 import { useSettings } from '@/hooks/useSettings.ts'
 import { useWaStatus } from '@/hooks/useWaStatus.ts'
 import { useToast } from '@/hooks/useToast.ts'
@@ -16,11 +15,10 @@ const tabs = [
 ] as const
 
 export default function Settings() {
-  const [searchParams, setSearchParams] = useSearchParams()
-  const activeTab = searchParams.get('tab') || 'store'
+  const [activeTab, setActiveTab] = useState('store')
 
   function handleTabChange(tab: string) {
-    setSearchParams(tab === 'store' ? {} : { tab }, { replace: true })
+    setActiveTab(tab)
   }
   const { store, aiConfig, error, updateStore, updateAiConfig, loading, reload } = useSettings()
   const { qr: liveQr, connection: liveConn, phone: livePhone, connectedAt: liveConnectedAt } = useWaStatus()
