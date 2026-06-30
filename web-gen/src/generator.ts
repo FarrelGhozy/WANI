@@ -111,9 +111,12 @@ function generateHtml(
     );
 
     // page context for active nav highlighting
-    const pageCtx: Record<string, string> = { "page.name": page.replace(/\.html$/, "") };
+    const rawName = page.replace(/\.html$/, "");
+    const pageCtx: Record<string, string> = { "page.name": rawName };
+    // "code" page is the home page (beranda)
+    const pageKey = rawName === "code" ? "beranda" : rawName;
     for (const p of ["beranda", "produk", "tentang", "kontak"]) {
-      pageCtx[`page.${p}`] = pageCtx["page.name"] === p ? "1" : "";
+      pageCtx[`page.${p}`] = pageKey === p ? "1" : "";
     }
 
     // conditional sections {{#key}}...{{/key}}
