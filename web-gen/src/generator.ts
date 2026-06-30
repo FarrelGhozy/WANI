@@ -261,9 +261,12 @@ function buildContext(params: GenerateParams): Record<string, unknown> {
   const p = config.colors.primary;
   const s = config.colors.secondary;
   const logoUrl = config.logoUrl ?? store.logoUrl ?? "";
+  const faviconUrl = config.faviconUrl ?? logoUrl ?? null;
   const hasHeroImage = !!(config.hero.imageUrl);
   const hasAboutImage = !!(config.about.imageUrl);
   const hasLogo = !!logoUrl;
+  const hasFavicon = !!faviconUrl;
+  const initial = store.businessName?.charAt(0)?.toUpperCase() ?? "S";
   return {
     "store.businessName": store.businessName,
     "store.name": store.businessName,
@@ -286,6 +289,9 @@ function buildContext(params: GenerateParams): Record<string, unknown> {
     "about.imageUrl": config.about.imageUrl ?? "",
     "about.hasImage": hasAboutImage ? "1" : "",
     "store.hasLogo": hasLogo ? "1" : "",
+    "favicon.url": faviconUrl ?? "",
+    "favicon.has": hasFavicon ? "1" : "",
+    "favicon.svg": makeFaviconSvg(initial, p),
     "social.instagram": config.socialMedia.instagram ?? "",
     "social.facebook": config.socialMedia.facebook ?? "",
     "social.tiktok": config.socialMedia.tiktok ?? "",
@@ -342,6 +348,14 @@ function escapeXml(s: string): string {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
 
+function makeFaviconSvg(initial: string, color: string): string {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+<rect width="32" height="32" rx="6" fill="${escapeXml(color)}"/>
+<text x="16" y="22" text-anchor="middle" font-family="system-ui,sans-serif" font-size="18" font-weight="700" fill="white">${escapeXml(initial)}</text>
+</svg>`;
+  return `data:image/svg+xml,${encodeURIComponent(svg)}`;
+}
+
 type ImageMap = Record<string, string>;
 
 function copyAssetImages(params: GenerateParams, outDir: string): ImageMap {
@@ -388,6 +402,11 @@ function copyAssetImages(params: GenerateParams, outDir: string): ImageMap {
   const logoSource = params.config.logoUrl ?? params.store.logoUrl;
   const logoLocal = resolveImage(logoSource, "logo");
   if (logoLocal) imageMap["store.logoUrl"] = logoLocal;
+
+  // Favicon — fallback: faviconUrl → logoUrl → SVG (handled in template via favicon.svg)
+  const faviconSource = params.config.faviconUrl ?? params.config.logoUrl ?? params.store.logoUrl;
+  const faviconLocal = resolveImage(faviconSource, "favicon");
+  if (faviconLocal) imageMap["favicon.url"] = faviconLocal;
 
   // Product images
   for (const product of params.products) {
