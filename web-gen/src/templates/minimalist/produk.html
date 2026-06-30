@@ -1,70 +1,41 @@
 <!DOCTYPE html>
-
-<html class="light" lang="en"><head>
+<html class="light" lang="id"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Produk — {{store.name}}</title>
-<!-- Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=Playfair+Display:ital,wght@0,400;0,700;1,400&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<title>Produk — {{store.businessName}}</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <link href="./assets/tailwind.css" rel="stylesheet" />
-<style>:root{ {{color.vars}} }
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #c0c0c080; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #a0a0a0b0; }
-    </style>
-<style>
-        body {
-            background-color: #faf8ff;
-            color: #131b2e;
-            overflow-x: hidden;
-            scroll-behavior: smooth;
-        }
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
-        }
-    </style>
+<style>:root{ {{color.vars}} }</style>
+<style>.material-symbols-outlined{font-variation-settings:'FILL'0,'wght'300,'GRAD'0,'opsz'24}::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#d6d3d1;border-radius:2px}.font-serif{font-family:'Playfair Display',Georgia,serif}.reveal{opacity:0;transform:translateY(24px);transition:all .9s cubic-bezier(0.16,1,0.3,1)}.reveal.visible{opacity:1;transform:translateY(0)}</style>
 </head>
-<body class="font-body-md text-on-surface">
+<body class="bg-stone-50 text-stone-800">
 
 {{>navbar}}
 
-<main>
-<section class="py-3xl px-margin-mobile md:px-margin-desktop bg-surface-container-low">
-<div class="max-w-7xl mx-auto">
-<div class="flex justify-between items-end mb-2xl">
-<div class="space-y-sm">
-<h1 class="font-serif text-headline-sm text-4xl">Produk Kami</h1>
-<div class="w-12 h-px bg-primary"></div>
-</div>
-<a class="font-label-md text-label-md line-draw" href="#">VIEW ALL</a>
-</div>
-<div class="grid grid-cols-1 md:grid-cols-3 gap-xl">
+<main class="pt-20">
+<section class="py-24">
+<div class="max-w-6xl mx-auto px-6 md:px-12">
+<div class="mb-16 reveal"><p class="text-xs text-stone-400 uppercase tracking-[0.2em] mb-4">Katalog</p><h1 class="font-serif text-4xl md:text-6xl text-stone-900">Semua Produk</h1><p class="text-stone-500 mt-4">Dari {{store.businessName}}</p></div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-stone-200">
 {{#products}}
-<div class="group cursor-pointer">
-<div class="aspect-[1/1] overflow-hidden bg-white border border-outline-variant mb-md">
-<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt="{{.name}}" src="{{.imageUrl}}"/>
+<a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="group bg-stone-50 p-8 hover:bg-white transition-colors duration-500 reveal">
+<div class="aspect-[4/5] mb-6 overflow-hidden bg-stone-100">
+{{#.imageUrl}}<img src="{{.imageUrl}}" alt="{{.name}}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" />{{/.imageUrl}}
+{{^.imageUrl}}<div class="w-full h-full flex items-center justify-center"><span class="material-symbols-outlined text-5xl text-stone-300">inventory_2</span></div>{{/.imageUrl}}
 </div>
-<div class="space-y-xs">
-<h3 class="font-body-lg text-body-lg group-hover:text-primary transition-colors">{{.name}}</h3>
-<p class="font-label-md text-label-md text-primary">Rp {{.price}}</p>
-<p class="font-label-sm text-on-surface-variant opacity-60">{{.description}}</p>
-</div>
-</div>
+<h2 class="font-serif text-xl text-stone-900 mb-1">{{.name}}</h2>
+<p class="text-sm text-stone-500 line-clamp-2 mb-3">{{.description}}</p>
+<div class="flex items-center justify-between"><p class="font-semibold text-stone-900">Rp {{.price}}</p><span class="text-xs text-stone-400">Stok: {{.stock}}</span></div>
+{{^.isAvailable}}<span class="inline-block mt-2 text-xs text-red-400">— Habis</span>{{/.isAvailable}}
+</a>
 {{/products}}
 {{^products}}
-<div class="col-span-full flex flex-col items-center justify-center py-3xl text-center">
-<div class="w-20 h-20 bg-surface-container-highest rounded-full flex items-center justify-center mb-6 border border-dashed border-outline-variant">
-<span class="material-symbols-outlined text-4xl text-outline-variant">inventory_2</span>
-</div>
-<h3 class="font-headline-md text-headline-md text-on-surface/60 mb-2">Belum Ada Produk</h3>
-<p class="font-body-md text-body-md text-on-surface-variant/60 mb-6 max-w-sm">Belum ada produk yang tersedia. Silakan cek kembali nanti atau hubungi kami untuk informasi lebih lanjut.</p>
-<a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="px-8 py-4 bg-primary text-on-primary font-label-sm text-label-sm rounded-full hover:bg-primary-fixed hover:text-on-primary-fixed transition-all inline-flex items-center gap-2">
-<span class="material-symbols-outlined text-sm">chat</span>
-Hubungi Kami
-</a>
+<div class="col-span-full flex flex-col items-center justify-center py-24 text-center reveal bg-stone-50">
+<span class="material-symbols-outlined text-6xl text-stone-300 mb-6">inventory_2</span>
+<h3 class="font-serif text-2xl text-stone-400 mb-3">Belum Ada Produk</h3>
+<p class="text-stone-400 mb-8 max-w-sm">Belum ada produk tersedia.</p>
+<a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="text-stone-900 font-semibold text-sm border-b-2 border-stone-900 hover:text-primary hover:border-primary transition-colors pb-1">Hubungi Kami</a>
 </div>
 {{/products}}
 </div>
@@ -74,4 +45,5 @@ Hubungi Kami
 
 {{>footer}}
 
+<script>(function(){var o=new IntersectionObserver(function(e){e.forEach(function(e){if(e.isIntersecting)e.target.classList.add('visible')})},{threshold:0.05,rootMargin:'0px 0px -40px 0px'});document.querySelectorAll('.reveal').forEach(function(e){o.observe(e)})})();</script>
 </body></html>
