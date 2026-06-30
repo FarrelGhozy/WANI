@@ -19,6 +19,7 @@ const defaultConfig: WebsiteConfig = {
   heroImageUrl: null,
   aboutImageUrl: null,
   logoUrl: null,
+  faviconUrl: null,
   ctaText: 'Lihat Produk',
 }
 
