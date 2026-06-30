@@ -1,0 +1,26 @@
+<!-- TopNavBar (Shared Component) -->
+<nav class="w-full sticky top-0 z-50 bg-surface glass-nav border-b border-outline-variant shadow-sm transition-all duration-300">
+<div class="flex justify-between items-center max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop h-16">
+<!-- Brand -->
+<div class="font-headline-sm text-headline-sm font-bold text-primary"><a href="./">{{store.name}}</a></div>
+<!-- Navigation Links -->
+<div class="hidden md:flex items-center gap-xl font-body-md text-body-md">
+<a href="./" class="transition-colors duration-200 pb-1 active:scale-95 {{#page.beranda}}text-primary font-bold border-b-2 border-primary{{/page.beranda}}{{^page.beranda}}text-on-surface-variant hover:text-primary{{/page.beranda}}">Beranda</a>
+<a href="./produk.html" class="transition-colors duration-200 pb-1 active:scale-95 {{#page.produk}}text-primary font-bold border-b-2 border-primary{{/page.produk}}{{^page.produk}}text-on-surface-variant hover:text-primary{{/page.produk}}">Produk</a>
+<a href="./tentang.html" class="transition-colors duration-200 pb-1 active:scale-95 {{#page.tentang}}text-primary font-bold border-b-2 border-primary{{/page.tentang}}{{^page.tentang}}text-on-surface-variant hover:text-primary{{/page.tentang}}">Tentang</a>
+<a href="./kontak.html" class="transition-colors duration-200 pb-1 active:scale-95 {{#page.kontak}}text-primary font-bold border-b-2 border-primary{{/page.kontak}}{{^page.kontak}}text-on-surface-variant hover:text-primary{{/page.kontak}}">Kontak</a>
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-md">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors duration-200">
+<span class="material-symbols-outlined">shopping_cart</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors duration-200">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+<button class="md:hidden p-2 text-on-surface-variant">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+</div>
+</nav>

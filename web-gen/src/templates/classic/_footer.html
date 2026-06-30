@@ -1,0 +1,19 @@
+<!-- Footer -->
+<footer class="w-full border-t border-outline-variant bg-surface-container-low">
+<div class="flex flex-col md:flex-row justify-between items-center py-xl px-margin-mobile md:px-margin-desktop max-w-7xl mx-auto gap-md">
+<div class="flex flex-col items-center md:items-start gap-xs">
+<div class="font-headline-sm text-headline-sm font-bold text-on-surface">{{store.name}}</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant">&copy; 2026 {{store.name}}. All rights reserved.</p>
+</div>
+<div class="flex flex-wrap justify-center gap-lg">
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer" href="{{whatsapp.url}}" target="_blank">WhatsApp Support</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer" href="#">Store Location</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer" href="#">Payment Methods</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer" href="#">Privacy Policy</a>
+</div>
+<div class="flex gap-md">
+{{#social.instagram}}<span class="material-symbols-outlined text-primary cursor-pointer" data-icon="language" onclick="window.open('{{social.instagram}}','_blank')">language</span>{{/social.instagram}}
+{{#social.facebook}}<span class="material-symbols-outlined text-primary cursor-pointer" data-icon="share" onclick="window.open('{{social.facebook}}','_blank')">share</span>{{/social.facebook}}
+</div>
+</div>
+</footer>

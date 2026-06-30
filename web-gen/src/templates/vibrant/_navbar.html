@@ -1,0 +1,25 @@
+<!-- TopNavBar -->
+<nav class="w-full sticky top-0 z-50 bg-surface border-b border-outline-variant shadow-sm h-16">
+<div class="flex justify-between items-center max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop h-full">
+<div class="flex items-center gap-md">
+<a href="./" class="font-headline-sm text-headline-sm font-bold text-primary">{{store.name}}</a>
+</div>
+<div class="hidden md:flex items-center gap-xl">
+<a href="./" class="font-body-md text-body-md transition-colors duration-200 active:scale-95 pb-1 {{#page.beranda}}text-primary font-bold border-b-2 border-primary{{/page.beranda}}{{^page.beranda}}text-on-surface-variant hover:text-primary{{/page.beranda}}">Beranda</a>
+<a href="./produk.html" class="font-body-md text-body-md transition-colors duration-200 active:scale-95 pb-1 {{#page.produk}}text-primary font-bold border-b-2 border-primary{{/page.produk}}{{^page.produk}}text-on-surface-variant hover:text-primary{{/page.produk}}">Produk</a>
+<a href="./tentang.html" class="font-body-md text-body-md transition-colors duration-200 active:scale-95 pb-1 {{#page.tentang}}text-primary font-bold border-b-2 border-primary{{/page.tentang}}{{^page.tentang}}text-on-surface-variant hover:text-primary{{/page.tentang}}">Tentang</a>
+<a href="./kontak.html" class="font-body-md text-body-md transition-colors duration-200 active:scale-95 pb-1 {{#page.kontak}}text-primary font-bold border-b-2 border-primary{{/page.kontak}}{{^page.kontak}}text-on-surface-variant hover:text-primary{{/page.kontak}}">Kontak</a>
+</div>
+<div class="flex items-center gap-md">
+<button class="p-2 rounded-full hover:bg-surface-container transition-colors active:scale-95">
+<span class="material-symbols-outlined text-primary" data-icon="shopping_cart">shopping_cart</span>
+</button>
+<button class="p-2 rounded-full hover:bg-surface-container transition-colors active:scale-95">
+<span class="material-symbols-outlined text-primary" data-icon="account_circle">account_circle</span>
+</button>
+<button class="md:hidden p-2">
+<span class="material-symbols-outlined text-on-surface" data-icon="menu">menu</span>
+</button>
+</div>
+</div>
+</nav>

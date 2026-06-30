@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Kontak — {{store.name}}</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=Playfair+Display:ital,wght@0,400;0,700;1,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed-variant": "#38485d",
+                    "primary": "{{color.primary}}",
+                    "background": "#faf8ff",
+                    "primary-container": "#2563eb",
+                    "secondary": "{{color.secondary}}",
+                    "on-primary-fixed-variant": "#003ea8",
+                    "on-primary-fixed": "#00174b",
+                    "tertiary": "#784b00",
+                    "secondary-container": "#d0e1fb",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-tint": "#0053db",
+                    "on-surface": "#131b2e",
+                    "surface-container-low": "#f2f3ff",
+                    "tertiary-container": "#996100",
+                    "on-surface-variant": "#434655",
+                    "on-background": "#131b2e",
+                    "on-tertiary-fixed-variant": "#653e00",
+                    "surface": "#faf8ff",
+                    "tertiary-fixed-dim": "#ffb95f",
+                    "surface-dim": "#d2d9f4",
+                    "outline-variant": "#c3c6d7",
+                    "on-primary": "#ffffff",
+                    "on-tertiary-fixed": "#2a1700",
+                    "surface-container": "#eaedff",
+                    "on-secondary-container": "#54647a",
+                    "on-error": "#ffffff",
+                    "primary-fixed-dim": "#b4c5ff",
+                    "on-secondary": "#ffffff",
+                    "inverse-primary": "#b4c5ff",
+                    "error-container": "#ffdad6",
+                    "surface-container-high": "#e2e7ff",
+                    "surface-bright": "#faf8ff",
+                    "secondary-fixed": "#d3e4fe",
+                    "on-tertiary-container": "#ffeedd",
+                    "surface-variant": "#dae2fd",
+                    "primary-fixed": "#dbe1ff",
+                    "tertiary-fixed": "#ffddb8",
+                    "on-secondary-fixed": "#0b1c30",
+                    "error": "#ba1a1a",
+                    "inverse-surface": "#283044",
+                    "on-error-container": "#93000a",
+                    "secondary-fixed-dim": "#b7c8e1",
+                    "surface-container-highest": "#dae2fd",
+                    "on-tertiary": "#ffffff",
+                    "on-primary-container": "#eeefff",
+                    "outline": "#737686",
+                    "inverse-on-surface": "#eef0ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "base": "4px",
+                    "lg": "24px",
+                    "margin-mobile": "16px",
+                    "2xl": "64px",
+                    "xs": "4px",
+                    "sm": "8px",
+                    "md": "16px",
+                    "margin-desktop": "auto",
+                    "xl": "40px",
+                    "gutter": "20px",
+                    "3xl": "80px"
+            },
+            "fontFamily": {
+                    "serif": ["Playfair Display", "serif"],
+                    "display-lg-mobile": ["Plus Jakarta Sans"],
+                    "label-sm": ["Inter"],
+                    "display-lg": ["Plus Jakarta Sans"],
+                    "headline-md": ["Plus Jakarta Sans"],
+                    "label-md": ["JetBrains Mono"],
+                    "body-md": ["Inter"],
+                    "headline-sm": ["Plus Jakarta Sans"],
+                    "body-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "display-lg-mobile": ["32px", {"lineHeight": "1.2", "fontWeight": "800"}],
+                    "label-sm": ["12px", {"lineHeight": "1.0", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "headline-md": ["30px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                    "label-md": ["14px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "body-md": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "headline-sm": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #faf8ff;
+            color: #131b2e;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="font-body-md text-on-surface">
+
+{{>navbar}}
+
+<main>
+<section class="py-3xl px-margin-mobile md:px-margin-desktop">
+<div class="max-w-4xl mx-auto space-y-xl">
+<div class="text-center space-y-md">
+<h1 class="font-serif text-5xl">Hubungi Kami</h1>
+<p class="font-body-md text-on-surface-variant max-w-xl mx-auto">Ada pertanyaan? Jangan ragu untuk menghubungi kami.</p>
+</div>
+<div class="grid md:grid-cols-2 gap-xl">
+<div class="space-y-md">
+<div class="border border-outline-variant p-xl flex items-start gap-md">
+<span class="material-symbols-outlined text-primary">location_on</span>
+<div>
+<h3 class="font-label-md text-label-md font-bold uppercase tracking-wider">Alamat</h3>
+<p class="font-body-md text-on-surface-variant">{{store.address}}</p>
+</div>
+</div>
+<div class="border border-outline-variant p-xl flex items-start gap-md">
+<span class="material-symbols-outlined text-primary">schedule</span>
+<div>
+<h3 class="font-label-md text-label-md font-bold uppercase tracking-wider">Jam Operasional</h3>
+<p class="font-body-md text-on-surface-variant">{{store.businessHours}}</p>
+</div>
+</div>
+<div class="border border-outline-variant p-xl flex items-start gap-md">
+<span class="material-symbols-outlined text-primary">call</span>
+<div>
+<h3 class="font-label-md text-label-md font-bold uppercase tracking-wider">WhatsApp</h3>
+<a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="text-primary hover:underline">{{store.phone}}</a>
+</div>
+</div>
+{{#contact.email}}
+<div class="border border-outline-variant p-xl flex items-start gap-md">
+<span class="material-symbols-outlined text-primary">mail</span>
+<div>
+<h3 class="font-label-md text-label-md font-bold uppercase tracking-wider">Email</h3>
+<a href="mailto:{{contact.email}}" class="text-primary hover:underline">{{contact.email}}</a>
+</div>
+</div>
+{{/contact.email}}
+</div>
+<div class="border border-outline-variant p-xl bg-surface-container-low flex flex-col items-center justify-center text-center">
+<span class="material-symbols-outlined text-4xl text-primary mb-md">send</span>
+<h2 class="font-label-md text-label-md font-bold uppercase tracking-wider mb-md">Kirim Pesan</h2>
+<p class="font-body-md text-on-surface-variant mb-lg">Klik tombol di bawah untuk chat via WhatsApp.</p>
+<a href="{{whatsapp.url}}?text={{wa.text}}" target="_blank" rel="noopener" class="inline-flex items-center gap-sm px-xl py-md border border-on-surface hover:bg-on-surface hover:text-surface transition-all font-label-md text-label-md">
+Chat WhatsApp
+<span class="material-symbols-outlined text-sm">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+</section>
+</main>
+
+{{>footer}}
+
+</body></html>

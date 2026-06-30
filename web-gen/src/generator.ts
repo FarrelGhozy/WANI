@@ -6,6 +6,7 @@ import {
   mkdirSync,
   writeFileSync,
   readFileSync,
+  readdirSync,
 } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
@@ -36,45 +37,96 @@ export async function generate(
   return generateAstro(params, templatePath);
 }
 
-/* ── HTML Template ──────────────────────────────────── */
+/* ── HTML Template (multi-page + partials) ──────────── */
 function generateHtml(
   params: GenerateParams,
   templatePath: string,
-  htmlPath: string,
+  _htmlPath: string,
 ): GenerateResult {
   const ctx = buildContext(params);
-  let html = readFileSync(htmlPath, "utf-8");
 
-  // product loop
-  html = html.replace(
-    /{{#products}}([\s\S]*?){{\/products}}/g,
-    (_, block) => params.products.map((p) => renderItem(block, p)).join("\n"),
-  );
+  // load partials (_*.html)
+  const partials: Record<string, string> = {};
+  for (const f of readdirSync(templatePath)) {
+    if (f.startsWith("_") && f.endsWith(".html")) {
+      partials[f.slice(1, -5)] = readFileSync(join(templatePath, f), "utf-8");
+    }
+  }
 
-  // {{^products}} fallback — show block only when no products
-  html = html.replace(
-    /{{\^products}}([\s\S]*?){{\/products}}/g,
-    (_, block) => params.products.length === 0 ? block : "",
-  );
+  // determine pages: all .html that aren't partials; fallback code.html
+  let pages = readdirSync(templatePath)
+    .filter((f) => f.endsWith(".html") && !f.startsWith("_"));
 
-  // conditional sections {{#key}}...{{/key}} for non-loop keys
-  html = html.replace(
-    /{{#([a-zA-Z.]+)}}([\s\S]*?){{\/\1}}/g,
-    (_, key, block) => {
-      const val = ctx[key];
-      return val && String(val).length > 0 ? block : "";
-    },
-  );
+  // ponytail: single-file redirect until migrated
+  if (pages.length === 0) {
+    if (existsSync(join(templatePath, "code.html"))) {
+      pages = ["code.html"];
+    }
+  }
 
-  // simple replacements
-  for (const [k, v] of Object.entries(ctx)) {
-    html = html.replaceAll(`{{${k}}}`, String(v ?? ""));
+  if (pages.length === 0) {
+    return { success: false, outputPath: null, error: "no HTML templates found" };
   }
 
   const outDir = params.outputDir;
   if (existsSync(outDir)) rmSync(outDir, { recursive: true, force: true });
   mkdirSync(outDir, { recursive: true });
-  writeFileSync(join(outDir, "index.html"), html);
+
+  for (const page of pages) {
+    let html = readFileSync(join(templatePath, page), "utf-8");
+
+    // inject partials
+    for (const [name, content] of Object.entries(partials)) {
+      html = html.replaceAll(`{{>${name}}}`, content);
+    }
+
+    // product loop
+    html = html.replace(
+      /{{#products}}([\s\S]*?){{\/products}}/g,
+      (_, block) => params.products.map((p) => renderItem(block, p)).join("\n"),
+    );
+
+    // {{^products}} fallback
+    html = html.replace(
+      /{{\^products}}([\s\S]*?){{\/products}}/g,
+      (_, block) => params.products.length === 0 ? block : "",
+    );
+
+    // page context for active nav highlighting
+    const pageCtx: Record<string, string> = { "page.name": page.replace(/\.html$/, "") };
+    for (const p of ["beranda", "produk", "tentang", "kontak"]) {
+      pageCtx[`page.${p}`] = pageCtx["page.name"] === p ? "1" : "";
+    }
+
+    // conditional sections {{#key}}...{{/key}}
+    html = html.replace(
+      /{{#([a-zA-Z.]+)}}([\s\S]*?){{\/\1}}/g,
+      (_, key, block) => {
+        const val = ctx[key] ?? pageCtx[key];
+        return val && String(val).length > 0 ? block : "";
+      },
+    );
+
+    // negation sections {{^key}}...{{/key}}
+    html = html.replace(
+      /{{\^([a-zA-Z.]+)}}([\s\S]*?){{\/\1}}/g,
+      (_, key, block) => {
+        const val = ctx[key] ?? pageCtx[key];
+        return (val && String(val).length > 0) ? "" : block;
+      },
+    );
+
+    // simple replacements
+    for (const [k, v] of Object.entries({ ...ctx, ...pageCtx })) {
+      html = html.replaceAll(`{{${k}}}`, String(v ?? ""));
+    }
+
+    // ponytail: "index" → index.html for clean URL, others keep name
+    const pageName = page.replace(/\.html$/, "");
+    const outName = pageName === "index" || page === "code.html" ? "index.html" : `${pageName}.html`;
+    writeFileSync(join(outDir, outName), html);
+  }
+
   const assetsDir = join(templatePath, "assets");
   if (existsSync(assetsDir)) {
     cpSync(assetsDir, join(outDir, "assets"), { recursive: true, force: true });

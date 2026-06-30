@@ -147,32 +147,7 @@
     </style>
 </head>
 <body class="font-body-md text-on-surface">
-<!-- TopNavBar (Shared Component) -->
-<nav class="w-full sticky top-0 z-50 bg-surface glass-nav border-b border-outline-variant shadow-sm transition-all duration-300">
-<div class="flex justify-between items-center max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop h-16">
-<!-- Brand -->
-<div class="font-headline-sm text-headline-sm font-bold text-primary">{{store.name}}</div>
-<!-- Navigation Links -->
-<div class="hidden md:flex items-center gap-xl font-body-md text-body-md">
-<a class="text-primary font-bold border-b-2 border-primary pb-1 active:scale-95 transition-transform" href="#">Home</a>
-<a class="text-on-surface-variant hover:text-primary transition-colors duration-200 active:scale-95 transition-transform" href="#">Products</a>
-<a class="text-on-surface-variant hover:text-primary transition-colors duration-200 active:scale-95 transition-transform" href="#">Categories</a>
-<a class="text-on-surface-variant hover:text-primary transition-colors duration-200 active:scale-95 transition-transform" href="#">About Us</a>
-</div>
-<!-- Actions -->
-<div class="flex items-center gap-md">
-<button class="p-2 text-on-surface-variant hover:text-primary transition-colors duration-200">
-<span class="material-symbols-outlined">shopping_cart</span>
-</button>
-<button class="p-2 text-on-surface-variant hover:text-primary transition-colors duration-200">
-<span class="material-symbols-outlined">account_circle</span>
-</button>
-<button class="md:hidden p-2 text-on-surface-variant">
-<span class="material-symbols-outlined">menu</span>
-</button>
-</div>
-</div>
-</nav>
+{{>navbar}}
 <main>
 <!-- Artistic Hero Section -->
 <section class="relative h-[921px] flex items-center overflow-hidden px-margin-mobile md:px-margin-desktop">
@@ -285,42 +260,7 @@
 </div>
 </section>
 </main>
-<!-- Footer (Shared Component) -->
-<footer class="w-full border-t border-outline-variant bg-surface-container-low">
-<div class="flex flex-col md:flex-row justify-between items-start py-xl px-margin-mobile md:px-margin-desktop max-w-7xl mx-auto gap-xl">
-<div class="space-y-md">
-<div class="font-headline-sm text-headline-sm font-bold text-on-surface">{{store.name}}</div>
-<p class="font-body-md text-on-surface-variant max-w-xs">{{hero.aboutText}}</p>
-<div class="flex gap-md">
-{{#social.instagram}}<a class="w-10 h-10 border border-outline-variant flex items-center justify-center rounded-full hover:bg-primary hover:text-white hover:border-primary transition-all" href="{{social.instagram}}">
-<span class="material-symbols-outlined text-sm">public</span>
-</a>{{/social.instagram}}
-{{#social.facebook}}<a class="w-10 h-10 border border-outline-variant flex items-center justify-center rounded-full hover:bg-primary hover:text-white hover:border-primary transition-all" href="{{social.facebook}}">
-<span class="material-symbols-outlined text-sm">chat</span>
-</a>{{/social.facebook}}
-</div>
-</div>
-<div class="grid grid-cols-2 md:grid-cols-2 gap-xl w-full md:w-auto">
-<div class="space-y-sm">
-<p class="font-label-md text-label-md font-bold mb-md uppercase tracking-wider">Help</p>
-<ul class="space-y-sm">
-<li><a class="font-label-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer" href="{{whatsapp.url}}" target="_blank">WhatsApp Support</a></li>
-<li><a class="font-label-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer" href="#">Store Location</a></li>
-</ul>
-</div>
-<div class="space-y-sm">
-<p class="font-label-md text-label-md font-bold mb-md uppercase tracking-wider">Company</p>
-<ul class="space-y-sm">
-<li><a class="font-label-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer" href="#">Payment Methods</a></li>
-<li><a class="font-label-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer" href="#">Privacy Policy</a></li>
-</ul>
-</div>
-</div>
-</div>
-<div class="border-t border-outline-variant py-md px-margin-mobile md:px-margin-desktop max-w-7xl mx-auto">
-<p class="font-label-sm text-label-sm text-on-surface-variant text-center md:text-left">&copy; 2026 {{store.name}}. All rights reserved.</p>
-</div>
-</footer>
+{{>footer}}
 <!-- Custom Cursor Effect -->
 <div class="fixed w-8 h-8 border border-primary rounded-full pointer-events-none z-[9999] transition-transform duration-100 ease-out hidden md:block" id="cursor"></div>
 <script>

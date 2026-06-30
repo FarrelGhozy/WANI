@@ -1,0 +1,28 @@
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-surface/70 backdrop-blur-xl border-b border-primary-fixed/30 shadow-[0_4px_20px_rgba(0,219,231,0.15)]">
+<div class="flex justify-between items-center px-margin-desktop py-4 max-w-max-width mx-auto">
+<div class="font-headline-md text-headline-md text-primary-fixed italic tracking-tighter shadow-[0_0_15px_rgba(116,245,255,0.6)]">
+<a href="./" class="text-primary-fixed no-underline">{{store.name}}</a>
+</div>
+<div class="hidden md:flex gap-8">
+<a href="./" class="font-label-caps text-label-caps transition-colors pb-1 {{#page.beranda}}text-primary-fixed border-b-2 border-primary-fixed{{/page.beranda}}{{^page.beranda}}text-on-surface-variant hover:text-primary-fixed{{/page.beranda}}">BERANDA</a>
+<a href="./produk.html" class="font-label-caps text-label-caps transition-colors pb-1 {{#page.produk}}text-primary-fixed border-b-2 border-primary-fixed{{/page.produk}}{{^page.produk}}text-on-surface-variant hover:text-primary-fixed{{/page.produk}}">PRODUK</a>
+<a href="./tentang.html" class="font-label-caps text-label-caps transition-colors pb-1 {{#page.tentang}}text-primary-fixed border-b-2 border-primary-fixed{{/page.tentang}}{{^page.tentang}}text-on-surface-variant hover:text-primary-fixed{{/page.tentang}}">TENTANG</a>
+<a href="./kontak.html" class="font-label-caps text-label-caps transition-colors pb-1 {{#page.kontak}}text-primary-fixed border-b-2 border-primary-fixed{{/page.kontak}}{{^page.kontak}}text-on-surface-variant hover:text-primary-fixed{{/page.kontak}}">KONTAK</a>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative hidden sm:block">
+<input class="bg-surface-container-low border-b border-outline-variant text-data-md font-data-md px-4 py-1 focus:outline-none focus:border-primary-fixed transition-all w-48 lg:w-64" placeholder="QUERY_DATABASE..." type="text"/>
+<span class="material-symbols-outlined absolute right-2 top-1 text-primary-fixed text-sm">search</span>
+</div>
+<div class="flex gap-4">
+<button class="active:scale-95 duration-100 hover:bg-primary/10 p-2 rounded transition-all">
+<span class="material-symbols-outlined text-primary-fixed">shopping_cart</span>
+</button>
+<button class="active:scale-95 duration-100 hover:bg-primary/10 p-2 rounded transition-all">
+<span class="material-symbols-outlined text-primary-fixed">account_circle</span>
+</button>
+</div>
+</div>
+</div>
+</nav>

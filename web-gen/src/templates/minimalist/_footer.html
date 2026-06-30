@@ -1,0 +1,36 @@
+<!-- Footer (Shared Component) -->
+<footer class="w-full border-t border-outline-variant bg-surface-container-low">
+<div class="flex flex-col md:flex-row justify-between items-start py-xl px-margin-mobile md:px-margin-desktop max-w-7xl mx-auto gap-xl">
+<div class="space-y-md">
+<div class="font-headline-sm text-headline-sm font-bold text-on-surface">{{store.name}}</div>
+<p class="font-body-md text-on-surface-variant max-w-xs">{{hero.aboutText}}</p>
+<div class="flex gap-md">
+{{#social.instagram}}<a class="w-10 h-10 border border-outline-variant flex items-center justify-center rounded-full hover:bg-primary hover:text-white hover:border-primary transition-all" href="{{social.instagram}}">
+<span class="material-symbols-outlined text-sm">public</span>
+</a>{{/social.instagram}}
+{{#social.facebook}}<a class="w-10 h-10 border border-outline-variant flex items-center justify-center rounded-full hover:bg-primary hover:text-white hover:border-primary transition-all" href="{{social.facebook}}">
+<span class="material-symbols-outlined text-sm">chat</span>
+</a>{{/social.facebook}}
+</div>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-2 gap-xl w-full md:w-auto">
+<div class="space-y-sm">
+<p class="font-label-md text-label-md font-bold mb-md uppercase tracking-wider">Help</p>
+<ul class="space-y-sm">
+<li><a class="font-label-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer" href="{{whatsapp.url}}" target="_blank">WhatsApp Support</a></li>
+<li><a class="font-label-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer" href="#">Store Location</a></li>
+</ul>
+</div>
+<div class="space-y-sm">
+<p class="font-label-md text-label-md font-bold mb-md uppercase tracking-wider">Company</p>
+<ul class="space-y-sm">
+<li><a class="font-label-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer" href="#">Payment Methods</a></li>
+<li><a class="font-label-sm text-on-surface-variant hover:text-primary transition-colors cursor-pointer" href="#">Privacy Policy</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="border-t border-outline-variant py-md px-margin-mobile md:px-margin-desktop max-w-7xl mx-auto">
+<p class="font-label-sm text-label-sm text-on-surface-variant text-center md:text-left">&copy; 2026 {{store.name}}. All rights reserved.</p>
+</div>
+</footer>

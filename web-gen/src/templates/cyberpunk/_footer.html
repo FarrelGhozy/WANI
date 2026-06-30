@@ -1,0 +1,57 @@
+<!-- Footer -->
+<footer class="bg-surface-container-highest w-full bottom-0 mt-auto border-t border-dashed border-outline-variant">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter px-margin-desktop py-12 max-w-max-width mx-auto">
+<div class="md:col-span-1">
+<div class="font-headline-lg text-headline-lg text-primary-fixed mb-4">{{store.name}}</div>
+<p class="font-data-md text-data-md text-on-surface-variant">{{hero.aboutText}}</p>
+</div>
+<div>
+<div class="font-label-caps text-label-caps text-primary-fixed mb-6">DIRECTORIES</div>
+<ul class="space-y-3">
+<li><a class="font-data-md text-data-md text-on-surface-variant hover:text-primary-fixed transition-all uppercase" href="#">TERMINAL_LOGS</a></li>
+<li><a class="font-data-md text-data-md text-on-surface-variant hover:text-primary-fixed transition-all uppercase" href="#">WARRANTY_VOID</a></li>
+<li><a class="font-data-md text-data-md text-on-surface-variant hover:text-primary-fixed transition-all uppercase" href="#">DEBUG_MODE</a></li>
+<li><a class="font-data-md text-data-md text-on-surface-variant hover:text-primary-fixed transition-all uppercase" href="#">ENCRYPTION_DOCS</a></li>
+</ul>
+</div>
+<div>
+<div class="font-label-caps text-label-caps text-primary-fixed mb-6">SYSTEM_STATUS</div>
+<div class="space-y-3 font-data-md text-data-md text-on-surface-variant">
+<div class="flex justify-between border-b border-outline-variant/30 pb-1">
+<span>GATEWAY_01</span>
+<span class="text-primary-fixed">ONLINE</span>
+</div>
+<div class="flex justify-between border-b border-outline-variant/30 pb-1">
+<span>MARKET_API</span>
+<span class="text-primary-fixed">ACTIVE</span>
+</div>
+<div class="flex justify-between border-b border-outline-variant/30 pb-1">
+<span>LOAD_BALANCER</span>
+<span class="text-error">BUSY</span>
+</div>
+</div>
+</div>
+<div>
+<div class="font-label-caps text-label-caps text-primary-fixed mb-6">DECRYPTED_COMMUNS</div>
+<div class="flex gap-4">
+{{#social.instagram}}<a class="w-10 h-10 border border-outline-variant flex items-center justify-center hover:bg-primary-fixed/20 hover:border-primary-fixed hover:text-primary-fixed transition-all" href="{{social.instagram}}">
+<span class="material-symbols-outlined">hub</span>
+</a>{{/social.instagram}}
+{{#social.facebook}}<a class="w-10 h-10 border border-outline-variant flex items-center justify-center hover:bg-primary-fixed/20 hover:border-primary-fixed hover:text-primary-fixed transition-all" href="{{social.facebook}}">
+<span class="material-symbols-outlined">share</span>
+</a>{{/social.facebook}}
+{{#social.tiktok}}<a class="w-10 h-10 border border-outline-variant flex items-center justify-center hover:bg-primary-fixed/20 hover:border-primary-fixed hover:text-primary-fixed transition-all" href="{{social.tiktok}}">
+<span class="material-symbols-outlined">rss_feed</span>
+</a>{{/social.tiktok}}
+</div>
+</div>
+</div>
+<div class="border-t border-outline-variant/20 py-6 px-margin-desktop max-w-max-width mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+<div class="font-data-md text-data-md uppercase text-on-tertiary-fixed-variant">&copy; 2026 {{store.name}}. ALL RIGHTS RESERVED.</div>
+<div class="flex gap-6 font-data-md text-[10px] text-on-surface-variant/40">
+<span>IP_AUTH: 192.168.4.1</span>
+<span>LATENCY: 42MS</span>
+<span>SESSION: RX-990</span>
+</div>
+</div>
+</footer>

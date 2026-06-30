@@ -3,7 +3,7 @@
 <html class="light" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>{{store.name}} | Timeless Elegance</title>
+<title>Produk — {{store.name}}</title>
 <!-- Google Fonts: Bodoni Moda for headlines, Plus Jakarta Sans for body -->
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&amp;family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&amp;display=swap" rel="stylesheet"/>
 <!-- Material Symbols Outlined -->
@@ -109,54 +109,20 @@
     .renaissance-border {
       border: 1px solid rgba(120, 86, 0, 0.2);
     }
-    .glass-nav {
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-    }
   </style>
 </head>
 <body class="bg-background text-on-background font-body-md selection:bg-primary-fixed selection:text-on-primary-fixed">
+
 {{>navbar}}
+
 <main>
-<!-- Hero Section -->
-<section class="relative overflow-hidden bg-surface-container-low py-xl">
-<div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop grid grid-cols-1 md:grid-cols-12 gap-xl items-center">
-<div class="md:col-span-5 text-center md:text-left z-10">
-<h1 class="font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mb-md">
-            {{hero.headline}}
-          </h1>
-<p class="font-body-lg text-body-lg text-on-surface-variant mb-lg max-w-lg">
-            {{hero.subheadline}}
-          </p>
-<div class="flex flex-col sm:flex-row gap-md justify-center md:justify-start">
-<button class="bg-primary text-on-primary px-lg py-sm font-label-sm text-label-sm rounded uppercase active:scale-95 transition-all">
-              Explore Collection
-            </button>
-<button class="border border-primary text-primary px-lg py-sm font-label-sm text-label-sm rounded uppercase hover:bg-primary-fixed-dim transition-all">
-              Our Story
-            </button>
-</div>
-</div>
-<div class="md:col-span-7 relative">
-<div class="aspect-[4/5] md:aspect-square renaissance-border p-sm bg-surface">
-<div class="w-full h-full overflow-hidden">
-<img class="w-full h-full object-cover grayscale-[20%] hover:scale-105 transition-transform duration-700" alt="" src="{{store.logoUrl}}"/>
-</div>
-</div>
-<!-- Decorative Architectural Element -->
-<div class="absolute -bottom-base -right-base w-32 h-32 border-r-2 border-b-2 border-primary opacity-30"></div>
-</div>
-</div>
-</section>
-<!-- New Arrivals Section (Product Grid) -->
 <section class="py-xl bg-background">
 <div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop">
 <div class="flex justify-between items-end mb-xl border-b border-outline-variant pb-md">
 <div>
 <span class="font-label-sm text-label-sm text-primary uppercase tracking-widest mb-xs block">Seasonal Selection</span>
-<h2 class="font-headline-lg text-headline-lg text-on-surface">New Arrivals</h2>
+<h1 class="font-headline-lg text-headline-lg text-on-surface">Produk Kami</h1>
 </div>
-<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors pb-xs" href="#">View All →</a>
 </div>
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
 {{#products}}
@@ -178,73 +144,8 @@
 </div>
 </div>
 </section>
-<!-- WhatsApp CTA Section (Asymmetric Bento) -->
-<section class="py-xl max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop">
-<div class="grid grid-cols-1 md:grid-cols-12 gap-md items-stretch">
-<div class="md:col-span-8 bg-surface-container p-lg flex flex-col justify-center renaissance-border">
-<span class="font-label-sm text-label-sm text-primary uppercase mb-base">Personalized Shopping</span>
-<h2 class="font-headline-lg text-headline-lg text-on-surface mb-md">Concierge Service</h2>
-<p class="font-body-lg text-body-lg text-on-surface-variant mb-lg max-w-xl">
-            Experience the pinnacle of boutique service. Connect with our curators directly to curate your personal collection or source rare pieces from our global network.
-          </p>
-<div>
-<a class="inline-flex items-center gap-base bg-primary text-on-primary px-lg py-sm font-label-sm text-label-sm rounded uppercase active:scale-95 transition-transform" href="{{whatsapp.url}}" target="_blank" rel="noopener">
-<span class="material-symbols-outlined" data-icon="chat">chat</span>
-              Order via WhatsApp
-            </a>
-</div>
-</div>
-<div class="md:col-span-4 min-h-[300px]">
-<div class="w-full h-full renaissance-border bg-surface-container-highest flex items-center justify-center overflow-hidden">
-<img class="w-full h-full object-cover grayscale-[10%] opacity-80" alt="" src=""/>
-</div>
-</div>
-</div>
-</section>
-<!-- Aesthetic Atmosphere Section (Full Width Image) -->
-<section class="relative h-[614px] flex items-center justify-center overflow-hidden mt-xl">
-<div class="absolute inset-0 bg-cover bg-fixed bg-center" style="background-image: url('')"></div>
-<div class="absolute inset-0 bg-on-background/30 backdrop-blur-[2px]"></div>
-<div class="relative z-10 text-center max-w-3xl px-margin-mobile">
-<h2 class="font-display-lg text-display-lg-mobile md:text-display-lg text-surface mb-md italic">{{hero.aboutText}}</h2>
-<p class="font-label-sm text-label-sm text-surface-variant uppercase tracking-widest">— {{store.name}}</p>
-</div>
-</section>
 </main>
+
 {{>footer}}
-<!-- Micro-interactions Script -->
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // Reveal animations on scroll
-      const observerOptions = {
-        threshold: 0.1
-      };
 
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('opacity-100', 'translate-y-0');
-            entry.target.classList.remove('opacity-0', 'translate-y-8');
-          }
-        });
-      }, observerOptions);
-
-      document.querySelectorAll('section').forEach(section => {
-        section.classList.add('transition-all', 'duration-1000', 'ease-out', 'opacity-0', 'translate-y-8');
-        observer.observe(section);
-      });
-
-      // Sticky Header glass effect transition
-      const header = document.querySelector('header');
-      window.addEventListener('scroll', () => {
-        if (window.scrollY > 20) {
-          header.classList.add('glass-nav', 'bg-surface/90');
-          header.classList.remove('bg-surface');
-        } else {
-          header.classList.remove('glass-nav', 'bg-surface/90');
-          header.classList.add('bg-surface');
-        }
-      });
-    });
-  </script>
 </body></html>
