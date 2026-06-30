@@ -1,57 +1,138 @@
-<!-- Footer -->
-<footer class="bg-[#1C1C22] w-full bottom-0 mt-auto border-t border-dashed border-outline-variant">
-<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter px-margin-desktop py-12 max-w-max-width mx-auto">
-<div class="md:col-span-1">
-<div class="font-headline-lg text-headline-lg text-primary-fixed mb-4">{{store.name}}</div>
-<p class="font-data-md text-data-md text-on-surface-variant">{{hero.aboutText}}</p>
-</div>
-<div>
-<div class="font-label-caps text-label-caps text-primary-fixed mb-6">DIRECTORIES</div>
-<ul class="space-y-3">
-<li><a class="font-data-md text-data-md text-on-surface-variant hover:text-primary-fixed transition-all uppercase" href="#">TERMINAL_LOGS</a></li>
-<li><a class="font-data-md text-data-md text-on-surface-variant hover:text-primary-fixed transition-all uppercase" href="#">WARRANTY_VOID</a></li>
-<li><a class="font-data-md text-data-md text-on-surface-variant hover:text-primary-fixed transition-all uppercase" href="#">DEBUG_MODE</a></li>
-<li><a class="font-data-md text-data-md text-on-surface-variant hover:text-primary-fixed transition-all uppercase" href="#">ENCRYPTION_DOCS</a></li>
-</ul>
-</div>
-<div>
-<div class="font-label-caps text-label-caps text-primary-fixed mb-6">SYSTEM_STATUS</div>
-<div class="space-y-3 font-data-md text-data-md text-on-surface-variant">
-<div class="flex justify-between border-b border-outline-variant/30 pb-1">
-<span>GATEWAY_01</span>
-<span class="text-primary-fixed">ONLINE</span>
-</div>
-<div class="flex justify-between border-b border-outline-variant/30 pb-1">
-<span>MARKET_API</span>
-<span class="text-primary-fixed">ACTIVE</span>
-</div>
-<div class="flex justify-between border-b border-outline-variant/30 pb-1">
-<span>LOAD_BALANCER</span>
-<span class="text-error">BUSY</span>
-</div>
-</div>
-</div>
-<div>
-<div class="font-label-caps text-label-caps text-primary-fixed mb-6">DECRYPTED_COMMUNS</div>
-<div class="flex gap-4">
-{{#social.instagram}}<a class="w-10 h-10 border border-outline-variant flex items-center justify-center hover:bg-primary-fixed/20 hover:border-primary-fixed hover:text-primary-fixed transition-all" href="{{social.instagram}}">
-<span class="material-symbols-outlined">hub</span>
-</a>{{/social.instagram}}
-{{#social.facebook}}<a class="w-10 h-10 border border-outline-variant flex items-center justify-center hover:bg-primary-fixed/20 hover:border-primary-fixed hover:text-primary-fixed transition-all" href="{{social.facebook}}">
-<span class="material-symbols-outlined">share</span>
-</a>{{/social.facebook}}
-{{#social.tiktok}}<a class="w-10 h-10 border border-outline-variant flex items-center justify-center hover:bg-primary-fixed/20 hover:border-primary-fixed hover:text-primary-fixed transition-all" href="{{social.tiktok}}">
-<span class="material-symbols-outlined">rss_feed</span>
-</a>{{/social.tiktok}}
-</div>
-</div>
-</div>
-<div class="border-t border-outline-variant/30 bg-[#1C1C22] py-4 px-margin-desktop max-w-max-width mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-<div class="font-data-md text-data-md uppercase text-on-surface-variant">&copy; 2026 {{store.name}}. ALL RIGHTS RESERVED.</div>
-<div class="flex gap-6 font-data-md text-[10px] text-on-surface-variant/50">
-<span>IP_AUTH: 192.168.4.1</span>
-<span>LATENCY: 42MS</span>
-<span>SESSION: RX-990</span>
-</div>
-</div>
+<!-- ============================================================
+     CYBERPUNK FOOTER — Dark footer with neon accents & social links
+     ============================================================ -->
+<footer class="bg-[#0d0d14] border-t border-[#00d4ff]/15 mt-auto">
+  <!-- Top border glow line -->
+  <div class="h-px bg-gradient-to-r from-transparent via-[#00d4ff]/40 to-transparent"></div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
+
+      <!-- Column 1: Brand -->
+      <div class="lg:col-span-1">
+        {{#store.hasLogo}}
+        <img src="{{store.logoUrl}}" alt="{{store.name}}" class="h-10 w-auto mb-3" />
+        {{/store.hasLogo}}
+        {{^store.hasLogo}}
+        <div class="text-xl font-['Plus_Jakarta_Sans'] font-extrabold text-[#00d4ff] mb-3" style="text-shadow: 0 0 10px rgba(0,212,255,0.3);">
+          {{store.name}}
+        </div>
+        {{/store.hasLogo}}
+        <p class="text-sm font-['Inter'] text-[#8888a0] leading-relaxed max-w-xs">
+          {{hero.subheadline}}
+        </p>
+        <!-- Decorative terminal line -->
+        <div class="mt-4 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-[#00d4ff] animate-pulse"></span>
+          <span class="text-[11px] font-['JetBrains_Mono'] text-[#555568]">SYS.ONLINE // v2.4.1</span>
+        </div>
+      </div>
+
+      <!-- Column 2: Quick Links -->
+      <div>
+        <h4 class="text-xs font-['Inter'] font-semibold tracking-[0.15em] uppercase text-[#b388ff] mb-5">
+          <span class="material-symbols-outlined text-sm align-middle mr-1">link</span> Navigasi
+        </h4>
+        <ul class="space-y-3">
+          <li><a href="./" class="text-sm font-['Inter'] text-[#8888a0] hover:text-[#00d4ff] transition-colors duration-200">Beranda</a></li>
+          <li><a href="./produk.html" class="text-sm font-['Inter'] text-[#8888a0] hover:text-[#00d4ff] transition-colors duration-200">Produk</a></li>
+          <li><a href="./tentang.html" class="text-sm font-['Inter'] text-[#8888a0] hover:text-[#00d4ff] transition-colors duration-200">Tentang</a></li>
+          <li><a href="./kontak.html" class="text-sm font-['Inter'] text-[#8888a0] hover:text-[#00d4ff] transition-colors duration-200">Kontak</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 3: Business Info -->
+      <div>
+        <h4 class="text-xs font-['Inter'] font-semibold tracking-[0.15em] uppercase text-[#b388ff] mb-5">
+          <span class="material-symbols-outlined text-sm align-middle mr-1">store</span> Informasi
+        </h4>
+        <ul class="space-y-3 text-sm font-['Inter'] text-[#8888a0]">
+          {{#store.address}}<li class="flex items-start gap-2">
+            <span class="material-symbols-outlined text-xs text-[#00d4ff] mt-0.5">location_on</span>
+            <span>{{store.address}}</span>
+          </li>{{/store.address}}
+          {{#store.businessHours}}<li class="flex items-start gap-2">
+            <span class="material-symbols-outlined text-xs text-[#00d4ff] mt-0.5">schedule</span>
+            <span>{{store.businessHours}}</span>
+          </li>{{/store.businessHours}}
+          {{#store.phone}}<li class="flex items-start gap-2">
+            <span class="material-symbols-outlined text-xs text-[#00d4ff] mt-0.5">call</span>
+            <span>{{store.phone}}</span>
+          </li>{{/store.phone}}
+        </ul>
+      </div>
+
+      <!-- Column 4: Social & Payment -->
+      <div>
+        <h4 class="text-xs font-['Inter'] font-semibold tracking-[0.15em] uppercase text-[#b388ff] mb-5">
+          <span class="material-symbols-outlined text-sm align-middle mr-1">hub</span> Jaringan
+        </h4>
+        <div class="flex flex-wrap gap-3 mb-6">
+          {{#social.instagram}}
+          <a href="{{social.instagram}}" target="_blank" rel="noopener"
+             class="w-10 h-10 flex items-center justify-center border border-[#00d4ff]/20 text-[#8888a0] hover:text-[#00d4ff] hover:border-[#00d4ff]/60 hover:shadow-[0_0_10px_rgba(0,212,255,0.15)] rounded transition-all duration-200 active:scale-90">
+            <span class="material-symbols-outlined text-lg">camera</span>
+          </a>
+          {{/social.instagram}}
+          {{#social.facebook}}
+          <a href="{{social.facebook}}" target="_blank" rel="noopener"
+             class="w-10 h-10 flex items-center justify-center border border-[#00d4ff]/20 text-[#8888a0] hover:text-[#00d4ff] hover:border-[#00d4ff]/60 hover:shadow-[0_0_10px_rgba(0,212,255,0.15)] rounded transition-all duration-200 active:scale-90">
+            <span class="material-symbols-outlined text-lg">share</span>
+          </a>
+          {{/social.facebook}}
+          {{#social.tiktok}}
+          <a href="{{social.tiktok}}" target="_blank" rel="noopener"
+             class="w-10 h-10 flex items-center justify-center border border-[#00d4ff]/20 text-[#8888a0] hover:text-[#00d4ff] hover:border-[#00d4ff]/60 hover:shadow-[0_0_10px_rgba(0,212,255,0.15)] rounded transition-all duration-200 active:scale-90">
+            <span class="material-symbols-outlined text-lg">music_note</span>
+          </a>
+          {{/social.tiktok}}
+          {{#social.youtube}}
+          <a href="{{social.youtube}}" target="_blank" rel="noopener"
+             class="w-10 h-10 flex items-center justify-center border border-[#00d4ff]/20 text-[#8888a0] hover:text-[#00d4ff] hover:border-[#00d4ff]/60 hover:shadow-[0_0_10px_rgba(0,212,255,0.15)] rounded transition-all duration-200 active:scale-90">
+            <span class="material-symbols-outlined text-lg">play_circle</span>
+          </a>
+          {{/social.youtube}}
+          {{#social.shopee}}
+          <a href="{{social.shopee}}" target="_blank" rel="noopener"
+             class="w-10 h-10 flex items-center justify-center border border-[#00d4ff]/20 text-[#8888a0] hover:text-[#00d4ff] hover:border-[#00d4ff]/60 hover:shadow-[0_0_10px_rgba(0,212,255,0.15)] rounded transition-all duration-200 active:scale-90">
+            <span class="material-symbols-outlined text-lg">shopping_bag</span>
+          </a>
+          {{/social.shopee}}
+          {{#social.tokopedia}}
+          <a href="{{social.tokopedia}}" target="_blank" rel="noopener"
+             class="w-10 h-10 flex items-center justify-center border border-[#00d4ff]/20 text-[#8888a0] hover:text-[#00d4ff] hover:border-[#00d4ff]/60 hover:shadow-[0_0_10px_rgba(0,212,255,0.15)] rounded transition-all duration-200 active:scale-90">
+            <span class="material-symbols-outlined text-lg">storefront</span>
+          </a>
+          {{/social.tokopedia}}
+        </div>
+
+        <!-- Payment Methods -->
+        {{#store.paymentMethods}}
+        <div>
+          <h4 class="text-xs font-['Inter'] font-semibold tracking-[0.15em] uppercase text-[#b388ff] mb-3">
+            <span class="material-symbols-outlined text-sm align-middle mr-1">credit_card</span> Pembayaran
+          </h4>
+          <p class="text-sm font-['Inter'] text-[#8888a0]">{{store.paymentMethods}}</p>
+        </div>
+        {{/store.paymentMethods}}
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom bar -->
+  <div class="border-t border-[#00d4ff]/10 bg-[#08080c]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+      <p class="text-xs font-['Inter'] text-[#555568]">
+        &copy; 2026 {{store.name}}. All rights reserved.
+      </p>
+      <div class="flex items-center gap-4 text-[11px] font-['JetBrains_Mono'] text-[#444458]">
+        <span class="flex items-center gap-1">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#00d4ff] inline-block"></span>
+          ONLINE
+        </span>
+        <span>ENC: AES-256</span>
+        <span>NODE: {{stats.totalOrders}}{{^stats.totalOrders}}0{{/stats.totalOrders}} TX</span>
+      </div>
+    </div>
+  </div>
 </footer>
