@@ -64,10 +64,10 @@
         <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">chat</span>
         <span>Chat WhatsApp</span>
       </a>
-      <a href="tel:{{store.phone}}" class="flex items-center gap-3 p-3 rounded-xl text-on-surface-variant hover:bg-surface-container transition-all">
+{{#store.phone}}      <a href="tel:{{store.phone}}" class="flex items-center gap-3 p-3 rounded-xl text-on-surface-variant hover:bg-surface-container transition-all">
         <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">call</span>
         <span>{{store.phone}}</span>
-      </a>
+      </a>{{/store.phone}}
     </div>
   </div>
 </nav>
