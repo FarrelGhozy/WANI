@@ -145,7 +145,7 @@
         <span class="font-label-sm text-label-sm uppercase tracking-[0.2em] text-[rgba(184,134,11,0.5)]">Angka Kami</span>
         <div class="w-8 h-px bg-gradient-to-r from-transparent via-[rgba(184,134,11,0.3)] to-transparent mx-auto mt-3"></div>
       </div>
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+      <div class="flex flex-wrap justify-center gap-5 md:gap-6 [&>*]:w-[calc(50%-0.75rem)] md:[&>*]:w-[calc(25%-1.25rem)]">
         <div class="text-center p-8 rounded-sm bg-surface border border-[rgba(184,134,11,0.08)] hover:border-[rgba(184,134,11,0.2)] transition-all duration-500 group">
           <p class="font-display-lg text-display-lg-mobile md:text-display-lg text-[{{color.primary}}] mb-2 group-hover:scale-110 transition-transform duration-500">✦</p>
           <p class="font-display-md text-display-md text-on-surface mb-1">{{stats.totalOrders}}</p>
@@ -194,7 +194,7 @@
       </div>
 
       <!-- Product Grid -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+      <div class="flex flex-wrap justify-center gap-5 md:gap-6 [&>*]:w-full sm:[&>*]:w-[calc(50%-0.75rem)] lg:[&>*]:w-[calc(25%-1.25rem)]">
         {{#products}}
         <div class="group cursor-pointer scrolly-reveal">
           <div class="relative overflow-hidden bg-surface renaissance-border mb-4">
@@ -241,7 +241,7 @@
         </div>
         {{/products}}
         {{^products}}
-        <div class="col-span-full flex flex-col items-center justify-center py-20 text-center">
+        <div class="w-full flex flex-col items-center justify-center py-20 text-center">
           <div class="w-24 h-24 mx-auto mb-8 rounded-full border-2 border-dashed border-[rgba(184,134,11,0.15)] flex items-center justify-center">
             <span class="material-symbols-outlined text-5xl text-[rgba(184,134,11,0.2)]">inventory_2</span>
           </div>

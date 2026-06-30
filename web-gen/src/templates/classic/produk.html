@@ -72,7 +72,7 @@
   <section class="pb-24 bg-background">
     <div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop">
       <!-- Product Grid -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+      <div class="flex flex-wrap justify-center gap-5 md:gap-6 [&>*]:w-full sm:[&>*]:w-[calc(50%-0.75rem)] lg:[&>*]:w-[calc(25%-1.25rem)]">
         {{#products}}
         <div class="group cursor-pointer scrolly-reveal">
           <div class="relative overflow-hidden bg-surface renaissance-border mb-4">
@@ -110,7 +110,7 @@
         </div>
         {{/products}}
         {{^products}}
-        <div class="col-span-full flex flex-col items-center justify-center py-24 text-center">
+        <div class="w-full flex flex-col items-center justify-center py-24 text-center">
           <div class="w-28 h-28 mx-auto mb-8 rounded-full border-2 border-dashed border-[rgba(184,134,11,0.12)] flex items-center justify-center">
             <span class="material-symbols-outlined text-6xl text-[rgba(184,134,11,0.15)]">inventory_2</span>
           </div>

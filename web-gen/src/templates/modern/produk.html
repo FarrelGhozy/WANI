@@ -30,7 +30,7 @@
 <h1 class="font-display-lg text-3xl md:text-4xl font-extrabold text-on-surface">Semua Produk</h1>
 <p class="text-on-surface-variant">Jelajahi semua produk berkualitas dari {{store.businessName}}.</p>
 </div>
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-lg">
+<div class="flex flex-wrap justify-center gap-4 md:gap-5 [grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-lg>*]:w-full sm:[grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-lg>*]:w-[calc(50%-0.5rem)] lg:[grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-lg>*]:w-[calc(33.333%-0.75rem)]">
 {{#products}}
 <a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="group bg-surface rounded-2xl overflow-hidden border border-outline-variant hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col reveal">
 <div class="aspect-square relative overflow-hidden bg-surface-variant">
@@ -64,7 +64,7 @@
 </a>
 {{/products}}
 {{^products}}
-<div class="col-span-full flex flex-col items-center justify-center py-3xl text-center reveal">
+<div class="w-full flex flex-col items-center justify-center py-3xl text-center reveal">
 <div class="w-24 h-24 bg-surface-container-highest rounded-3xl flex items-center justify-center mb-6 border-2 border-dashed border-outline-variant">
 <span class="material-symbols-outlined text-5xl text-outline-variant">inventory_2</span>
 </div>

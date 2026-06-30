@@ -269,7 +269,7 @@
          STATS COUNTER SECTION
          ============================================================ -->
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6">
+      <div class="flex flex-wrap justify-center gap-4 lg:gap-5 [&>*]:w-[calc(50%-0.5rem)] md:[&>*]:w-[calc(25%-1rem)]">
         <div class="cyber-card rounded-lg p-6 text-center reveal">
           <div class="text-3xl lg:text-4xl font-bold stat-value mb-1" data-count="{{stats.totalOrders}}">{{stats.totalOrders}}{{^stats.totalOrders}}0{{/stats.totalOrders}}</div>
           <div class="text-xs font-['JetBrains_Mono'] text-[#555568] uppercase tracking-wider">Total Pesanan</div>
@@ -311,7 +311,7 @@
       </div>
 
       <!-- Product Grid -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-5">
+      <div class="flex flex-wrap justify-center gap-4 lg:gap-5 [&>*]:w-full sm:[&>*]:w-[calc(50%-0.5rem)] lg:[&>*]:w-[calc(33.333%-0.75rem)] xl:[&>*]:w-[calc(25%-1rem)]">
         {{#products}}
         <div class="cyber-card rounded-lg overflow-hidden group reveal transition-all duration-300 hover:-translate-y-1">
           <!-- Product Image -->
@@ -351,7 +351,7 @@
 
         <!-- Empty State -->
         {{^products}}
-        <div class="col-span-full flex flex-col items-center justify-center py-16 lg:py-24 text-center">
+        <div class="w-full flex flex-col items-center justify-center py-16 lg:py-24 text-center">
           <div class="w-20 h-20 rounded-full border border-dashed border-[#2a2a3a] flex items-center justify-center mb-5 bg-[#12121a]">
             <span class="material-symbols-outlined text-4xl text-[#2a2a3a]">inventory_2</span>
           </div>
