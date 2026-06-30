@@ -82,6 +82,19 @@ Hubungi Kami
 </div>
 </div>
 {{/products}}
+{{^products}}
+<div class="col-span-full flex flex-col items-center justify-center py-3xl text-center">
+<div class="w-20 h-20 bg-surface-container-highest rounded-full flex items-center justify-center mb-6 border border-dashed border-outline-variant">
+<span class="material-symbols-outlined text-4xl text-outline-variant">inventory_2</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface/60 mb-2">Belum Ada Produk</h3>
+<p class="font-body-md text-body-md text-on-surface-variant/60 mb-6 max-w-sm">Belum ada produk yang tersedia. Silakan cek kembali nanti atau hubungi kami untuk informasi lebih lanjut.</p>
+<a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="px-8 py-4 bg-primary text-on-primary font-label-sm text-label-sm rounded-full hover:bg-primary-fixed hover:text-on-primary-fixed transition-all inline-flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">chat</span>
+Hubungi Kami
+</a>
+</div>
+{{/products}}
 </div>
 <div class="text-center mt-xl">
 <a href="./produk.html" class="inline-flex items-center gap-sm text-primary font-bold hover:underline">Lihat Semua Produk &rarr;</a>
