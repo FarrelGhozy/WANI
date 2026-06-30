@@ -6,6 +6,7 @@ export interface StoreData {
   paymentMethods: string | null
   shippingInfo: string | null
   returnPolicy: string | null
+  logoUrl: string | null
 }
 
 export interface ProductData {
@@ -40,10 +41,12 @@ export interface SiteConfig {
     headline: string
     subheadline: string | null
     ctaText: string | null
+    imageUrl?: string | null
   }
   about: {
     description: string
     mission: string | null
+    imageUrl?: string | null
   }
   socialMedia: SocialMediaLinks
   contact: {
@@ -56,6 +59,7 @@ export interface SiteConfig {
     secondary: string
   }
   waOrderTemplate: string | null
+  logoUrl?: string | null
 }
 
 export interface GenerateParams {
