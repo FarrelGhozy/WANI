@@ -170,6 +170,7 @@ export interface WebsiteConfig {
   heroImageUrl?: string | null
   aboutImageUrl?: string | null
   logoUrl?: string | null
+  faviconUrl?: string | null
   ctaText?: string
 }
 
