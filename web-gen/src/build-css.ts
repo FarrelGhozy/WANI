@@ -80,13 +80,13 @@ ${themeVars.join("\n")}
   // run tailwindcss CLI
   const outFile = join(tp, "assets", "tailwind.css")
   mkdirSync(join(tp, "assets"), { recursive: true })
-  const r = spawnSync("npx", ["@tailwindcss/cli", "-i", join(inputDir, "input.css"), "-o", outFile], {
+  const r = spawnSync("bunx", ["@tailwindcss/cli", "-i", join(inputDir, "input.css"), "-o", outFile], {
     cwd: inputDir, stdio: ["ignore", "pipe", "pipe"], timeout: 60_000,
     env: { ...process.env, NODE_ENV: "production" },
   })
 
   if (r.status !== 0) {
-    console.error(`[${t}] tailwind build failed:`, (r.stderr || r.stdout).toString().slice(0, 200))
+    console.error(`[${t}] tailwind build failed:`, ((r.stderr || r.stdout)?.toString() || "no output").slice(0, 200))
   } else {
     const kb = (existsSync(outFile) ? readFileSync(outFile).length : 0) / 1024
     console.log(`[${t}] tailwind.css — ${kb.toFixed(0)}KB`)
