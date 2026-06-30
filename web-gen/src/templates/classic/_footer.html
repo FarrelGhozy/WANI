@@ -1,143 +1,71 @@
-<!-- Renaissance Footer - Elegant 3-Column with Gold Accents -->
+<!-- Classic Footer - Elegant 3-Column -->
 <footer class="w-full bg-gradient-to-b from-surface to-surface-container-low border-t border-[rgba(184,134,11,0.15)] relative overflow-hidden">
-  <!-- Decorative Top Border -->
   <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[rgba(184,134,11,0.4)] to-transparent"></div>
-  <div class="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-transparent via-[{{color.primary}}] to-transparent"></div>
 
-  <div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop py-16">
-    <div class="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8">
+  <div class="max-w-7xl mx-auto px-6 md:px-12 py-16 md:py-20">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 lg:gap-12">
 
-      <!-- Column 1: Brand & Description -->
-      <div class="md:col-span-4 flex flex-col gap-4">
+      <!-- Column 1: Brand -->
+      <div class="space-y-4">
         <div class="flex items-center gap-3">
           {{#store.hasLogo}}
-          <div class="w-12 h-12 rounded-full overflow-hidden ring-2 ring-[rgba(184,134,11,0.2)]">
+          <div class="w-10 h-10 rounded-full overflow-hidden ring-2 ring-[rgba(184,134,11,0.2)] shrink-0">
             <img src="{{store.logoUrl}}" alt="{{store.businessName}}" class="w-full h-full object-cover" />
           </div>
           {{/store.hasLogo}}
-          {{^store.hasLogo}}
-          <div class="w-12 h-12 rounded-full bg-gradient-to-br from-[{{color.primary}}] to-[rgba(184,134,11,0.6)] flex items-center justify-center">
-            <span class="text-surface font-bold font-display-md text-xl">{{store.businessName}}</span>
-          </div>
-          {{/store.hasLogo}}
-          <span class="font-display-md text-display-md text-on-surface tracking-tight">{{store.businessName}}</span>
+          <span class="font-display-md text-lg text-on-surface tracking-tight font-bold">{{store.businessName}}</span>
         </div>
-        <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
-          Menghadirkan pengalaman berbelanja eksklusif dengan koleksi terkurasi. Setiap produk dipilih dengan cermat untuk memenuhi standar kualitas tertinggi.
-        </p>
-        <div class="flex gap-3 mt-2">
-          {{#social.instagram}}
-          <a href="{{social.instagram}}" target="_blank" rel="noopener" class="w-10 h-10 rounded-full border border-[rgba(184,134,11,0.2)] flex items-center justify-center text-on-surface-variant hover:bg-[{{color.primary}}] hover:text-on-primary hover:border-[{{color.primary}}] transition-all duration-300 group">
-            <span class="material-symbols-outlined text-sm group-hover:scale-110 transition-transform">photo_camera</span>
-          </a>
-          {{/social.instagram}}
-          {{#social.facebook}}
-          <a href="{{social.facebook}}" target="_blank" rel="noopener" class="w-10 h-10 rounded-full border border-[rgba(184,134,11,0.2)] flex items-center justify-center text-on-surface-variant hover:bg-[{{color.primary}}] hover:text-on-primary hover:border-[{{color.primary}}] transition-all duration-300 group">
-            <span class="material-symbols-outlined text-sm group-hover:scale-110 transition-transform">groups</span>
-          </a>
-          {{/social.facebook}}
-          {{#social.tiktok}}
-          <a href="{{social.tiktok}}" target="_blank" rel="noopener" class="w-10 h-10 rounded-full border border-[rgba(184,134,11,0.2)] flex items-center justify-center text-on-surface-variant hover:bg-[{{color.primary}}] hover:text-on-primary hover:border-[{{color.primary}}] transition-all duration-300 group">
-            <span class="material-symbols-outlined text-sm group-hover:scale-110 transition-transform">music_note</span>
-          </a>
-          {{/social.tiktok}}
-          {{#social.youtube}}
-          <a href="{{social.youtube}}" target="_blank" rel="noopener" class="w-10 h-10 rounded-full border border-[rgba(184,134,11,0.2)] flex items-center justify-center text-on-surface-variant hover:bg-[{{color.primary}}] hover:text-on-primary hover:border-[{{color.primary}}] transition-all duration-300 group">
-            <span class="material-symbols-outlined text-sm group-hover:scale-110 transition-transform">play_circle</span>
-          </a>
-          {{/social.youtube}}
+        <p class="text-sm text-on-surface-variant leading-relaxed line-clamp-3">{{about.description}}</p>
+        <div class="flex flex-wrap gap-2 pt-1">
+          {{#social.instagram}}<a href="{{social.instagram}}" target="_blank" rel="noopener" class="w-9 h-9 rounded-full border border-[rgba(184,134,11,0.2)] flex items-center justify-center text-on-surface-variant hover:bg-[{{color.primary}}] hover:text-on-primary hover:border-[{{color.primary}}] transition-all" title="Instagram"><span class="material-symbols-outlined text-sm">photo_camera</span></a>{{/social.instagram}}
+          {{#social.facebook}}<a href="{{social.facebook}}" target="_blank" rel="noopener" class="w-9 h-9 rounded-full border border-[rgba(184,134,11,0.2)] flex items-center justify-center text-on-surface-variant hover:bg-[{{color.primary}}] hover:text-on-primary hover:border-[{{color.primary}}] transition-all" title="Facebook"><span class="material-symbols-outlined text-sm">groups</span></a>{{/social.facebook}}
+          {{#social.tiktok}}<a href="{{social.tiktok}}" target="_blank" rel="noopener" class="w-9 h-9 rounded-full border border-[rgba(184,134,11,0.2)] flex items-center justify-center text-on-surface-variant hover:bg-[{{color.primary}}] hover:text-on-primary hover:border-[{{color.primary}}] transition-all" title="TikTok"><span class="material-symbols-outlined text-sm">music_note</span></a>{{/social.tiktok}}
+          {{#social.youtube}}<a href="{{social.youtube}}" target="_blank" rel="noopener" class="w-9 h-9 rounded-full border border-[rgba(184,134,11,0.2)] flex items-center justify-center text-on-surface-variant hover:bg-[{{color.primary}}] hover:text-on-primary hover:border-[{{color.primary}}] transition-all" title="YouTube"><span class="material-symbols-outlined text-sm">play_circle</span></a>{{/social.youtube}}
         </div>
       </div>
 
-      <!-- Column 2: Quick Links & Info -->
-      <div class="md:col-span-4">
-        <h3 class="font-display-sm text-display-sm text-on-surface mb-6 relative inline-block">
-          Informasi
-          <span class="absolute -bottom-1 left-0 w-8 h-0.5 bg-gradient-to-r from-[{{color.primary}}] to-transparent"></span>
-        </h3>
-        <div class="grid grid-cols-2 gap-3">
-          <div class="space-y-3">
-            <a href="./" class="flex items-center gap-2 font-body-md text-body-md text-on-surface-variant hover:text-[{{color.primary}}] transition-colors duration-300">
-              <span class="material-symbols-outlined text-sm">chevron_right</span>
-              Beranda
-            </a>
-            <a href="./produk.html" class="flex items-center gap-2 font-body-md text-body-md text-on-surface-variant hover:text-[{{color.primary}}] transition-colors duration-300">
-              <span class="material-symbols-outlined text-sm">chevron_right</span>
-              Produk
-            </a>
-            <a href="./tentang.html" class="flex items-center gap-2 font-body-md text-body-md text-on-surface-variant hover:text-[{{color.primary}}] transition-colors duration-300">
-              <span class="material-symbols-outlined text-sm">chevron_right</span>
-              Tentang
-            </a>
-            <a href="./kontak.html" class="flex items-center gap-2 font-body-md text-body-md text-on-surface-variant hover:text-[{{color.primary}}] transition-colors duration-300">
-              <span class="material-symbols-outlined text-sm">chevron_right</span>
-              Kontak
-            </a>
+      <!-- Column 2: Links & Info -->
+      <div>
+        <h3 class="font-bold text-on-surface mb-5 text-sm uppercase tracking-wider">Informasi</h3>
+        <div class="grid grid-cols-2 gap-4">
+          <div class="space-y-2.5">
+            <a href="./" class="block text-sm text-on-surface-variant hover:text-[{{color.primary}}] transition-colors">Beranda</a>
+            <a href="./produk.html" class="block text-sm text-on-surface-variant hover:text-[{{color.primary}}] transition-colors">Produk</a>
+            <a href="./tentang.html" class="block text-sm text-on-surface-variant hover:text-[{{color.primary}}] transition-colors">Tentang</a>
+            <a href="./kontak.html" class="block text-sm text-on-surface-variant hover:text-[{{color.primary}}] transition-colors">Kontak</a>
           </div>
-          <div class="space-y-3">
-            <div class="flex items-center gap-2 font-body-md text-body-md text-on-surface-variant">
-              <span class="material-symbols-outlined text-sm text-[{{color.primary}}]">location_on</span>
-              <span class="truncate">{{store.address}}</span>
-            </div>
-            <div class="flex items-center gap-2 font-body-md text-body-md text-on-surface-variant">
-              <span class="material-symbols-outlined text-sm text-[{{color.primary}}]">schedule</span>
-              <span>{{store.businessHours}}</span>
-            </div>
-            <div class="flex items-center gap-2 font-body-md text-body-md text-on-surface-variant">
-              <span class="material-symbols-outlined text-sm text-[{{color.primary}}]">payments</span>
-              <span>{{store.paymentMethods}}</span>
-            </div>
+          <div class="space-y-2.5 text-sm text-on-surface-variant">
+            {{#store.address}}<div class="truncate">{{store.address}}</div>{{/store.address}}
+            {{#store.businessHours}}<div>{{store.businessHours}}</div>{{/store.businessHours}}
+            {{#store.paymentMethods}}<div class="truncate">{{store.paymentMethods}}</div>{{/store.paymentMethods}}
           </div>
         </div>
       </div>
 
-      <!-- Column 3: Contact & CTA -->
-      <div class="md:col-span-4">
-        <h3 class="font-display-sm text-display-sm text-on-surface mb-6 relative inline-block">
-          Hubungi Kami
-          <span class="absolute -bottom-1 left-0 w-8 h-0.5 bg-gradient-to-r from-[{{color.primary}}] to-transparent"></span>
-        </h3>
-        <div class="space-y-4">
-          <a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="flex items-center gap-3 p-4 rounded-lg bg-gradient-to-r from-[{{color.primary}}]/10 to-transparent border border-[rgba(184,134,11,0.15)] group hover:from-[{{color.primary}}]/20 transition-all duration-300">
-            <div class="w-10 h-10 rounded-full bg-[{{color.primary}}]/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-              <span class="material-symbols-outlined text-[{{color.primary}}]">chat</span>
-            </div>
-            <div>
-              <p class="font-label-sm text-label-sm text-on-surface-variant">WhatsApp</p>
-              <p class="font-body-md text-body-md text-on-surface font-semibold">{{store.phone}}</p>
-            </div>
+      <!-- Column 3: Contact -->
+      <div>
+        <h3 class="font-bold text-on-surface mb-5 text-sm uppercase tracking-wider">Hubungi Kami</h3>
+        <div class="space-y-3">
+          <a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="flex items-center gap-3 p-3 rounded-lg bg-[{{color.primary}}]/5 border border-[rgba(184,134,11,0.1)] hover:bg-[{{color.primary}}]/10 transition-all">
+            <span class="material-symbols-outlined text-[{{color.primary}}] text-xl">chat</span>
+            <div class="min-w-0"><p class="text-xs text-on-surface-variant">WhatsApp</p><p class="text-sm text-on-surface font-semibold truncate">{{store.phone}}</p></div>
           </a>
           {{#contact.email}}
-          <a href="mailto:{{contact.email}}" class="flex items-center gap-3 p-4 rounded-lg bg-[rgba(184,134,11,0.03)] border border-[rgba(184,134,11,0.1)] group hover:bg-[rgba(184,134,11,0.08)] transition-all duration-300">
-            <div class="w-10 h-10 rounded-full bg-[{{color.primary}}]/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-              <span class="material-symbols-outlined text-[{{color.primary}}]">mail</span>
-            </div>
-            <div>
-              <p class="font-label-sm text-label-sm text-on-surface-variant">Email</p>
-              <p class="font-body-md text-body-md text-on-surface font-semibold">{{contact.email}}</p>
-            </div>
+          <a href="mailto:{{contact.email}}" class="flex items-center gap-3 p-3 rounded-lg bg-[rgba(184,134,11,0.03)] border border-[rgba(184,134,11,0.08)] hover:bg-[rgba(184,134,11,0.06)] transition-all">
+            <span class="material-symbols-outlined text-[{{color.primary}}] text-xl">mail</span>
+            <div class="min-w-0"><p class="text-xs text-on-surface-variant">Email</p><p class="text-sm text-on-surface font-semibold truncate">{{contact.email}}</p></div>
           </a>
           {{/contact.email}}
           {{#social.shopee}}
-          <a href="{{social.shopee}}" target="_blank" rel="noopener" class="flex items-center gap-3 p-4 rounded-lg bg-[rgba(184,134,11,0.03)] border border-[rgba(184,134,11,0.1)] group hover:bg-[rgba(184,134,11,0.08)] transition-all duration-300">
-            <div class="w-10 h-10 rounded-full bg-[{{color.primary}}]/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-              <span class="material-symbols-outlined text-[{{color.primary}}]">shopping_bag</span>
-            </div>
-            <div>
-              <p class="font-label-sm text-label-sm text-on-surface-variant">Belanja Online</p>
-              <p class="font-body-md text-body-md text-on-surface font-semibold">Shopee</p>
-            </div>
+          <a href="{{social.shopee}}" target="_blank" rel="noopener" class="flex items-center gap-3 p-3 rounded-lg bg-[rgba(184,134,11,0.03)] border border-[rgba(184,134,11,0.08)] hover:bg-[rgba(184,134,11,0.06)] transition-all">
+            <span class="material-symbols-outlined text-[{{color.primary}}] text-xl">shopping_bag</span>
+            <div class="min-w-0"><p class="text-xs text-on-surface-variant">Shopee</p><p class="text-sm text-on-surface font-semibold">Kunjungi Toko</p></div>
           </a>
           {{/social.shopee}}
           {{#social.tokopedia}}
-          <a href="{{social.tokopedia}}" target="_blank" rel="noopener" class="flex items-center gap-3 p-4 rounded-lg bg-[rgba(184,134,11,0.03)] border border-[rgba(184,134,11,0.1)] group hover:bg-[rgba(184,134,11,0.08)] transition-all duration-300">
-            <div class="w-10 h-10 rounded-full bg-[{{color.primary}}]/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-              <span class="material-symbols-outlined text-[{{color.primary}}]">storefront</span>
-            </div>
-            <div>
-              <p class="font-label-sm text-label-sm text-on-surface-variant">Belanja Online</p>
-              <p class="font-body-md text-body-md text-on-surface font-semibold">Tokopedia</p>
-            </div>
+          <a href="{{social.tokopedia}}" target="_blank" rel="noopener" class="flex items-center gap-3 p-3 rounded-lg bg-[rgba(184,134,11,0.03)] border border-[rgba(184,134,11,0.08)] hover:bg-[rgba(184,134,11,0.06)] transition-all">
+            <span class="material-symbols-outlined text-[{{color.primary}}] text-xl">storefront</span>
+            <div class="min-w-0"><p class="text-xs text-on-surface-variant">Tokopedia</p><p class="text-sm text-on-surface font-semibold">Kunjungi Toko</p></div>
           </a>
           {{/social.tokopedia}}
         </div>
@@ -147,21 +75,12 @@
 
   <!-- Bottom Bar -->
   <div class="border-t border-[rgba(184,134,11,0.1)]">
-    <div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop py-6 flex flex-col md:flex-row justify-between items-center gap-4">
-      <p class="font-label-sm text-label-sm text-on-surface-variant">
-        &copy; 2026 {{store.businessName}}. All rights reserved.
-      </p>
-      <div class="flex gap-6 font-label-sm text-label-sm text-on-surface-variant">
-        {{#contact.mapsUrl}}<a href="{{contact.mapsUrl}}" target="_blank" rel="noopener" class="hover:text-[{{color.primary}}] transition-colors duration-300">Lokasi</a>{{/contact.mapsUrl}}
-        <a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="hover:text-[{{color.primary}}] transition-colors duration-300">Dukungan</a>
-        {{#store.shippingInfo}}
-        <span class="hover:text-[{{color.primary}}] transition-colors duration-300 cursor-default">Pengiriman</span>
-        {{/store.shippingInfo}}
+    <div class="max-w-7xl mx-auto px-6 md:px-12 py-5 flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-on-surface-variant">
+      <p>&copy; 2026 {{store.businessName}}</p>
+      <div class="flex gap-4">
+        {{#contact.mapsUrl}}<a href="{{contact.mapsUrl}}" target="_blank" rel="noopener" class="hover:text-[{{color.primary}}] transition-colors">Lokasi</a>{{/contact.mapsUrl}}
+        <a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="hover:text-[{{color.primary}}] transition-colors">Dukungan</a>
       </div>
     </div>
   </div>
-
-  <!-- Decorative Corner Elements -->
-  <div class="absolute bottom-0 right-0 w-32 h-32 border-r-2 border-b-2 border-[rgba(184,134,11,0.08)] rounded-br-3xl"></div>
-  <div class="absolute top-0 left-0 w-24 h-24 border-l-2 border-t-2 border-[rgba(184,134,11,0.06)] rounded-tl-3xl"></div>
 </footer>
