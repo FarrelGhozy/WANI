@@ -4,6 +4,7 @@
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
   <title>{{store.businessName}} | Timeless Elegance</title>
+  {{#favicon.has}}<link rel="icon" href="{{favicon.url}}" />{{/favicon.has}}{{^favicon.has}}<link rel="icon" href="{{favicon.svg}}" />{{/favicon.has}}
   <!-- Google Fonts: Bodoni Moda for headlines, Plus Jakarta Sans for body -->
   <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&amp;family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&amp;display=swap" rel="stylesheet"/>
   <!-- Material Symbols Outlined -->
