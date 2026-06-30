@@ -59,6 +59,7 @@ services:
       - "3001"
     volumes:
       - generated-sites:/app/generated-sites
+      - uploads:/app/uploads
     restart: unless-stopped
     networks: [wani]
     healthcheck:
@@ -117,6 +118,7 @@ services:
 volumes:
   pgdata:
   generated-sites:
+  uploads:
 
 networks:
   wani:
