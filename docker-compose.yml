@@ -58,7 +58,7 @@ services:
     expose:
       - "3001"
     volumes:
-      - generated-sites:/app/generated-sites
+      - generated-sites:/app/api/generated-sites
     restart: unless-stopped
     networks: [wani]
     healthcheck:

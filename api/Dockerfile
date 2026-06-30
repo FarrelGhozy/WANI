@@ -16,8 +16,8 @@ COPY web-gen/ /app/web-gen/
 
 RUN DATABASE_URL="postgresql://dummy:dummy@db:5432/wani_api" bun prisma generate
 
-# Pre-build Tailwind CSS for web-gen templates
-RUN cd /app/web-gen && bun run src/build-css.ts
+# Pre-build fonts + Tailwind CSS for web-gen templates
+RUN cd /app/web-gen && bun run src/build-fonts.ts && bun run src/build-css.ts
 
 RUN bun build ./src/index.ts --target=bun --outfile=./dist/index.js
 

@@ -7,8 +7,9 @@ import {
   writeFileSync,
   readFileSync,
   readdirSync,
+  copyFileSync,
 } from "node:fs";
-import { join } from "node:path";
+import { join, dirname } from "node:path";
 import { tmpdir } from "node:os";
 import { spawnSync } from "node:child_process";
 import type { GenerateParams, GenerateResult, ProductData } from "./types.ts";
@@ -72,6 +73,9 @@ function generateHtml(
   if (existsSync(outDir)) rmSync(outDir, { recursive: true, force: true });
   mkdirSync(outDir, { recursive: true });
 
+  // shared fonts dir (per-template fallback to shared)
+  const fontsSrc = join(dirname(TEMPLATES_DIR), "assets", "fonts");
+
   for (const page of pages) {
     let html = readFileSync(join(templatePath, page), "utf-8");
 
@@ -79,6 +83,10 @@ function generateHtml(
     for (const [name, content] of Object.entries(partials)) {
       html = html.replaceAll(`{{>${name}}}`, content);
     }
+
+    // strip Google Fonts CDN links, inject local fonts.css
+    html = html.replace(/<link[^>]*fonts\.(googleapis|gstatic)\.com[^>]*>/gi, "");
+    html = html.replace("</head>", '<link href="./assets/fonts.css" rel="stylesheet"/></head>');
 
     // product loop
     html = html.replace(
@@ -130,6 +138,10 @@ function generateHtml(
   const assetsDir = join(templatePath, "assets");
   if (existsSync(assetsDir)) {
     cpSync(assetsDir, join(outDir, "assets"), { recursive: true, force: true });
+  }
+  // copy shared fonts to output
+  if (existsSync(fontsSrc)) {
+    cpSync(fontsSrc, join(outDir, "assets"), { recursive: true, force: true });
   }
   return { success: true, outputPath: outDir };
 }
