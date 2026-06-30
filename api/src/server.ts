@@ -40,7 +40,7 @@ app.use("/s/preview", (_req, res) => {
 
 app.use("/s", express.static(generatedDir))
 
-const uploadsDir = path.resolve(import.meta.dir, "..", "uploads")
+const uploadsDir = path.resolve(process.cwd(), "uploads")
 app.use("/uploads", express.static(uploadsDir))
 
 app.use((_req, res) => {

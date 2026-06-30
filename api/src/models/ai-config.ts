@@ -18,7 +18,7 @@ export class AiConfigModel extends BaseModel {
         data: {
           id: "default",
           systemPrompt: "",
-          model: "opencode/deepseek-v4-flash-free",
+          model: "deepseek-v4-flash-free",
           maxTokens: 2048,
           temperature: 0.7,
         },

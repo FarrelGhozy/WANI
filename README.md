@@ -59,7 +59,7 @@ Semua konfigurasi lewat `.env` (root project). Lihat [`.env.example`](.env.examp
 | `API_TOKEN` | ✅ | — | Shared secret bot↔API auth |
 | `JWT_SECRET` | ✅ | — | Secret untuk JWT auth |
 | `OPENROUTER_API_KEY` | ✅ | — | API key LLM provider (dapat gratis di openrouter.ai) |
-| `LLM_MODEL` | | `opencode/deepseek-v4-flash-free` | Model utama |
+| `LLM_MODEL` | | `deepseek-v4-flash-free` | Model utama |
 | `LLM_FALLBACK_MODEL` | | `google/gemini-2.0-flash-exp:free` | Cadangan |
 
 ---

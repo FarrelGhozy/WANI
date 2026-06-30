@@ -5,7 +5,7 @@ import multer from "multer"
 import { sendResponse } from "@/src/utils/response"
 import { BadRequestError } from "@/src/utils/errors"
 
-const UPLOADS_DIR = path.resolve(import.meta.dir, "..", "..", "uploads")
+const UPLOADS_DIR = path.resolve(process.cwd(), "uploads")
 
 const ALLOWED_TYPES = ["image/png", "image/jpeg", "image/webp"]
 
