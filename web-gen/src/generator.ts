@@ -273,7 +273,6 @@ function buildContext(params: GenerateParams): Record<string, unknown> {
     "store.phone": store.phone,
     "store.address": store.address ?? "",
     "store.businessHours": store.businessHours ?? "",
-    "store.hours": store.businessHours ?? "",
     "store.paymentMethods": store.paymentMethods ?? "",
     "store.shippingInfo": store.shippingInfo ?? "",
     "store.returnPolicy": store.returnPolicy ?? "",
@@ -312,7 +311,6 @@ function buildContext(params: GenerateParams): Record<string, unknown> {
     "wa.text": encodeURIComponent(
       config.waOrderTemplate ?? buildDefaultWaTemplate(),
     ),
-    "wa.phone": store.phone,
     "placeholders.hero": makePlaceholderSvg(p, s, "Hero"),
     "placeholders.about": makePlaceholderSvg(p, s, "Tentang"),
     "placeholders.product": makePlaceholderSvg("#f5f5f4", "#e7e5e4", "Produk"),
@@ -322,12 +320,9 @@ function buildContext(params: GenerateParams): Record<string, unknown> {
 
 function buildDefaultWaTemplate(): string {
   return [
-    `Halo {store.businessName}, saya tertarik dengan produk berikut:`,
+    `Halo, saya tertarik dengan produk yang ada di katalog.`,
     ``,
-    `\u2022 {product.name}`,
-    `\u2022 Harga: Rp {product.price}`,
-    ``,
-    `Apakah produk ini tersedia? Mohon info cara pemesanan dan pembayaran. Terima kasih.`,
+    `Mohon info cara pemesanan dan pembayaran. Terima kasih.`,
   ].join("\n");
 }
 
