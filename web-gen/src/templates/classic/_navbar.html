@@ -66,19 +66,19 @@
   <!-- Mobile Menu -->
   <div id="mobile-menu" class="hidden md:hidden border-t border-[rgba(184,134,11,0.1)] bg-surface/95 backdrop-blur-xl">
     <div class="flex flex-col px-margin-mobile py-6 space-y-2">
-      <a href="./" class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 {{#page.beranda}}bg-[{{color.primary}}]/10 text-[{{color.primary}}] font-semibold border-l-2 border-[{{color.primary}}]{{/page.beranda}}{{^page.beranda}}text-on-surface-variant hover:bg-[rgba(184,134,11,0.05)] hover:text-[{{color.primary}}]{{/page.beranda}}">
+      <a href="./" onclick="document.getElementById('mobile-menu').classList.add('hidden')" class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 {{#page.beranda}}bg-[{{color.primary}}]/10 text-[{{color.primary}}] font-semibold border-l-2 border-[{{color.primary}}]{{/page.beranda}}{{^page.beranda}}text-on-surface-variant hover:bg-[rgba(184,134,11,0.05)] hover:text-[{{color.primary}}]{{/page.beranda}}">
         <span class="material-symbols-outlined text-sm">home</span>
         Beranda
       </a>
-      <a href="./produk.html" class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 {{#page.produk}}bg-[{{color.primary}}]/10 text-[{{color.primary}}] font-semibold border-l-2 border-[{{color.primary}}]{{/page.produk}}{{^page.produk}}text-on-surface-variant hover:bg-[rgba(184,134,11,0.05)] hover:text-[{{color.primary}}]{{/page.produk}}">
+      <a href="./produk.html" onclick="document.getElementById('mobile-menu').classList.add('hidden')" class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 {{#page.produk}}bg-[{{color.primary}}]/10 text-[{{color.primary}}] font-semibold border-l-2 border-[{{color.primary}}]{{/page.produk}}{{^page.produk}}text-on-surface-variant hover:bg-[rgba(184,134,11,0.05)] hover:text-[{{color.primary}}]{{/page.produk}}">
         <span class="material-symbols-outlined text-sm">inventory_2</span>
         Produk
       </a>
-      <a href="./tentang.html" class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 {{#page.tentang}}bg-[{{color.primary}}]/10 text-[{{color.primary}}] font-semibold border-l-2 border-[{{color.primary}}]{{/page.tentang}}{{^page.tentang}}text-on-surface-variant hover:bg-[rgba(184,134,11,0.05)] hover:text-[{{color.primary}}]{{/page.tentang}}">
+      <a href="./tentang.html" onclick="document.getElementById('mobile-menu').classList.add('hidden')" class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 {{#page.tentang}}bg-[{{color.primary}}]/10 text-[{{color.primary}}] font-semibold border-l-2 border-[{{color.primary}}]{{/page.tentang}}{{^page.tentang}}text-on-surface-variant hover:bg-[rgba(184,134,11,0.05)] hover:text-[{{color.primary}}]{{/page.tentang}}">
         <span class="material-symbols-outlined text-sm">store</span>
         Tentang
       </a>
-      <a href="./kontak.html" class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 {{#page.kontak}}bg-[{{color.primary}}]/10 text-[{{color.primary}}] font-semibold border-l-2 border-[{{color.primary}}]{{/page.kontak}}{{^page.kontak}}text-on-surface-variant hover:bg-[rgba(184,134,11,0.05)] hover:text-[{{color.primary}}]{{/page.kontak}}">
+      <a href="./kontak.html" onclick="document.getElementById('mobile-menu').classList.add('hidden')" class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 {{#page.kontak}}bg-[{{color.primary}}]/10 text-[{{color.primary}}] font-semibold border-l-2 border-[{{color.primary}}]{{/page.kontak}}{{^page.kontak}}text-on-surface-variant hover:bg-[rgba(184,134,11,0.05)] hover:text-[{{color.primary}}]{{/page.kontak}}">
         <span class="material-symbols-outlined text-sm">call</span>
         Kontak
       </a>
