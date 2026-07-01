@@ -209,6 +209,24 @@ export class OrderModel extends BaseModel {
           data: { status: newStatus, stockReleased: true },
         })
       })
+    } else if (newStatus === "CANCELLED" && current.stockReleased) {
+      await this.db.$transaction(async (tx) => {
+        const items = await tx.orderItem.findMany({
+          where: { orderId: id },
+        })
+
+        for (const item of items) {
+          await tx.product.update({
+            where: { id: item.productId },
+            data: { stock: { increment: item.qty } },
+          })
+        }
+
+        await tx.order.update({
+          where: { id },
+          data: { status: newStatus, stockReleased: false },
+        })
+      })
     } else {
       await this.delegate.update({
         where: { id },
