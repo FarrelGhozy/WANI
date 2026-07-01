@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react'
 import { useSettings } from '@/hooks/useSettings.ts'
-import { useWaStatus } from '@/hooks/useWaStatus.ts'
+import { useWaStatusContext } from '@/contexts/WaStatusContext.tsx'
 import { useToast } from '@/hooks/useToast.ts'
 import { fetchApi } from '@/lib/api.ts'
 import StoreTab from '@/components/StoreTab.tsx'
@@ -21,7 +21,7 @@ export default function Settings() {
     setActiveTab(tab)
   }
   const { store, aiConfig, error, updateStore, updateAiConfig, loading, reload } = useSettings()
-  const { qr: liveQr, connection: liveConn, phone: livePhone, connectedAt: liveConnectedAt } = useWaStatus()
+  const { qr: liveQr, connection: liveConn, phone: livePhone, connectedAt: liveConnectedAt } = useWaStatusContext()
   const { toast } = useToast()
 
   const [override, setOverride] = useState<{ connection: string; qr: string; phone: string } | null>(null)

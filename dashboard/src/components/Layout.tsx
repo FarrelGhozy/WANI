@@ -4,11 +4,11 @@ import BottomNav from '@/components/BottomNav.tsx'
 import Topbar from '@/components/Topbar.tsx'
 import ToastContainer from '@/components/ui/Toast.tsx'
 import { useToast } from '@/hooks/useToast.ts'
-import { useWaStatus } from '@/hooks/useWaStatus.ts'
+import { useWaStatusContext } from '@/contexts/WaStatusContext.tsx'
 import { useSettings } from '@/hooks/useSettings.ts'
 
 export default function Layout() {
-  const { connection } = useWaStatus()
+  const { connection } = useWaStatusContext()
   const { store } = useSettings()
   const { toasts, removeToast } = useToast()
 

@@ -2,6 +2,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router'
 import AuthLayout from '@/components/AuthLayout.tsx'
 import Layout from '@/components/Layout.tsx'
 import ProtectedRoute from '@/components/ProtectedRoute.tsx'
+import { WaStatusProvider } from '@/contexts/WaStatusContext.tsx'
 import LoginPage from '@/pages/LoginPage.tsx'
 import SignUpPage from '@/pages/SignUpPage.tsx'
 import ForgotPasswordPage from '@/pages/ForgotPasswordPage.tsx'
@@ -24,7 +25,7 @@ const router = createBrowserRouter([
     ],
   },
   {
-    element: <ProtectedRoute><Layout /></ProtectedRoute>,
+    element: <ProtectedRoute><WaStatusProvider><Layout /></WaStatusProvider></ProtectedRoute>,
     children: [
       { index: true,           element: <Dashboard /> },
       { path: 'products',      element: <Products /> },
