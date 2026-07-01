@@ -24,6 +24,11 @@ export const env = {
     temperature: num("LLM_TEMPERATURE", 0.7)
   },
 
+  auth: {
+    jwtSecret: process.env.JWT_SECRET ?? "",
+    jwtExpires: process.env.JWT_EXPIRES ?? "7d"
+  },
+
   guardrails: {
     maxInputChars: num("MAX_INPUT_CHARS", 4000),
     maxReplyChars: num("MAX_REPLY_CHARS", 1500),
