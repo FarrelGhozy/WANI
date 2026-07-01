@@ -72,6 +72,7 @@ export interface GenerateParams {
   config: SiteConfig
   stats: OrdersStats
   outputDir: string
+  uploadsDir?: string
 }
 
 export interface GenerateResult {

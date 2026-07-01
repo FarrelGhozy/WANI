@@ -15,6 +15,7 @@ type UpdateWebsiteBody = z.infer<typeof updateWebsiteSchema>
 type GenerateWebsiteBody = z.infer<typeof generateWebsiteSchema>
 
 const GENERATED_DIR = path.resolve(import.meta.dir, "..", "generated-sites")
+const UPLOADS_DIR = path.resolve(import.meta.dir, "..", "..", "uploads")
 
 function getConfigValue<T>(config: any, key: string, fallback: T): T {
   return config?.[key] ?? fallback
@@ -126,6 +127,7 @@ export async function generateWebsite(
       pending: stats.pending,
     },
     outputDir,
+    uploadsDir: UPLOADS_DIR,
   })
 
   if (!result.success) {

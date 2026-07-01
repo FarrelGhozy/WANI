@@ -137,9 +137,11 @@ function generateHtml(
       },
     );
 
-    // simple replacements
+    // simple replacements — {{var}} escaped, {{{var}}} raw
     for (const [k, v] of Object.entries({ ...fullCtx, ...pageCtx })) {
-      html = html.replaceAll(`{{${k}}}`, String(v ?? ""));
+      const val = String(v ?? "");
+      html = html.replaceAll(`{{${k}}}`, escapeHtml(val));
+      html = html.replaceAll(`{{{${k}}}}`, val);
     }
 
     // ponytail: "index" → index.html for clean URL, others keep name
@@ -169,9 +171,12 @@ function generateHtml(
 function renderItem(block: string, item: ProductData): string {
   let out = block;
   for (const [k, v] of Object.entries(item)) {
-    out = out.replaceAll(`{{.${k}}}`, String(v ?? ""));
+    const val = String(v ?? "");
+    out = out.replaceAll(`{{.${k}}}`, escapeHtml(val));
+    out = out.replaceAll(`{{{.${k}}}}`, val);
   }
-  out = out.replaceAll(/{{\.\w+}}/g, ""); // cleanup unused
+  out = out.replaceAll(/{{\.\w+}}/g, ""); // cleanup unused escaped
+  out = out.replaceAll(/\{\{\{\.\w+\}\}\}/g, ""); // cleanup unused raw
   return out;
 }
 
@@ -332,42 +337,49 @@ function buildDefaultWaTemplate(): string {
 function makePlaceholderSvg(primary: string, secondary: string, label: string): string {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
 <defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
-<stop offset="0%" style="stop-color:${escapeXml(primary)}33"/>
-<stop offset="100%" style="stop-color:${escapeXml(secondary)}44"/>
+<stop offset="0%" style="stop-color:${escapeHtml(primary)}33"/>
+<stop offset="100%" style="stop-color:${escapeHtml(secondary)}44"/>
 </linearGradient></defs>
 <rect fill="url(#g)" width="800" height="600"/>
-<rect fill="none" stroke="${escapeXml(primary)}22" stroke-width="1" x="40" y="40" width="720" height="520"/>
-<text x="400" y="310" text-anchor="middle" dominant-baseline="middle" font-family="system-ui,sans-serif" font-size="28" font-weight="600" fill="${escapeXml(primary)}66">${escapeXml(label)}</text>
+<rect fill="none" stroke="${escapeHtml(primary)}22" stroke-width="1" x="40" y="40" width="720" height="520"/>
+<text x="400" y="310" text-anchor="middle" dominant-baseline="middle" font-family="system-ui,sans-serif" font-size="28" font-weight="600" fill="${escapeHtml(primary)}66">${escapeHtml(label)}</text>
 </svg>`;
   return `data:image/svg+xml,${encodeURIComponent(svg)}`;
 }
 
-function escapeXml(s: string): string {
-  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+function escapeHtml(s: string): string {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 }
 
 function makeFaviconSvg(initial: string, color: string): string {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-<rect width="32" height="32" rx="6" fill="${escapeXml(color)}"/>
-<text x="16" y="22" text-anchor="middle" font-family="system-ui,sans-serif" font-size="18" font-weight="700" fill="white">${escapeXml(initial)}</text>
+<rect width="32" height="32" rx="6" fill="${escapeHtml(color)}"/>
+<text x="16" y="22" text-anchor="middle" font-family="system-ui,sans-serif" font-size="18" font-weight="700" fill="white">${escapeHtml(initial)}</text>
 </svg>`;
   return `data:image/svg+xml,${encodeURIComponent(svg)}`;
 }
 
 type ImageMap = Record<string, string>;
 
+function resolveUploadsDir(params: GenerateParams): string {
+  if (params.uploadsDir) return params.uploadsDir;
+  if (process.env.UPLOADS_DIR) return process.env.UPLOADS_DIR;
+  // fallback: assumes web-gen and api are sibling directories
+  return join(dirname(TEMPLATES_DIR), "..", "api", "uploads");
+}
+
 function copyAssetImages(params: GenerateParams, outDir: string): ImageMap {
   const imagesDir = join(outDir, "assets", "images");
   mkdirSync(imagesDir, { recursive: true });
 
   const imageMap: ImageMap = {};
+  const uploadsDir = resolveUploadsDir(params);
 
   function resolveImage(sourceUrl: string | null | undefined, destName: string): string | null {
     if (!sourceUrl) return null;
 
     // Local uploads: resolve from the uploads directory
     if (sourceUrl.startsWith("/uploads/")) {
-      const uploadsDir = join(dirname(TEMPLATES_DIR), "..", "api", "uploads");
       const filename = sourceUrl.split("/").pop() ?? destName;
       const sourcePath = join(uploadsDir, filename);
       if (existsSync(sourcePath)) {
