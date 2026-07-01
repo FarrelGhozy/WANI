@@ -3,6 +3,7 @@ import { Link } from 'react-router'
 import { MailIcon } from '@/components/Icons.tsx'
 import Button from '@/components/ui/Button.tsx'
 import Input from '@/components/ui/Input.tsx'
+import { fetchApi } from '@/lib/api.ts'
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
@@ -24,10 +25,18 @@ export default function ForgotPasswordPage() {
     }
     setLoading(true)
     setError(null)
-    // Mock: simulate API call
-    await new Promise((r) => setTimeout(r, 1500))
-    setLoading(false)
-    setSubmitted(true)
+    try {
+      await fetchApi('/api/auth/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      })
+      setSubmitted(true)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Gagal mengirim email')
+    } finally {
+      setLoading(false)
+    }
   }
 
   if (submitted) {

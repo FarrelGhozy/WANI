@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router'
-import { useWaStatus } from '@/hooks/useWaStatus.ts'
+import { useWaStatusContext } from '@/contexts/WaStatusContext.tsx'
 import { useOrders } from '@/hooks/useOrders.ts'
 import { useProducts } from '@/hooks/useProducts.ts'
 import { useCustomers } from '@/hooks/useCustomers.ts'
@@ -46,7 +46,7 @@ function connectionLabel(status: string): string {
 
 export default function Dashboard() {
   const navigate = useNavigate()
-  const { qr, connection, phone, loading: waLoading } = useWaStatus()
+  const { qr, connection, phone, loading: waLoading } = useWaStatusContext()
   const { allOrders, loading: ordersLoading } = useOrders()
   const { products, loading: prodLoading } = useProducts()
   const { allCustomers, loading: custLoading } = useCustomers()

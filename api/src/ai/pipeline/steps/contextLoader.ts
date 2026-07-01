@@ -2,7 +2,6 @@ import { StoreModel } from "@/src/models/store"
 import { ProductModel } from "@/src/models/catalog"
 import { AiConfigModel } from "@/src/models/ai-config"
 import { StorePaymentMethodModel } from "@/src/models/store-payment"
-import { env } from "@/src/config/env"
 import type { PipelineStep } from "../types"
 
 /**
@@ -37,7 +36,7 @@ export const contextLoaderStep: PipelineStep = {
 
     // --- build store info ---
     ctx.storeInfo = {
-      businessName: store?.businessName ?? env.ai.defaultModel,
+      businessName: store?.businessName ?? "",
       phone: store?.phone ?? "",
       address: store?.address ?? null,
       businessHours: store?.businessHours ?? null,

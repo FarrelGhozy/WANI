@@ -17,12 +17,15 @@ type LoginBody = z.infer<typeof loginSchema>
 type ForgotPasswordBody = z.infer<typeof forgotPasswordSchema>
 type ResetPasswordBody = z.infer<typeof resetPasswordSchema>
 
-const JWT_SECRET = process.env.JWT_SECRET ?? "wani-dev-secret-change-in-production"
-const JWT_EXPIRES = "7d"
+function getJwtSecret(): string {
+  const secret = process.env.JWT_SECRET
+  if (secret) return secret
+  throw new Error("JWT_SECRET not configured")
+}
 
 function signToken(user: { id: string; email: string; role: string }): string {
-  return jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, {
-    expiresIn: JWT_EXPIRES,
+  return jwt.sign({ id: user.id, email: user.email, role: user.role }, getJwtSecret(), {
+    expiresIn: (process.env.JWT_EXPIRES || "7d") as unknown as number,
   })
 }
 
@@ -104,8 +107,9 @@ export async function forgotPassword(
     })
 
     // TODO: send email with reset link
-    // For now, just return the token in response for testing
-    sendResponse(res, 200, "reset link sent", { resetToken })
+    // Log for development debugging
+    console.log(`[DEV] Password reset token for ${req.body.email}: ${resetToken}`)
+    sendResponse(res, 200, "reset link sent")
     return
   }
 
