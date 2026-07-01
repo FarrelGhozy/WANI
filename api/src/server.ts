@@ -7,11 +7,14 @@ import routes from "@/src/routes"
 import { morganStream } from "@/src/config/logger"
 import { errorHandler } from "@/src/middleware/error"
 import { sendResponse } from "@/src/utils/response"
+import { metricsMiddleware } from "@/src/config/metrics"
 
 export const app = express()
 
 app.disable("x-powered-by")
 app.set("etag", false)
+
+app.use(metricsMiddleware)
 
 app.use(
   helmet({

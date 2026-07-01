@@ -22,6 +22,7 @@
     "morgan": "^1",
     "multer": "^2.2.0",
     "pg": "^8",
+    "prom-client": "^15.1.3",
     "winston": "^3",
     "zod": "^4"
   },

@@ -14,6 +14,7 @@ import authRoutes from "@/src/routes/auth"
 import websiteRoutes from "@/src/routes/website"
 import uploadRoutes from "@/src/routes/upload"
 import outgoingRoutes from "@/src/routes/outgoing"
+import monitoringRoutes from "@/src/routes/monitoring"
 import debugRoutes from "@/src/routes/debug"
 
 const router = Router()
@@ -34,6 +35,7 @@ router.use("/auth", authRoutes)
 router.use("/website", websiteRoutes)
 router.use("/upload", uploadRoutes)
 router.use("/outgoing", outgoingRoutes)
+router.use("/", monitoringRoutes)
 
 // Dev-only: pipeline traces, circuit breaker status/reset
 if (process.env.NODE_ENV !== "production") {

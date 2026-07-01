@@ -63,7 +63,7 @@ services:
     restart: unless-stopped
     networks: [wani]
     healthcheck:
-      test: ["CMD", "bun", "-e", "fetch('http://localhost:3001/api/store').then(r => process.exit(r.ok?0:1)).catch(() => process.exit(1))"]
+      test: ["CMD", "bun", "-e", "fetch('http://localhost:3001/api/health').then(r => process.exit(r.ok?0:1)).catch(() => process.exit(1))"]
       interval: 10s
       timeout: 5s
       retries: 6
@@ -86,6 +86,12 @@ services:
       - "5173:80"
     restart: unless-stopped
     networks: [wani]
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:80"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 10s
     logging:
       driver: json-file
       options:
@@ -109,6 +115,12 @@ services:
       API_TOKEN: ${API_TOKEN}
     restart: unless-stopped
     networks: [wani]
+    healthcheck:
+      test: ["CMD-SHELL", "kill -0 1 2>/dev/null || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
     logging:
       driver: json-file
       options:
