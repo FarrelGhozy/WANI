@@ -11,7 +11,7 @@ export function useCustomers() {
   const [search, setSearch] = useState('')
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [conversation, setConversation] = useState<Conversation | null>(null)
-  const [convLoading] = useState(false)
+  const [convLoading, setConvLoading] = useState(false)
 
   const fetchCustomers = useCallback(async () => {
     const res = await fetchApi<{ items: Customer[]; total: number }>('/api/customers?limit=100')
@@ -35,9 +35,11 @@ export function useCustomers() {
   // Auto-load conversation when selected customer changes
   useEffect(() => {
     let cancelled = false
+    setConvLoading(true)
     ;(async () => {
       if (!selectedId) {
         if (!cancelled) setConversation(null)
+        setConvLoading(false)
         return
       }
       try {
@@ -88,6 +90,7 @@ export function useCustomers() {
       } catch {
         if (!cancelled) setConversation(null)
       }
+      if (!cancelled) setConvLoading(false)
     })()
     return () => { cancelled = true }
   }, [selectedId])
