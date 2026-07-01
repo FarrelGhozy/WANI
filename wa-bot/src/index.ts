@@ -24,6 +24,8 @@ let sock: WASocket | null = null;
 let pollTimer: ReturnType<typeof setInterval> | null = null;
 let connected = false;
 let cleanupRegistered = false;
+let reconnecting = false;
+let reconnectAttempt = 0;
 
 async function main() {
   const { state, saveCreds } = await usePrismaAuthState(prisma);
@@ -55,6 +57,8 @@ async function main() {
 
     if (connection === "open" || receivedPendingNotifications) {
       connected = true;
+      reconnectAttempt = 0;
+      reconnecting = false;
       const id = sock?.user?.id ?? state.creds.me?.id ?? "";
       const phoneNumber = id.split(":")[0]?.replace(/[^0-9]/g, "") || null;
       logger.info({ connection, receivedPendingNotifications, phoneNumber }, "connected — clearing QR");
@@ -70,11 +74,20 @@ async function main() {
       const loggedOut = reason.includes("logged out");
       logger.info({ loggedOut, reason }, "connection closed");
       api.post("/api/qr", { status: "disconnected" }).catch(e => logger.error({ err: e?.response?.data ?? e }, "disconnect status failed"));
-      if (!loggedOut) {
-        logger.info("reconnecting...");
+      if (!loggedOut && !reconnecting) {
+        reconnecting = true;
+        reconnectAttempt++;
+        if (reconnectAttempt > 10) {
+          logger.error("max reconnect attempts reached, exiting");
+          process.exit(1);
+        }
+        const delay = Math.min(1000 * Math.pow(2, reconnectAttempt - 1), 30000);
+        logger.info({ attempt: reconnectAttempt, delay }, "reconnecting...");
         if (pollTimer) clearInterval(pollTimer);
         sock?.end(undefined);
-        main();
+        setTimeout(() => {
+          main().finally(() => { reconnecting = false; });
+        }, delay);
       }
     }
   });
@@ -135,7 +148,14 @@ async function main() {
       const st = data?.data;
       if (st?.status === "disconnected" && !st?.phone && !st?.qr) {
         logger.info("reset detected — logging out");
-        sock?.logout();
+        try {
+          await sock?.logout();
+          logger.info("logout successful");
+        } catch (logoutErr) {
+          logger.error({ err: String(logoutErr) }, "logout failed");
+        }
+        if (pollTimer) clearInterval(pollTimer);
+        sock?.end(undefined);
         process.exit(0);
       }
     } catch {}
