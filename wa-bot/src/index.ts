@@ -185,14 +185,24 @@ async function main() {
 
   if (!cleanupRegistered) {
     cleanupRegistered = true;
-    process.on("SIGINT", () => {
-      if (pollTimer) clearInterval(pollTimer);
+
+    async function gracefulShutdown(signal: string): Promise<void> {
+      logger.info({ signal }, "received signal — shutting down gracefully");
+      if (pollTimer) {
+        clearInterval(pollTimer);
+        pollTimer = null;
+      }
+      try {
+        await prisma.$disconnect();
+        logger.info("prisma disconnected");
+      } catch (err) {
+        logger.error({ err: String(err) }, "prisma disconnect failed");
+      }
       process.exit(0);
-    });
-    process.on("SIGTERM", () => {
-      if (pollTimer) clearInterval(pollTimer);
-      process.exit(0);
-    });
+    }
+
+    process.on("SIGINT", () => gracefulShutdown("SIGINT"));
+    process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
   }
 }
 
