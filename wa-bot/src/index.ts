@@ -24,8 +24,9 @@ let sock: WASocket | null = null;
 let pollTimer: ReturnType<typeof setInterval> | null = null;
 let connected = false;
 let cleanupRegistered = false;
-let reconnecting = false;
-let reconnectAttempt = 0;
+let isReconnecting = false;
+let reconnectAttempts = 0;
+let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
 
 async function main() {
   const { state, saveCreds } = await usePrismaAuthState(prisma);
@@ -56,9 +57,9 @@ async function main() {
     }
 
     if (connection === "open" || receivedPendingNotifications) {
+      reconnectAttempts = 0;
+      isReconnecting = false;
       connected = true;
-      reconnectAttempt = 0;
-      reconnecting = false;
       const id = sock?.user?.id ?? state.creds.me?.id ?? "";
       const phoneNumber = id.split(":")[0]?.replace(/[^0-9]/g, "") || null;
       logger.info({ connection, receivedPendingNotifications, phoneNumber }, "connected — clearing QR");
@@ -74,19 +75,19 @@ async function main() {
       const loggedOut = reason.includes("logged out");
       logger.info({ loggedOut, reason }, "connection closed");
       api.post("/api/qr", { status: "disconnected" }).catch(e => logger.error({ err: e?.response?.data ?? e }, "disconnect status failed"));
-      if (!loggedOut && !reconnecting) {
-        reconnecting = true;
-        reconnectAttempt++;
-        if (reconnectAttempt > 10) {
-          logger.error("max reconnect attempts reached, exiting");
+      if (!loggedOut && !isReconnecting) {
+        isReconnecting = true;
+        if (reconnectAttempts >= 10) {
+          logger.error("max reconnect attempts reached");
           process.exit(1);
         }
-        const delay = Math.min(1000 * Math.pow(2, reconnectAttempt - 1), 30000);
-        logger.info({ attempt: reconnectAttempt, delay }, "reconnecting...");
+        const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 30000);
+        reconnectAttempts++;
+        logger.info({ attempt: reconnectAttempts, delay }, "reconnecting...");
         if (pollTimer) clearInterval(pollTimer);
         sock?.end(undefined);
-        setTimeout(() => {
-          main().finally(() => { reconnecting = false; });
+        reconnectTimer = setTimeout(() => {
+          main().finally(() => { isReconnecting = false; });
         }, delay);
       }
     }
@@ -185,9 +186,12 @@ async function main() {
 
   if (!cleanupRegistered) {
     cleanupRegistered = true;
-
-    async function gracefulShutdown(signal: string): Promise<void> {
+    async function shutdown(signal: string): Promise<void> {
       logger.info({ signal }, "received signal — shutting down gracefully");
+      if (reconnectTimer) {
+        clearTimeout(reconnectTimer);
+        reconnectTimer = null;
+      }
       if (pollTimer) {
         clearInterval(pollTimer);
         pollTimer = null;
@@ -201,8 +205,8 @@ async function main() {
       process.exit(0);
     }
 
-    process.on("SIGINT", () => gracefulShutdown("SIGINT"));
-    process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
+    process.on("SIGINT", () => shutdown("SIGINT"));
+    process.on("SIGTERM", () => shutdown("SIGTERM"));
   }
 }
 
