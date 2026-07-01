@@ -104,8 +104,9 @@ export async function forgotPassword(
     })
 
     // TODO: send email with reset link
-    // For now, just return the token in response for testing
-    sendResponse(res, 200, "reset link sent", { resetToken })
+    // Log for development debugging
+    console.log(`[DEV] Password reset token for ${req.body.email}: ${resetToken}`)
+    sendResponse(res, 200, "reset link sent")
     return
   }
 
