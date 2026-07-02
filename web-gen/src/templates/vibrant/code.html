@@ -7,88 +7,9 @@
   {{#favicon.has}}<link rel="icon" href="{{favicon.url}}" />{{/favicon.has}}{{^favicon.has}}<link rel="icon" href="{{favicon.svg}}" />{{/favicon.has}}
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=JetBrains+Mono:wght@100..900&amp;family=Plus+Jakarta+Sans:wght@100..900&amp;display=swap" rel="stylesheet" />
-  <link href="./assets/tailwind.css" rel="stylesheet" />
+  <link href="./assets/style.css" rel="stylesheet" />
   <style>
     :root{ {{color.vars}} }
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--accent-orange, #FF6B00), var(--accent-purple, #8B5CF6)); border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: #a0a0a0b0; }
-  </style>
-  <style>
-    .material-symbols-outlined {
-      font-family: 'Material Symbols Outlined' !important; font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-      display: inline-block;
-      line-height: 1;
-    }
-    .vibrant-gradient {
-      background: linear-gradient(135deg, #FF6B00, #8B5CF6, #10B981);
-    }
-    .vibrant-gradient-text {
-      background: linear-gradient(135deg, #FF6B00, #8B5CF6);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .glass-card {
-      background: rgba(255, 255, 255, 0.7);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-    }
-    .floating {
-      animation: floating 3s ease-in-out infinite;
-    }
-    .floating-delayed {
-      animation: floating 4s ease-in-out infinite 1s;
-    }
-    @keyframes floating {
-      0%, 100% { transform: translateY(0px) rotate(0deg); }
-      50% { transform: translateY(-15px) rotate(2deg); }
-    }
-    .reveal {
-      opacity: 0;
-      transform: translateY(30px);
-      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .reveal.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    .reveal-left {
-      opacity: 0;
-      transform: translateX(-40px);
-      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .reveal-left.visible {
-      opacity: 1;
-      transform: translateX(0);
-    }
-    .reveal-right {
-      opacity: 0;
-      transform: translateX(40px);
-      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .reveal-right.visible {
-      opacity: 1;
-      transform: translateX(0);
-    }
-    .reveal-scale {
-      opacity: 0;
-      transform: scale(0.92);
-      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .reveal-scale.visible {
-      opacity: 1;
-      transform: scale(1);
-    }
-    .text-balance {
-      text-wrap: balance;
-    }
-    @media (prefers-reduced-motion: reduce) {
-      .floating, .floating-delayed { animation: none; }
-      .reveal, .reveal-left, .reveal-right, .reveal-scale { opacity: 1; transform: none; }
-    }
   </style>
 </head>
 <body class="bg-background text-on-background font-body-md selection:bg-primary selection:text-on-primary overflow-x-hidden">
@@ -235,7 +156,7 @@
     </div>
 
     <!-- Product Bento Grid -->
-    <div class="flex flex-wrap justify-center gap-4 md:gap-5 [&>*]:w-[calc(50%-0.5rem)] md:[&>*]:w-[calc(33.333%-0.75rem)] lg:[&>*]:w-[calc(25%-1rem)]">
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
       {{#products}}
       <div class="group reveal {{^.isAvailable}}opacity-70{{/.isAvailable}}">
         <div class="relative rounded-2xl overflow-hidden bg-surface-container-high aspect-square mb-3 shadow-lg shadow-black/5 group-hover:shadow-xl group-hover:shadow-black/10 transition-all duration-500">
