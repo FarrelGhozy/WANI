@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - "api/**"
+      - "web-gen/**"    # API image bundles web-gen templates
     # For production deployment using semantic versioning
     tags:
       - "api-v*.*.*"
@@ -14,6 +15,7 @@ on:
       - main
     paths:
       - "api/**"
+      - "web-gen/**"    # API image bundles web-gen templates
 
 permissions:
   contents: read
