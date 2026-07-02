@@ -94,8 +94,8 @@ function generateHtml(
       html = html.replaceAll(`{{>${name}}}`, content);
     }
 
-    // strip Google Fonts CDN links, inject local fonts.css
-    html = html.replace(/<link[^>]*fonts\.(googleapis|gstatic)\.com[^>]*>/gi, "");
+    // strip Google Fonts CDN links (but keep Material Symbols), inject local fonts.css
+    html = html.replace(/<link(?![^>]*Material\+Symbols)[^>]*fonts\.(googleapis|gstatic)\.com[^>]*>/gi, "");
     html = html.replace("</head>", '<link href="./assets/fonts.css" rel="stylesheet"/></head>');
 
     // product loop
@@ -174,9 +174,32 @@ function renderItem(block: string, item: ProductData): string {
     const val = String(v ?? "");
     out = out.replaceAll(`{{.${k}}}`, escapeHtml(val));
     out = out.replaceAll(`{{{.${k}}}}`, val);
+    const truthy = v !== null && v !== undefined && v !== false && v !== "";
+    const startTag = `{{#.${k}}}`;
+    const endTag = `{{/.${k}}}`;
+    const negTag = `{{^.${k}}}`;
+    while (out.includes(startTag)) {
+      const s = out.indexOf(startTag);
+      const e = out.indexOf(endTag, s);
+      if (e === -1) break;
+      const blockContent = out.slice(s + startTag.length, e);
+      // ponytail: nested blocks not supported
+      const before = out.slice(0, s);
+      const after = out.slice(e + endTag.length);
+      out = truthy ? before + blockContent + after : before + after;
+    }
+    while (out.includes(negTag)) {
+      const s = out.indexOf(negTag);
+      const e = out.indexOf(endTag, s);
+      if (e === -1) break;
+      const blockContent = out.slice(s + negTag.length, e);
+      const before = out.slice(0, s);
+      const after = out.slice(e + endTag.length);
+      out = truthy ? before + after : before + blockContent + after;
+    }
   }
-  out = out.replaceAll(/{{\.\w+}}/g, ""); // cleanup unused escaped
-  out = out.replaceAll(/\{\{\{\.\w+\}\}\}/g, ""); // cleanup unused raw
+  out = out.replaceAll(/{{\.\w+}}/g, "");
+  out = out.replaceAll(/\{\{\{\.\w+\}\}\}/g, "");
   return out;
 }
 
