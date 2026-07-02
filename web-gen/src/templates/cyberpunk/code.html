@@ -13,7 +13,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
 
   <!-- Tailwind & Color Vars -->
-  <link href="./assets/tailwind.css" rel="stylesheet" />
+  <link href="./assets/style.css" rel="stylesheet" />
   <style>:root{ {{color.vars}} }</style>
 
   <!-- Cyberpunk Theme Styles -->
@@ -269,7 +269,7 @@
          STATS COUNTER SECTION
          ============================================================ -->
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
-      <div class="flex flex-wrap justify-center gap-4 lg:gap-5 [&>*]:w-[calc(50%-0.5rem)] md:[&>*]:w-[calc(25%-1rem)]">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-5">
         <div class="cyber-card rounded-lg p-6 text-center reveal">
           <div class="text-3xl lg:text-4xl font-bold stat-value mb-1" data-count="{{stats.totalOrders}}">{{stats.totalOrders}}{{^stats.totalOrders}}0{{/stats.totalOrders}}</div>
           <div class="text-xs font-['JetBrains_Mono'] text-[#555568] uppercase tracking-wider">Total Pesanan</div>
@@ -311,7 +311,7 @@
       </div>
 
       <!-- Product Grid -->
-      <div class="flex flex-wrap justify-center gap-4 lg:gap-5 [&>*]:w-full sm:[&>*]:w-[calc(50%-0.5rem)] lg:[&>*]:w-[calc(33.333%-0.75rem)] xl:[&>*]:w-[calc(25%-1rem)]">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-5">
         {{#products}}
         <div class="cyber-card rounded-lg overflow-hidden group reveal transition-all duration-300 hover:-translate-y-1">
           <!-- Product Image -->

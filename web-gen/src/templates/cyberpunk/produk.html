@@ -13,7 +13,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
 
   <!-- Tailwind & Color Vars -->
-  <link href="./assets/tailwind.css" rel="stylesheet" />
+  <link href="./assets/style.css" rel="stylesheet" />
   <style>:root{ {{color.vars}} }</style>
 
   <!-- Cyberpunk Theme Styles -->
@@ -115,7 +115,7 @@
       </div>
 
       <!-- Grid -->
-      <div class="flex flex-wrap justify-center gap-4 lg:gap-5 [&>*]:w-full sm:[&>*]:w-[calc(50%-0.5rem)] lg:[&>*]:w-[calc(33.333%-0.75rem)] xl:[&>*]:w-[calc(25%-1rem)]">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-5">
         {{#products}}
         <div class="cyber-card rounded-lg overflow-hidden group reveal transition-all duration-300 hover:-translate-y-1">
           <!-- Image -->

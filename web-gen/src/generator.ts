@@ -119,23 +119,25 @@ function generateHtml(
       pageCtx[`page.${p}`] = pageKey === p ? "1" : "";
     }
 
-    // conditional sections {{#key}}...{{/key}}
-    html = html.replace(
-      /{{#([a-zA-Z.]+)}}([\s\S]*?){{\/\1}}/g,
-      (_, key, block) => {
-        const val = fullCtx[key] ?? pageCtx[key];
-        return val && String(val).length > 0 ? block : "";
-      },
-    );
-
-    // negation sections {{^key}}...{{/key}}
-    html = html.replace(
-      /{{\^([a-zA-Z.]+)}}([\s\S]*?){{\/\1}}/g,
-      (_, key, block) => {
-        const val = fullCtx[key] ?? pageCtx[key];
-        return (val && String(val).length > 0) ? "" : block;
-      },
-    );
+    // conditional & negation sections — loop for nested sections
+    for (let i = 0; i < 10; i++) {
+      let before = html;
+      html = html.replace(
+        /{{#([a-zA-Z.]+)}}([\s\S]*?){{\/\1}}/g,
+        (_, key, block) => {
+          const val = fullCtx[key] ?? pageCtx[key];
+          return val && String(val).length > 0 ? block : "";
+        },
+      );
+      html = html.replace(
+        /{{\^([a-zA-Z.]+)}}([\s\S]*?){{\/\1}}/g,
+        (_, key, block) => {
+          const val = fullCtx[key] ?? pageCtx[key];
+          return (val && String(val).length > 0) ? "" : block;
+        },
+      );
+      if (html === before) break;
+    }
 
     // simple replacements — {{var}} escaped, {{{var}}} raw
     for (const [k, v] of Object.entries({ ...fullCtx, ...pageCtx })) {
