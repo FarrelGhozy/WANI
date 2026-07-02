@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&amp;family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&amp;display=swap" rel="stylesheet"/>
   <!-- Material Symbols Outlined -->
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-  <link href="./assets/tailwind.css" rel="stylesheet" />
+  <link href="./assets/style.css" rel="stylesheet" />
   <style>:root{ {{color.vars}} --color-secondary: {{color.secondary}}; }
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
@@ -51,7 +51,7 @@
     }
   </style>
 </head>
-<body class="bg-background text-on-background font-body-md selection:bg-[{{color.primary}}]/20 selection:text-on-background">
+<body class="bg-background text-on-background font-body-md">
 
 {{>navbar}}
 
@@ -72,8 +72,8 @@
         <div class="md:col-span-5 md:col-start-1 z-10">
           <div class="space-y-6">
             <div class="flex items-center gap-3">
-              <span class="w-8 h-px bg-gradient-to-r from-[{{color.primary}}] to-transparent"></span>
-              <span class="font-label-sm text-label-sm uppercase tracking-[0.2em] text-[{{color.primary}}]">{{store.businessName}}</span>
+              <span class="w-8 h-px bg-gradient-to-r from-primary to-transparent"></span>
+              <span class="font-label-sm text-label-sm uppercase tracking-[0.2em] text-primary">{{store.businessName}}</span>
             </div>
             <h1 class="font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface leading-[1.05] tracking-tight text-shadow-gold">
               {{hero.headline}}
@@ -82,11 +82,11 @@
               {{hero.subheadline}}
             </p>
             <div class="flex flex-col sm:flex-row gap-4 pt-2">
-              <a href="#produk" class="inline-flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-[{{color.primary}}] to-[rgba(184,134,11,0.7)] text-on-primary font-label-sm text-label-sm uppercase tracking-wider rounded-full hover:shadow-lg hover:shadow-[{{color.primary}}]/25 transition-all duration-300 active:scale-95">
+              <a href="#produk" class="inline-flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-primary to-[rgba(184,134,11,0.7)] text-on-primary font-label-sm text-label-sm uppercase tracking-wider rounded-full hover:shadow-primary/25 transition-all duration-300 active:scale-95">
                 {{hero.ctaText}}
                 <span class="material-symbols-outlined text-sm">arrow_forward</span>
               </a>
-              <a href="./tentang.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 border border-[{{color.primary}}]/30 text-[{{color.primary}}] font-label-sm text-label-sm uppercase tracking-wider rounded-full hover:bg-[{{color.primary}}]/5 transition-all duration-300 active:scale-95">
+              <a href="./tentang.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 border border-primary/30 text-primary font-label-sm text-label-sm uppercase tracking-wider rounded-full hover:bg-primary/5 transition-all duration-300 active:scale-95">
                 Cerita Kami
               </a>
             </div>
@@ -143,24 +143,24 @@
         <span class="font-label-sm text-label-sm uppercase tracking-[0.2em] text-[rgba(184,134,11,0.5)]">Angka Kami</span>
         <div class="w-8 h-px bg-gradient-to-r from-transparent via-[rgba(184,134,11,0.3)] to-transparent mx-auto mt-3"></div>
       </div>
-      <div class="flex flex-wrap justify-center gap-5 md:gap-6 [&>*]:w-[calc(50%-0.75rem)] md:[&>*]:w-[calc(25%-1.25rem)]">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-5 md:gap-6">
         <div class="text-center p-8 rounded-sm bg-surface border border-[rgba(184,134,11,0.08)] hover:border-[rgba(184,134,11,0.2)] transition-all duration-500 group">
-          <p class="font-display-lg text-display-lg-mobile md:text-display-lg text-[{{color.primary}}] mb-2 group-hover:scale-110 transition-transform duration-500">✦</p>
+          <p class="font-display-lg text-display-lg-mobile md:text-display-lg text-primary mb-2 group-hover:scale-110 transition-transform duration-500">✦</p>
           <p class="font-display-md text-display-md text-on-surface mb-1">{{stats.totalOrders}}</p>
           <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Total Pesanan</p>
         </div>
         <div class="text-center p-8 rounded-sm bg-surface border border-[rgba(184,134,11,0.08)] hover:border-[rgba(184,134,11,0.2)] transition-all duration-500 group">
-          <p class="font-display-lg text-display-lg-mobile md:text-display-lg text-[{{color.primary}}] mb-2 group-hover:scale-110 transition-transform duration-500">◆</p>
+          <p class="font-display-lg text-display-lg-mobile md:text-display-lg text-primary mb-2 group-hover:scale-110 transition-transform duration-500">◆</p>
           <p class="font-display-md text-display-md text-on-surface mb-1">{{stats.completed}}</p>
           <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Selesai</p>
         </div>
         <div class="text-center p-8 rounded-sm bg-surface border border-[rgba(184,134,11,0.08)] hover:border-[rgba(184,134,11,0.2)] transition-all duration-500 group">
-          <p class="font-display-lg text-display-lg-mobile md:text-display-lg text-[{{color.primary}}] mb-2 group-hover:scale-110 transition-transform duration-500">◈</p>
+          <p class="font-display-lg text-display-lg-mobile md:text-display-lg text-primary mb-2 group-hover:scale-110 transition-transform duration-500">◈</p>
           <p class="font-display-md text-display-md text-on-surface mb-1">{{stats.pending}}</p>
           <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Diproses</p>
         </div>
         <div class="text-center p-8 rounded-sm bg-surface border border-[rgba(184,134,11,0.08)] hover:border-[rgba(184,134,11,0.2)] transition-all duration-500 group">
-          <p class="font-display-lg text-display-lg-mobile md:text-display-lg text-[{{color.primary}}] mb-2 group-hover:scale-110 transition-transform duration-500">♛</p>
+          <p class="font-display-lg text-display-lg-mobile md:text-display-lg text-primary mb-2 group-hover:scale-110 transition-transform duration-500">♛</p>
           <p class="font-display-md text-display-md text-on-surface mb-1">100%</p>
           <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Kepuasan</p>
         </div>
@@ -179,20 +179,20 @@
       <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-6">
         <div>
           <div class="flex items-center gap-3 mb-4">
-            <span class="w-8 h-px bg-gradient-to-r from-[{{color.primary}}] to-transparent"></span>
-            <span class="font-label-sm text-label-sm uppercase tracking-[0.2em] text-[{{color.primary}}]">Koleksi Pilihan</span>
+            <span class="w-8 h-px bg-gradient-to-r from-primary to-transparent"></span>
+            <span class="font-label-sm text-label-sm uppercase tracking-[0.2em] text-primary">Koleksi Pilihan</span>
           </div>
           <h2 class="font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface">Produk Unggulan</h2>
           <p class="font-body-lg text-body-lg text-on-surface-variant mt-3 max-w-xl">Setiap produk dalam koleksi ini dipilih dengan cermat untuk menghadirkan pengalaman terbaik.</p>
         </div>
-        <a href="./produk.html" class="flex items-center gap-2 font-label-sm text-label-sm text-[{{color.primary}}] hover:text-[{{color.primary}}]/70 transition-colors duration-300 uppercase tracking-wider whitespace-nowrap">
+        <a href="./produk.html" class="flex items-center gap-2 font-label-sm text-label-sm text-primary hover:text-primary/70 transition-colors duration-300 uppercase tracking-wider whitespace-nowrap">
           Lihat Semua
           <span class="material-symbols-outlined text-sm">arrow_forward</span>
         </a>
       </div>
 
       <!-- Product Grid -->
-      <div class="flex flex-wrap justify-center gap-5 md:gap-6 [&>*]:w-full sm:[&>*]:w-[calc(50%-0.75rem)] lg:[&>*]:w-[calc(25%-1.25rem)]">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6">
         {{#products}}
         <div class="group cursor-pointer scrolly-reveal">
           <div class="relative overflow-hidden bg-surface renaissance-border mb-4">
@@ -220,10 +220,10 @@
             </div>
           </div>
           <div class="px-1">
-            <h3 class="font-display-md text-display-md text-on-surface group-hover:text-[{{color.primary}}] transition-colors duration-300">{{.name}}</h3>
+            <h3 class="font-display-md text-display-md text-on-surface group-hover:text-primary transition-colors duration-300">{{.name}}</h3>
             <p class="font-body-md text-body-md text-on-surface-variant mt-1.5">{{.description}}</p>
             <div class="flex items-center justify-between mt-3 pt-3 border-t border-[rgba(184,134,11,0.08)]">
-              <span class="font-display-sm text-display-sm text-[{{color.primary}}]">Rp {{.price}}</span>
+              <span class="font-display-sm text-display-sm text-primary">Rp {{.price}}</span>
               <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Stok: {{.stock}}</span>
             </div>
           </div>
@@ -236,7 +236,7 @@
           </div>
           <h3 class="font-display-md text-display-md text-on-surface/50 mb-3">Belum Ada Produk</h3>
           <p class="font-body-md text-body-md text-on-surface-variant/60 mb-8 max-w-md">Koleksi kami sedang dalam persiapan. Nantikan kehadiran produk-produk eksklusif yang akan sehadir.</p>
-          <a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[{{color.primary}}] to-[rgba(184,134,11,0.7)] text-on-primary font-label-sm text-label-sm uppercase tracking-wider rounded-full hover:shadow-lg transition-all duration-300">
+          <a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-primary to-[rgba(184,134,11,0.7)] text-on-primary font-label-sm text-label-sm uppercase tracking-wider rounded-full hover:shadow-lg transition-all duration-300">
             <span class="material-symbols-outlined text-sm">chat</span>
             Hubungi Kami
           </a>
@@ -270,12 +270,12 @@
         {{about.description}}
       </blockquote>
       <div class="flex items-center justify-center gap-4">
-        <span class="w-8 h-px bg-gradient-to-r from-transparent via-[{{color.primary}}] to-transparent"></span>
-        <span class="font-display-sm text-display-sm text-[{{color.primary}}]">&mdash; {{store.businessName}}</span>
-        <span class="w-8 h-px bg-gradient-to-r from-transparent via-[{{color.primary}}] to-transparent"></span>
+        <span class="w-8 h-px bg-gradient-to-r from-transparent via-primary to-transparent"></span>
+        <span class="font-display-sm text-display-sm text-primary">&mdash; {{store.businessName}}</span>
+        <span class="w-8 h-px bg-gradient-to-r from-transparent via-primary to-transparent"></span>
       </div>
       <div class="mt-10">
-        <a href="./tentang.html" class="inline-flex items-center gap-2 font-label-sm text-label-sm text-on-surface-variant hover:text-[{{color.primary}}] transition-colors duration-300 uppercase tracking-wider">
+        <a href="./tentang.html" class="inline-flex items-center gap-2 font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors duration-300 uppercase tracking-wider">
           Baca Cerita Lengkap
           <span class="material-symbols-outlined text-sm">arrow_forward</span>
         </a>
@@ -300,17 +300,17 @@
             <!-- Inner decorative border -->
             <div class="absolute inset-2 border border-[rgba(184,134,11,0.06)] rounded-sm pointer-events-none"></div>
             <div class="relative z-10">
-              <span class="font-label-sm text-label-sm uppercase tracking-[0.2em] text-[{{color.primary}}]">Concierge Service</span>
+              <span class="font-label-sm text-label-sm uppercase tracking-[0.2em] text-primary">Concierge Service</span>
               <h2 class="font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mt-4 mb-6">Pengalaman Berbelanja Personal</h2>
               <p class="font-body-lg text-body-lg text-on-surface-variant mb-8 max-w-xl leading-relaxed">
                 Nikmati pengalaman konsultasi personal dengan kurator kami. Dapatkan rekomendasi produk yang sesuai dengan gaya dan kebutuhan Anda.
               </p>
               <div class="flex flex-col sm:flex-row gap-4">
-                <a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-[{{color.primary}}] to-[rgba(184,134,11,0.7)] text-on-primary font-label-sm text-label-sm uppercase tracking-wider rounded-full hover:shadow-lg hover:shadow-[{{color.primary}}]/25 transition-all duration-300 active:scale-95">
+                <a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-primary to-[rgba(184,134,11,0.7)] text-on-primary font-label-sm text-label-sm uppercase tracking-wider rounded-full hover:shadow-primary/25 transition-all duration-300 active:scale-95">
                   <span class="material-symbols-outlined text-sm">chat</span>
                   Konsultasi via WhatsApp
                 </a>
-                <a href="./kontak.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 border border-[rgba(184,134,11,0.2)] text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider rounded-full hover:border-[{{color.primary}}] hover:text-[{{color.primary}}] transition-all duration-300">
+                <a href="./kontak.html" class="inline-flex items-center justify-center gap-2 px-8 py-4 border border-[rgba(184,134,11,0.2)] text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider rounded-full hover:border-primary hover:text-primary transition-all duration-300">
                   Kontak Lainnya
                 </a>
               </div>
@@ -328,7 +328,7 @@
           {{/store.hasLogo}}
           {{^store.hasLogo}}
           <div class="flex items-center justify-center">
-            <div class="w-48 h-48 rounded-full bg-gradient-to-br from-[{{color.primary}}]/20 to-[rgba(184,134,11,0.1)] border-2 border-[rgba(184,134,11,0.15)] flex items-center justify-center">
+            <div class="w-48 h-48 rounded-full bg-gradient-to-br from-primary/20 to-[rgba(184,134,11,0.1)] border-2 border-[rgba(184,134,11,0.15)] flex items-center justify-center">
               <span class="font-display-lg text-display-lg text-[rgba(184,134,11,0.3)]">{{store.businessName}}</span>
             </div>
           </div>

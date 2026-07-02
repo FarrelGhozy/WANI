@@ -17,10 +17,10 @@
         </div>
         <p class="text-sm text-on-surface-variant leading-relaxed line-clamp-3">{{about.description}}</p>
         <div class="flex flex-wrap gap-2 pt-1">
-          {{#social.instagram}}<a href="{{social.instagram}}" target="_blank" rel="noopener" class="w-9 h-9 rounded-full border border-[rgba(184,134,11,0.2)] flex items-center justify-center text-on-surface-variant hover:bg-[{{color.primary}}] hover:text-on-primary hover:border-[{{color.primary}}] transition-all" title="Instagram"><span class="material-symbols-outlined text-sm">photo_camera</span></a>{{/social.instagram}}
-          {{#social.facebook}}<a href="{{social.facebook}}" target="_blank" rel="noopener" class="w-9 h-9 rounded-full border border-[rgba(184,134,11,0.2)] flex items-center justify-center text-on-surface-variant hover:bg-[{{color.primary}}] hover:text-on-primary hover:border-[{{color.primary}}] transition-all" title="Facebook"><span class="material-symbols-outlined text-sm">groups</span></a>{{/social.facebook}}
-          {{#social.tiktok}}<a href="{{social.tiktok}}" target="_blank" rel="noopener" class="w-9 h-9 rounded-full border border-[rgba(184,134,11,0.2)] flex items-center justify-center text-on-surface-variant hover:bg-[{{color.primary}}] hover:text-on-primary hover:border-[{{color.primary}}] transition-all" title="TikTok"><span class="material-symbols-outlined text-sm">music_note</span></a>{{/social.tiktok}}
-          {{#social.youtube}}<a href="{{social.youtube}}" target="_blank" rel="noopener" class="w-9 h-9 rounded-full border border-[rgba(184,134,11,0.2)] flex items-center justify-center text-on-surface-variant hover:bg-[{{color.primary}}] hover:text-on-primary hover:border-[{{color.primary}}] transition-all" title="YouTube"><span class="material-symbols-outlined text-sm">play_circle</span></a>{{/social.youtube}}
+          {{#social.instagram}}<a href="{{social.instagram}}" target="_blank" rel="noopener" class="w-9 h-9 rounded-full border border-[rgba(184,134,11,0.2)] flex items-center justify-center text-on-surface-variant hover:bg-primary hover:text-on-primary hover:border-primary transition-all" title="Instagram"><span class="material-symbols-outlined text-sm">photo_camera</span></a>{{/social.instagram}}
+          {{#social.facebook}}<a href="{{social.facebook}}" target="_blank" rel="noopener" class="w-9 h-9 rounded-full border border-[rgba(184,134,11,0.2)] flex items-center justify-center text-on-surface-variant hover:bg-primary hover:text-on-primary hover:border-primary transition-all" title="Facebook"><span class="material-symbols-outlined text-sm">groups</span></a>{{/social.facebook}}
+          {{#social.tiktok}}<a href="{{social.tiktok}}" target="_blank" rel="noopener" class="w-9 h-9 rounded-full border border-[rgba(184,134,11,0.2)] flex items-center justify-center text-on-surface-variant hover:bg-primary hover:text-on-primary hover:border-primary transition-all" title="TikTok"><span class="material-symbols-outlined text-sm">music_note</span></a>{{/social.tiktok}}
+          {{#social.youtube}}<a href="{{social.youtube}}" target="_blank" rel="noopener" class="w-9 h-9 rounded-full border border-[rgba(184,134,11,0.2)] flex items-center justify-center text-on-surface-variant hover:bg-primary hover:text-on-primary hover:border-primary transition-all" title="YouTube"><span class="material-symbols-outlined text-sm">play_circle</span></a>{{/social.youtube}}
         </div>
       </div>
 
@@ -29,10 +29,10 @@
         <h3 class="font-bold text-on-surface mb-5 text-sm uppercase tracking-wider">Informasi</h3>
         <div class="grid grid-cols-2 gap-4">
           <div class="space-y-2.5">
-            <a href="./" class="block text-sm text-on-surface-variant hover:text-[{{color.primary}}] transition-colors">Beranda</a>
-            <a href="./produk.html" class="block text-sm text-on-surface-variant hover:text-[{{color.primary}}] transition-colors">Produk</a>
-            <a href="./tentang.html" class="block text-sm text-on-surface-variant hover:text-[{{color.primary}}] transition-colors">Tentang</a>
-            <a href="./kontak.html" class="block text-sm text-on-surface-variant hover:text-[{{color.primary}}] transition-colors">Kontak</a>
+            <a href="./" class="block text-sm text-on-surface-variant hover:text-primary transition-colors">Beranda</a>
+            <a href="./produk.html" class="block text-sm text-on-surface-variant hover:text-primary transition-colors">Produk</a>
+            <a href="./tentang.html" class="block text-sm text-on-surface-variant hover:text-primary transition-colors">Tentang</a>
+            <a href="./kontak.html" class="block text-sm text-on-surface-variant hover:text-primary transition-colors">Kontak</a>
           </div>
           <div class="space-y-2.5 text-sm text-on-surface-variant">
             {{#store.address}}<div class="truncate">{{store.address}}</div>{{/store.address}}
@@ -46,25 +46,25 @@
       <div>
         <h3 class="font-bold text-on-surface mb-5 text-sm uppercase tracking-wider">Hubungi Kami</h3>
         <div class="space-y-3">
-          <a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="flex items-center gap-3 p-3 rounded-lg bg-[{{color.primary}}]/5 border border-[rgba(184,134,11,0.1)] hover:bg-[{{color.primary}}]/10 transition-all">
-            <span class="material-symbols-outlined text-[{{color.primary}}] text-xl">chat</span>
+          <a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="flex items-center gap-3 p-3 rounded-lg bg-primary/5 border border-[rgba(184,134,11,0.1)] hover:bg-primary/10 transition-all">
+            <span class="material-symbols-outlined text-primary text-xl">chat</span>
             <div class="min-w-0"><p class="text-xs text-on-surface-variant">WhatsApp</p><p class="text-sm text-on-surface font-semibold truncate">{{store.phone}}</p></div>
           </a>
           {{#contact.email}}
           <a href="mailto:{{contact.email}}" class="flex items-center gap-3 p-3 rounded-lg bg-[rgba(184,134,11,0.03)] border border-[rgba(184,134,11,0.08)] hover:bg-[rgba(184,134,11,0.06)] transition-all">
-            <span class="material-symbols-outlined text-[{{color.primary}}] text-xl">mail</span>
+            <span class="material-symbols-outlined text-primary text-xl">mail</span>
             <div class="min-w-0"><p class="text-xs text-on-surface-variant">Email</p><p class="text-sm text-on-surface font-semibold truncate">{{contact.email}}</p></div>
           </a>
           {{/contact.email}}
           {{#social.shopee}}
           <a href="{{social.shopee}}" target="_blank" rel="noopener" class="flex items-center gap-3 p-3 rounded-lg bg-[rgba(184,134,11,0.03)] border border-[rgba(184,134,11,0.08)] hover:bg-[rgba(184,134,11,0.06)] transition-all">
-            <span class="material-symbols-outlined text-[{{color.primary}}] text-xl">shopping_bag</span>
+            <span class="material-symbols-outlined text-primary text-xl">shopping_bag</span>
             <div class="min-w-0"><p class="text-xs text-on-surface-variant">Shopee</p><p class="text-sm text-on-surface font-semibold">Kunjungi Toko</p></div>
           </a>
           {{/social.shopee}}
           {{#social.tokopedia}}
           <a href="{{social.tokopedia}}" target="_blank" rel="noopener" class="flex items-center gap-3 p-3 rounded-lg bg-[rgba(184,134,11,0.03)] border border-[rgba(184,134,11,0.08)] hover:bg-[rgba(184,134,11,0.06)] transition-all">
-            <span class="material-symbols-outlined text-[{{color.primary}}] text-xl">storefront</span>
+            <span class="material-symbols-outlined text-primary text-xl">storefront</span>
             <div class="min-w-0"><p class="text-xs text-on-surface-variant">Tokopedia</p><p class="text-sm text-on-surface font-semibold">Kunjungi Toko</p></div>
           </a>
           {{/social.tokopedia}}
@@ -78,8 +78,8 @@
     <div class="max-w-7xl mx-auto px-6 md:px-12 py-5 flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-on-surface-variant">
       <p>&copy; 2026 {{store.businessName}}</p>
       <div class="flex gap-4">
-        {{#contact.mapsUrl}}<a href="{{contact.mapsUrl}}" target="_blank" rel="noopener" class="hover:text-[{{color.primary}}] transition-colors">Lokasi</a>{{/contact.mapsUrl}}
-        <a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="hover:text-[{{color.primary}}] transition-colors">Dukungan</a>
+        {{#contact.mapsUrl}}<a href="{{contact.mapsUrl}}" target="_blank" rel="noopener" class="hover:text-primary transition-colors">Lokasi</a>{{/contact.mapsUrl}}
+        <a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="hover:text-primary transition-colors">Dukungan</a>
       </div>
     </div>
   </div>

@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&amp;family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&amp;display=swap" rel="stylesheet"/>
   <!-- Material Symbols Outlined -->
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-  <link href="./assets/tailwind.css" rel="stylesheet" />
+  <link href="./assets/style.css" rel="stylesheet" />
   <style>:root{ {{color.vars}} --color-secondary: {{color.secondary}}; }
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
@@ -38,7 +38,7 @@
     }
   </style>
 </head>
-<body class="bg-background text-on-background font-body-md selection:bg-[{{color.primary}}]/20 selection:text-on-background">
+<body class="bg-background text-on-background font-body-md">
 
 {{>navbar}}
 
@@ -53,15 +53,15 @@
 
     <div class="max-w-4xl mx-auto px-margin-mobile md:px-margin-desktop text-center relative z-10">
       <div class="flex items-center justify-center gap-3 mb-6">
-        <span class="w-8 h-px bg-gradient-to-r from-transparent via-[{{color.primary}}] to-transparent"></span>
-        <span class="font-label-sm text-label-sm uppercase tracking-[0.2em] text-[{{color.primary}}]">Hubungi Kami</span>
-        <span class="w-8 h-px bg-gradient-to-r from-transparent via-[{{color.primary}}] to-transparent"></span>
+        <span class="w-8 h-px bg-gradient-to-r from-transparent via-primary to-transparent"></span>
+        <span class="font-label-sm text-label-sm uppercase tracking-[0.2em] text-primary">Hubungi Kami</span>
+        <span class="w-8 h-px bg-gradient-to-r from-transparent via-primary to-transparent"></span>
       </div>
       <h1 class="font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mb-6 text-shadow-gold leading-[1.05]">Hubungi Kami</h1>
       <p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl mx-auto leading-relaxed">
         Ada pertanyaan atau butuh bantuan? Tim kami siap membantu Anda melalui berbagai saluran komunikasi di bawah ini.
       </p>
-      <div class="w-16 h-px bg-gradient-to-r from-transparent via-[{{color.primary}}]/40 to-transparent mx-auto mt-10"></div>
+      <div class="w-16 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent mx-auto mt-10"></div>
     </div>
   </section>
 
@@ -87,7 +87,7 @@
                   <p class="font-label-sm text-label-sm uppercase tracking-[0.2em] text-[rgba(37,211,102,0.7)] mb-1">WhatsApp</p>
                   <h3 class="font-display-md text-display-md text-on-surface">Chat via WhatsApp</h3>
                 </div>
-                <span class="material-symbols-outlined text-on-surface-variant group-hover:text-[{{color.primary}}] group-hover:translate-x-1 transition-all duration-300">arrow_forward</span>
+                <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary group-hover:translate-x-1 transition-all duration-300">arrow_forward</span>
               </div>
               <p class="font-body-md text-body-md text-on-surface-variant mt-3">Respons cepat dalam hitungan menit. Tim kami siap membantu Anda.</p>
               <div class="flex items-center gap-2 mt-3">
@@ -99,16 +99,16 @@
 
           <!-- Location / Address -->
           <div class="renaissance-border bg-surface p-6 md:p-8 rounded-sm flex items-start gap-5 relative">
-            <div class="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-[{{color.primary}}]/50 to-transparent"></div>
-            <div class="w-14 h-14 rounded-full bg-[{{color.primary}}]/10 flex items-center justify-center flex-shrink-0">
-              <span class="material-symbols-outlined text-[{{color.primary}}] text-2xl">location_on</span>
+            <div class="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-primary/50 to-transparent"></div>
+            <div class="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+              <span class="material-symbols-outlined text-primary text-2xl">location_on</span>
             </div>
             <div>
               <p class="font-label-sm text-label-sm uppercase tracking-[0.2em] text-[rgba(184,134,11,0.6)] mb-1">Alamat</p>
               <h3 class="font-display-md text-display-md text-on-surface mb-3">Lokasi Toko</h3>
               <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">{{store.address}}</p>
               {{#contact.mapsUrl}}
-              <a href="{{contact.mapsUrl}}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 mt-4 font-label-sm text-label-sm text-[{{color.primary}}] hover:text-[{{color.primary}}]/70 transition-colors uppercase tracking-wider">
+              <a href="{{contact.mapsUrl}}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 mt-4 font-label-sm text-label-sm text-primary hover:text-primary/70 transition-colors uppercase tracking-wider">
                 <span class="material-symbols-outlined text-sm">map</span>
                 Buka di Google Maps
               </a>
@@ -119,15 +119,15 @@
           <!-- Business Hours + Payment inline -->
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div class="renaissance-border bg-surface p-6 md:p-8 rounded-sm">
-              <div class="w-12 h-12 rounded-full bg-[{{color.primary}}]/10 flex items-center justify-center mb-4">
-                <span class="material-symbols-outlined text-[{{color.primary}}]">schedule</span>
+              <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                <span class="material-symbols-outlined text-primary">schedule</span>
               </div>
               <p class="font-label-sm text-label-sm uppercase tracking-[0.2em] text-[rgba(184,134,11,0.6)] mb-1">Jam Operasional</p>
               <p class="font-body-md text-body-md text-on-surface">{{store.businessHours}}</p>
             </div>
             <div class="renaissance-border bg-surface p-6 md:p-8 rounded-sm">
-              <div class="w-12 h-12 rounded-full bg-[{{color.primary}}]/10 flex items-center justify-center mb-4">
-                <span class="material-symbols-outlined text-[{{color.primary}}]">payments</span>
+              <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                <span class="material-symbols-outlined text-primary">payments</span>
               </div>
               <p class="font-label-sm text-label-sm uppercase tracking-[0.2em] text-[rgba(184,134,11,0.6)] mb-1">Pembayaran</p>
               <p class="font-body-md text-body-md text-on-surface">{{store.paymentMethods}}</p>
@@ -137,9 +137,9 @@
           <!-- Email -->
           {{#contact.email}}
           <a href="mailto:{{contact.email}}" class="renaissance-border bg-surface p-6 md:p-8 rounded-sm flex items-start gap-5 group hover:border-[rgba(184,134,11,0.35)] transition-all duration-300 relative">
-            <div class="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-[{{color.primary}}]/50 to-transparent"></div>
-            <div class="w-14 h-14 rounded-full bg-[{{color.primary}}]/10 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
-              <span class="material-symbols-outlined text-[{{color.primary}}] text-2xl">mail</span>
+            <div class="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-primary/50 to-transparent"></div>
+            <div class="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+              <span class="material-symbols-outlined text-primary text-2xl">mail</span>
             </div>
             <div class="flex-1">
               <div class="flex items-center justify-between">
@@ -147,7 +147,7 @@
                   <p class="font-label-sm text-label-sm uppercase tracking-[0.2em] text-[rgba(184,134,11,0.6)] mb-1">Email</p>
                   <h3 class="font-display-md text-display-md text-on-surface">Kirim Email</h3>
                 </div>
-                <span class="material-symbols-outlined text-on-surface-variant group-hover:text-[{{color.primary}}] group-hover:translate-x-1 transition-all duration-300">arrow_forward</span>
+                <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary group-hover:translate-x-1 transition-all duration-300">arrow_forward</span>
               </div>
               <p class="font-body-md text-body-md text-on-surface-variant mt-3">{{contact.email}}</p>
             </div>
@@ -160,17 +160,17 @@
 
           <!-- Concierge Service Card -->
           <div class="renaissance-border bg-surface p-8 md:p-10 rounded-sm text-center relative overflow-hidden flex flex-col items-center justify-center min-h-[300px]">
-            <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[{{color.primary}}] to-transparent"></div>
+            <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary to-transparent"></div>
             <div class="absolute -top-10 -right-10 w-32 h-32 bg-[rgba(184,134,11,0.04)] rounded-full blur-2xl"></div>
 
-            <div class="w-16 h-16 mx-auto mb-6 rounded-full bg-gradient-to-br from-[{{color.primary}}]/20 to-[rgba(184,134,11,0.1)] border border-[rgba(184,134,11,0.15)] flex items-center justify-center">
-              <span class="material-symbols-outlined text-[{{color.primary}}] text-3xl">concierge</span>
+            <div class="w-16 h-16 mx-auto mb-6 rounded-full bg-gradient-to-br from-primary/20 to-[rgba(184,134,11,0.1)] border border-[rgba(184,134,11,0.15)] flex items-center justify-center">
+              <span class="material-symbols-outlined text-primary text-3xl">concierge</span>
             </div>
             <h2 class="font-display-md text-display-md text-on-surface mb-3">Concierge Service</h2>
             <p class="font-body-md text-body-md text-on-surface-variant mb-8 max-w-xs mx-auto leading-relaxed">
               Dapatkan pengalaman konsultasi personal. Kami siap membantu memilihkan produk yang tepat untuk Anda.
             </p>
-            <a href="{{whatsapp.url}}?text={{wa.text}}" target="_blank" rel="noopener" class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[{{color.primary}}] to-[rgba(184,134,11,0.7)] text-on-primary font-label-sm text-label-sm uppercase tracking-wider rounded-full hover:shadow-lg hover:shadow-[{{color.primary}}]/25 transition-all duration-300 active:scale-95">
+            <a href="{{whatsapp.url}}?text={{wa.text}}" target="_blank" rel="noopener" class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-primary to-[rgba(184,134,11,0.7)] text-on-primary font-label-sm text-label-sm uppercase tracking-wider rounded-full hover:shadow-primary/25 transition-all duration-300 active:scale-95">
               <span class="material-symbols-outlined text-sm">chat</span>
               Mulai Konsultasi
             </a>
@@ -179,56 +179,56 @@
           <!-- Social Links -->
           <div class="renaissance-border bg-surface p-8 md:p-10 rounded-sm">
             <div class="flex items-center gap-3 mb-6">
-              <span class="w-6 h-px bg-gradient-to-r from-[{{color.primary}}] to-transparent"></span>
+              <span class="w-6 h-px bg-gradient-to-r from-primary to-transparent"></span>
               <span class="font-label-sm text-label-sm uppercase tracking-[0.2em] text-[rgba(184,134,11,0.6)]">Ikuti Kami</span>
             </div>
             <div class="grid grid-cols-2 gap-3">
               {{#social.instagram}}
               <a href="{{social.instagram}}" target="_blank" rel="noopener" class="flex items-center gap-3 p-4 rounded-sm border border-[rgba(184,134,11,0.1)] hover:bg-gradient-to-r hover:from-[rgba(184,134,11,0.08)] hover:to-transparent hover:border-[rgba(184,134,11,0.25)] transition-all duration-300 group">
                 <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[rgba(184,134,11,0.1)] to-[rgba(184,134,11,0.05)] flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <span class="material-symbols-outlined text-[{{color.primary}}] text-lg">photo_camera</span>
+                  <span class="material-symbols-outlined text-primary text-lg">photo_camera</span>
                 </div>
-                <span class="font-body-md text-body-md text-on-surface group-hover:text-[{{color.primary}}] transition-colors">Instagram</span>
+                <span class="font-body-md text-body-md text-on-surface group-hover:text-primary transition-colors">Instagram</span>
               </a>
               {{/social.instagram}}
               {{#social.facebook}}
               <a href="{{social.facebook}}" target="_blank" rel="noopener" class="flex items-center gap-3 p-4 rounded-sm border border-[rgba(184,134,11,0.1)] hover:bg-gradient-to-r hover:from-[rgba(184,134,11,0.08)] hover:to-transparent hover:border-[rgba(184,134,11,0.25)] transition-all duration-300 group">
                 <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[rgba(184,134,11,0.1)] to-[rgba(184,134,11,0.05)] flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <span class="material-symbols-outlined text-[{{color.primary}}] text-lg">groups</span>
+                  <span class="material-symbols-outlined text-primary text-lg">groups</span>
                 </div>
-                <span class="font-body-md text-body-md text-on-surface group-hover:text-[{{color.primary}}] transition-colors">Facebook</span>
+                <span class="font-body-md text-body-md text-on-surface group-hover:text-primary transition-colors">Facebook</span>
               </a>
               {{/social.facebook}}
               {{#social.tiktok}}
               <a href="{{social.tiktok}}" target="_blank" rel="noopener" class="flex items-center gap-3 p-4 rounded-sm border border-[rgba(184,134,11,0.1)] hover:bg-gradient-to-r hover:from-[rgba(184,134,11,0.08)] hover:to-transparent hover:border-[rgba(184,134,11,0.25)] transition-all duration-300 group">
                 <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[rgba(184,134,11,0.1)] to-[rgba(184,134,11,0.05)] flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <span class="material-symbols-outlined text-[{{color.primary}}] text-lg">music_note</span>
+                  <span class="material-symbols-outlined text-primary text-lg">music_note</span>
                 </div>
-                <span class="font-body-md text-body-md text-on-surface group-hover:text-[{{color.primary}}] transition-colors">TikTok</span>
+                <span class="font-body-md text-body-md text-on-surface group-hover:text-primary transition-colors">TikTok</span>
               </a>
               {{/social.tiktok}}
               {{#social.youtube}}
               <a href="{{social.youtube}}" target="_blank" rel="noopener" class="flex items-center gap-3 p-4 rounded-sm border border-[rgba(184,134,11,0.1)] hover:bg-gradient-to-r hover:from-[rgba(184,134,11,0.08)] hover:to-transparent hover:border-[rgba(184,134,11,0.25)] transition-all duration-300 group">
                 <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[rgba(184,134,11,0.1)] to-[rgba(184,134,11,0.05)] flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <span class="material-symbols-outlined text-[{{color.primary}}] text-lg">play_circle</span>
+                  <span class="material-symbols-outlined text-primary text-lg">play_circle</span>
                 </div>
-                <span class="font-body-md text-body-md text-on-surface group-hover:text-[{{color.primary}}] transition-colors">YouTube</span>
+                <span class="font-body-md text-body-md text-on-surface group-hover:text-primary transition-colors">YouTube</span>
               </a>
               {{/social.youtube}}
               {{#social.shopee}}
               <a href="{{social.shopee}}" target="_blank" rel="noopener" class="flex items-center gap-3 p-4 rounded-sm border border-[rgba(184,134,11,0.1)] hover:bg-gradient-to-r hover:from-[rgba(184,134,11,0.08)] hover:to-transparent hover:border-[rgba(184,134,11,0.25)] transition-all duration-300 group">
                 <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[rgba(184,134,11,0.1)] to-[rgba(184,134,11,0.05)] flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <span class="material-symbols-outlined text-[{{color.primary}}] text-lg">shopping_bag</span>
+                  <span class="material-symbols-outlined text-primary text-lg">shopping_bag</span>
                 </div>
-                <span class="font-body-md text-body-md text-on-surface group-hover:text-[{{color.primary}}] transition-colors">Shopee</span>
+                <span class="font-body-md text-body-md text-on-surface group-hover:text-primary transition-colors">Shopee</span>
               </a>
               {{/social.shopee}}
               {{#social.tokopedia}}
               <a href="{{social.tokopedia}}" target="_blank" rel="noopener" class="flex items-center gap-3 p-4 rounded-sm border border-[rgba(184,134,11,0.1)] hover:bg-gradient-to-r hover:from-[rgba(184,134,11,0.08)] hover:to-transparent hover:border-[rgba(184,134,11,0.25)] transition-all duration-300 group">
                 <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[rgba(184,134,11,0.1)] to-[rgba(184,134,11,0.05)] flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <span class="material-symbols-outlined text-[{{color.primary}}] text-lg">storefront</span>
+                  <span class="material-symbols-outlined text-primary text-lg">storefront</span>
                 </div>
-                <span class="font-body-md text-body-md text-on-surface group-hover:text-[{{color.primary}}] transition-colors">Tokopedia</span>
+                <span class="font-body-md text-body-md text-on-surface group-hover:text-primary transition-colors">Tokopedia</span>
               </a>
               {{/social.tokopedia}}
             </div>
@@ -249,7 +249,7 @@
       <div class="max-w-2xl mx-auto">
         <h2 class="font-display-md text-display-md text-on-surface mb-4">Butuh Bantuan Langsung?</h2>
         <p class="font-body-md text-body-md text-on-surface-variant mb-8">Hubungi kami sekarang dan tim kami akan dengan senang hati membantu Anda.</p>
-        <a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[{{color.primary}}] to-[rgba(184,134,11,0.7)] text-on-primary font-label-sm text-label-sm uppercase tracking-wider rounded-full hover:shadow-lg hover:shadow-[{{color.primary}}]/25 transition-all duration-300 active:scale-95">
+        <a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-primary to-[rgba(184,134,11,0.7)] text-on-primary font-label-sm text-label-sm uppercase tracking-wider rounded-full hover:shadow-primary/25 transition-all duration-300 active:scale-95">
           <span class="material-symbols-outlined text-sm">chat</span>
           {{store.phone}}
         </a>

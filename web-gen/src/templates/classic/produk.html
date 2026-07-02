@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&amp;family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&amp;display=swap" rel="stylesheet"/>
   <!-- Material Symbols Outlined -->
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-  <link href="./assets/tailwind.css" rel="stylesheet" />
+  <link href="./assets/style.css" rel="stylesheet" />
   <style>:root{ {{color.vars}} --color-secondary: {{color.secondary}}; }
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
@@ -39,7 +39,7 @@
     .stagger-delay-4 { transition-delay: 0.4s; }
   </style>
 </head>
-<body class="bg-background text-on-background font-body-md selection:bg-[{{color.primary}}]/20 selection:text-on-background">
+<body class="bg-background text-on-background font-body-md">
 
 {{>navbar}}
 
@@ -54,15 +54,15 @@
 
     <div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop text-center relative z-10">
       <div class="flex items-center justify-center gap-3 mb-6">
-        <span class="w-8 h-px bg-gradient-to-r from-transparent via-[{{color.primary}}] to-transparent"></span>
-        <span class="font-label-sm text-label-sm uppercase tracking-[0.2em] text-[{{color.primary}}]">Koleksi</span>
-        <span class="w-8 h-px bg-gradient-to-r from-transparent via-[{{color.primary}}] to-transparent"></span>
+        <span class="w-8 h-px bg-gradient-to-r from-transparent via-primary to-transparent"></span>
+        <span class="font-label-sm text-label-sm uppercase tracking-[0.2em] text-primary">Koleksi</span>
+        <span class="w-8 h-px bg-gradient-to-r from-transparent via-primary to-transparent"></span>
       </div>
       <h1 class="font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mb-4 text-shadow-gold">Produk Kami</h1>
       <p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl mx-auto leading-relaxed">
         Temukan koleksi produk pilihan yang telah dikurasi khusus untuk Anda. Setiap produk mencerminkan dedikasi terhadap kualitas dan keindahan.
       </p>
-      <div class="w-16 h-px bg-gradient-to-r from-transparent via-[{{color.primary}}]/40 to-transparent mx-auto mt-8"></div>
+      <div class="w-16 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent mx-auto mt-8"></div>
     </div>
   </section>
 
@@ -72,7 +72,7 @@
   <section class="pb-24 bg-background">
     <div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop">
       <!-- Product Grid -->
-      <div class="flex flex-wrap justify-center gap-5 md:gap-6 [&>*]:w-full sm:[&>*]:w-[calc(50%-0.75rem)] lg:[&>*]:w-[calc(25%-1.25rem)]">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6">
         {{#products}}
         <div class="group cursor-pointer scrolly-reveal">
           <div class="relative overflow-hidden bg-surface renaissance-border mb-4">
@@ -100,10 +100,10 @@
             </div>
           </div>
           <div class="px-1">
-            <h3 class="font-display-md text-display-md text-on-surface group-hover:text-[{{color.primary}}] transition-colors duration-300">{{.name}}</h3>
+            <h3 class="font-display-md text-display-md text-on-surface group-hover:text-primary transition-colors duration-300">{{.name}}</h3>
             <p class="font-body-md text-body-md text-on-surface-variant mt-1.5 line-clamp-2">{{.description}}</p>
             <div class="flex items-center justify-between mt-3 pt-3 border-t border-[rgba(184,134,11,0.08)]">
-              <span class="font-display-sm text-display-sm text-[{{color.primary}}]">Rp {{.price}}</span>
+              <span class="font-display-sm text-display-sm text-primary">Rp {{.price}}</span>
               <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Stok: {{.stock}}</span>
             </div>
           </div>
@@ -118,7 +118,7 @@
           <p class="font-body-md text-body-md text-on-surface-variant/60 mb-8 max-w-md leading-relaxed">
             Kami sedang menyiapkan produk-produk terbaik untuk Anda. Pantau terus atau hubungi kami untuk informasi lebih lanjut.
           </p>
-          <a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[{{color.primary}}] to-[rgba(184,134,11,0.7)] text-on-primary font-label-sm text-label-sm uppercase tracking-wider rounded-full hover:shadow-lg hover:shadow-[{{color.primary}}]/25 transition-all duration-300 active:scale-95">
+          <a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-primary to-[rgba(184,134,11,0.7)] text-on-primary font-label-sm text-label-sm uppercase tracking-wider rounded-full hover:shadow-primary/25 transition-all duration-300 active:scale-95">
             <span class="material-symbols-outlined text-sm">chat</span>
             Hubungi Kami
           </a>
@@ -137,7 +137,7 @@
         <span class="font-label-sm text-label-sm uppercase tracking-[0.2em] text-[rgba(184,134,11,0.4)]">Butuh Bantuan?</span>
         <h2 class="font-display-md text-display-md text-on-surface mt-3 mb-4">Kami Siap Membantu Anda</h2>
         <p class="font-body-md text-body-md text-on-surface-variant mb-8">Tim kami siap memberikan rekomendasi produk yang sesuai dengan kebutuhan Anda.</p>
-        <a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[{{color.primary}}] to-[rgba(184,134,11,0.7)] text-on-primary font-label-sm text-label-sm uppercase tracking-wider rounded-full hover:shadow-lg hover:shadow-[{{color.primary}}]/25 transition-all duration-300 active:scale-95">
+        <a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-primary to-[rgba(184,134,11,0.7)] text-on-primary font-label-sm text-label-sm uppercase tracking-wider rounded-full hover:shadow-primary/25 transition-all duration-300 active:scale-95">
           <span class="material-symbols-outlined text-sm">chat</span>
           Konsultasi Gratis
         </a>

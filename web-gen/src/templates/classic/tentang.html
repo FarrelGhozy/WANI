@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&amp;family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&amp;display=swap" rel="stylesheet"/>
   <!-- Material Symbols Outlined -->
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-  <link href="./assets/tailwind.css" rel="stylesheet" />
+  <link href="./assets/style.css" rel="stylesheet" />
   <style>:root{ {{color.vars}} --color-secondary: {{color.secondary}}; }
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
@@ -38,7 +38,7 @@
     }
   </style>
 </head>
-<body class="bg-background text-on-background font-body-md selection:bg-[{{color.primary}}]/20 selection:text-on-background">
+<body class="bg-background text-on-background font-body-md">
 
 {{>navbar}}
 
@@ -57,15 +57,15 @@
 
     <div class="max-w-4xl mx-auto px-margin-mobile md:px-margin-desktop text-center relative z-10">
       <div class="flex items-center justify-center gap-3 mb-6">
-        <span class="w-8 h-px bg-gradient-to-r from-transparent via-[{{color.primary}}] to-transparent"></span>
-        <span class="font-label-sm text-label-sm uppercase tracking-[0.2em] text-[{{color.primary}}]">Tentang Kami</span>
-        <span class="w-8 h-px bg-gradient-to-r from-transparent via-[{{color.primary}}] to-transparent"></span>
+        <span class="w-8 h-px bg-gradient-to-r from-transparent via-primary to-transparent"></span>
+        <span class="font-label-sm text-label-sm uppercase tracking-[0.2em] text-primary">Tentang Kami</span>
+        <span class="w-8 h-px bg-gradient-to-r from-transparent via-primary to-transparent"></span>
       </div>
       <h1 class="font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mb-6 text-shadow-gold leading-[1.05]">Tentang {{store.businessName}}</h1>
       <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mx-auto leading-relaxed">
         {{about.description}}
       </p>
-      <div class="w-16 h-px bg-gradient-to-r from-transparent via-[{{color.primary}}]/40 to-transparent mx-auto mt-10"></div>
+      <div class="w-16 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent mx-auto mt-10"></div>
     </div>
   </section>
 
@@ -105,15 +105,15 @@
         <div class="md:col-span-6">
           <div class="space-y-6">
             <div class="flex items-center gap-3">
-              <span class="w-8 h-px bg-gradient-to-r from-[{{color.primary}}] to-transparent"></span>
-              <span class="font-label-sm text-label-sm uppercase tracking-[0.2em] text-[{{color.primary}}]">Cerita Kami</span>
+              <span class="w-8 h-px bg-gradient-to-r from-primary to-transparent"></span>
+              <span class="font-label-sm text-label-sm uppercase tracking-[0.2em] text-primary">Cerita Kami</span>
             </div>
             <h2 class="font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface leading-[1.1]">Komitmen pada Kualitas & Keindahan</h2>
             <div class="space-y-4 font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
               <p>{{about.description}}</p>
             </div>
             <div class="pt-4">
-              <a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-[{{color.primary}}] to-[rgba(184,134,11,0.7)] text-on-primary font-label-sm text-label-sm uppercase tracking-wider rounded-full hover:shadow-lg hover:shadow-[{{color.primary}}]/25 transition-all duration-300 active:scale-95">
+              <a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-primary to-[rgba(184,134,11,0.7)] text-on-primary font-label-sm text-label-sm uppercase tracking-wider rounded-full hover:shadow-primary/25 transition-all duration-300 active:scale-95">
                 <span class="material-symbols-outlined text-sm">chat</span>
                 Hubungi Kami
               </a>
@@ -133,10 +133,10 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
         <!-- Store Information -->
         <div class="renaissance-border bg-surface p-10 md:p-12 rounded-sm relative">
-          <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[{{color.primary}}] to-transparent"></div>
+          <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary to-transparent"></div>
           <div class="flex items-center gap-3 mb-8">
-            <div class="w-10 h-10 rounded-full bg-[{{color.primary}}]/10 flex items-center justify-center">
-              <span class="material-symbols-outlined text-[{{color.primary}}]">store</span>
+            <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+              <span class="material-symbols-outlined text-primary">store</span>
             </div>
             <h2 class="font-display-md text-display-md text-on-surface">Informasi Toko</h2>
           </div>
@@ -175,24 +175,24 @@
         <div class="space-y-8">
           <!-- Stats Grid -->
           <div class="renaissance-border bg-surface p-10 md:p-12 rounded-sm relative">
-            <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[{{color.primary}}] to-transparent"></div>
+            <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary to-transparent"></div>
             <div class="flex items-center gap-3 mb-8">
-              <div class="w-10 h-10 rounded-full bg-[{{color.primary}}]/10 flex items-center justify-center">
-                <span class="material-symbols-outlined text-[{{color.primary}}]">insights</span>
+              <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-primary">insights</span>
               </div>
               <h2 class="font-display-md text-display-md text-on-surface">Statistik</h2>
             </div>
             <div class="grid grid-cols-3 gap-6">
               <div class="text-center">
-                <p class="font-display-lg text-display-lg-mobile md:text-display-lg text-[{{color.primary}}] mb-1">{{stats.totalOrders}}</p>
+                <p class="font-display-lg text-display-lg-mobile md:text-display-lg text-primary mb-1">{{stats.totalOrders}}</p>
                 <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Total</p>
               </div>
               <div class="text-center border-x border-[rgba(184,134,11,0.08)]">
-                <p class="font-display-lg text-display-lg-mobile md:text-display-lg text-[{{color.primary}}] mb-1">{{stats.completed}}</p>
+                <p class="font-display-lg text-display-lg-mobile md:text-display-lg text-primary mb-1">{{stats.completed}}</p>
                 <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Selesai</p>
               </div>
               <div class="text-center">
-                <p class="font-display-lg text-display-lg-mobile md:text-display-lg text-[{{color.primary}}] mb-1">{{stats.pending}}</p>
+                <p class="font-display-lg text-display-lg-mobile md:text-display-lg text-primary mb-1">{{stats.pending}}</p>
                 <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Diproses</p>
               </div>
             </div>
@@ -202,8 +202,8 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {{#store.shippingInfo}}
             <div class="renaissance-border bg-surface p-6 rounded-sm text-center hover:border-[rgba(184,134,11,0.3)] transition-all duration-300">
-              <div class="w-12 h-12 mx-auto mb-4 rounded-full bg-[{{color.primary}}]/10 flex items-center justify-center">
-                <span class="material-symbols-outlined text-[{{color.primary}}]">local_shipping</span>
+              <div class="w-12 h-12 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-primary">local_shipping</span>
               </div>
               <h3 class="font-display-sm text-display-sm text-on-surface mb-2">Pengiriman</h3>
               <p class="font-body-md text-body-md text-on-surface-variant">{{store.shippingInfo}}</p>
@@ -211,8 +211,8 @@
             {{/store.shippingInfo}}
             {{#store.returnPolicy}}
             <div class="renaissance-border bg-surface p-6 rounded-sm text-center hover:border-[rgba(184,134,11,0.3)] transition-all duration-300">
-              <div class="w-12 h-12 mx-auto mb-4 rounded-full bg-[{{color.primary}}]/10 flex items-center justify-center">
-                <span class="material-symbols-outlined text-[{{color.primary}}]">assignment_return</span>
+              <div class="w-12 h-12 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
+                <span class="material-symbols-outlined text-primary">assignment_return</span>
               </div>
               <h3 class="font-display-sm text-display-sm text-on-surface mb-2">Kebijakan Retur</h3>
               <p class="font-body-md text-body-md text-on-surface-variant">{{store.returnPolicy}}</p>
@@ -237,9 +237,9 @@
         Setiap produk yang kami hadirkan adalah cerminan dari dedikasi terhadap kualitas, keindahan, dan pengalaman berbelanja yang tak terlupakan.
       </blockquote>
       <div class="flex items-center justify-center gap-4">
-        <span class="w-8 h-px bg-gradient-to-r from-transparent via-[{{color.primary}}] to-transparent"></span>
-        <span class="font-display-sm text-display-sm text-[{{color.primary}}]">&mdash; {{store.businessName}}</span>
-        <span class="w-8 h-px bg-gradient-to-r from-transparent via-[{{color.primary}}] to-transparent"></span>
+        <span class="w-8 h-px bg-gradient-to-r from-transparent via-primary to-transparent"></span>
+        <span class="font-display-sm text-display-sm text-primary">&mdash; {{store.businessName}}</span>
+        <span class="w-8 h-px bg-gradient-to-r from-transparent via-primary to-transparent"></span>
       </div>
     </div>
   </section>
