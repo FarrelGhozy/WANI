@@ -2,6 +2,7 @@
 
 > **Total Bug Terdokumentasi:** 13
 > **Ditemukan:** 2026-07-01 saat analisis mendalam
+> **Last updated:** 2026-07-03
 
 ---
 
@@ -14,13 +15,13 @@
 | BUG-003 | 🟡 HIGH | dashboard | ForgotPassword pakai mock setTimeout | OPEN |
 | BUG-004 | 🟡 HIGH | api | `businessName` fallback ke nama model LLM | OPEN |
 | BUG-005 | 🟡 HIGH | api | Stock tidak direstor saat order dicancel | OPEN |
-| BUG-006 | 🟡 HIGH | wa-bot | Recursive reconnect tanpa guard | OPEN |
+| BUG-006 | 🟡 HIGH | wa-bot | Recursive reconnect tanpa guard | PARTIAL — structured logging + backoff added, reconnect guard pending |
 | BUG-007 | 🔴 CRITICAL | wa-bot | `process.exit(0)` race dengan `sock.logout()` | OPEN |
 | BUG-008 | 🔴 CRITICAL | wa-bot | `.env` dengan live credentials committed | OPEN |
-| BUG-009 | 🟢 MEDIUM | dashboard | Duplicate `useWaStatus` polling | OPEN |
+| BUG-009 | 🟢 MEDIUM | dashboard | Duplicate `useWaStatus` polling | PARTIAL — StoreContext + ProductsContext solved duplicate fetch, WaStatusContext already existed |
 | BUG-010 | 🟢 MEDIUM | web-gen | Hardcoded path `../../api/uploads/` | OPEN |
 | BUG-011 | 🟢 MEDIUM | api | JWT secret hardcoded fallback | OPEN |
-| BUG-012 | 🔵 LOW | web-gen | HTML unescaped di template engine | OPEN |
+| BUG-012 | 🔵 LOW | web-gen | HTML unescaped di template engine | PARTIAL — `escapeHtml` exported for visibility, still needs wiring in variable substitution order |
 | BUG-013 | 🔵 LOW | wa-bot | Tidak ada Prisma disconnect di shutdown | OPEN |
 
 ---

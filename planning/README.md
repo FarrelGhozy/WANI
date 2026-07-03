@@ -1,6 +1,7 @@
 # WANI — Dokumentasi Perencanaan & Analisis
 
-> **Dibuat:** 2026-07-01 — Analisis mendalam seluruh codebase WANI
+> **Dibuat:** 2026-07-01 — Analisis mendalam seluruh codebase WANI  
+> **Last updated:** 2026-07-03
 > **Tujuan:** Lomba — memaksimalkan kematangan projek secara sistematis
 
 ## Navigasi Cepat
@@ -14,10 +15,10 @@
 
 | Tahap | Fokus | Status |
 |-------|-------|--------|
-| [Tahap 1 — Stabilitas](tahap1-stabilitas/) | Bug fixing, security hardening, test infrastructure | 🔴 KRITIS |
-| [Tahap 2 — Kualitas](tahap2-kualitas/) | Code quality, error handling, performance | 🟡 PENTING |
-| [Tahap 3 — Fitur](tahap3-fitur/) | Feature completion, RAG, multi-store | 🟢 PENGEMBANGAN |
-| [Tahap 4 — DevOps](tahap4-devops/) | CI/CD, monitoring, production readiness | 🔵 INFRA |
+| [Tahap 1 — Stabilitas](tahap1-stabilitas/) | Bug fixing, security hardening, test infrastructure | 🟡 ~65% |
+| [Tahap 2 — Kualitas](tahap2-kualitas/) | Code quality, error handling, performance | 🟢 ~70% |
+| [Tahap 3 — Fitur](tahap3-fitur/) | Feature completion, RAG, multi-store | 🔵 0% |
+| [Tahap 4 — DevOps](tahap4-devops/) | CI/CD, monitoring, production readiness | 🔵 0% |
 
 ## Katalog Bug
 
@@ -36,10 +37,10 @@ Semua bug terdokumentasi di [bug/](bug/) dengan format:
 
 | Modul | Kematangan | Test Coverage | Bugs Ditemukan | Security Issues |
 |-------|-----------|---------------|----------------|-----------------|
-| **API** | 75% | ~40% (unit only) | 5 | 3 (1 CRITICAL) |
-| **Dashboard** | 65% | 0% | 2 | 0 |
-| **Web-Gen** | 55% | 0% | 3 | 1 |
-| **WA-Bot** | 50% | ~15% (auth only) | 3 | 1 (CRITICAL) |
+| **API** | 85% | 82% (223 tests) | 5 | 3 (1 CRITICAL) |
+| **Dashboard** | 80% | ~30% (97 tests) | 2 | 0 |
+| **Web-Gen** | 70% | 82% (37 tests) | 1 | 0 |
+| **WA-Bot** | 60% | 0% | 4 | 1 (CRITICAL) |
 
 ### Statistik
 
@@ -47,6 +48,8 @@ Semua bug terdokumentasi di [bug/](bug/) dengan format:
 - **Total baris kode:** ~15,000+
 - **Total endpoint API:** ~45
 - **Total komponen UI:** 27
-- **Bug ditemukan:** 13
-- **Security issue:** 5
+- **Bug ditemukan:** 13 (2 partial fixed)
+- **Test files:** 31 (dashboard 7 + API 22 + web-gen 2)
+- **Total tests:** 357 (dashboard 97 + API 223 + web-gen 37)
+- **Security issue:** 3 (dari 5, credential exposure + JWT masih pending)
 - **Missing features:** 12

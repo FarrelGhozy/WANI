@@ -1,5 +1,11 @@
 # Error Handling Improvements — Tahap 2
 
+> **Status:** ✅ Mostly complete (2026-07-03)
+> - [x] Dashboard: ErrorBoundary + enhanced useToast + skeleton loading
+> - [x] API: Consistent error response (already had `sendResponse` + `AppError`)
+> - [x] WA-Bot: Silent catch → structured logging + exponential backoff
+> - [ ] Web-Gen: Error classes (GenerationError, etc.) — not started
+
 ---
 
 ## Dashboard: Unified Error Toast System

@@ -1,8 +1,11 @@
 # Tahap 1 — Stabilitas
 
-> **Prioritas:** 🔴 KRITIS
+> **Prioritas:** 🟡 ~65% complete (2026-07-03)
 > **Target:** Minggu 1-2
 > **Goal:** Zero critical bugs, security hardened, basic test coverage
+> 
+> **Progress:** Test infrastructure ✅ (API 82%, dashboard 97 tests, web-gen 82%).  
+> Bug fixing masih pending untuk BUG-001, BUG-007, BUG-008 (CRITICAL).
 
 ## Overview
 

@@ -1,6 +1,11 @@
 # Test Infrastructure — Tahap 1
 
 > Rencana implementasi test untuk mencapai coverage ≥ 40%
+> **Status:** ✅ 3 dari 4 modul complete (2026-07-03)
+> - [x] API: 22 files, 223 tests, **82% coverage** ✅
+> - [x] Dashboard: 7 files, 97 tests ✅ (vitest + jsdom)
+> - [x] Web-Gen: 2 files, 37 tests, **82% coverage** ✅
+> - [ ] WA-Bot: not started
 
 ---
 

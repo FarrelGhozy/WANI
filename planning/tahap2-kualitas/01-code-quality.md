@@ -1,6 +1,11 @@
 # Code Quality Improvements — Tahap 2
 
 > Rencana refactoring untuk membersihkan code smells
+> **Status:** ✅ 4 dari 4 items completed (2026-07-03)
+> - [x] `as any` cleanup → **0 `as any` di API src/**
+> - [x] Duplicate upload logic → **`lib/upload.ts`**
+> - [x] Duplicate injection patterns → **`guardrails/injection-patterns.ts`**
+> - [x] Non-null assertions → **`getValidatedQuery<T>()` type guard**
 
 ---
 
