@@ -38,7 +38,7 @@ export default function OrderDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
   const { getOrder, updateStatus, confirmPayment } = useOrders()
-  const { toast } = useToast()
+  const { toast, apiError } = useToast()
   const order = id ? getOrder(id) : undefined
 
   const [paymentModal, setPaymentModal] = useState(false)
@@ -73,8 +73,8 @@ export default function OrderDetail() {
       await confirmPayment(id, { method: methodToApi[selectedMethod] || selectedMethod, amount: paymentAmount })
       toast('Pembayaran berhasil dikonfirmasi', 'success')
       setPaymentModal(false)
-    } catch {
-      toast('Gagal mengkonfirmasi pembayaran', 'error')
+    } catch (e) {
+      apiError(e, 'Gagal mengkonfirmasi pembayaran')
     } finally {
       setConfirmingPayment(false)
     }
@@ -105,8 +105,8 @@ export default function OrderDetail() {
     try {
       await updateStatus(id, next)
       toast(labels[next] || 'Status pesanan berhasil diperbarui', 'success')
-    } catch {
-      toast('Gagal memperbarui status pesanan', 'error')
+    } catch (e) {
+      apiError(e, 'Gagal memperbarui status pesanan')
     }
   }
 
