@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import { useSettings } from '@/hooks/useSettings.ts'
+import { useStoreContext } from '@/contexts/StoreContext.tsx'
 import { useWaStatusContext } from '@/contexts/WaStatusContext.tsx'
 import { useToast } from '@/hooks/useToast.ts'
 import { fetchApi } from '@/lib/api.ts'
@@ -20,7 +20,7 @@ export default function Settings() {
   function handleTabChange(tab: string) {
     setActiveTab(tab)
   }
-  const { store, aiConfig, error, updateStore, updateAiConfig, loading, reload } = useSettings()
+  const { store, aiConfig, error, updateAiConfig, loading, reload } = useStoreContext()
   const { qr: liveQr, connection: liveConn, phone: livePhone, connectedAt: liveConnectedAt } = useWaStatusContext()
   const { toast, apiError } = useToast()
 
@@ -114,7 +114,7 @@ export default function Settings() {
         ))}
       </div>
 
-      {activeTab === 'store' && <StoreTab store={store} onUpdate={updateStore} />}
+      {activeTab === 'store' && <StoreTab />}
       {activeTab === 'ai' && <AiTab key={aiConfig.id} config={aiConfig} onUpdate={handleAiUpdate} />}
       {activeTab === 'wa' && (
         <WaSessionTab
