@@ -1,4 +1,5 @@
 import { createBrowserRouter, RouterProvider } from 'react-router'
+import { ErrorBoundary } from '@/components/ErrorBoundary.tsx'
 import AuthLayout from '@/components/AuthLayout.tsx'
 import Layout from '@/components/Layout.tsx'
 import ProtectedRoute from '@/components/ProtectedRoute.tsx'
@@ -42,5 +43,9 @@ const router = createBrowserRouter([
 ])
 
 export default function App() {
-  return <RouterProvider router={router} />
+  return (
+    <ErrorBoundary>
+      <RouterProvider router={router} />
+    </ErrorBoundary>
+  )
 }

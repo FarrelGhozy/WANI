@@ -1,4 +1,5 @@
 import { Outlet } from 'react-router'
+import { ErrorBoundary } from '@/components/ErrorBoundary.tsx'
 import Sidebar from '@/components/Sidebar.tsx'
 import BottomNav from '@/components/BottomNav.tsx'
 import Topbar from '@/components/Topbar.tsx'
@@ -18,7 +19,9 @@ export default function Layout() {
       <div className="flex flex-1 flex-col lg:ml-64">
         <Topbar connection={connection} />
         <main className="flex-1 p-4 pb-24 sm:p-6 sm:pb-24 lg:p-8">
-          <Outlet />
+          <ErrorBoundary>
+            <Outlet />
+          </ErrorBoundary>
         </main>
       </div>
       <BottomNav />
