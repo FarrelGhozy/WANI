@@ -1,6 +1,6 @@
 import { useOrders } from '@/hooks/useOrders.ts'
 import OrderListView from '@/components/OrderListView.tsx'
-import Spinner from '@/components/ui/Spinner.tsx'
+import { Skeleton, SkeletonTable } from '@/components/ui/Skeleton.tsx'
 
 const statusOptions = [
   { value: '', label: 'Semua Status' },
@@ -12,10 +12,24 @@ const statusOptions = [
 ]
 
 export default function Orders() {
-  const { orders, loading, search, setSearch, statusFilter, setStatusFilter, sortField, sortDir, toggleSort } = useOrders()
+  const { orders, loading, error, reload, search, setSearch, statusFilter, setStatusFilter, sortField, sortDir, toggleSort } = useOrders()
 
   if (loading) {
-    return <div className="flex items-center justify-center py-20"><Spinner size={24} /></div>
+    return (
+      <div className="max-lg:flex max-lg:h-[calc(100dvh-12rem)] max-lg:flex-col lg:space-y-6">
+        <div className="flex flex-wrap items-start justify-between gap-2">
+          <div>
+            <Skeleton variant="text" className="h-7 w-28" />
+            <Skeleton variant="text" className="mt-2 h-4 w-40" />
+          </div>
+        </div>
+        <div className="flex gap-3">
+          <Skeleton variant="rectangular" className="h-10 flex-1" />
+          <Skeleton variant="rectangular" className="h-10 w-44" />
+        </div>
+        <SkeletonTable rows={6} cols={6} />
+      </div>
+    )
   }
 
   return (
@@ -38,6 +52,21 @@ export default function Orders() {
             </span>
         </div>
       </div>
+
+      {/* Error */}
+      {error && (
+        <div className="rounded-xl border border-red-200 bg-red-50 p-4">
+          <div className="flex items-start justify-between gap-3">
+            <p className="text-sm text-red-800">{error}</p>
+            <button
+              onClick={reload}
+              className="shrink-0 rounded-lg bg-red-100 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-200 transition-colors"
+            >
+              Coba Lagi
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Filters */}
       <div className="flex flex-col gap-3 sm:flex-row">
