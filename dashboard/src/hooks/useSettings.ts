@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react'
 import { fetchApi } from '@/lib/api'
+import { getErrorMessage } from '@/hooks/useToast'
 import type { StoreProfile, AiConfig } from '@/types.ts'
 
 export type { StoreProfile, AiConfig }
@@ -28,7 +29,7 @@ export function useSettings() {
           setAiConfig(data.aiConfig)
         }
       } catch (e) {
-        if (!cancelled) setError((e as Error).message)
+        if (!cancelled) setError(getErrorMessage(e, 'Gagal memuat pengaturan'))
       }
       if (!cancelled) setLoading(false)
     })()
@@ -44,7 +45,8 @@ export function useSettings() {
       })
       if (res.data) setStore(res.data)
     } catch (e) {
-      setError((e as Error).message)
+      setError(getErrorMessage(e, 'Gagal menyimpan toko'))
+      throw e
     }
   }, [])
 
@@ -57,7 +59,8 @@ export function useSettings() {
       })
       if (res.data) setAiConfig(res.data)
     } catch (e) {
-      setError((e as Error).message)
+      setError(getErrorMessage(e, 'Gagal menyimpan AI config'))
+      throw e
     }
   }, [])
 
@@ -69,7 +72,7 @@ export function useSettings() {
       setStore(data.store)
       setAiConfig(data.aiConfig)
     } catch (e) {
-      setError((e as Error).message)
+      setError(getErrorMessage(e, 'Gagal memuat pengaturan'))
     } finally {
       setLoading(false)
     }
