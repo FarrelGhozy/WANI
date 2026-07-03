@@ -73,7 +73,7 @@ async function runInputFirewall(ctx: {
     if (classifierResult.verdict === "SUSPICIOUS") {
       ctx.trace.begin("firewall_tier3")
       const history = await MessageModel.recentByConversation(ctx.conversationId!, 6)
-      const historyTexts = history.map((m: any) => `${m.role}: ${m.content}`)
+      const historyTexts = history.map((m) => `${m.role}: ${m.content}`)
 
       const judgeResult = await judgeInput(ctx.normalized, classifierResult.reasons, historyTexts)
       ctx.trace.set("judge_verdict", judgeResult.verdict).set("judge_reasons", judgeResult.reasons)

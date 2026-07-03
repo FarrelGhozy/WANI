@@ -57,11 +57,11 @@ async function runOutputGuardrails(params: OutputGuardrailParams): Promise<strin
   trace.begin("output_pii")
   const piiFound = scanPii(finalReply)
   if (piiFound.length > 0) {
-    trace.set("pii_redacted", piiFound.map((m: any) => m.type))
-    await ActivityLogModel.log("pii_output", `PII in outbound reply: ${piiFound.map((m: any) => m.type).join(", ")}`, convId, {
-      piiTypes: piiFound.map((m: any) => m.type), intent,
+    trace.set("pii_redacted", piiFound.map((m) => m.type))
+    await ActivityLogModel.log("pii_output", `PII in outbound reply: ${piiFound.map((m) => m.type).join(", ")}`, convId, {
+      piiTypes: piiFound.map((m) => m.type), intent,
     })
-    for (const m of piiFound.sort((a: any, b: any) => b.start - a.start)) {
+    for (const m of piiFound.sort((a, b) => b.start - a.start)) {
       finalReply = finalReply.slice(0, m.start) + `[${m.type.toUpperCase()}]` + finalReply.slice(m.end)
     }
   }
