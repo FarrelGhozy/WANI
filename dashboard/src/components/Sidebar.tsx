@@ -1,6 +1,7 @@
 import { useCallback } from 'react'
 import { NavLink, useNavigate } from 'react-router'
 import { useAuth } from '@/hooks/useAuth.ts'
+import { useStoreContext } from '@/contexts/StoreContext.tsx'
 import { GridIcon, BagIcon, ClipboardIcon, PeopleIcon, GlobeIcon, CogIcon, LogOutIcon } from '@/components/Icons.tsx'
 
 const navItems = [
@@ -14,8 +15,6 @@ const navItems = [
 
 interface SidebarProps {
   connection: string
-  storeName: string
-  storeLogoUrl: string | null
 }
 
 function statusColor(status: string) {
@@ -34,9 +33,12 @@ function statusLabel(status: string) {
   }
 }
 
-export default function Sidebar({ connection, storeName, storeLogoUrl }: SidebarProps) {
+export default function Sidebar({ connection }: SidebarProps) {
   const navigate = useNavigate()
   const { logout } = useAuth()
+  const { store } = useStoreContext()
+  const storeName = store?.businessName ?? 'WANI'
+  const storeLogoUrl = store?.logoUrl ?? null
   const initial = storeName.charAt(0).toUpperCase()
 
   const handleLogout = useCallback(() => {
