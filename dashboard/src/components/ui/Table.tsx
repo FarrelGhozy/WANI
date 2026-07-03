@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { Skeleton } from '@/components/ui/Skeleton.tsx'
 
 export interface Column<T> {
   key: string
@@ -19,18 +20,6 @@ interface TableProps<T> {
   emptyDescription?: string
 }
 
-function SkeletonRow({ cols }: { cols: number }) {
-  return (
-    <tr>
-      {Array.from({ length: cols }).map((_, i) => (
-        <td key={i} className="px-4 py-3">
-          <div className={`h-4 animate-pulse rounded bg-stone-100 ${i === 0 ? 'w-8' : i === 1 ? 'w-24' : i === 2 ? 'w-32' : 'w-16'}`} />
-        </td>
-      ))}
-    </tr>
-  )
-}
-
 export default function Table<T>({
   columns, data, keyExtractor, loading, onRowClick, emptyIcon, emptyTitle, emptyDescription,
 }: TableProps<T>) {
@@ -48,7 +37,20 @@ export default function Table<T>({
         </thead>
         <tbody>
           {loading ? (
-            Array.from({ length: 5 }).map((_, i) => <SkeletonRow key={i} cols={columns.length} />)
+            Array.from({ length: 5 }).map((_, rowIdx) => (
+              <tr key={rowIdx}>
+                {Array.from({ length: columns.length }).map((__, colIdx) => (
+                  <td key={colIdx} className="px-4 py-3">
+                    <Skeleton
+                      variant="text"
+                      className={`h-4 ${
+                        colIdx === 0 ? 'w-8' : colIdx === 1 ? 'w-24' : colIdx === 2 ? 'w-32' : 'w-16'
+                      }`}
+                    />
+                  </td>
+                ))}
+              </tr>
+            ))
           ) : data.length === 0 ? (
             <tr>
               <td colSpan={columns.length} className="px-4 py-12">
