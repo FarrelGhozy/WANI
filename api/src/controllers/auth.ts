@@ -24,9 +24,11 @@ function getJwtSecret(): string {
 }
 
 function signToken(user: { id: string; email: string; role: string }): string {
-  return jwt.sign({ id: user.id, email: user.email, role: user.role }, getJwtSecret(), {
-    expiresIn: (process.env.JWT_EXPIRES || "7d") as unknown as number,
-  })
+  return jwt.sign(
+    { id: user.id, email: user.email, role: user.role },
+    getJwtSecret(),
+    { expiresIn: process.env.JWT_EXPIRES || "7d" } as jwt.SignOptions,
+  )
 }
 
 export async function register(
@@ -77,7 +79,8 @@ export async function me(
   req: Request,
   res: Response,
 ): Promise<void> {
-  const user = await UserModel.getById(req.user!.id)
+  if (!req.user) throw new UnauthorizedError("not authenticated")
+  const user = await UserModel.getById<{ id: string; name: string; email: string; role: string }>(req.user.id)
   if (!user) {
     throw new UnauthorizedError("user not found")
   }
