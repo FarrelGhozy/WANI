@@ -1,5 +1,6 @@
 import { useState, useMemo, useCallback, useEffect } from 'react'
 import { fetchApi } from '@/lib/api'
+import { getErrorMessage } from '@/hooks/useToast'
 import type { OrderStatus, OrderSortField, OrderItem, Payment, Order } from '@/types.ts'
 export type { OrderStatus, OrderSortField, OrderItem, Payment, Order }
 
@@ -80,7 +81,7 @@ export function useOrders() {
         const items = await fetchOrders()
         if (!cancelled) setOrders(items)
       } catch (e) {
-        if (!cancelled) setError((e as Error).message)
+        if (!cancelled) setError(getErrorMessage(e, 'Gagal memuat pesanan'))
       }
       if (!cancelled) setLoading(false)
     })()
@@ -157,7 +158,8 @@ export function useOrders() {
         return mapped
       }
     } catch (e) {
-      setError((e as Error).message)
+      setError(getErrorMessage(e, 'Gagal memperbarui status'))
+      throw e
     }
   }, [orders])
 
@@ -189,7 +191,8 @@ export function useOrders() {
         return mapped
       }
     } catch (e) {
-      setError((e as Error).message)
+      setError(getErrorMessage(e, 'Gagal konfirmasi pembayaran'))
+      throw e
     }
   }, [orders])
 
@@ -210,7 +213,7 @@ export function useOrders() {
         const items = await fetchOrders()
         setOrders(items)
       } catch (e) {
-        setError((e as Error).message)
+        setError(getErrorMessage(e, 'Gagal memuat pesanan'))
       } finally {
         setLoading(false)
       }
