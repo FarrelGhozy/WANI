@@ -5,6 +5,7 @@ import { ConversationModel } from "@/src/models/conversation"
 import { MessageModel } from "@/src/models/message"
 import { sendResponse } from "@/src/utils/response"
 import { NotFoundError } from "@/src/utils/errors"
+import { getValidatedQuery } from "@/src/middleware/validate"
 import {
   orderQuerySchema,
   updateOrderStatusSchema,
@@ -64,7 +65,7 @@ export async function listOrders(
   req: Request<Record<string, string>, any, any, OrderQuery>,
   res: Response,
 ): Promise<void> {
-  const result = await OrderModel.list(req.validatedQuery! as OrderQuery)
+  const result = await OrderModel.list(getValidatedQuery<OrderQuery>(req))
   sendResponse(res, 200, "orders retrieved", result)
 }
 

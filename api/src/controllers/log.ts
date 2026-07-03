@@ -3,6 +3,7 @@ import type { z } from "zod"
 import { prisma } from "@/src/config/db"
 import { ActivityLogModel } from "@/src/models/activity-log"
 import { sendResponse } from "@/src/utils/response"
+import { getValidatedQuery } from "@/src/middleware/validate"
 import { logQuerySchema } from "@/src/schemas/log"
 
 type LogQuery = z.infer<typeof logQuerySchema>
@@ -11,7 +12,7 @@ export async function listLogs(
   req: Request<Record<string, string>, any, any, LogQuery>,
   res: Response,
 ): Promise<void> {
-  const result = await ActivityLogModel.list(req.validatedQuery! as LogQuery)
+  const result = await ActivityLogModel.list(getValidatedQuery<LogQuery>(req))
   sendResponse(res, 200, "logs retrieved", result)
 }
 

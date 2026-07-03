@@ -3,6 +3,7 @@ import type { z } from "zod"
 import { ProductModel, CategoryModel } from "@/src/models/catalog"
 import { sendResponse } from "@/src/utils/response"
 import { NotFoundError } from "@/src/utils/errors"
+import { getValidatedQuery } from "@/src/middleware/validate"
 import { createProductSchema, updateProductSchema, productQuerySchema, createCategorySchema, updateCategorySchema } from "@/src/schemas/product"
 
 type CreateProductBody = z.infer<typeof createProductSchema>
@@ -15,7 +16,7 @@ export async function listProducts(
   req: Request<Record<string, string>, any, any, ProductQuery>,
   res: Response,
 ): Promise<void> {
-  const result = await ProductModel.list(req.validatedQuery! as ProductQuery)
+  const result = await ProductModel.list(getValidatedQuery<ProductQuery>(req))
   sendResponse(res, 200, "products retrieved", result)
 }
 

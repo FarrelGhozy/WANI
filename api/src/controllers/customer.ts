@@ -5,6 +5,7 @@ import { ConversationModel } from "@/src/models/conversation"
 import { MessageModel } from "@/src/models/message"
 import { sendResponse } from "@/src/utils/response"
 import { NotFoundError } from "@/src/utils/errors"
+import { getValidatedQuery } from "@/src/middleware/validate"
 import { customerQuerySchema, updateCustomerSchema } from "@/src/schemas/customer"
 import { updateConversationStatusSchema, sendMessageSchema } from "@/src/schemas/customer"
 
@@ -17,7 +18,7 @@ export async function listCustomers(
   req: Request<Record<string, string>, any, any, CustomerQuery>,
   res: Response,
 ): Promise<void> {
-  const result = await CustomerModel.list(req.validatedQuery! as CustomerQuery)
+  const result = await CustomerModel.list(getValidatedQuery<CustomerQuery>(req))
   sendResponse(res, 200, "customers retrieved", result)
 }
 

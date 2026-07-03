@@ -2,6 +2,7 @@ import type { Request, Response } from "express"
 import type { z } from "zod"
 import { sendResponse } from "@/src/utils/response"
 import { NotFoundError } from "@/src/utils/errors"
+import { getValidatedQuery } from "@/src/middleware/validate"
 import { getTraces, getTraceById, clearTraces } from "@/src/debug/tracer"
 import { getCircuitState, resetCircuit } from "@/src/ai/circuit-breaker"
 import { getTracesQuerySchema, getTraceDetailParamsSchema } from "@/src/schemas/debug"
@@ -13,7 +14,7 @@ export function getRecentTraces(
   req: Request<Record<string, string>, unknown, unknown, GetTracesQuery>,
   res: Response,
 ): void {
-  const q = req.validatedQuery! as GetTracesQuery
+  const q = getValidatedQuery<GetTracesQuery>(req)
   const limit = Number(q.limit)
   const traces = getTraces(limit)
   sendResponse(res, 200, "ok", { traces })
