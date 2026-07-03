@@ -8,21 +8,21 @@ import CategoryModal from '@/components/CategoryModal.tsx'
 import Button from '@/components/ui/Button.tsx'
 import Pagination from '@/components/ui/Pagination.tsx'
 import Modal from '@/components/ui/Modal.tsx'
-import Spinner from '@/components/ui/Spinner.tsx'
+import { Skeleton, SkeletonTable } from '@/components/ui/Skeleton.tsx'
 
 const CARD_LIMIT = 20
 
 export default function Products() {
   const navigate = useNavigate()
   const {
-    products, categories, loading,
+    products, categories, loading, error, reload,
     search, setSearch,
     categoryFilter, setCategoryFilter,
     sortField, sortDir, toggleSort,
     deleteProduct,
     createCategory, updateCategory, deleteCategory,
   } = useProducts()
-  const { toast } = useToast()
+  const { toast, apiError } = useToast()
 
   const [view, setView] = useState<'list' | 'card'>('list')
   const [cardPage, setCardPage] = useState(1)
@@ -39,13 +39,32 @@ export default function Products() {
       await deleteProduct(id)
       toast('Produk berhasil dihapus', 'success')
       setDeleteId(null)
-    } catch {
-      toast('Gagal menghapus produk', 'error')
+    } catch (e) {
+      apiError(e, 'Gagal menghapus produk')
     }
   }
 
   if (loading) {
-    return <div className="flex items-center justify-center py-20"><Spinner size={24} /></div>
+    return (
+      <div className="space-y-6">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <Skeleton variant="text" className="h-7 w-24" />
+            <Skeleton variant="text" className="mt-2 h-4 w-36" />
+          </div>
+          <div className="flex gap-3">
+            <Skeleton variant="rectangular" className="h-10 w-24" />
+            <Skeleton variant="rectangular" className="h-10 w-32" />
+            <Skeleton variant="rectangular" className="h-10 w-36" />
+          </div>
+        </div>
+        <div className="flex gap-3">
+          <Skeleton variant="rectangular" className="h-10 flex-1" />
+          <Skeleton variant="rectangular" className="h-10 w-44" />
+        </div>
+        <SkeletonTable rows={6} cols={5} />
+      </div>
+    )
   }
 
   return (
@@ -94,6 +113,21 @@ export default function Products() {
           </Button>
         </div>
       </div>
+
+      {/* Error */}
+      {error && (
+        <div className="rounded-xl border border-red-200 bg-red-50 p-4">
+          <div className="flex items-start justify-between gap-3">
+            <p className="text-sm text-red-800">{error}</p>
+            <button
+              onClick={reload}
+              className="shrink-0 rounded-lg bg-red-100 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-200 transition-colors"
+            >
+              Coba Lagi
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Filters */}
       <div className="flex flex-col gap-3 sm:flex-row">
