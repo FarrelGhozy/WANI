@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { fetchApi } from '@/lib/api.ts'
+import { getErrorMessage } from '@/hooks/useToast.ts'
 import type { WaStatus } from '@/types.ts'
 
 export type { WaStatus }
@@ -26,7 +27,7 @@ export function useWaStatus(pollInterval = 5000): WaStatus {
       setError(null)
     } catch (e) {
       setLoading(false)
-      setError(e instanceof Error ? e.message : 'unknown error')
+      setError(getErrorMessage(e, 'Gagal memeriksa status WA'))
     }
   }, [])
 
