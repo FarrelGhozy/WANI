@@ -170,7 +170,7 @@ function generateHtml(
   return { success: true, outputPath: outDir };
 }
 
-function renderItem(block: string, item: ProductData): string {
+export function renderItem(block: string, item: ProductData): string {
   let out = block;
   for (const [k, v] of Object.entries(item)) {
     const val = String(v ?? "");
@@ -288,7 +288,7 @@ function writeDataFile(workingDir: string, filename: string, data: unknown) {
   writeFileSync(join(dataDir, filename), JSON.stringify(data, null, 2));
 }
 
-function buildContext(params: GenerateParams): Record<string, unknown> {
+export function buildContext(params: GenerateParams): Record<string, unknown> {
   const { store, config, stats } = params;
   const fmtPrice = (n: number) => `Rp ${n.toLocaleString("id-ID")}`;
   const p = config.colors.primary;
@@ -372,7 +372,7 @@ function makePlaceholderSvg(primary: string, secondary: string, label: string): 
   return `data:image/svg+xml,${encodeURIComponent(svg)}`;
 }
 
-function escapeHtml(s: string): string {
+export function escapeHtml(s: string): string {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 }
 
