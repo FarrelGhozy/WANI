@@ -1,5 +1,6 @@
 import { useState, useMemo, useCallback, useEffect } from 'react'
 import { fetchApi } from '@/lib/api'
+import { getErrorMessage } from '@/hooks/useToast'
 import type { MessageRole, ConversationStatus, Message, Conversation, Customer } from '@/types.ts'
 
 export type { MessageRole, ConversationStatus, Message, Conversation, Customer }
@@ -25,7 +26,7 @@ export function useCustomers() {
         const items = await fetchCustomers()
         if (!cancelled) setCustomers(items)
       } catch (e) {
-        if (!cancelled) setError((e as Error).message)
+        if (!cancelled) setError(getErrorMessage(e, 'Gagal memuat pelanggan'))
       }
       if (!cancelled) setLoading(false)
     })()
@@ -87,8 +88,11 @@ export function useCustomers() {
             setConversation(null)
           }
         }
-      } catch {
-        if (!cancelled) setConversation(null)
+      } catch (e) {
+        if (!cancelled) {
+          setConversation(null)
+          setError(getErrorMessage(e, 'Gagal memuat percakapan'))
+        }
       }
       if (!cancelled) setConvLoading(false)
     })()
@@ -121,7 +125,7 @@ export function useCustomers() {
         setConversation((prev) => prev ? { ...prev, messages: [...prev.messages, newMsg] } : prev)
       }
     } catch (e) {
-      setError((e as Error).message)
+      setError(getErrorMessage(e, 'Gagal memuat pelanggan'))
     }
   }, [conversation, selectedId])
 
@@ -155,7 +159,7 @@ export function useCustomers() {
         const items = await fetchCustomers()
         setCustomers(items)
       } catch (e) {
-        setError((e as Error).message)
+        setError(getErrorMessage(e, 'Gagal memuat pelanggan'))
       } finally {
         setLoading(false)
       }
