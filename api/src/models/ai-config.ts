@@ -3,7 +3,7 @@ import type { AiConfig } from "@db/client"
 
 function normalize(row: AiConfig | null): AiConfig | null {
   if (!row) return null
-  return { ...row, temperature: Number(row.temperature) } as unknown as AiConfig
+  return { ...row }
 }
 
 export class AiConfigModel extends BaseModel {
