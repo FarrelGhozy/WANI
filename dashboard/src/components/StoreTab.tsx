@@ -4,6 +4,7 @@ import { Link } from 'react-router'
 import type { StoreProfile } from '@/hooks/useSettings.ts'
 import { useProducts } from '@/hooks/useProducts.ts'
 import { useToast } from '@/hooks/useToast.ts'
+import { uploadFile } from '@/lib/upload.ts'
 import Card from '@/components/ui/Card.tsx'
 import Button from '@/components/ui/Button.tsx'
 import Input from '@/components/ui/Input.tsx'
@@ -272,23 +273,11 @@ export default function StoreTab({ store, onUpdate }: StoreTabProps) {
   async function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
-    try {
-      const body = new FormData()
-      body.append('file', file)
-      body.append('prefix', 'store')
-      const res = await fetch('/api/upload', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${localStorage.getItem('wani_auth_token')}` },
-        body,
-      })
-      const json = await res.json()
-      if (json.status === 'success') {
-        await onUpdate({ logoUrl: json.data.url })
-        toast('Foto toko berhasil diganti', 'success')
-      } else {
-        toast('Gagal mengupload foto', 'error')
-      }
-    } catch {
+    const result = await uploadFile(file, 'store')
+    if (result.success && result.url) {
+      await onUpdate({ logoUrl: result.url })
+      toast('Foto toko berhasil diganti', 'success')
+    } else {
       toast('Gagal mengupload foto', 'error')
     }
   }
