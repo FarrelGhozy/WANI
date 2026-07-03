@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head><title>{{store.businessName}}</title></head>
+<body>
+{{>navbar}}
+<h1>{{hero.headline}}</h1>
+<p>{{{hero.subheadline}}}</p>
+{{#store.hasLogo}}<img src="{{store.logoUrl}}" alt="logo"/>{{/store.hasLogo}}
+{{^store.hasLogo}}<span>No logo</span>{{/store.hasLogo}}
+{{#products}}
+<div class="product">
+  <h3>{{.name}}</h3>
+  <span>{{.price}}</span>
+  {{#.description}}<p>{{.description}}</p>{{/.description}}
+</div>
+{{/products}}
+{{^products}}<p>Tidak ada produk</p>{{/products}}
+{{>footer}}
+</body>
+</html>
