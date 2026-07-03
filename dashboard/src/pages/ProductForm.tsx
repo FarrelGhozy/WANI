@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { useProducts, type ProductFormData } from '@/hooks/useProducts.ts'
 import { useToast } from '@/hooks/useToast.ts'
+import { uploadFile } from '@/lib/upload.ts'
 import Button from '@/components/ui/Button.tsx'
 import Input from '@/components/ui/Input.tsx'
 import Select from '@/components/ui/Select.tsx'
@@ -122,24 +123,11 @@ export default function ProductForm() {
 
     let imageUrl = form.imageUrl || null
     if (pendingFile.current) {
-      try {
-        const body = new FormData()
-        body.append('file', pendingFile.current)
-        body.append('prefix', 'product')
-        const token = localStorage.getItem('wani_auth_token')
-        const res = await fetch('/api/upload', {
-          method: 'POST',
-          headers: token ? { Authorization: `Bearer ${token}` } : {},
-          body,
-        })
-        const json = await res.json() as { status: string; data?: { url: string } }
-        if (json.status === 'success' && json.data?.url) {
-          imageUrl = json.data.url
-        } else {
-          throw new Error(json.status === 'failure' ? json.status : 'upload failed')
-        }
-      } catch (e) {
-        apiError(e, 'Gagal upload gambar')
+      const result = await uploadFile(pendingFile.current, 'product')
+      if (result.success && result.url) {
+        imageUrl = result.url
+      } else {
+        apiError(new Error(result.error), 'Gagal upload gambar')
         setSaving(false)
         return
       }
