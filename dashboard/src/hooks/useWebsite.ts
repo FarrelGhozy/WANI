@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo, useEffect } from 'react'
 import { fetchApi } from '@/lib/api.ts'
+import { getErrorMessage } from '@/hooks/useToast.ts'
 import { useProducts } from '@/hooks/useProducts.ts'
 import type { WebsiteConfig, GenerationLog } from '@/types.ts'
 
@@ -33,15 +34,21 @@ export function useWebsite() {
   const [logs, setLogs] = useState<GenerationLog[]>([])
   const [loading, setLoading] = useState(true)
   const [generating, setGenerating] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const fetchConfig = useCallback(async () => {
+    const [cfgRes, genRes] = await Promise.all([
+      fetchApi<Record<string, unknown>>('/api/website'),
+      fetchApi<GenerationLog[]>('/api/website/generations'),
+    ])
+    return { cfgRes, genRes }
+  }, [])
 
   useEffect(() => {
     let cancelled = false
     ;(async () => {
       try {
-        const [cfgRes, genRes] = await Promise.all([
-          fetchApi<Record<string, unknown>>('/api/website'),
-          fetchApi<GenerationLog[]>('/api/website/generations'),
-        ])
+        const { cfgRes, genRes } = await fetchConfig()
         if (!cancelled) {
           if (cfgRes.data) {
             setConfig((prev) => ({ ...prev, ...cfgRes.data as Partial<WebsiteConfig> }))
@@ -49,14 +56,15 @@ export function useWebsite() {
           if (genRes.data) {
             setLogs(genRes.data)
           }
+          setError(null)
         }
-      } catch {
-        // API not available — use defaults
+      } catch (e) {
+        if (!cancelled) setError(getErrorMessage(e, 'Gagal memuat konfigurasi website'))
       }
       if (!cancelled) setLoading(false)
     })()
     return () => { cancelled = true }
-  }, [])
+  }, [fetchConfig])
 
   const updateConfig = useCallback(async (patch: Partial<WebsiteConfig>) => {
     setConfig((prev) => ({ ...prev, ...patch }))
@@ -66,8 +74,10 @@ export function useWebsite() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(patch),
       })
-    } catch {
-      // Silent save failure
+    } catch (e) {
+      const msg = getErrorMessage(e, 'Gagal menyimpan konfigurasi')
+      setError(msg)
+      throw e
     }
   }, [])
 
@@ -101,7 +111,8 @@ export function useWebsite() {
         return res.data.slug
       }
       return null
-    } catch {
+    } catch (e) {
+      setError(getErrorMessage(e, 'Gagal generate website'))
       return null
     } finally {
       setGenerating(false)
@@ -112,8 +123,9 @@ export function useWebsite() {
     try {
       const res = await fetchApi<GenerationLog[]>('/api/website/generations')
       if (res.data) setLogs(res.data)
-    } catch {
-      // ignore
+      setError(null)
+    } catch (e) {
+      setError(getErrorMessage(e, 'Gagal memuat log generasi'))
     }
   }, [])
 
@@ -149,6 +161,24 @@ export function useWebsite() {
     await fetchApi('/api/website/publish', { method: 'POST' })
   }, [])
 
+  const reload = useCallback(async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      const { cfgRes, genRes } = await fetchConfig()
+      if (cfgRes.data) {
+        setConfig((prev) => ({ ...prev, ...cfgRes.data as Partial<WebsiteConfig> }))
+      }
+      if (genRes.data) {
+        setLogs(genRes.data)
+      }
+    } catch (e) {
+      setError(getErrorMessage(e, 'Gagal memuat konfigurasi website'))
+    } finally {
+      setLoading(false)
+    }
+  }, [fetchConfig])
+
   return {
     config,
     logs,
@@ -162,5 +192,7 @@ export function useWebsite() {
     deleteGeneration,
     publish,
     loading,
+    error,
+    reload,
   }
 }
