@@ -1,6 +1,7 @@
 import { useCustomers } from '@/hooks/useCustomers.ts'
 import CustomerListView from '@/components/CustomerListView.tsx'
 import ChatView from '@/components/ChatView.tsx'
+import { Skeleton, SkeletonText } from '@/components/ui/Skeleton.tsx'
 import Spinner from '@/components/ui/Spinner.tsx'
 
 function EmptyChatPanel() {
@@ -20,10 +21,28 @@ function EmptyChatPanel() {
 }
 
 export default function Customers() {
-  const { customers, loading, search, setSearch, selectedId, setSelectedId, selected, conversation, sendMessage, convLoading } = useCustomers()
+  const { customers, loading, error, reload, search, setSearch, selectedId, setSelectedId, selected, conversation, sendMessage, convLoading } = useCustomers()
 
   if (loading) {
-    return <div className="flex items-center justify-center py-20"><Spinner size={24} /></div>
+    return (
+      <div className="flex h-[calc(100dvh-12rem)] flex-col pb-16 lg:h-[calc(100vh-9rem)] lg:pb-0">
+        <div className="mb-4">
+          <Skeleton variant="text" className="h-7 w-32" />
+          <Skeleton variant="text" className="mt-2 h-4 w-24" />
+        </div>
+        <div className="mb-4">
+          <Skeleton variant="rectangular" className="h-10 w-full max-w-md" />
+        </div>
+        <div className="flex flex-1 gap-4 overflow-hidden">
+          <div className="flex-1 rounded-xl border border-stone-200 bg-white p-6 lg:w-80 lg:shrink-0">
+            <SkeletonText lines={8} />
+          </div>
+          <div className="hidden flex-1 rounded-xl border border-stone-200 bg-white p-6 lg:flex lg:items-center lg:justify-center">
+            <Skeleton variant="text" className="h-4 w-48" />
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -32,6 +51,21 @@ export default function Customers() {
         <h1 className="text-2xl font-semibold tracking-tight text-stone-900">Pelanggan</h1>
         <p className="mt-1 text-sm text-stone-500">{customers.length} pelanggan</p>
       </div>
+
+      {/* Error */}
+      {error && (
+        <div className="mb-4 rounded-xl border border-red-200 bg-red-50 p-4">
+          <div className="flex items-start justify-between gap-3">
+            <p className="text-sm text-red-800">{error}</p>
+            <button
+              onClick={reload}
+              className="shrink-0 rounded-lg bg-red-100 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-200 transition-colors"
+            >
+              Coba Lagi
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Search */}
       <div className="mb-4">
