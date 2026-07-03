@@ -5,6 +5,7 @@ import { existsSync, rmSync, symlinkSync, unlinkSync, readlinkSync } from "node:
 import { WebSiteModel } from "@/src/models/website"
 import { StoreModel } from "@/src/models/store"
 import { ProductModel } from "@/src/models/catalog"
+import type { Product } from "@db/client"
 import { OrderModel } from "@/src/models/order"
 import { sendResponse } from "@/src/utils/response"
 import { BadRequestError, InternalServerError, NotFoundError } from "@/src/utils/errors"
@@ -17,8 +18,8 @@ type GenerateWebsiteBody = z.infer<typeof generateWebsiteSchema>
 const GENERATED_DIR = path.resolve(import.meta.dir, "..", "generated-sites")
 const UPLOADS_DIR = path.resolve(import.meta.dir, "..", "..", "uploads")
 
-function getConfigValue<T>(config: any, key: string, fallback: T): T {
-  return config?.[key] ?? fallback
+function getConfigValue<T>(config: Record<string, unknown>, key: string, fallback: T): T {
+  return (config[key] as T) ?? fallback
 }
 
 export async function getWebsiteConfig(_req: Request, res: Response): Promise<void> {
@@ -55,14 +56,14 @@ export async function generateWebsite(
     throw new BadRequestError("store not configured — set store info first")
   }
 
-  const products = await ProductModel.getAll()
-  const availableProducts = products.filter((p: any) => p.isAvailable)
+  const products = await ProductModel.getAll() as Product[]
+  const availableProducts = products.filter((p) => p.isAvailable)
 
   const webRow = await WebSiteModel.getConfig()
   const config = (webRow?.config as Record<string, unknown>) ?? {}
   const selectedIds: string[] = getConfigValue(config, "selectedProductIds", [])
   const selectedProducts = selectedIds.length > 0
-    ? availableProducts.filter((p: any) => selectedIds.includes(p.id))
+    ? availableProducts.filter((p) => selectedIds.includes(p.id))
     : availableProducts
 
   const { totalOrders } = await OrderModel.getStats()
@@ -86,7 +87,7 @@ export async function generateWebsite(
       returnPolicy: store.returnPolicy,
       logoUrl: store.logoUrl,
     },
-    products: selectedProducts.map((p: any) => ({
+    products: selectedProducts.map((p) => ({
       id: p.id,
       name: p.name,
       description: p.description,
@@ -112,7 +113,7 @@ export async function generateWebsite(
         email: getConfigValue(config, "contactEmail", null),
         mapsUrl: getConfigValue(config, "contactMapsUrl", null),
       },
-      selectedProductIds: selectedProducts.map((p: any) => p.id),
+      selectedProductIds: selectedProducts.map((p) => p.id),
       colors: {
         primary: getConfigValue(config, "primaryColor", "#059669"),
         secondary: getConfigValue(config, "secondaryColor", "#f59e0b"),
@@ -167,7 +168,7 @@ export async function listGenerations(_req: Request, res: Response): Promise<voi
 }
 
 export async function deleteGeneration(req: Request, res: Response): Promise<void> {
-  const gen = await WebSiteModel.getGenerationById(req.params.id)
+  const gen = await WebSiteModel.getGenerationById(req.params.id as string)
   if (!gen) {
     throw new NotFoundError("generation not found")
   }
@@ -189,7 +190,7 @@ export async function deleteGeneration(req: Request, res: Response): Promise<voi
     }
   } catch {}
 
-  await WebSiteModel.deleteGeneration(req.params.id)
+  await WebSiteModel.deleteGeneration(req.params.id as string)
   sendResponse(res, 200, "generation deleted")
 }
 
