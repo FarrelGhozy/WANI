@@ -27,6 +27,7 @@ let cleanupRegistered = false;
 let isReconnecting = false;
 let reconnectAttempts = 0;
 let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+let pollErrors = 0;
 
 async function main() {
   const { state, saveCreds } = await usePrismaAuthState(prisma);
@@ -109,8 +110,8 @@ async function main() {
       const pushName = msg.pushName || phone;
 
       // Safety net: receiving messages confirms connection
-      api.delete("/api/qr").catch(() => {});
-      api.post("/api/qr", { status: "connected" }).catch(() => {});
+      api.delete("/api/qr").catch(e => logger.warn({ err: e?.response?.data ?? String(e) }, "qr safety net: clear failed"));
+      api.post("/api/qr", { status: "connected" }).catch(e => logger.warn({ err: e?.response?.data ?? String(e) }, "qr safety net: status update failed"));
 
       logger.info({ phone, text, pushName }, "message received");
 
@@ -159,12 +160,15 @@ async function main() {
         sock?.end(undefined);
         process.exit(0);
       }
-    } catch {}
+    } catch (err) {
+      logger.error({ err: String(err) }, "pollResetSignal failed");
+    }
   }
 
   async function pollOutgoing() {
     await pollResetSignal();
     try {
+      pollErrors = 0
       const { data } = await api.get("/api/outgoing");
       const items: Array<{ id: string; jid: string; text: string }> = data?.data?.items ?? [];
       for (const msg of items) {
@@ -176,8 +180,13 @@ async function main() {
           logger.error({ err: String(err), id: msg.id }, "outgoing failed");
         }
       }
-    } catch {
-      // Connection error — next cycle
+    } catch (err) {
+      pollErrors++
+      logger.error({ err: String(err), pollErrors }, "pollOutgoing failed")
+      // Exponential backoff on repeated failures: max 60s
+      const delay = Math.min(3000 * Math.pow(2, pollErrors), 60_000)
+      if (pollTimer) clearInterval(pollTimer)
+      pollTimer = setInterval(pollOutgoing, delay)
     }
   }
 
