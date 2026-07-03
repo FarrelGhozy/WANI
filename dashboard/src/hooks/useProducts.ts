@@ -1,5 +1,6 @@
 import { useState, useMemo, useCallback, useEffect } from 'react'
 import { fetchApi } from '@/lib/api'
+import { getErrorMessage } from '@/hooks/useToast'
 import type { Category, Product, ProductFormData } from '@/types.ts'
 
 export type { Category, Product, ProductFormData }
@@ -33,7 +34,7 @@ export function useProducts() {
           setAllCategories(categories)
         }
       } catch (e) {
-        if (!cancelled) setError((e as Error).message)
+        if (!cancelled) setError(getErrorMessage(e, 'Gagal memuat produk'))
       }
       if (!cancelled) setLoading(false)
     })()
@@ -99,7 +100,7 @@ export function useProducts() {
         return res.data
       }
     } catch (e) {
-      setError((e as Error).message)
+      setError(getErrorMessage(e, 'Gagal membuat produk'))
       throw e
     }
   }, [])
@@ -116,7 +117,7 @@ export function useProducts() {
         return res.data
       }
     } catch (e) {
-      setError((e as Error).message)
+      setError(getErrorMessage(e, 'Gagal memperbarui produk'))
       throw e
     }
   }, [])
@@ -126,7 +127,7 @@ export function useProducts() {
       await fetchApi(`/api/products/${id}`, { method: 'DELETE' })
       setAllProducts((prev) => prev.filter((p) => p.id !== id))
     } catch (e) {
-      setError((e as Error).message)
+      setError(getErrorMessage(e, 'Gagal menghapus produk'))
       throw e
     }
   }, [])
@@ -143,7 +144,7 @@ export function useProducts() {
         return res.data
       }
     } catch (e) {
-      setError((e as Error).message)
+      setError(getErrorMessage(e, 'Gagal membuat kategori'))
       throw e
     }
   }, [])
@@ -160,7 +161,7 @@ export function useProducts() {
         return res.data
       }
     } catch (e) {
-      setError((e as Error).message)
+      setError(getErrorMessage(e, 'Gagal memperbarui kategori'))
       throw e
     }
   }, [])
@@ -170,7 +171,7 @@ export function useProducts() {
       await fetchApi(`/api/products/categories/${id}`, { method: 'DELETE' })
       setAllCategories((prev) => prev.filter((c) => c.id !== id))
     } catch (e) {
-      setError((e as Error).message)
+      setError(getErrorMessage(e, 'Gagal menghapus kategori'))
       throw e
     }
   }, [])
@@ -193,7 +194,7 @@ export function useProducts() {
         setAllProducts(products)
         setAllCategories(categories)
       } catch (e) {
-        setError((e as Error).message)
+        setError(getErrorMessage(e, 'Gagal memuat produk'))
       } finally {
         setLoading(false)
       }
