@@ -5,21 +5,25 @@ import Card from '@/components/ui/Card.tsx'
 import Button from '@/components/ui/Button.tsx'
 import Modal from '@/components/ui/Modal.tsx'
 import Badge from '@/components/ui/Badge.tsx'
-import Spinner from '@/components/ui/Spinner.tsx'
+import { Skeleton, SkeletonCard } from '@/components/ui/Skeleton.tsx'
 import ImageUpload from '@/components/ui/ImageUpload.tsx'
 import { formatDate } from '@/utils/format'
 
 export default function Website() {
-  const { config, logs, latestSlug, generating, availableProducts, updateConfig, generate, downloadZip, deleteGeneration, loading } = useWebsite()
-  const { toast } = useToast()
+  const { config, logs, latestSlug, generating, availableProducts, updateConfig, generate, downloadZip, deleteGeneration, loading, error, reload } = useWebsite()
+  const { toast, apiError } = useToast()
   const [deleting, setDeleting] = useState<string | null>(null)
 
   async function handleGenerate() {
-    const slug = await generate()
-    if (slug) {
-      toast('Website berhasil dibuat', 'success')
-    } else {
-      toast('Gagal membuat website', 'error')
+    try {
+      const slug = await generate()
+      if (slug) {
+        toast('Website berhasil dibuat', 'success')
+      } else {
+        apiError(new Error('Gagal membuat website'), 'Gagal membuat website')
+      }
+    } catch (e) {
+      apiError(e, 'Gagal membuat website')
     }
   }
 
@@ -32,8 +36,8 @@ export default function Website() {
   async function handleDownload(slug?: string) {
     try {
       await downloadZip(slug)
-    } catch {
-      toast('Gagal mendownload ZIP', 'error')
+    } catch (e) {
+      apiError(e, 'Gagal mendownload ZIP')
     }
   }
 
@@ -41,13 +45,32 @@ export default function Website() {
     try {
       await deleteGeneration(id)
       toast('Riwayat berhasil dihapus', 'success')
-    } catch {
-      toast('Gagal menghapus riwayat', 'error')
+    } catch (e) {
+      apiError(e, 'Gagal menghapus riwayat')
     }
     setDeleting(null)
   }
 
-  if (loading) return <Spinner />
+  if (loading) {
+    return (
+      <div className="mx-auto max-w-5xl space-y-6">
+        <div>
+          <Skeleton variant="text" className="h-7 w-40" />
+          <Skeleton variant="text" className="mt-2 h-4 w-72" />
+        </div>
+        <div className="grid gap-6 lg:grid-cols-3">
+          <div className="space-y-6 lg:col-span-2">
+            <SkeletonCard height="h-96" />
+            <SkeletonCard height="h-56" />
+          </div>
+          <div className="space-y-4">
+            <SkeletonCard height="h-40" />
+            <SkeletonCard height="h-32" />
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="mx-auto max-w-5xl space-y-6">
@@ -57,6 +80,20 @@ export default function Website() {
           <p className="mt-1 text-sm text-stone-500">Kelola website toko Anda — generate, preview, dan download</p>
         </div>
       </div>
+
+      {error && (
+        <div className="rounded-xl border border-red-200 bg-red-50 p-4">
+          <div className="flex items-start justify-between gap-3">
+            <p className="text-sm text-red-800">{error}</p>
+            <button
+              onClick={reload}
+              className="shrink-0 rounded-lg bg-red-100 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-200 transition-colors"
+            >
+              Coba Lagi
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
