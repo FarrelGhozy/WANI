@@ -1,8 +1,8 @@
 import { useRef, useState, useCallback } from 'react'
 import type { ReactNode } from 'react'
 import { Link } from 'react-router'
-import type { StoreProfile } from '@/hooks/useSettings.ts'
-import { useProducts } from '@/hooks/useProducts.ts'
+import { useStoreContext } from '@/contexts/StoreContext.tsx'
+import { useProductsContext } from '@/contexts/ProductsContext.tsx'
 import { useToast } from '@/hooks/useToast.ts'
 import { uploadFile } from '@/lib/upload.ts'
 import Card from '@/components/ui/Card.tsx'
@@ -11,11 +11,6 @@ import Input from '@/components/ui/Input.tsx'
 import Textarea from '@/components/ui/Textarea.tsx'
 import CategoryModal from '@/components/CategoryModal.tsx'
 import PaymentTab from '@/components/PaymentTab.tsx'
-
-interface StoreTabProps {
-  store: StoreProfile
-  onUpdate: (patch: Partial<StoreProfile>) => void
-}
 
 const DAYS = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'] as const
 
@@ -218,9 +213,12 @@ function validateHours(hours: HoursState): string | null {
   return null
 }
 
-export default function StoreTab({ store, onUpdate }: StoreTabProps) {
+export default function StoreTab() {
+  const { store, updateStore: onUpdate } = useStoreContext()
   const fileRef = useRef<HTMLInputElement>(null)
-  const { categories, createCategory, updateCategory, deleteCategory } = useProducts()
+
+  if (!store) return null
+  const { categories, createCategory, updateCategory, deleteCategory } = useProductsContext()
   const [categoryModalOpen, setCategoryModalOpen] = useState(false)
   const [saving, setSaving] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
