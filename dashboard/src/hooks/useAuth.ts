@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react'
 import { fetchApi } from '@/lib/api.ts'
+import { getErrorMessage } from '@/hooks/useToast.ts'
 import type { User } from '@/types.ts'
 
 export type { User }
@@ -28,7 +29,7 @@ export function useAuth() {
       localStorage.setItem(AUTH_USER_KEY, JSON.stringify(userData))
       setUser(userData)
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Login gagal')
+      setError(getErrorMessage(e, 'Login gagal'))
     } finally {
       setLoading(false)
     }
@@ -79,7 +80,7 @@ export function useAuth() {
       setUser(userData)
       return true
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Registrasi gagal')
+      setError(getErrorMessage(e, 'Registrasi gagal'))
       return false
     } finally {
       setLoading(false)
