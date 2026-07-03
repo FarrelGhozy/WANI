@@ -1,18 +1,20 @@
 import { createPortal } from 'react-dom'
 import type { ReactNode } from 'react'
-import { Check, X, Info } from 'lucide-react'
+import { Check, X, Info, AlertTriangle } from 'lucide-react'
 import type { Toast } from '@/hooks/useToast'
 
 const colors: Record<Toast['type'], string> = {
   success: 'border-emerald-300 bg-emerald-50 text-emerald-800',
   error: 'border-red-300 bg-red-50 text-red-800',
   info: 'border-stone-300 bg-stone-50 text-stone-800',
+  warning: 'border-amber-300 bg-amber-50 text-amber-800',
 }
 
 const icons: Record<Toast['type'], ReactNode> = {
   success: <Check size={16} />,
   error: <X size={16} />,
   info: <Info size={16} />,
+  warning: <AlertTriangle size={16} />,
 }
 
 interface ToastContainerProps {
@@ -28,13 +30,27 @@ export default function ToastContainer({ toasts, onRemove }: ToastContainerProps
       {toasts.map(t => (
         <div
           key={t.id}
-          className={`flex items-center gap-2 rounded-lg border px-4 py-3 text-sm shadow-lg ${colors[t.type]}`}
+          className={`flex items-start gap-2 rounded-lg border px-4 py-3 text-sm shadow-lg ${colors[t.type]}`}
         >
-          <span className="shrink-0">{icons[t.type]}</span>
-          <span>{t.message}</span>
+          <span className="mt-0.5 shrink-0">{icons[t.type]}</span>
+          <div className="min-w-0 flex-1">
+            {t.title && <p className="text-xs font-semibold">{t.title}</p>}
+            <p>{t.message}</p>
+            {t.action && (
+              <button
+                onClick={() => {
+                  t.action?.onClick()
+                  onRemove(t.id)
+                }}
+                className="mt-1 text-xs font-medium underline underline-offset-2 hover:opacity-80"
+              >
+                {t.action.label}
+              </button>
+            )}
+          </div>
           <button
             onClick={() => onRemove(t.id)}
-            className="ml-2 text-current/60 hover:text-current"
+            className="ml-2 shrink-0 text-current/60 hover:text-current"
           >
             <X size={14} />
           </button>
