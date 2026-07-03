@@ -1,11 +1,18 @@
 import type { Request, Response, NextFunction } from "express";
 import type { ZodType } from "zod";
-import { BadRequestError } from "@/src/utils/errors";
+import { BadRequestError, InternalServerError } from "@/src/utils/errors";
 
 interface ValidationSchemas {
   body?: ZodType;
   query?: ZodType;
   params?: ZodType;
+}
+
+export function getValidatedQuery<T>(req: Request): T {
+  if (!req.validatedQuery) {
+    throw new InternalServerError("validatedQuery missing — validate middleware required")
+  }
+  return req.validatedQuery as unknown as T
 }
 
 export function validate(schemas: ValidationSchemas) {
