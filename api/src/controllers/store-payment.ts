@@ -1,5 +1,6 @@
 import type { Request, Response } from "express"
 import type { z } from "zod"
+import type { Prisma } from "@db/client"
 import { StorePaymentMethodModel } from "@/src/models/store-payment"
 import { sendResponse } from "@/src/utils/response"
 import { NotFoundError } from "@/src/utils/errors"
@@ -20,24 +21,25 @@ export async function listPaymentMethods(
 }
 
 export async function createPaymentMethod(
-  req: Request<Record<string, string>, any, CreateBody>,
+  req: Request<Record<string, string>, unknown, CreateBody>,
   res: Response,
 ): Promise<void> {
-  const data = {
-    ...req.body,
+  const data: Prisma.StorePaymentMethodCreateInput = {
+    type: req.body.type,
+    label: req.body.label,
     storeId: "default",
     isActive: true,
     sortOrder: 0,
-    accountName: (req.body as any).accountName ?? null,
-    accountNumber: (req.body as any).accountNumber ?? null,
-    bankName: (req.body as any).bankName ?? null,
-    providerName: (req.body as any).providerName ?? null,
-    phoneNumber: (req.body as any).phoneNumber ?? null,
-    qrImageUrl: (req.body as any).qrImageUrl ?? null,
-    instructions: (req.body as any).instructions ?? null,
   }
+  if ("accountName" in req.body) data.accountName = req.body.accountName ?? null
+  if ("accountNumber" in req.body) data.accountNumber = req.body.accountNumber ?? null
+  if ("bankName" in req.body) data.bankName = req.body.bankName ?? null
+  if ("providerName" in req.body) data.providerName = req.body.providerName ?? null
+  if ("phoneNumber" in req.body) data.phoneNumber = req.body.phoneNumber ?? null
+  if ("qrImageUrl" in req.body) data.qrImageUrl = req.body.qrImageUrl ?? null
+  if ("instructions" in req.body) data.instructions = req.body.instructions ?? null
 
-  const method = await StorePaymentMethodModel.create(data as any)
+  const method = await StorePaymentMethodModel.create(data)
   sendResponse(res, 201, "payment method created", method)
 }
 
