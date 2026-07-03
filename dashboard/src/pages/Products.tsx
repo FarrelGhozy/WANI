@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
-import { useProducts } from '@/hooks/useProducts.ts'
+import { useProductsContext } from '@/contexts/ProductsContext.tsx'
 import { useToast } from '@/hooks/useToast.ts'
 import ProductListView from '@/components/ProductListView.tsx'
 import ProductCard from '@/components/ProductCard.tsx'
@@ -21,7 +21,7 @@ export default function Products() {
     sortField, sortDir, toggleSort,
     deleteProduct,
     createCategory, updateCategory, deleteCategory,
-  } = useProducts()
+  } = useProductsContext()
   const { toast, apiError } = useToast()
 
   const [view, setView] = useState<'list' | 'card'>('list')

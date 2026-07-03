@@ -2,7 +2,7 @@ import { useMemo, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router'
 import { useWaStatusContext } from '@/contexts/WaStatusContext.tsx'
 import { useOrders } from '@/hooks/useOrders.ts'
-import { useProducts } from '@/hooks/useProducts.ts'
+import { useProductsContext } from '@/contexts/ProductsContext.tsx'
 import { useCustomers } from '@/hooks/useCustomers.ts'
 import { fetchApi } from '@/lib/api'
 import StatusCard from '@/components/StatusCard.tsx'
@@ -49,7 +49,7 @@ export default function Dashboard() {
   const navigate = useNavigate()
   const { qr, connection, phone, loading: waLoading } = useWaStatusContext()
   const { allOrders, loading: ordersLoading } = useOrders()
-  const { products, loading: prodLoading } = useProducts()
+  const { products, loading: prodLoading } = useProductsContext()
   const { allCustomers, loading: custLoading } = useCustomers()
   const [needsPaymentMethod, setNeedsPaymentMethod] = useState(false)
 

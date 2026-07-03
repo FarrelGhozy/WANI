@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router'
-import { useProducts, type ProductFormData } from '@/hooks/useProducts.ts'
+import { useProductsContext } from '@/contexts/ProductsContext.tsx'
+import type { ProductFormData } from '@/hooks/useProducts.ts'
 import { useToast } from '@/hooks/useToast.ts'
 import { uploadFile } from '@/lib/upload.ts'
 import Button from '@/components/ui/Button.tsx'
@@ -22,7 +23,7 @@ function parsePrice(value: string) {
 export default function ProductForm() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { getProduct, categories, createProduct, updateProduct, createCategory } = useProducts()
+  const { getProduct, categories, createProduct, updateProduct, createCategory } = useProductsContext()
   const { toast, apiError } = useToast()
   const isEdit = Boolean(id)
 
