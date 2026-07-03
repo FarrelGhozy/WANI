@@ -6,7 +6,7 @@ import { fetchApi } from '@/lib/api.ts'
 import StoreTab from '@/components/StoreTab.tsx'
 import AiTab from '@/components/AiTab.tsx'
 import WaSessionTab from '@/components/WaSessionTab.tsx'
-import Spinner from '@/components/ui/Spinner.tsx'
+import { Skeleton, SkeletonCard } from '@/components/ui/Skeleton.tsx'
 
 const tabs = [
   { id: 'store', label: 'Toko' },
@@ -22,7 +22,7 @@ export default function Settings() {
   }
   const { store, aiConfig, error, updateStore, updateAiConfig, loading, reload } = useSettings()
   const { qr: liveQr, connection: liveConn, phone: livePhone, connectedAt: liveConnectedAt } = useWaStatusContext()
-  const { toast } = useToast()
+  const { toast, apiError } = useToast()
 
   const [override, setOverride] = useState<{ connection: string; qr: string; phone: string } | null>(null)
 
@@ -45,8 +45,8 @@ export default function Settings() {
     try {
       await updateAiConfig(patch)
       toast('Konfigurasi AI berhasil disimpan', 'success')
-    } catch {
-      toast('Gagal menyimpan konfigurasi AI', 'error')
+    } catch (e) {
+      apiError(e, 'Gagal menyimpan konfigurasi AI')
     }
   }, [updateAiConfig, toast])
 
@@ -57,15 +57,25 @@ export default function Settings() {
       await fetchApi('/api/qr/reset', { method: 'POST' })
       setOverride(null)
       toast('Koneksi WhatsApp direset. Scan QR baru untuk menghubungkan.', 'info')
-    } catch {
-      toast('Gagal mereset koneksi', 'error')
+    } catch (e) {
+      apiError(e, 'Gagal mereset koneksi')
     } finally {
       setResetting(false)
     }
   }, [resetting, toast])
 
   if (loading) {
-    return <div className="flex items-center justify-center py-20"><Spinner size={24} /></div>
+    return (
+      <div className="space-y-5 md:space-y-6">
+        <Skeleton variant="text" className="h-7 w-40" />
+        <div className="flex gap-1 border-b border-stone-200 pb-0">
+          <Skeleton variant="rectangular" className="h-10 w-16" />
+          <Skeleton variant="rectangular" className="h-10 w-20" />
+          <Skeleton variant="rectangular" className="h-10 w-24" />
+        </div>
+        <SkeletonCard height="h-80" />
+      </div>
+    )
   }
 
   if (!store || !aiConfig) {
