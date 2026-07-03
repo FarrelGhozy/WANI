@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react'
 import { fetchApi } from '@/lib/api'
+import { getErrorMessage } from '@/hooks/useToast'
 import type { StorePaymentMethod, PaymentMethodType } from '@/types'
 
 export type { StorePaymentMethod, PaymentMethodType }
@@ -43,7 +44,7 @@ export function usePaymentMethods() {
         const res = await fetchApi<StorePaymentMethod[]>('/api/store/payment-methods')
         if (!cancelled) setMethods(res.data ?? [])
       } catch (e) {
-        if (!cancelled) setError((e as Error).message)
+        if (!cancelled) setError(getErrorMessage(e, 'Gagal memuat metode pembayaran'))
       } finally {
         if (!cancelled) setLoading(false)
       }
@@ -58,37 +59,52 @@ export function usePaymentMethods() {
       const res = await fetchApi<StorePaymentMethod[]>('/api/store/payment-methods')
       setMethods(res.data ?? [])
     } catch (e) {
-      setError((e as Error).message)
+      setError(getErrorMessage(e, 'Gagal memuat metode pembayaran'))
     } finally {
       setLoading(false)
     }
   }, [])
 
   const create = useCallback(async (data: CreatePaymentMethodData) => {
-    const res = await fetchApi<StorePaymentMethod>('/api/store/payment-methods', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    })
-    if (res.data) setMethods((prev) => [...prev, res.data!])
-    return res.data
+    try {
+      const res = await fetchApi<StorePaymentMethod>('/api/store/payment-methods', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      })
+      if (res.data) setMethods((prev) => [...prev, res.data!])
+      return res.data
+    } catch (e) {
+      setError(getErrorMessage(e, 'Gagal menambah metode pembayaran'))
+      throw e
+    }
   }, [])
 
   const update = useCallback(async (id: string, data: UpdatePaymentMethodData) => {
-    const res = await fetchApi<StorePaymentMethod>(`/api/store/payment-methods/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    })
-    if (res.data) {
-      setMethods((prev) => prev.map((m) => (m.id === id ? res.data! : m)))
+    try {
+      const res = await fetchApi<StorePaymentMethod>(`/api/store/payment-methods/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      })
+      if (res.data) {
+        setMethods((prev) => prev.map((m) => (m.id === id ? res.data! : m)))
+      }
+      return res.data
+    } catch (e) {
+      setError(getErrorMessage(e, 'Gagal memperbarui metode pembayaran'))
+      throw e
     }
-    return res.data
   }, [])
 
   const remove = useCallback(async (id: string) => {
-    await fetchApi(`/api/store/payment-methods/${id}`, { method: 'DELETE' })
-    setMethods((prev) => prev.filter((m) => m.id !== id))
+    try {
+      await fetchApi(`/api/store/payment-methods/${id}`, { method: 'DELETE' })
+      setMethods((prev) => prev.filter((m) => m.id !== id))
+    } catch (e) {
+      setError(getErrorMessage(e, 'Gagal menghapus metode pembayaran'))
+      throw e
+    }
   }, [])
 
   const toggleActive = useCallback(async (method: StorePaymentMethod) => {
