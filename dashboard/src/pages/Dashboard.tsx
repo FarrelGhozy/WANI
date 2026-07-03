@@ -7,6 +7,7 @@ import { useCustomers } from '@/hooks/useCustomers.ts'
 import { fetchApi } from '@/lib/api'
 import StatusCard from '@/components/StatusCard.tsx'
 import Card from '@/components/ui/Card.tsx'
+import { Skeleton, SkeletonCard } from '@/components/ui/Skeleton.tsx'
 import Badge from '@/components/ui/Badge.tsx'
 import QRCode from '@/components/QRCode.tsx'
 import { SignalIcon, BagIcon, ClipboardIcon, PeopleIcon } from '@/components/Icons.tsx'
@@ -97,13 +98,13 @@ export default function Dashboard() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="h-6 w-48 animate-pulse rounded bg-stone-200" />
+        <Skeleton variant="text" className="h-6 w-48" />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-28 animate-pulse rounded-xl bg-stone-100" />
+            <Skeleton key={i} variant="rectangular" className="h-28 rounded-xl" />
           ))}
         </div>
-        <div className="h-64 animate-pulse rounded-xl bg-stone-100" />
+        <SkeletonCard height="h-64" />
       </div>
     )
   }
