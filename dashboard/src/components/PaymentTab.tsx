@@ -2,6 +2,7 @@ import { useState, useRef } from 'react'
 import { usePaymentMethods } from '@/hooks/usePaymentMethods'
 import type { StorePaymentMethod, PaymentMethodType, CreatePaymentMethodData } from '@/hooks/usePaymentMethods'
 import { useToast } from '@/hooks/useToast'
+import { uploadFile } from '@/lib/upload.ts'
 import Button from '@/components/ui/Button'
 import Modal from '@/components/ui/Modal'
 import Spinner from '@/components/ui/Spinner'
@@ -122,25 +123,14 @@ export default function PaymentTab() {
     const file = e.target.files?.[0]
     if (!file) return
     setUploading(true)
-    try {
-      const body = new FormData()
-      body.append('file', file)
-      body.append('prefix', 'qris')
-      const res = await fetch('/api/upload', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${localStorage.getItem('wani_auth_token')}` },
-        body,
-      })
-      const json = await res.json()
-      if (json.status === 'success') {
-        setForm((prev) => ({ ...prev, qrImageUrl: json.data.url }))
-        setErrors((prev) => ({ ...prev, qrImageUrl: '' }))
-        toast('QRIS berhasil diupload', 'success')
-      }
-    } catch {
+    const result = await uploadFile(file, 'qris')
+    setUploading(false)
+    if (result.success && result.url) {
+      setForm((prev) => ({ ...prev, qrImageUrl: result.url! }))
+      setErrors((prev) => ({ ...prev, qrImageUrl: '' }))
+      toast('QRIS berhasil diupload', 'success')
+    } else {
       toast('Gagal mengupload QRIS', 'error')
-    } finally {
-      setUploading(false)
     }
   }
 
