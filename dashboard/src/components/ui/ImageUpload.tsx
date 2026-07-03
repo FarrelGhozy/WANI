@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import { useToast } from '@/hooks/useToast.ts'
+import { uploadFile } from '@/lib/upload.ts'
 import Spinner from '@/components/ui/Spinner.tsx'
 
 interface ImageUploadProps {
@@ -27,26 +28,13 @@ export default function ImageUpload({ value, onChange, label, prefix = 'website'
     }
 
     setUploading(true)
-    try {
-      const body = new FormData()
-      body.append('file', file)
-      body.append('prefix', prefix)
-      const token = localStorage.getItem('wani_auth_token')
-      const res = await fetch('/api/upload', {
-        method: 'POST',
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-        body,
-      })
-      const json = (await res.json()) as { status: string; data?: { url: string } }
-      if (json.status === 'success' && json.data?.url) {
-        onChange(json.data.url)
-      } else {
-        throw new Error('upload failed')
-      }
-    } catch {
+    const result = await uploadFile(file, prefix)
+    setUploading(false)
+
+    if (result.success && result.url) {
+      onChange(result.url)
+    } else {
       toast('Gagal upload gambar', 'error')
-    } finally {
-      setUploading(false)
     }
   }
 
