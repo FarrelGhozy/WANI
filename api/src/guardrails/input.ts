@@ -1,4 +1,5 @@
 import { env } from "@/src/config/env"
+import { QUICK_INJECTION_PATTERNS } from "@/src/guardrails/injection-patterns"
 
 // Code-point ranges for control + zero-width characters that have no place in
 // chat text and are commonly used to smuggle hidden instructions. Newline
@@ -31,26 +32,7 @@ export function normalizeInput(text: string): string {
   return cleaned.length > max ? cleaned.slice(0, max) : cleaned
 }
 
-// Heuristic prompt-injection / jailbreak signatures (EN + ID). Intentionally
-// conservative to limit false positives; a hit short-circuits the LLM call.
-const INJECTION_PATTERNS: RegExp[] = [
-  /ignore\s+(?:all\s+|the\s+|any\s+)?(?:previous|above|prior|earlier)\s+(?:instructions?|prompts?|messages?|rules?)/i,
-  /disregard\s+(?:all\s+|the\s+)?(?:previous|above|prior)\s+(?:instructions?|prompts?|rules?)/i,
-  /abaikan\s+(?:semua\s+)?(?:instruksi|perintah|aturan|peraturan|pesan)/i,
-  /lupakan\s+(?:semua\s+)?(?:instruksi|perintah|aturan|peraturan)/i,
-  /(?:reveal|show|print|repeat|leak|bocorkan|tampilkan)\s+(?:me\s+)?(?:your\s+|the\s+)?(?:system\s+)?(?:prompt|instructions?|aturan\s+sistem)/i,
-  /system\s+prompt/i,
-  /you\s+are\s+now\s+(?:a|an|the)?/i,
-  /kamu\s+(?:sekarang\s+)?(?:adalah|berperan\s+sebagai)/i,
-  /(?:pretend|act)\s+(?:to\s+be|as)\s+/i,
-  /berpura-?pura\s+(?:menjadi|jadi)/i,
-  /developer\s+mode/i,
-  /jailbreak/i,
-  /\bDAN\s+mode\b/i,
-  /<\|[^|]*\|>/,
-  /\[\s*(?:system|assistant|user)\s*\]/i,
-]
-
+/** Heuristic prompt-injection / jailbreak check using quick patterns. */
 export function detectInjection(text: string): boolean {
-  return INJECTION_PATTERNS.some((re) => re.test(text))
+  return QUICK_INJECTION_PATTERNS.some((re) => re.test(text))
 }
