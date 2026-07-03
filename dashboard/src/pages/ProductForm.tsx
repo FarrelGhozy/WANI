@@ -22,7 +22,7 @@ export default function ProductForm() {
   const { id } = useParams()
   const navigate = useNavigate()
   const { getProduct, categories, createProduct, updateProduct, createCategory } = useProducts()
-  const { toast } = useToast()
+  const { toast, apiError } = useToast()
   const isEdit = Boolean(id)
 
   const [form, setForm] = useState<ProductFormData>({
@@ -108,8 +108,8 @@ export default function ProductForm() {
       setShowNewCategory(false)
       setNewCategoryName('')
       setNewCategoryDesc('')
-    } catch {
-      toast('Gagal menambahkan kategori', 'error')
+    } catch (e) {
+      apiError(e, 'Gagal menambahkan kategori')
     } finally {
       setCreatingCategory(false)
     }
@@ -138,8 +138,8 @@ export default function ProductForm() {
         } else {
           throw new Error(json.status === 'failure' ? json.status : 'upload failed')
         }
-      } catch {
-        toast('Gagal upload gambar', 'error')
+      } catch (e) {
+        apiError(e, 'Gagal upload gambar')
         setSaving(false)
         return
       }
@@ -163,8 +163,8 @@ export default function ProductForm() {
         setSaving(false)
         navigate('/products')
       }, 300)
-    } catch {
-      toast(isEdit ? 'Gagal memperbarui produk' : 'Gagal membuat produk', 'error')
+    } catch (e) {
+      apiError(e, isEdit ? 'Gagal memperbarui produk' : 'Gagal membuat produk')
       setSaving(false)
     }
   }
