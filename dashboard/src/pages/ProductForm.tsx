@@ -79,23 +79,23 @@ export default function ProductForm() {
   }
 
   useEffect(() => {
-    if (id) {
-      const product = getProduct(id)
-      if (product) {
-        const formData: ProductFormData = {
-          name: product.name,
-          price: product.price,
-          stock: product.stock,
-          categoryId: product.categoryId ?? '',
-          description: product.description ?? '',
-          isAvailable: product.isAvailable,
-          imageUrl: product.imageUrl ?? '',
-        }
-        setForm(formData)
-        setInitialForm(formData)
-        setPriceDisplay(formatPriceInput(String(product.price)))
-      }
+    if (!id) return
+    const product = getProduct(id)
+    if (!product) return
+    const formData: ProductFormData = {
+      name: product.name,
+      price: product.price,
+      stock: product.stock,
+      categoryId: product.categoryId ?? '',
+      description: product.description ?? '',
+      isAvailable: product.isAvailable,
+      imageUrl: product.imageUrl ?? '',
     }
+    /* eslint-disable react-hooks/set-state-in-effect */
+    setForm(formData)
+    setInitialForm(formData)
+    setPriceDisplay(formatPriceInput(String(product.price)))
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, [id, getProduct])
 
   function set<K extends keyof ProductFormData>(key: K, value: ProductFormData[K]) {
