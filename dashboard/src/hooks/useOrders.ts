@@ -70,7 +70,7 @@ export function useOrders() {
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
 
   const fetchOrders = useCallback(async () => {
-    const res = await fetchApi<{ items: ApiOrder[]; total: number }>('/orders?limit=100')
+    const res = await fetchApi<{ items: ApiOrder[]; total: number }>('/orders?limit=500')
     return res.data?.items.map(mapOrder) ?? []
   }, [])
 

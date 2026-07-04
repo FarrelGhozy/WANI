@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import type { ReactNode } from "react";
 import type { AiConfig } from "@/hooks/useSettings.ts";
+import { useUnsavedChanges } from "@/hooks/useUnsavedChanges.ts";
 import Card from "@/components/ui/Card.tsx";
 import Button from "@/components/ui/Button.tsx";
 
@@ -21,6 +22,8 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
 export default function AiTab({ config, onUpdate }: AiTabProps) {
   const [saving, setSaving] = useState(false);
   const [dirty, setDirty] = useState(false);
+
+  useUnsavedChanges(dirty);
 
   const [model, setModel] = useState(config.model)
   const [maxTokens, setMaxTokens] = useState(config.maxTokens)

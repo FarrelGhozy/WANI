@@ -1,9 +1,10 @@
-import { useRef, useState, useCallback } from 'react'
+import { useRef, useState, useCallback, useMemo } from 'react'
 import type { ReactNode } from 'react'
 import { Link } from 'react-router'
 import { useStoreContext } from '@/contexts/StoreContext.tsx'
 import { useProductsContext } from '@/contexts/ProductsContext.tsx'
 import { useToast } from '@/hooks/useToast.ts'
+import { useUnsavedChanges } from '@/hooks/useUnsavedChanges.ts'
 import { uploadFile } from '@/lib/upload.ts'
 import Card from '@/components/ui/Card.tsx'
 import Button from '@/components/ui/Button.tsx'
@@ -232,6 +233,17 @@ export default function StoreTab() {
     shippingInfo: store.shippingInfo ?? null,
     returnPolicy: store.returnPolicy ?? null,
   }))
+
+  const isDirty = useMemo(() => {
+    return form.businessName !== store.businessName
+      || form.phone !== cleanPhone(store.phone)
+      || form.address !== (store.address ?? '')
+      || form.businessHours !== (store.businessHours ?? null)
+      || form.shippingInfo !== (store.shippingInfo ?? null)
+      || form.returnPolicy !== (store.returnPolicy ?? null)
+  }, [form, store])
+
+  useUnsavedChanges(isDirty)
 
   const handleSave = useCallback(async () => {
     const errs: Record<string, string> = {}

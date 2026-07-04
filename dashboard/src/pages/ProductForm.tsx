@@ -1,8 +1,9 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { useProductsContext } from '@/contexts/ProductsContext.tsx'
 import type { ProductFormData } from '@/hooks/useProducts.ts'
 import { useToast } from '@/hooks/useToast.ts'
+import { useUnsavedChanges } from '@/hooks/useUnsavedChanges.ts'
 import { uploadFile } from '@/lib/upload.ts'
 import Button from '@/components/ui/Button.tsx'
 import Input from '@/components/ui/Input.tsx'
@@ -47,6 +48,20 @@ export default function ProductForm() {
   const [newCategoryName, setNewCategoryName] = useState('')
   const [newCategoryDesc, setNewCategoryDesc] = useState('')
   const [creatingCategory, setCreatingCategory] = useState(false)
+  const initialForm = useRef<ProductFormData>(form)
+
+  const isDirty = useMemo(() => {
+    return form.name !== initialForm.current.name
+      || form.price !== initialForm.current.price
+      || form.stock !== initialForm.current.stock
+      || form.categoryId !== initialForm.current.categoryId
+      || form.description !== initialForm.current.description
+      || form.isAvailable !== initialForm.current.isAvailable
+      || form.imageUrl !== initialForm.current.imageUrl
+      || pendingFile.current !== null
+  }, [form])
+
+  useUnsavedChanges(isDirty)
 
   useEffect(() => {
     return () => {
@@ -68,7 +83,7 @@ export default function ProductForm() {
       const product = getProduct(id)
       if (product) {
         const timer = setTimeout(() => {
-          setForm({
+          const formData: ProductFormData = {
             name: product.name,
             price: product.price,
             stock: product.stock,
@@ -76,7 +91,9 @@ export default function ProductForm() {
             description: product.description ?? '',
             isAvailable: product.isAvailable,
             imageUrl: product.imageUrl ?? '',
-          })
+          }
+          setForm(formData)
+          initialForm.current = formData
           setPriceDisplay(formatPriceInput(String(product.price)))
         }, 0)
         return () => clearTimeout(timer)
