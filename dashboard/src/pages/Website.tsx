@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useWebsite } from '@/hooks/useWebsite.ts'
 import { useToast } from '@/hooks/useToast.ts'
+import { mediaUrl } from '@/lib/media.ts'
 import Card from '@/components/ui/Card.tsx'
 import Button from '@/components/ui/Button.tsx'
 import Modal from '@/components/ui/Modal.tsx'
@@ -29,7 +30,7 @@ export default function Website() {
 
   function handlePreview(slug?: string) {
     const s = slug || latestSlug
-    if (s) window.open(`/s/${s}/`, '_blank')
+    if (s) window.open(mediaUrl(`/s/${s}/`), '_blank')
     else toast('Belum ada website yang di-generate', 'error')
   }
 

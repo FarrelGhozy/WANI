@@ -2,6 +2,7 @@ import { useCallback } from 'react'
 import { NavLink, useNavigate } from 'react-router'
 import { useAuth } from '@/hooks/useAuth.ts'
 import { useStoreContext } from '@/contexts/StoreContext.tsx'
+import { mediaUrl } from '@/lib/media.ts'
 import { GridIcon, BagIcon, ClipboardIcon, PeopleIcon, GlobeIcon, CogIcon, LogOutIcon } from '@/components/Icons.tsx'
 
 const navItems = [
@@ -117,7 +118,7 @@ export default function Sidebar({ connection }: SidebarProps) {
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-teal-600 ring-2 ring-teal-500/40">
             {storeLogoUrl ? (
-              <img src={storeLogoUrl} alt={storeName} className="h-full w-full object-cover" />
+              <img src={mediaUrl(storeLogoUrl)} alt={storeName} className="h-full w-full object-cover" />
             ) : (
               <span className="text-sm font-bold text-white">{initial}</span>
             )}

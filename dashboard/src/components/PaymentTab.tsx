@@ -3,6 +3,7 @@ import { usePaymentMethods } from '@/hooks/usePaymentMethods'
 import type { StorePaymentMethod, PaymentMethodType, CreatePaymentMethodData } from '@/hooks/usePaymentMethods'
 import { useToast } from '@/hooks/useToast'
 import { uploadFile } from '@/lib/upload.ts'
+import { mediaUrl } from '@/lib/media.ts'
 import Button from '@/components/ui/Button'
 import Modal from '@/components/ui/Modal'
 import Spinner from '@/components/ui/Spinner'
@@ -312,7 +313,7 @@ export default function PaymentTab() {
                   <td className="py-2 pr-3 md:py-3 md:pr-4">
                     <div className="flex items-center gap-2 md:gap-3">
                       {method.type === 'QRIS' && method.qrImageUrl ? (
-                        <img src={method.qrImageUrl} alt="QRIS" className="h-8 w-8 rounded border border-stone-200 object-cover md:h-10 md:w-10" />
+                        <img src={mediaUrl(method.qrImageUrl)} alt="QRIS" className="h-8 w-8 rounded border border-stone-200 object-cover md:h-10 md:w-10" />
                       ) : null}
                       <span className="text-[10px] text-stone-600 md:text-xs">{methodDetail(method)}</span>
                     </div>
@@ -403,7 +404,7 @@ export default function PaymentTab() {
               <div className="flex items-center gap-4">
                 {form.qrImageUrl ? (
                   <div className="relative">
-                    <img src={form.qrImageUrl} alt="QRIS" className="h-24 w-24 rounded-lg border border-stone-200 object-cover" />
+                    <img src={mediaUrl(form.qrImageUrl)} alt="QRIS" className="h-24 w-24 rounded-lg border border-stone-200 object-cover" />
                     <button
                       onClick={() => setForm((prev) => ({ ...prev, qrImageUrl: '' }))}
                       className="absolute -right-2 -top-2 rounded-full bg-red-500 p-0.5 text-white"

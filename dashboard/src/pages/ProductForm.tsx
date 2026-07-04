@@ -4,6 +4,7 @@ import { useProductsContext } from '@/contexts/ProductsContext.tsx'
 import type { ProductFormData } from '@/hooks/useProducts.ts'
 import { useToast } from '@/hooks/useToast.ts'
 import { uploadFile } from '@/lib/upload.ts'
+import { mediaUrl } from '@/lib/media.ts'
 import Button from '@/components/ui/Button.tsx'
 import Input from '@/components/ui/Input.tsx'
 import Select from '@/components/ui/Select.tsx'
@@ -186,7 +187,7 @@ export default function ProductForm() {
           <div className="flex flex-col items-start gap-4 sm:flex-row">
             <div className="flex h-28 w-28 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-stone-200 bg-stone-50">
               {previewUrl || form.imageUrl ? (
-                <img src={previewUrl || form.imageUrl || undefined} alt="Pratinjau produk" className="h-full w-full object-cover" />
+                <img src={mediaUrl(previewUrl || form.imageUrl)} alt="Pratinjau produk" className="h-full w-full object-cover" />
               ) : (
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-stone-300">
                   <rect x="3" y="3" width="18" height="18" rx="2" />

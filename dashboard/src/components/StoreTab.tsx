@@ -5,6 +5,7 @@ import { useStoreContext } from '@/contexts/StoreContext.tsx'
 import { useProductsContext } from '@/contexts/ProductsContext.tsx'
 import { useToast } from '@/hooks/useToast.ts'
 import { uploadFile } from '@/lib/upload.ts'
+import { mediaUrl } from '@/lib/media.ts'
 import Card from '@/components/ui/Card.tsx'
 import Button from '@/components/ui/Button.tsx'
 import Input from '@/components/ui/Input.tsx'
@@ -292,7 +293,7 @@ export default function StoreTab() {
           <div className="relative">
             <div className="flex h-24 w-24 items-center justify-center overflow-hidden rounded-full bg-teal-50 ring-4 ring-teal-100">
               {store.logoUrl ? (
-                <img src={store.logoUrl} alt={store.businessName} className="h-full w-full object-cover" />
+                <img src={mediaUrl(store.logoUrl)} alt={store.businessName} className="h-full w-full object-cover" />
               ) : (
                 <span className="text-3xl font-bold text-teal-600">{initial}</span>
               )}

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router'
 import type { Product } from '@/hooks/useProducts.ts'
 import Badge from '@/components/ui/Badge.tsx'
 import { formatPrice } from '@/utils/format'
+import { mediaUrl } from '@/lib/media.ts'
 
 interface ProductCardProps {
   product: Product
@@ -18,7 +19,7 @@ export default function ProductCard({ product: item, onDelete }: ProductCardProp
       {/* Image area */}
       <div className="flex aspect-[4/3] items-center justify-center rounded-t-xl bg-stone-50">
         {item.imageUrl && !imgError ? (
-          <img src={item.imageUrl} alt={item.name} className="h-full w-full rounded-t-xl object-cover" onError={() => setImgError(true)} />
+          <img src={mediaUrl(item.imageUrl)} alt={item.name} className="h-full w-full rounded-t-xl object-cover" onError={() => setImgError(true)} />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
             <div className="flex h-14 w-14 items-center justify-center rounded-full bg-stone-100 text-xl font-bold text-stone-300">

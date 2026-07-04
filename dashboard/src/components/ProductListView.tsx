@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router'
 import type { Product } from '@/hooks/useProducts.ts'
 import Badge from '@/components/ui/Badge.tsx'
 import { formatPrice } from '@/utils/format'
+import { mediaUrl } from '@/lib/media.ts'
 
 interface ProductListViewProps {
   products: Product[]
@@ -22,7 +23,7 @@ function Thumbnail({ product }: { product: Product }) {
   if (product.imageUrl && !imgError) {
     return (
       <div className="max-sm:hidden flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-lg">
-        <img src={product.imageUrl} alt={product.name} className="h-full w-full object-cover" onError={() => setImgError(true)} />
+        <img src={mediaUrl(product.imageUrl)} alt={product.name} className="h-full w-full object-cover" onError={() => setImgError(true)} />
       </div>
     )
   }
