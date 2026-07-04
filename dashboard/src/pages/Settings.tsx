@@ -54,7 +54,7 @@ export default function Settings() {
     } catch (e) {
       apiError(e, 'Gagal menyimpan konfigurasi AI')
     }
-  }, [updateAiConfig, toast])
+  }, [updateAiConfig, toast, apiError])
 
   const handleReset = useCallback(async () => {
     if (resetting) return
@@ -68,7 +68,7 @@ export default function Settings() {
     } finally {
       setResetting(false)
     }
-  }, [resetting, toast])
+  }, [resetting, toast, apiError])
 
   const handleRequestPairing = useCallback(async (phone: string) => {
     setRequestingPairing(true)
