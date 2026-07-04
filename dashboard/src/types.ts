@@ -182,3 +182,28 @@ export interface GenerationLog {
   message: string
   createdAt: string
 }
+
+export interface KnowledgeDocument {
+  id: string
+  storeId: string
+  title: string
+  content: string
+  source: string | null
+  isActive: boolean
+  chunkCount: number
+  createdAt: string
+  updatedAt: string
+}
+
+export interface KnowledgeSearchResult {
+  content: string
+  score: number
+  documentId: string
+  documentTitle: string
+}
+
+export interface KnowledgeIndexResult {
+  documentId: string
+  chunkCount: number
+  tokensUsed: number
+}
