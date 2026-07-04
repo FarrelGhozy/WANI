@@ -66,7 +66,7 @@ export default function Dashboard() {
     return () => { cancelled = true }
   }, [])
 
-  const loading = waLoading || ordersLoading || prodLoading || custLoading
+  const coreLoading = ordersLoading || prodLoading || custLoading
 
   const totalRevenue = useMemo(
     () => allOrders
@@ -95,7 +95,7 @@ export default function Dashboard() {
     [allCustomers],
   )
 
-  if (loading) {
+  if (coreLoading) {
     return (
       <div className="space-y-6">
         <Skeleton variant="text" className="h-6 w-48" />

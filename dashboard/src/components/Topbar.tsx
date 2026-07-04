@@ -1,21 +1,29 @@
-import { useLocation, useNavigate, Link } from 'react-router'
-import { CogIcon } from '@/components/Icons.tsx'
+import { useLocation, useNavigate } from 'react-router'
 
-function pathToLabel(path: string): string {
-  if (path === '/') return 'Dashboard'
-  const segment = path.split('/').filter(Boolean)[0]
-  if (!segment) return 'Dashboard'
-  const map: Record<string, string> = {
-    products: 'Produk',
-    orders: 'Pesanan',
-    customers: 'Pelanggan',
-    website: 'Website',
-    settings: 'Pengaturan',
+const segmentLabels: Record<string, string> = {
+  products: 'Produk',
+  orders: 'Pesanan',
+  customers: 'Pelanggan',
+  website: 'Website',
+  settings: 'Pengaturan',
+}
+
+function buildCrumbs(pathname: string): { label: string; to: string }[] {
+  const crumbs: { label: string; to: string }[] = [{ label: 'Beranda', to: '/' }]
+  const segments = pathname.split('/').filter(Boolean)
+  if (segments.length === 0) return crumbs
+
+  let accumulated = ''
+  for (let i = 0; i < segments.length; i++) {
+    accumulated += '/' + segments[i]
+    const label = segmentLabels[segments[i]]
+      ?? (i > 0 && /^[a-f0-9-]+$/i.test(segments[i])
+        ? 'Detail'
+        : segments[i].charAt(0).toUpperCase() + segments[i].slice(1))
+    crumbs.push({ label, to: accumulated })
   }
-  return map[segment] ?? segment
-    .split('-')
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(' ')
+
+  return crumbs
 }
 
 interface TopbarProps {
@@ -41,24 +49,29 @@ function statusLabel(status: string) {
 export default function Topbar({ connection }: TopbarProps) {
   const location = useLocation()
   const navigate = useNavigate()
-  const currentPage = pathToLabel(location.pathname)
+  const crumbs = buildCrumbs(location.pathname)
 
   return (
     <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-stone-200 bg-white/80 px-4 backdrop-blur-sm sm:px-6 lg:px-8">
-      <div className="flex items-center gap-2 text-sm">
-        <button onClick={() => navigate('/')} className="text-stone-400 transition-colors hover:text-stone-700">Beranda</button>
-        <span className="text-stone-300">/</span>
-        <span className="font-medium text-stone-900">{currentPage}</span>
+      <div className="flex items-center gap-1.5 text-sm">
+        {crumbs.map((crumb, i) => (
+          <span key={crumb.to} className="flex items-center gap-1.5">
+            {i > 0 && <span className="text-stone-300">/</span>}
+            {i < crumbs.length - 1 ? (
+              <button
+                onClick={() => navigate(crumb.to)}
+                className="text-stone-400 transition-colors hover:text-stone-700"
+              >
+                {crumb.label}
+              </button>
+            ) : (
+              <span className="font-medium text-stone-900">{crumb.label}</span>
+            )}
+          </span>
+        ))}
       </div>
 
       <div className="flex items-center gap-2">
-        <Link
-          to="/settings"
-          className="rounded-lg p-2 text-stone-400 transition-colors hover:bg-stone-100 hover:text-stone-700 lg:hidden"
-          aria-label="Pengaturan"
-        >
-          <CogIcon />
-        </Link>
         <span className={`h-2 w-2 rounded-full ${statusDot(connection)}`} />
         <span className="text-xs font-medium text-stone-500">{statusLabel(connection)}</span>
       </div>
