@@ -89,7 +89,7 @@ export default function ChatView({ customerName, conversation, onBack, onSendMes
       </div>
 
       {/* Messages */}
-      <div className="flex-1 space-y-3 overflow-y-auto px-5 py-4 pb-20 lg:pb-4">
+      <div className="flex-1 space-y-3 overflow-y-auto px-5 py-4 lg:pb-4">
         {conversation.messages.map((msg) => (
           <ChatBubble key={msg.id} message={msg} />
         ))}

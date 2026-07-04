@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router'
+import { Outlet, useNavigation } from 'react-router'
 import { ErrorBoundary } from '@/components/ErrorBoundary.tsx'
 import Sidebar from '@/components/Sidebar.tsx'
 import BottomNav from '@/components/BottomNav.tsx'
@@ -8,6 +8,16 @@ import { useToast } from '@/hooks/useToast.ts'
 import { useWaStatusContext } from '@/contexts/WaStatusContext.tsx'
 import { StoreProvider } from '@/contexts/StoreContext.tsx'
 import { ProductsProvider } from '@/contexts/ProductsContext.tsx'
+
+function NavProgress() {
+  const navigation = useNavigation()
+  if (navigation.state === 'idle') return null
+  return (
+    <div className="fixed inset-x-0 top-0 z-50 h-1">
+      <div className="h-full animate-pulse bg-teal-500" />
+    </div>
+  )
+}
 
 export default function Layout() {
   const { connection } = useWaStatusContext()
@@ -29,6 +39,7 @@ function LayoutInner({ connection, toasts, removeToast }: {
 }) {
   return (
     <div className="flex min-h-screen bg-stone-50">
+      <NavProgress />
       <Sidebar connection={connection} />
       <div className="flex flex-1 flex-col lg:ml-64">
         <Topbar connection={connection} />

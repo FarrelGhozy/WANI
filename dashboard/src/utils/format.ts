@@ -4,16 +4,20 @@ export function formatPrice(price: number): string {
 
 export function formatDate(date: string | Date, options?: { timeOnly?: boolean; long?: boolean; withTz?: boolean }): string {
   const d = new Date(date)
-  const fmt: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }
   if (options?.timeOnly) {
-    return d.toLocaleTimeString('id-ID', fmt).replace(/\./g, ':')
+    const h = String(d.getHours()).padStart(2, '0')
+    const m = String(d.getMinutes()).padStart(2, '0')
+    return `${h}:${m}`
   }
-  const dateOpts: Intl.DateTimeFormatOptions = {
-    day: 'numeric',
-    month: options?.long ? 'long' : 'short',
-    year: 'numeric',
-    ...fmt,
-  }
-  if (options?.withTz) dateOpts.timeZoneName = 'short'
-  return d.toLocaleDateString('id-ID', dateOpts).replace(/\./g, ':')
+  const day = d.getDate()
+  const year = d.getFullYear()
+  const month = options?.long
+    ? d.toLocaleDateString('id-ID', { month: 'long' })
+    : d.toLocaleDateString('id-ID', { month: 'short' })
+  const h = String(d.getHours()).padStart(2, '0')
+  const m = String(d.getMinutes()).padStart(2, '0')
+  const tz = options?.withTz
+    ? ` ${Intl.DateTimeFormat('id-ID', { timeZoneName: 'short' }).formatToParts(d).find(p => p.type === 'timeZoneName')?.value ?? ''}`
+    : ''
+  return `${day} ${month} ${year}, ${h}:${m}${tz}`
 }
