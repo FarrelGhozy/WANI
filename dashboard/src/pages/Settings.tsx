@@ -6,11 +6,13 @@ import { fetchApi } from '@/lib/api.ts'
 import StoreTab from '@/components/StoreTab.tsx'
 import AiTab from '@/components/AiTab.tsx'
 import WaSessionTab from '@/components/WaSessionTab.tsx'
+import KnowledgeBaseTab from '@/components/KnowledgeBaseTab.tsx'
 import { Skeleton, SkeletonCard } from '@/components/ui/Skeleton.tsx'
 
 const tabs = [
   { id: 'store', label: 'Toko' },
   { id: 'ai', label: 'AI Agent' },
+  { id: 'knowledge', label: 'Knowledge Base' },
   { id: 'wa', label: 'WA Session' },
 ] as const
 
@@ -116,6 +118,7 @@ export default function Settings() {
 
       {activeTab === 'store' && <StoreTab />}
       {activeTab === 'ai' && <AiTab key={aiConfig.id} config={aiConfig} onUpdate={handleAiUpdate} />}
+      {activeTab === 'knowledge' && <KnowledgeBaseTab />}
       {activeTab === 'wa' && (
         <WaSessionTab
           qr={qr}
