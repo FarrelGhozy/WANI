@@ -1,4 +1,6 @@
 import { useLocation, useNavigate } from 'react-router'
+import { useAuth } from '@/hooks/useAuth.ts'
+import { LogOutIcon } from '@/components/Icons.tsx'
 
 const segmentLabels: Record<string, string> = {
   products: 'Produk',
@@ -49,7 +51,13 @@ function statusLabel(status: string) {
 export default function Topbar({ connection }: TopbarProps) {
   const location = useLocation()
   const navigate = useNavigate()
+  const { logout } = useAuth()
   const crumbs = buildCrumbs(location.pathname)
+
+  function handleLogout() {
+    logout()
+    navigate('/login', { replace: true })
+  }
 
   return (
     <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-stone-200 bg-white/80 px-4 backdrop-blur-sm sm:px-6 lg:px-8">
@@ -71,7 +79,14 @@ export default function Topbar({ connection }: TopbarProps) {
         ))}
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-3">
+        <button
+          onClick={handleLogout}
+          className="rounded-lg p-1.5 text-red-400 transition-colors hover:bg-red-50 hover:text-red-600 lg:hidden"
+          aria-label="Keluar"
+        >
+          <LogOutIcon />
+        </button>
         <span className={`h-2 w-2 rounded-full ${statusDot(connection)}`} />
         <span className="text-xs font-medium text-stone-500">{statusLabel(connection)}</span>
       </div>
