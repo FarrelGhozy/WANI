@@ -18,13 +18,14 @@ app.use(metricsMiddleware)
 
 app.use(
   helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" },
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
         scriptSrc: ["'self'", "'unsafe-inline'", "cdn.tailwindcss.com"],
         styleSrc: ["'self'", "'unsafe-inline'", "fonts.googleapis.com", "fonts.gstatic.com", "googleapis.com"],
         fontSrc: ["'self'", "fonts.gstatic.com", "googleapis.com", "fonts.googleapis.com"],
-        imgSrc: ["'self'", "data:", "blob:"],
+        imgSrc: ["'self'", "data:", "blob:", "http://localhost:3001"],
         connectSrc: ["'self'"],
       },
     },
