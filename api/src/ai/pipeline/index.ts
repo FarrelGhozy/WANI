@@ -10,6 +10,7 @@ import { piiScanStep } from "./steps/piiScan"
 import { firewallStep } from "./steps/firewall"
 import { budgetStep } from "./steps/budget"
 import { contextLoaderStep } from "./steps/contextLoader"
+import { retrieveKnowledgeStep } from "./steps/retrieveKnowledge"
 import { messageBuilderStep } from "./steps/messageBuilder"
 import { llmCallStep } from "./steps/llmCall"
 import { outputParserStep } from "./steps/outputParser"
@@ -32,13 +33,14 @@ const steps = [
   piiScanStep,          // 6
   firewallStep,         // 7
   budgetStep,           // 8
-  contextLoaderStep,    // 9
+contextLoaderStep,    // 9
+  retrieveKnowledgeStep, // 9.5
   messageBuilderStep,   // 10
-  llmCallStep,          // 11
-  outputParserStep,     // 12
+  llmCallStep,           // 11
+  outputParserStep,      // 12
   intentExecutorStep,   // 13
   outputGuardrailsStep, // 14
-  usageRecorderStep,    // 15
+  usageRecorderStep,     // 15
   outboundPersisterStep,// 16
 ]
 
