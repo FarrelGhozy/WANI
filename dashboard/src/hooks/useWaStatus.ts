@@ -16,8 +16,8 @@ export function useWaStatus(pollInterval = 5000): WaStatus {
   const poll = useCallback(async () => {
     try {
       const [qrRes, statusRes] = await Promise.all([
-        fetchApi<{ qr: string | null }>('/api/qr'),
-        fetchApi<{ status: string; phone: string | null; connectedAt: string | null }>('/api/qr/status'),
+        fetchApi<{ qr: string | null }>('/qr'),
+        fetchApi<{ status: string; phone: string | null; connectedAt: string | null }>('/qr/status'),
       ])
       setQr(qrRes.data?.qr ?? '')
       setConnection(statusRes.data?.status ?? 'disconnected')

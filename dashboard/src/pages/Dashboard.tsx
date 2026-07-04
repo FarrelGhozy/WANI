@@ -57,7 +57,7 @@ export default function Dashboard() {
     let cancelled = false
     ;(async () => {
       try {
-        const res = await fetchApi<{ hasPaymentMethods: boolean }>('/api/store')
+        const res = await fetchApi<{ hasPaymentMethods: boolean }>('/store')
         if (!cancelled) setNeedsPaymentMethod(!res.data?.hasPaymentMethods)
       } catch {
         // silent

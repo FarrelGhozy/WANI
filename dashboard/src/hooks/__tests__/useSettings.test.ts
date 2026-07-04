@@ -43,10 +43,10 @@ const mockAiConfig: AiConfig = {
 
 function setupConfigFetch(store = mockStore, aiConfig = mockAiConfig) {
   mockFetchApi.mockImplementation(async (url: string) => {
-    if (url === '/api/store') {
+    if (url === '/store') {
       return { status: 'success', message: 'ok', data: store }
     }
-    if (url === '/api/ai-config') {
+    if (url === '/ai-config') {
       return { status: 'success', message: 'ok', data: aiConfig }
     }
     return { status: 'success', message: 'ok', data: null }
@@ -68,8 +68,8 @@ describe('useSettings', () => {
 
       expect(result.current.store).toEqual(mockStore)
       expect(result.current.aiConfig).toEqual(mockAiConfig)
-      expect(mockFetchApi).toHaveBeenCalledWith('/api/store')
-      expect(mockFetchApi).toHaveBeenCalledWith('/api/ai-config')
+      expect(mockFetchApi).toHaveBeenCalledWith('/store')
+      expect(mockFetchApi).toHaveBeenCalledWith('/ai-config')
       expect(result.current.error).toBeNull()
     })
 
@@ -110,7 +110,7 @@ describe('useSettings', () => {
         await result.current.updateStore({ businessName: 'WANI Super' })
       })
 
-      expect(mockFetchApi).toHaveBeenCalledWith('/api/store', expect.objectContaining({ method: 'PUT' }))
+      expect(mockFetchApi).toHaveBeenCalledWith('/store', expect.objectContaining({ method: 'PUT' }))
       expect(result.current.store!.businessName).toBe('WANI Super')
     })
 
@@ -161,7 +161,7 @@ describe('useSettings', () => {
         await result.current.updateAiConfig({ temperature: 0.9 })
       })
 
-      expect(mockFetchApi).toHaveBeenCalledWith('/api/ai-config', expect.objectContaining({ method: 'PUT' }))
+      expect(mockFetchApi).toHaveBeenCalledWith('/ai-config', expect.objectContaining({ method: 'PUT' }))
       expect(result.current.aiConfig!.temperature).toBe(0.9)
     })
 

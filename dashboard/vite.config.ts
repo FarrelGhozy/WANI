@@ -13,19 +13,5 @@ export default defineConfig({
   plugins: [tailwindcss(), react(), babel({ presets: [reactCompilerPreset()] })],
   server: {
     host: true,
-    proxy: {
-      "/api/*": {
-        target: process.env.VITE_API_URL || "http://localhost:3001",
-        configure: (_proxy) => {
-          _proxy.on("error", () => {});
-        }
-      },
-      "/uploads/*": {
-        target: process.env.VITE_API_URL || "http://localhost:3001"
-      },
-      "/s/*": {
-        target: process.env.VITE_API_URL || "http://localhost:3001"
-      }
-    }
   }
 });

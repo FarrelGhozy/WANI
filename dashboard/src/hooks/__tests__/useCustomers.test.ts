@@ -61,7 +61,7 @@ describe('useCustomers', () => {
 
       expect(result.current.customers).toHaveLength(2)
       expect(result.current.allCustomers).toHaveLength(2)
-      expect(mockFetchApi).toHaveBeenCalledWith('/api/customers?limit=100')
+      expect(mockFetchApi).toHaveBeenCalledWith('/customers?limit=100')
     })
 
     it('sets error on fetch failure', async () => {
@@ -183,7 +183,7 @@ describe('useCustomers', () => {
 
       await waitFor(() => expect(result.current.convLoading).toBe(false))
 
-      expect(mockFetchApi).toHaveBeenCalledWith('/api/customers/c1')
+      expect(mockFetchApi).toHaveBeenCalledWith('/customers/c1')
       expect(result.current.conversation).toBeDefined()
       expect(result.current.conversation!.messages).toHaveLength(1)
       expect(result.current.conversation!.messages[0].content).toBe('Halo')
@@ -306,7 +306,7 @@ describe('useCustomers', () => {
       })
 
       expect(mockFetchApi).toHaveBeenCalledWith(
-        '/api/conversations/conv-1/messages',
+        '/conversations/conv-1/messages',
         expect.objectContaining({ method: 'POST' }),
       )
       expect(result.current.conversation!.messages).toHaveLength(1)

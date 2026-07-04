@@ -13,8 +13,8 @@ export function useSettings() {
 
   const fetchConfigs = useCallback(async () => {
     const [storeRes, aiRes] = await Promise.all([
-      fetchApi<StoreProfile>('/api/store'),
-      fetchApi<AiConfig>('/api/ai-config'),
+      fetchApi<StoreProfile>('/store'),
+      fetchApi<AiConfig>('/ai-config'),
     ])
     return { store: storeRes.data, aiConfig: aiRes.data }
   }, [])
@@ -38,7 +38,7 @@ export function useSettings() {
 
   const updateStore = useCallback(async (patch: Partial<StoreProfile>) => {
     try {
-      const res = await fetchApi<StoreProfile>('/api/store', {
+      const res = await fetchApi<StoreProfile>('/store', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(patch),
@@ -52,7 +52,7 @@ export function useSettings() {
 
   const updateAiConfig = useCallback(async (patch: Partial<AiConfig>) => {
     try {
-      const res = await fetchApi<AiConfig>('/api/ai-config', {
+      const res = await fetchApi<AiConfig>('/ai-config', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(patch),

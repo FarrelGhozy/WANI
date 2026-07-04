@@ -46,10 +46,10 @@ const mockCategory2: Category = { id: 'c2', name: 'Minuman', description: null }
 
 function setupProductFetch(products: Product[] = [mockProduct, mockProduct2], categories: Category[] = [mockCategory, mockCategory2]) {
   mockFetchApi.mockImplementation(async (url: string) => {
-    if (url === '/api/products?limit=100') {
+    if (url === '/products?limit=100') {
       return { status: 'success', message: 'ok', data: { items: products, total: products.length } }
     }
-    if (url === '/api/products/categories') {
+    if (url === '/products/categories') {
       return { status: 'success', message: 'ok', data: { items: categories } }
     }
     return { status: 'success', message: 'ok', data: null }
@@ -73,8 +73,8 @@ describe('useProducts', () => {
 
       expect(result.current.products).toHaveLength(2)
       expect(result.current.categories).toHaveLength(2)
-      expect(mockFetchApi).toHaveBeenCalledWith('/api/products?limit=100')
-      expect(mockFetchApi).toHaveBeenCalledWith('/api/products/categories')
+      expect(mockFetchApi).toHaveBeenCalledWith('/products?limit=100')
+      expect(mockFetchApi).toHaveBeenCalledWith('/products/categories')
       expect(result.current.error).toBeNull()
     })
 
@@ -245,7 +245,7 @@ describe('useProducts', () => {
         })
       })
 
-      expect(mockFetchApi).toHaveBeenCalledWith('/api/products', expect.any(Object))
+      expect(mockFetchApi).toHaveBeenCalledWith('/products', expect.any(Object))
       expect(result.current.getProduct('p3')).toBeDefined()
     })
 
@@ -325,7 +325,7 @@ describe('useProducts', () => {
       })
 
       expect(result.current.getProduct('p1')).toBeUndefined()
-      expect(mockFetchApi).toHaveBeenCalledWith('/api/products/p1', expect.any(Object))
+      expect(mockFetchApi).toHaveBeenCalledWith('/products/p1', expect.any(Object))
     })
   })
 

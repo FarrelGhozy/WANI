@@ -18,8 +18,8 @@ export function useProducts() {
 
   const fetchData = useCallback(async () => {
     const [prodRes, catRes] = await Promise.all([
-      fetchApi<{ items: Product[]; total: number }>('/api/products?limit=100'),
-      fetchApi<{ items: Category[] }>('/api/products/categories'),
+      fetchApi<{ items: Product[]; total: number }>('/products?limit=100'),
+      fetchApi<{ items: Category[] }>('/products/categories'),
     ])
     return { products: prodRes.data?.items ?? [], categories: catRes.data?.items ?? [] }
   }, [])
@@ -90,7 +90,7 @@ export function useProducts() {
 
   const createProduct = useCallback(async (data: ProductFormData): Promise<Product | undefined> => {
     try {
-      const res = await fetchApi<Product>('/api/products', {
+      const res = await fetchApi<Product>('/products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -107,7 +107,7 @@ export function useProducts() {
 
   const updateProduct = useCallback(async (id: string, data: Partial<ProductFormData>): Promise<Product | undefined> => {
     try {
-      const res = await fetchApi<Product>(`/api/products/${id}`, {
+      const res = await fetchApi<Product>(`/products/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -124,7 +124,7 @@ export function useProducts() {
 
   const deleteProduct = useCallback(async (id: string): Promise<void> => {
     try {
-      await fetchApi(`/api/products/${id}`, { method: 'DELETE' })
+      await fetchApi(`/products/${id}`, { method: 'DELETE' })
       setAllProducts((prev) => prev.filter((p) => p.id !== id))
     } catch (e) {
       setError(getErrorMessage(e, 'Gagal menghapus produk'))
@@ -134,7 +134,7 @@ export function useProducts() {
 
   const createCategory = useCallback(async (data: { name: string; description?: string | null }): Promise<Category | undefined> => {
     try {
-      const res = await fetchApi<Category>('/api/products/categories', {
+      const res = await fetchApi<Category>('/products/categories', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -151,7 +151,7 @@ export function useProducts() {
 
   const updateCategory = useCallback(async (id: string, data: { name?: string; description?: string | null }): Promise<Category | undefined> => {
     try {
-      const res = await fetchApi<Category>(`/api/products/categories/${id}`, {
+      const res = await fetchApi<Category>(`/products/categories/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -168,7 +168,7 @@ export function useProducts() {
 
   const deleteCategory = useCallback(async (id: string): Promise<void> => {
     try {
-      await fetchApi(`/api/products/categories/${id}`, { method: 'DELETE' })
+      await fetchApi(`/products/categories/${id}`, { method: 'DELETE' })
       setAllCategories((prev) => prev.filter((c) => c.id !== id))
     } catch (e) {
       setError(getErrorMessage(e, 'Gagal menghapus kategori'))

@@ -1,3 +1,5 @@
+const API_BASE = (window as any).__ENV__?.API_URL ?? '/api'
+
 interface ApiResponse<T> {
   status: 'success' | 'failure'
   message: string
@@ -14,7 +16,7 @@ export async function fetchApi<T>(path: string, options?: RequestInit): Promise<
     headers['Authorization'] = `Bearer ${token}`
   }
 
-  const res = await fetch(path, { ...options, headers })
+  const res = await fetch(`${API_BASE}${path}`, { ...options, headers })
   const json = await res.json() as ApiResponse<T>
 
   if (json.status === 'failure') {

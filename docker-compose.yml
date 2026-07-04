@@ -78,10 +78,9 @@ services:
     image: ghcr.io/farrelghozy/wani-dashboard:latest
     depends_on:
       api:
-        condition: service_healthy
+        condition: service_started
     environment:
-      API_HOST: api
-      API_PORT: 3001
+      VITE_API_URL: /api
     ports:
       - "5173:80"
     restart: unless-stopped

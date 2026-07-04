@@ -54,7 +54,7 @@ export default function Settings() {
     if (resetting) return
     setResetting(true)
     try {
-      await fetchApi('/api/qr/reset', { method: 'POST' })
+      await fetchApi('/qr/reset', { method: 'POST' })
       setOverride(null)
       toast('Koneksi WhatsApp direset. Scan QR baru untuk menghubungkan.', 'info')
     } catch (e) {

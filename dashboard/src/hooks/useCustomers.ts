@@ -15,7 +15,7 @@ export function useCustomers() {
   const [convLoading, setConvLoading] = useState(false)
 
   const fetchCustomers = useCallback(async () => {
-    const res = await fetchApi<{ items: Customer[]; total: number }>('/api/customers?limit=100')
+    const res = await fetchApi<{ items: Customer[]; total: number }>('/customers?limit=100')
     return res.data?.items ?? []
   }, [])
 
@@ -66,7 +66,7 @@ export function useCustomers() {
           } | null
           createdAt: string
           updatedAt: string
-        }>(`/api/customers/${selectedId}`)
+        }>(`/customers/${selectedId}`)
         if (!cancelled) {
           const conv = res.data?.conversation
           if (conv) {
@@ -107,7 +107,7 @@ export function useCustomers() {
         role: string
         content: string
         createdAt: string
-      }>(`/api/conversations/${conversation.id}/messages`, {
+      }>(`/conversations/${conversation.id}/messages`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text }),

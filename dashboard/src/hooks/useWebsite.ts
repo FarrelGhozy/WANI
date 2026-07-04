@@ -5,6 +5,8 @@ import { useProducts } from '@/hooks/useProducts.ts'
 import { useProductsContext } from '@/contexts/ProductsContext.tsx'
 import type { WebsiteConfig, GenerationLog } from '@/types.ts'
 
+const API_BASE = (window as any).__ENV__?.API_URL ?? '/api'
+
 export type { WebsiteConfig, GenerationLog }
 
 function useProductsSafe() {
@@ -47,8 +49,8 @@ export function useWebsite() {
 
   const fetchConfig = useCallback(async () => {
     const [cfgRes, genRes] = await Promise.all([
-      fetchApi<Record<string, unknown>>('/api/website'),
-      fetchApi<GenerationLog[]>('/api/website/generations'),
+      fetchApi<Record<string, unknown>>('/website'),
+      fetchApi<GenerationLog[]>('/website/generations'),
     ])
     return { cfgRes, genRes }
   }, [])
@@ -78,7 +80,7 @@ export function useWebsite() {
   const updateConfig = useCallback(async (patch: Partial<WebsiteConfig>) => {
     setConfig((prev) => ({ ...prev, ...patch }))
     try {
-      await fetchApi('/api/website', {
+      await fetchApi('/website', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(patch),
@@ -102,7 +104,7 @@ export function useWebsite() {
   const generate = useCallback(async (): Promise<string | null> => {
     setGenerating(true)
     try {
-      const res = await fetchApi<{ slug: string }>('/api/website/generate', {
+      const res = await fetchApi<{ slug: string }>('/website/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ template: config.template }),
@@ -130,7 +132,7 @@ export function useWebsite() {
 
   const refreshLogs = useCallback(async () => {
     try {
-      const res = await fetchApi<GenerationLog[]>('/api/website/generations')
+      const res = await fetchApi<GenerationLog[]>('/website/generations')
       if (res.data) setLogs(res.data)
       setError(null)
     } catch (e) {
@@ -141,7 +143,7 @@ export function useWebsite() {
   const downloadZip = useCallback(async (slug?: string) => {
     const token = getToken()
     const params = slug ? `?slug=${slug}` : ''
-    const res = await fetch(`/api/website/download${params}`, {
+    const res = await fetch(`${API_BASE}/website/download${params}`, {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     })
     if (!res.ok) throw new Error('Download failed')
@@ -158,7 +160,7 @@ export function useWebsite() {
 
   const deleteGeneration = useCallback(async (id: string) => {
     const token = getToken()
-    const res = await fetch(`/api/website/generations/${id}`, {
+    const res = await fetch(`${API_BASE}/website/generations/${id}`, {
       method: 'DELETE',
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     })
@@ -167,7 +169,7 @@ export function useWebsite() {
   }, [])
 
   const publish = useCallback(async () => {
-    await fetchApi('/api/website/publish', { method: 'POST' })
+    await fetchApi('/website/publish', { method: 'POST' })
   }, [])
 
   const reload = useCallback(async () => {

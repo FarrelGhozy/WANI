@@ -84,7 +84,7 @@ describe('useOrders', () => {
         customerPhone: '08123456789',
       })
       expect(result.current.allOrders[0].items[0].productName).toBe('Nasi Goreng')
-      expect(mockFetchApi).toHaveBeenCalledWith('/api/orders?limit=100')
+      expect(mockFetchApi).toHaveBeenCalledWith('/orders?limit=100')
     })
   })
 
@@ -211,7 +211,7 @@ describe('useOrders', () => {
         await result.current.updateStatus('order-001', 'CONFIRMED')
       })
 
-      expect(mockFetchApi).toHaveBeenCalledWith('/api/orders/order-001/status', expect.any(Object))
+      expect(mockFetchApi).toHaveBeenCalledWith('/orders/order-001/status', expect.any(Object))
       expect(result.current.getOrder('order-001')!.status).toBe('CONFIRMED')
     })
 
@@ -288,7 +288,7 @@ describe('useOrders', () => {
         await result.current.confirmPayment('order-001', { method: 'TRANSFER', amount: 75000 })
       })
 
-      expect(mockFetchApi).toHaveBeenCalledWith('/api/orders/order-001/payment', expect.any(Object))
+      expect(mockFetchApi).toHaveBeenCalledWith('/orders/order-001/payment', expect.any(Object))
       expect(result.current.getOrder('order-001')!.payment).toBeDefined()
       expect(result.current.getOrder('order-001')!.payment!.status).toBe('PAID')
     })

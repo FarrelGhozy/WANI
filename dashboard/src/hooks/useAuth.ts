@@ -19,7 +19,7 @@ export function useAuth() {
     setLoading(true)
     setError(null)
     try {
-      const json = await fetchApi<{ token: string; user: User }>('/api/auth/login', {
+      const json = await fetchApi<{ token: string; user: User }>('/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -44,7 +44,7 @@ export function useAuth() {
 
     ;(async () => {
       try {
-        const json = await fetchApi<User>('/api/auth/me')
+        const json = await fetchApi<User>('/auth/me')
         if (!cancelled) {
           if (json.data) {
             localStorage.setItem(AUTH_USER_KEY, JSON.stringify(json.data))
@@ -69,7 +69,7 @@ export function useAuth() {
     setLoading(true)
     setError(null)
     try {
-      const json = await fetchApi<{ token: string; user: User }>('/api/auth/register', {
+      const json = await fetchApi<{ token: string; user: User }>('/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password }),

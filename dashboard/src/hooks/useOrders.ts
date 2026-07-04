@@ -70,7 +70,7 @@ export function useOrders() {
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
 
   const fetchOrders = useCallback(async () => {
-    const res = await fetchApi<{ items: ApiOrder[]; total: number }>('/api/orders?limit=100')
+    const res = await fetchApi<{ items: ApiOrder[]; total: number }>('/orders?limit=100')
     return res.data?.items.map(mapOrder) ?? []
   }, [])
 
@@ -147,7 +147,7 @@ export function useOrders() {
     const allowed = statusFlow[orders[idx].status]
     if (!allowed.includes(status)) return undefined
     try {
-      const res = await fetchApi<ApiOrder>(`/api/orders/${id}/status`, {
+      const res = await fetchApi<ApiOrder>(`/orders/${id}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status }),
@@ -175,7 +175,7 @@ export function useOrders() {
     const idx = orders.findIndex((o) => o.id === id)
     if (idx === -1) return undefined
     try {
-      const res = await fetchApi<ApiOrder>(`/api/orders/${id}/payment`, {
+      const res = await fetchApi<ApiOrder>(`/orders/${id}/payment`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

@@ -52,7 +52,7 @@ describe('useAuth', () => {
         await result.current.login('test@example.com', 'password123')
       })
 
-      expect(mockFetchApi).toHaveBeenCalledWith('/api/auth/login', expect.any(Object))
+      expect(mockFetchApi).toHaveBeenCalledWith('/auth/login', expect.any(Object))
       expect(result.current.user).toEqual(mockUser)
       expect(result.current.error).toBeNull()
       expect(localStorage.getItem(AUTH_TOKEN_KEY)).toBe(mockToken)
@@ -125,7 +125,7 @@ describe('useAuth', () => {
         expect(result.current.user).toEqual(mockUser)
       })
 
-      expect(mockFetchApi).toHaveBeenCalledWith('/api/auth/me')
+      expect(mockFetchApi).toHaveBeenCalledWith('/auth/me')
     })
 
     it('clears token when auto-restore returns no data', async () => {

@@ -51,7 +51,7 @@ export default function OrderDetail() {
     setSelectedMethod('')
     setPaymentAmount(order?.totalAmount ?? 0)
     try {
-      const res = await fetchApi<StorePaymentMethod[]>('/api/store/payment-methods')
+      const res = await fetchApi<StorePaymentMethod[]>('/store/payment-methods')
       setPaymentMethods(res.data ?? [])
     } catch {
       setPaymentMethods([])

@@ -4,6 +4,8 @@ export interface UploadResult {
   error?: string
 }
 
+const API_BASE = (window as any).__ENV__?.API_URL ?? '/api'
+
 export async function uploadFile(file: File, prefix: string): Promise<UploadResult> {
   const body = new FormData()
   body.append('file', file)
@@ -15,7 +17,7 @@ export async function uploadFile(file: File, prefix: string): Promise<UploadResu
     headers['Authorization'] = `Bearer ${token}`
   }
 
-  const res = await fetch('/api/upload', {
+  const res = await fetch(`${API_BASE}/upload`, {
     method: 'POST',
     headers,
     body,

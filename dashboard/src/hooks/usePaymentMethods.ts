@@ -41,7 +41,7 @@ export function usePaymentMethods() {
       setLoading(true)
       setError(null)
       try {
-        const res = await fetchApi<StorePaymentMethod[]>('/api/store/payment-methods')
+        const res = await fetchApi<StorePaymentMethod[]>('/store/payment-methods')
         if (!cancelled) setMethods(res.data ?? [])
       } catch (e) {
         if (!cancelled) setError(getErrorMessage(e, 'Gagal memuat metode pembayaran'))
@@ -56,7 +56,7 @@ export function usePaymentMethods() {
     setLoading(true)
     setError(null)
     try {
-      const res = await fetchApi<StorePaymentMethod[]>('/api/store/payment-methods')
+      const res = await fetchApi<StorePaymentMethod[]>('/store/payment-methods')
       setMethods(res.data ?? [])
     } catch (e) {
       setError(getErrorMessage(e, 'Gagal memuat metode pembayaran'))
@@ -67,7 +67,7 @@ export function usePaymentMethods() {
 
   const create = useCallback(async (data: CreatePaymentMethodData) => {
     try {
-      const res = await fetchApi<StorePaymentMethod>('/api/store/payment-methods', {
+      const res = await fetchApi<StorePaymentMethod>('/store/payment-methods', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -82,7 +82,7 @@ export function usePaymentMethods() {
 
   const update = useCallback(async (id: string, data: UpdatePaymentMethodData) => {
     try {
-      const res = await fetchApi<StorePaymentMethod>(`/api/store/payment-methods/${id}`, {
+      const res = await fetchApi<StorePaymentMethod>(`/store/payment-methods/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
@@ -99,7 +99,7 @@ export function usePaymentMethods() {
 
   const remove = useCallback(async (id: string) => {
     try {
-      await fetchApi(`/api/store/payment-methods/${id}`, { method: 'DELETE' })
+      await fetchApi(`/store/payment-methods/${id}`, { method: 'DELETE' })
       setMethods((prev) => prev.filter((m) => m.id !== id))
     } catch (e) {
       setError(getErrorMessage(e, 'Gagal menghapus metode pembayaran'))
