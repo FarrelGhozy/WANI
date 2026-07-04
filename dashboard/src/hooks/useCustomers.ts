@@ -36,13 +36,12 @@ export function useCustomers() {
   // Auto-load conversation when selected customer changes
   useEffect(() => {
     let cancelled = false
-    setConvLoading(true)
     ;(async () => {
       if (!selectedId) {
         if (!cancelled) setConversation(null)
-        setConvLoading(false)
         return
       }
+      setConvLoading(true)
       try {
         const res = await fetchApi<{
           id: string
