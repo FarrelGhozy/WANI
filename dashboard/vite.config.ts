@@ -1,35 +1,31 @@
-import { defineConfig } from 'vite'
-import react, { reactCompilerPreset } from '@vitejs/plugin-react'
-import babel from '@rolldown/plugin-babel'
-import tailwindcss from '@tailwindcss/vite'
-import { fileURLToPath, URL } from 'node:url'
+import { defineConfig } from "vite";
+import react, { reactCompilerPreset } from "@vitejs/plugin-react";
+import babel from "@rolldown/plugin-babel";
+import tailwindcss from "@tailwindcss/vite";
+import { fileURLToPath, URL } from "node:url";
 
 export default defineConfig({
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
+      "@": fileURLToPath(new URL("./src", import.meta.url))
     }
   },
-  plugins: [
-    tailwindcss(),
-    react(),
-    babel({ presets: [reactCompilerPreset()] }),
-  ],
+  plugins: [tailwindcss(), react(), babel({ presets: [reactCompilerPreset()] })],
   server: {
     host: true,
     proxy: {
-      '/api': {
-        target: process.env.VITE_API_URL || 'http://localhost:3001',
+      "/api/*": {
+        target: process.env.VITE_API_URL || "http://localhost:3001",
         configure: (_proxy) => {
-          _proxy.on('error', () => {})
-        },
+          _proxy.on("error", () => {});
+        }
       },
-      '/uploads': {
-        target: process.env.VITE_API_URL || 'http://localhost:3001',
+      "/uploads/*": {
+        target: process.env.VITE_API_URL || "http://localhost:3001"
       },
-      '/s': {
-        target: process.env.VITE_API_URL || 'http://localhost:3001',
-      },
-    },
-  },
-})
+      "/s/*": {
+        target: process.env.VITE_API_URL || "http://localhost:3001"
+      }
+    }
+  }
+});
