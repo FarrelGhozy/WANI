@@ -45,10 +45,16 @@ export default function Orders() {
               <span className="h-2 w-2 rounded-full bg-amber-400" /> Tertunda
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-teal-400" /> Diproses
+              <span className="h-2 w-2 rounded-full bg-teal-400" /> Dikonfirmasi
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-emerald-400" /> Selesai
+              <span className="h-2 w-2 rounded-full bg-emerald-400" /> Diproses
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span className="h-2 w-2 rounded-full bg-stone-400" /> Selesai
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span className="h-2 w-2 rounded-full bg-red-400" /> Dibatalkan
             </span>
         </div>
       </div>

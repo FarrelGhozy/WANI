@@ -204,6 +204,10 @@ export default function ProductForm() {
                 onChange={(e) => {
                   set('imageUrl', e.target.value)
                   pendingFile.current = null
+                  if (previewUrl) {
+                    URL.revokeObjectURL(previewUrl)
+                    setPreviewUrl(null)
+                  }
                 }}
               />
               <div className="flex items-center gap-3">

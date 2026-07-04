@@ -1,4 +1,5 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
+import { useSearchParams } from 'react-router'
 import { useStoreContext } from '@/contexts/StoreContext.tsx'
 import { useWaStatusContext } from '@/contexts/WaStatusContext.tsx'
 import { useToast } from '@/hooks/useToast.ts'
@@ -15,7 +16,15 @@ const tabs = [
 ] as const
 
 export default function Settings() {
-  const [activeTab, setActiveTab] = useState('store')
+  const [searchParams] = useSearchParams()
+  const tabFromUrl = searchParams.get('tab')
+  const [activeTab, setActiveTab] = useState(tabFromUrl && tabs.some(t => t.id === tabFromUrl) ? tabFromUrl : 'store')
+
+  useEffect(() => {
+    if (tabFromUrl && tabs.some(t => t.id === tabFromUrl)) {
+      setActiveTab(tabFromUrl)
+    }
+  }, [tabFromUrl])
 
   function handleTabChange(tab: string) {
     setActiveTab(tab)
