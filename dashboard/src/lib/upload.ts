@@ -4,7 +4,7 @@ export interface UploadResult {
   error?: string
 }
 
-const API_BASE = (window as any).__ENV__?.API_URL ?? '/api'
+const API_BASE = window.__ENV__?.API_URL ?? '/api'
 
 export async function uploadFile(file: File, prefix: string): Promise<UploadResult> {
   const body = new FormData()
