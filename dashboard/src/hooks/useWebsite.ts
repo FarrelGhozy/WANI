@@ -2,20 +2,11 @@ import { useState, useCallback, useMemo, useEffect } from 'react'
 import { fetchApi } from '@/lib/api.ts'
 import { getErrorMessage } from '@/hooks/useToast.ts'
 import { useProducts } from '@/hooks/useProducts.ts'
-import { useProductsContext } from '@/contexts/ProductsContext.tsx'
 import type { WebsiteConfig, GenerationLog } from '@/types.ts'
 
 const API_BASE = import.meta.env.VITE_API_URL || window.__ENV__?.API_URL || '/api'
 
 export type { WebsiteConfig, GenerationLog }
-
-function useProductsSafe() {
-  try {
-    return useProductsContext()
-  } catch {
-    return useProducts()
-  }
-}
 
 const defaultConfig: WebsiteConfig = {
   heroHeadline: 'Selamat Datang di Toko Kami',
@@ -40,7 +31,7 @@ function getToken(): string | null {
 }
 
 export function useWebsite() {
-  const { products } = useProductsSafe()
+  const { products } = useProducts()
   const [config, setConfig] = useState<WebsiteConfig>(defaultConfig)
   const [logs, setLogs] = useState<GenerationLog[]>([])
   const [loading, setLoading] = useState(true)
