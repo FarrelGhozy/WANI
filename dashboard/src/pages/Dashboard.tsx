@@ -47,7 +47,7 @@ function connectionLabel(status: string): string {
 
 export default function Dashboard() {
   const navigate = useNavigate()
-  const { qr, connection, phone, loading: waLoading } = useWaStatusContext()
+  const { qr, connection, phone } = useWaStatusContext()
   const { allOrders, loading: ordersLoading } = useOrders()
   const { products, loading: prodLoading } = useProductsContext()
   const { allCustomers, loading: custLoading } = useCustomers()

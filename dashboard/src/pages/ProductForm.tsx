@@ -48,18 +48,17 @@ export default function ProductForm() {
   const [newCategoryName, setNewCategoryName] = useState('')
   const [newCategoryDesc, setNewCategoryDesc] = useState('')
   const [creatingCategory, setCreatingCategory] = useState(false)
-  const initialForm = useRef<ProductFormData>(form)
+  const [initialForm, setInitialForm] = useState<ProductFormData>(form)
 
   const isDirty = useMemo(() => {
-    return form.name !== initialForm.current.name
-      || form.price !== initialForm.current.price
-      || form.stock !== initialForm.current.stock
-      || form.categoryId !== initialForm.current.categoryId
-      || form.description !== initialForm.current.description
-      || form.isAvailable !== initialForm.current.isAvailable
-      || form.imageUrl !== initialForm.current.imageUrl
-      || pendingFile.current !== null
-  }, [form])
+    return form.name !== initialForm.name
+      || form.price !== initialForm.price
+      || form.stock !== initialForm.stock
+      || form.categoryId !== initialForm.categoryId
+      || form.description !== initialForm.description
+      || form.isAvailable !== initialForm.isAvailable
+      || form.imageUrl !== initialForm.imageUrl
+  }, [form, initialForm])
 
   useUnsavedChanges(isDirty)
 
@@ -92,7 +91,7 @@ export default function ProductForm() {
           imageUrl: product.imageUrl ?? '',
         }
         setForm(formData)
-        initialForm.current = formData
+        setInitialForm(formData)
         setPriceDisplay(formatPriceInput(String(product.price)))
       }
     }
