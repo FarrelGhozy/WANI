@@ -365,7 +365,6 @@ export default function PaymentTab() {
         title={editing ? 'Edit Metode Pembayaran' : `Tambah ${TYPE_CONFIG[activeType].label}`}
         actions={
           <div className="flex gap-2">
-            <Button size="sm" variant="secondary" onClick={closeModal}>Batal</Button>
             <Button size="sm" loading={saving} onClick={handleSave}>
               {editing ? 'Simpan' : 'Tambah'}
             </Button>

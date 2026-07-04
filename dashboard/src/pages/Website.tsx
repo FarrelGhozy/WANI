@@ -457,9 +457,6 @@ export default function Website() {
         <p className="text-sm text-stone-700">Hapus riwayat generate ini?</p>
         <p className="mt-1 text-xs text-stone-400">File website terkait juga akan dihapus.</p>
         <div className="mt-5 flex justify-center gap-3">
-          <Button variant="secondary" size="sm" onClick={() => setDeleting(null)}>
-            Batal
-          </Button>
           <Button variant="danger" size="sm" onClick={() => handleDelete(deleting!)}>
             Hapus
           </Button>
