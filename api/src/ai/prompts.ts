@@ -68,6 +68,7 @@ export function buildSystemPrompt(
   products: ProductEntry[],
   extraKnowledge?: string | null,
   extraInstructions?: string | null,
+  ragKnowledge?: string | null,
 ): string {
   const catalog = formatProductCatalog(products)
   const policies = formatPolicies(store)
@@ -87,6 +88,9 @@ export function buildSystemPrompt(
     policies,
   ]
 
+  if (ragKnowledge) {
+    sections.push("", "## Informasi Relevan (RAG)", ragKnowledge)
+  }
   if (extraKnowledge) {
     sections.push("", "## Pengetahuan Tambahan", extraKnowledge)
   }
