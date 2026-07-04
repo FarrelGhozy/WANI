@@ -72,7 +72,7 @@ export default function ChatView({ customerName, conversation, onBack, onSendMes
       <div className="flex items-center justify-between border-b border-stone-200 px-5 py-3">
         <div className="flex items-center gap-2">
           {onBack && (
-            <button onClick={onBack} className="lg:hidden -ml-1 rounded-lg p-1.5 text-stone-400 transition-colors hover:bg-stone-100 hover:text-stone-600">
+              <button onClick={onBack} className="lg:hidden -ml-1 rounded-lg p-1.5 text-stone-400 transition-colors hover:bg-stone-100 hover:text-stone-600" aria-label="Kembali ke daftar pelanggan">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                 <path d="M19 12H5M12 19l-7-7 7-7" />
               </svg>
