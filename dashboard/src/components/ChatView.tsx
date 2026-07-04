@@ -61,7 +61,6 @@ export default function ChatView({ customerName, conversation, onBack, onSendMes
     try {
       onSendMessage(input.trim())
       setInput('')
-      toast('Pesan berhasil dikirim', 'success')
     } catch {
       toast('Gagal mengirim pesan', 'error')
     }
