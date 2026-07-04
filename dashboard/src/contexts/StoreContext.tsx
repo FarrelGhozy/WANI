@@ -23,6 +23,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   )
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useStoreContext(): StoreContextType {
   const ctx = useContext(StoreContext)
   if (!ctx) {
