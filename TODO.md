@@ -1,106 +1,73 @@
-# WANI — Project TODO
+# TODO: Multi-Tenant Data Isolation
 
-## ✅ Baru Selesai
+**Goal:** Setiap user punya data sendiri (Store, Product, Order, Customer, dll).
+Registrasi → login → liat dashboard kosong, bukan data user lain.
 
-| # | Item | Package | Detail |
-|---|------|---------|--------|
-| 24 | **Logo WANI** — desain + implementasi | dashboard | Chat bubble + W icon, wordmark (teal + amber), PNG conversion via sharp |
-| 25 | **Login page redesign** | dashboard | Teal gradient bg, logo center di atas card, hilangin subtitle "Dashboard" |
-| 26 | **Login error UX** | dashboard | Shake animation, "Email atau password tidak cocok", red border kedua field, fix stale closure navigation |
-| 27 | **Final MOCK cleanup** | dashboard | `useAuth.ts` + `useWaStatus.ts` — MOCK toggle sudah dihapus sepenuhnya |
-| 28 | **TypeScript cleanup** | api | `tsc --noEmit` lulus 0 error — semua ParsedQs mismatch sudah dibenerin |
-| 29 | **wa-bot `.env`** | wa-bot | Sudah ada (sebelumnya: "tidak ada") |
-| 30 | **web-gen `.env`** | web-gen | Sudah ada (sebelumnya: "tidak ada") |
-| 31 | **`useRef` cleanup** | dashboard | ✅ Resolved — no `useRef` ditemukan di hooks |
-| 32 | **🔴 Critical deps** | wa-bot/web-gen | `bun install` + Prisma generate + template deps — semua beres |
-| 33 | **🧹 Cleanup** | dashboard | Hapus `package-lock.json`, buat `.env` |
-| 34 | **`(r: any)` → Prisma type** | api | `activity-log.ts:71` — pake `Prisma.ActivityLogModel` |
-| 35 | **`debug.ts` fix** | api | `any` → `unknown`, manual 404 → NotFoundError, hardcoded circuit → `getCircuitState()` |
-| 36 | **`hashPassword()` helper** | api | Ekstrak ke `utils/auth.ts`, pake di register + resetPassword |
-| 37 | **Rate limiter Map cleanup** | api | `setInterval` tiap 5 menit bersihin stale entries |
-| 38 | **`todayKey()` cache** | api | Cache date string, refresh tiap 10 menit |
-| 39 | **Shared `types.ts`** | dashboard | Centralize semua domain type di `src/types.ts`, hooks import + re-export |
+## Tahapan
 
----
+### Tahap 1: ✅ Prisma Schema — Add `ownerId` ke semua model
 
-## ✅ Terimplementasi
+- [x] 1a. `Store` — ganti `id @default("default")` → `id @default(uuid())`, tambah `ownerId String @unique`
+- [x] 1b. `AiConfig` — ganti `id @default("default")` → `id @default(uuid())`, tambah `ownerId String @unique`
+- [x] 1c. `WebSite` — ganti `id @default("default")` → `id @default(uuid())`, tambah `ownerId String @unique`
+- [x] 1d. `Category` — tambah `ownerId String`
+- [x] 1e. `Product` — tambah `ownerId String`
+- [x] 1f. `Customer` — tambah `ownerId String` (hapus `@@unique([phone])`, ganti `@@unique([ownerId, phone])`)
+- [x] 1g. `Order` — tambah `ownerId String`
+- [x] 1h. `Conversation` — tambah `ownerId String`
+- [x] 1i. `Message` — tambah `ownerId String`
+- [x] 1j. `StorePaymentMethod` — tambah `ownerId String` (ganti `storeId @default("default")` jadi `ownerId`)
+- [x] 1k. `ActivityLog` — tambah `ownerId String`
+- [x] 1l. `WebsiteGeneration` — tambah `ownerId String`
+- [x] 1m. Run `bun run prisma:migrate`
 
-- **WA Session** — QR push/pull/clear/status, auto-reconnect
-- **AI Pipeline (18-step)** — normalize → PII → rate limit → 3-tier firewall → budget → context → LLM → parse → intent → sanitize → output scan → PII redact → grounding → persist
-- **Guardrails** — T1 regex injection, T2 classifier, T3 judge, PII scanner/redactor, rate limit, daily budget, output leak detection, grounding check, Unicode defense (NFKC + homoglyph + leetspeak)
-- **Circuit Breaker** — 3 failures → 60s open → half-open → retry
-- **Debug Tracer** — Ring buffer (500 cap), per-request TraceContext, duration tracking
-- **Debug Routes** — GET /api/debug/traces, GET /api/debug/traces/:id, DELETE /api/debug/traces, GET /api/debug/status, POST /api/debug/circuit/reset
-- **Manual Payment Flow** — QRIS/Bank Transfer/E-Wallet/COD, CRUD payment methods, QRIS upload, warning banner, konfirmasi pembayaran
-- **API Spec** — Lengkap dengan request/response shapes
-- **Frontend (Dashboard)** — 11 pages (Dashboard, Products, ProductForm, Orders, OrderDetail, Customers, Settings, Website, Login, Signup, ForgotPassword), semua hooks panggil API real (via `fetchApi()`), React 19 + Vite 8 + Tailwind v4
-- **Bot (wa-bot/)** — Baileys connect, QR terminal + API POST, forward messages to API, send reply back, QRIS image detection
-- **API Endpoints** — Semua ~45 endpoint sudah diimplementasikan (routes, controllers, models, schemas, Zod validation)
-- **Tests** — 9 test files, 0 failures (firewall, guardrails, auth, middleware, errors, schemas, intent, golden-reply, response)
-- **Prisma Migrations** — 3+ migrations applied
-- **Docker Compose** — 4 service definitions (db, api, dashboard, wa-bot)
-- **Dockerfile** — Ada untuk api, dashboard, wa-bot
-- **JWT Auth** — Login/register, requireJwt middleware, auto-verify
-- **Website Generator** — Generate, download ZIP, publish, serve via /s/:slug
-- **Store Payment Methods** — Discriminated union Zod schema, dynamic form, QRIS upload via multer
+### Tahap 2: ✅ Middleware — Owner Scoping
 
----
+- [x] 2a. Buat helper `ownerFilter()` / `getOwnerId()` di `api/src/middleware/owner.ts`
+- [x] 2b. Pastikan `req.user.id` selalu ada setelah `requireJwt`
 
-## 🔄 Pending Improvements
+### Tahap 3: Migration Script — Backfill data existing
 
-### AI / Guardrails
+- [ ] 3a. Buat script `api/scripts/backfill-owner.ts` — assign semua data ke user pertama (atau prompt user mana)
+- [ ] 3b. Run script & verify
 
-| # | Item | Prioritas | Catatan |
-|---|------|-----------|---------|
-| 1 | **Grounding check** | Medium | `checkGrounding()` udah diimplementasi tapi butuh validasi end-to-end dengan real LLM |
-| 2 | **T2/T3 classifier tuning** | Low | Threshold confidence bisa di-tuning berdasarkan production data |
-| 3 | **Embeddings / RAG** | Low | `knowledgeBase` masih plain text — belum ada vector store |
-| 4 | **Multilingual defense** | Low | Regex injection detection baru EN+ID |
+### Tahap 4: Controllers — Scope queries by `ownerId`
 
-### Dashboard
+- [ ] 4a. `store.ts` — semua queries pake `ownerId: req.user.id`
+- [ ] 4b. `ai-config.ts` — semua queries pake `ownerId`
+- [ ] 4c. `products.ts` — semua queries pake `ownerId`
+- [ ] 4d. `categories.ts` — semua queries pake `ownerId`
+- [ ] 4e. `orders.ts` — semua queries pake `ownerId`
+- [ ] 4f. `customers.ts` — semua queries pake `ownerId`
+- [ ] 4g. `conversations.ts` — semua queries pake `ownerId`
+- [ ] 4h. `payment-methods.ts` — semua queries pake `ownerId`
+- [ ] 4i. `website.ts` — semua queries pake `ownerId`
+- [ ] 4j. `logs.ts` — semua queries pake `ownerId`
+- [ ] 4k. `upload.ts` — verify, mungkin perlu owner context
+- [ ] 4l. `qr.ts` — WaSession tetap global (no change)
+- [ ] 4m. `auth.ts` — no change (User model sendiri)
+- [ ] 4n. `dashboard.ts` — stats perlu di-scope
 
-| # | Item | Prioritas | Catatan |
-|---|------|-----------|---------|
-| 5 | **Error handling UI** | Medium | Belum ada unified error toast / notification system |
-| 6 | **Loading states** | Medium | Beberapa page belum punya skeleton loading |
-| 7 | **Login auto-redirect** | Low | User yang sudah login seharusnya langsung redirect ke dashboard dari `/login` |
+### Tahap 5: Routes — Verify middleware chain
 
-### Infra / DevOps
+- [ ] 5a. Cek semua route public → tetap public (GET products, orders, dll untuk WA bot)
+- [ ] 5b. Cek route yg pake `requireAuth` (bot) → no ownerId (WaSession, chat global)
+- [ ] 5c. Cek route yg pake `requireJwt` (dashboard) → harus pake owner scoping
 
-| # | Item | Prioritas | Catatan |
-|---|------|-----------|---------|
-| 8 | **PostgreSQL lokal** | High | Untuk development lokal butuh PG running — bisa pake `docker compose up db` |
-| 9 | **CI/CD pipeline** | Medium | Lint + typecheck + test + build |
-| 10 | **Health check endpoint** | Low | `GET /api/health` untuk monitoring |
-| 11 | **Production build dashboard** | Medium | Pastiin `vite build` output siap serve production |
+### Tahap 6: AI Pipeline — Scope context loading
 
-### Bot
+- [ ] 6a. `pipeline.ts` — `loadContext()` harus pake owner ID dari mana? Bot message → cari owner dari customer/conversation
+- [ ] 6b. Atau: bot punya `ownerId` default (system user)
 
-| # | Item | Prioritas | Catatan |
-|---|------|-----------|---------|
-| 12 | **Bot auto-start documentation** | Low | Cara jalanin bot setelah API siap |
-| 13 | **Multi-device session backup** | Low | Belum ada mekanisme backup creds |
+### Tahap 7: Frontend — Verify
 
-## Evaluasi — Jalan Normal
+- [ ] 7a. Login sebagai user baru → liat dashboard kosong
+- [ ] 7b. Tambah store → setup wizard
+- [ ] 7c. Sidebar tampilin nama user (udah ada dari `useAuth`)
+- [ ] 7d. Test CRUD semua fitur sebagai user baru
 
-### Syarat Minimal (Urutan Setup)
+### Tahap 8: Test
 
-```
-1. PostgreSQL running          → docker compose up db
-2. API env lengkap             → isi OPENROUTER_API_KEY + DB_URL di api/.env
-3. API dependencies            → cd api && bun install && bun run prisma:generate && bun run prisma:migrate
-4. API start                   → cd api && bun run src/index.ts (port 3001)
-5. Bot dependencies            → cd wa-bot && bun install && bun run prisma:generate
-6. Bot env                     → cd wa-bot && cp .env.example .env (isi API_TOKEN)
-7. Bot start                   → cd wa-bot && bun run src/index.ts
-8. Dashboard dependencies      → cd dashboard && bun install
-9. Dashboard start             → cd dashboard && bun run dev (port 5173)
-```
-
-### Catatan Penting
-
-- **AI pipeline TIDAK akan jalan** tanpa `OPENROUTER_API_KEY` — semua LLM call timeout/fail
-- **Bot ga bisa QR-generate** tanpa API endpoint `POST /api/qr`
-- **Database harus PostgreSQL 17** — Prisma pake `@prisma/adapter-pg` yang spesifik PG
-- **Port conflict**: API (3001), Dashboard (5173), PostgreSQL (5432)
-- **wa-bot dan API** harus jalan bareng biar chat flow lengkap
+- [ ] 8a. `bun test` di API — update test yg broken karena ownerId
+- [ ] 8b. Manual test: register 2 user, verify data terisolasi
+- [ ] 8c. Test WA bot flow masih jalan
