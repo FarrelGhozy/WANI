@@ -55,6 +55,9 @@ async function main() {
       logger.info("QR code received");
       qrcode.generate(qr, { small: true });
       api.post("/api/qr", { qr }).catch(e => logger.error({ err: e?.response?.data ?? e }, "push QR failed"));
+
+      // Check if pairing code was requested via dashboard
+      checkAndGeneratePairingCode();
     }
 
     if (connection === "open" || receivedPendingNotifications) {
@@ -142,6 +145,22 @@ async function main() {
       }
     }
   });
+
+  async function checkAndGeneratePairingCode() {
+    try {
+      const { data } = await api.get("/api/qr/status");
+      const pairingPhone = data?.data?.pairingPhone;
+      const pairingCode = data?.data?.pairingCode;
+      if (pairingPhone && !pairingCode && sock) {
+        logger.info({ pairingPhone }, "generating pairing code");
+        const code = await sock.requestPairingCode(pairingPhone);
+        logger.info({ code }, "pairing code generated");
+        await api.post("/api/qr", { pairingCode: code, pairingPhone: null });
+      }
+    } catch (err) {
+      logger.error({ err: String(err) }, "checkAndGeneratePairingCode failed");
+    }
+  }
 
   async function pollResetSignal() {
     if (!connected) return;

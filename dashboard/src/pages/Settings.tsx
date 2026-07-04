@@ -21,7 +21,7 @@ export default function Settings() {
     setActiveTab(tab)
   }
   const { store, aiConfig, error, updateAiConfig, loading, reload } = useStoreContext()
-  const { qr: liveQr, connection: liveConn, phone: livePhone, connectedAt: liveConnectedAt } = useWaStatusContext()
+  const { qr: liveQr, connection: liveConn, phone: livePhone, connectedAt: liveConnectedAt, pairingCode: livePairingCode, pairingPhone: livePairingPhone } = useWaStatusContext()
   const { toast, apiError } = useToast()
 
   const [override, setOverride] = useState<{ connection: string; qr: string; phone: string } | null>(null)
@@ -30,6 +30,8 @@ export default function Settings() {
   const connection = override?.connection ?? liveConn
   const phone = override?.phone ?? livePhone
   const connectedAt = liveConnectedAt
+  const pairingCode = livePairingCode
+  const pairingPhone = livePairingPhone
 
   const handleDisconnect = useCallback(() => {
     setOverride({ connection: 'disconnected', qr: '', phone: '' })
@@ -40,6 +42,7 @@ export default function Settings() {
   }, [])
 
   const [resetting, setResetting] = useState(false)
+  const [requestingPairing, setRequestingPairing] = useState(false)
 
   const handleAiUpdate = useCallback(async (patch: Partial<import('@/hooks/useSettings.ts').AiConfig>) => {
     try {
@@ -63,6 +66,23 @@ export default function Settings() {
       setResetting(false)
     }
   }, [resetting, toast])
+
+  const handleRequestPairing = useCallback(async (phone: string) => {
+    setRequestingPairing(true)
+    try {
+      await fetchApi('/qr/pairing', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone }),
+      })
+      toast('Meminta kode pairing ke bot...', 'info')
+    } catch (e) {
+      apiError(e, 'Gagal meminta kode pairing')
+      throw e
+    } finally {
+      setRequestingPairing(false)
+    }
+  }, [toast, apiError])
 
   if (loading) {
     return (
@@ -122,10 +142,14 @@ export default function Settings() {
           connection={connection}
           phone={phone}
           connectedAt={connectedAt}
+          pairingCode={pairingCode}
+          pairingPhone={pairingPhone}
           onDisconnect={handleDisconnect}
           onConnect={handleConnect}
           onReset={handleReset}
+          onRequestPairing={handleRequestPairing}
           resetting={resetting}
+          requestingPairing={requestingPairing}
         />
       )}
     </div>

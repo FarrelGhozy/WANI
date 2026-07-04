@@ -152,6 +152,8 @@ export interface WaStatus {
   connection: string
   phone: string
   connectedAt: string | null
+  pairingCode: string | null
+  pairingPhone: string | null
   loading: boolean
   error: string | null
 }

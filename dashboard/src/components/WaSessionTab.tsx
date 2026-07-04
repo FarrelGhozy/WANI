@@ -9,10 +9,27 @@ interface WaSessionTabProps {
   connection: string
   phone: string
   connectedAt: string | null
+  pairingCode: string | null
+  pairingPhone: string | null
   onDisconnect: () => void
   onConnect: () => void
   onReset: () => void
+  onRequestPairing: (phone: string) => Promise<void>
   resetting: boolean
+  requestingPairing: boolean
+}
+
+function normalizePhone(input: string): string {
+  const digits = input.replace(/\D/g, '')
+  if (digits.startsWith('0')) return '62' + digits.slice(1)
+  if (digits.startsWith('62')) return digits
+  return digits
+}
+
+function formatPairingCode(code: string): string {
+  const upper = code.toUpperCase()
+  if (upper.length <= 4) return upper
+  return upper.slice(0, 4) + '-' + upper.slice(4, 8)
 }
 
 const statusConfig: Record<string, { dot: string; label: string; bg: string }> = {
@@ -35,8 +52,15 @@ const statusConfig: Record<string, { dot: string; label: string; bg: string }> =
 
 const isMockQr = (qr: string) => !qr || qr === 'mock-qr-data-for-development'
 
-export default function WaSessionTab({ qr, connection, phone, connectedAt, onDisconnect, onReset, resetting }: WaSessionTabProps) {
+export default function WaSessionTab({
+  qr, connection, phone, connectedAt,
+  pairingCode,
+  onDisconnect, onReset, onRequestPairing,
+  resetting, requestingPairing,
+}: WaSessionTabProps) {
   const [confirming, setConfirming] = useState(false)
+  const [pairingInput, setPairingInput] = useState('')
+  const [pairingError, setPairingError] = useState<string | null>(null)
   const cfg = statusConfig[connection] ?? statusConfig.disconnected
   const canDisconnect = connection === 'connected'
 
@@ -46,6 +70,21 @@ export default function WaSessionTab({ qr, connection, phone, connectedAt, onDis
       onReset()
     } else {
       setConfirming(true)
+    }
+  }
+
+  const handleSubmitPairing = async () => {
+    setPairingError(null)
+    const normalized = normalizePhone(pairingInput)
+    if (normalized.length < 10 || normalized.length > 15) {
+      setPairingError('Nomor telepon tidak valid. Contoh: +6281234567890')
+      return
+    }
+    try {
+      await onRequestPairing(normalized)
+      setPairingInput('')
+    } catch {
+      setPairingError('Gagal mengirim permintaan pairing. Coba lagi.')
     }
   }
 
@@ -75,7 +114,7 @@ export default function WaSessionTab({ qr, connection, phone, connectedAt, onDis
       <Card accent="teal">
         <h2 className="mb-4 text-base font-semibold text-stone-900 md:mb-6 md:text-lg">WhatsApp Session</h2>
 
-        <div className="mb-5 grid gap-3 sm:grid-cols-3 md:mb-6 md:gap-4">
+        <div className="mb-5 grid gap-3 sm:grid-cols-4 md:mb-6 md:gap-4">
           <div className={`rounded-lg p-4 ${cfg.bg}`}>
             <p className="text-xs text-stone-500">Status</p>
             <div className="mt-1 flex items-center gap-2">
@@ -87,6 +126,12 @@ export default function WaSessionTab({ qr, connection, phone, connectedAt, onDis
             <p className="text-xs text-stone-500">Nomor Telepon</p>
             <p className="mt-1 text-sm font-medium text-stone-900">
               {phone || '-'}
+            </p>
+          </div>
+          <div className="rounded-lg bg-stone-50 p-4">
+            <p className="text-xs text-stone-500">Kode Pairing</p>
+            <p className="mt-1 text-sm font-medium text-stone-900">
+              {pairingCode ? formatPairingCode(pairingCode) : '-'}
             </p>
           </div>
           <div className="rounded-lg bg-stone-50 p-4">
@@ -134,38 +179,93 @@ export default function WaSessionTab({ qr, connection, phone, connectedAt, onDis
         )}
 
         {(connection === 'disconnected' || connection === 'connecting') && (
-          <div className="flex flex-col items-center rounded-lg bg-stone-50 p-4 md:p-6">
-            {isMockQr(qr) ? (
-              <>
-                <div className="mb-4 flex aspect-square w-[200px] items-center justify-center rounded-xl border-2 border-dashed border-stone-300 bg-white">
-                  <div className="text-center">
-                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="mx-auto text-stone-300">
-                      <rect x="2" y="2" width="8" height="8" rx="1" />
-                      <rect x="14" y="2" width="8" height="8" rx="1" />
-                      <rect x="2" y="14" width="8" height="8" rx="1" />
-                      <rect x="14" y="14" width="4" height="4" rx="1" />
-                      <rect x="20" y="14" width="2" height="4" rx="0.5" />
-                      <rect x="14" y="20" width="4" height="2" rx="0.5" />
-                    </svg>
-                    <p className="mt-2 text-xs text-stone-400">Menunggu QR Code...</p>
+          <div className="space-y-5">
+            {/* QR Section */}
+            <div className="flex flex-col items-center rounded-lg bg-stone-50 p-4 md:p-6">
+              {isMockQr(qr) ? (
+                <>
+                  <div className="mb-4 flex aspect-square w-[200px] items-center justify-center rounded-xl border-2 border-dashed border-stone-300 bg-white">
+                    <div className="text-center">
+                      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="mx-auto text-stone-300">
+                        <rect x="2" y="2" width="8" height="8" rx="1" />
+                        <rect x="14" y="2" width="8" height="8" rx="1" />
+                        <rect x="2" y="14" width="8" height="8" rx="1" />
+                        <rect x="14" y="14" width="4" height="4" rx="1" />
+                        <rect x="20" y="14" width="2" height="4" rx="0.5" />
+                        <rect x="14" y="20" width="4" height="2" rx="0.5" />
+                      </svg>
+                      <p className="mt-2 text-xs text-stone-400">Menunggu QR Code...</p>
+                    </div>
                   </div>
-                </div>
-                <p className="text-center text-xs font-medium text-stone-500">
-                  Jika QR Code tidak muncul, reset koneksi untuk memulai ulang proses pairing.
+                  <p className="text-center text-xs font-medium text-stone-500">
+                    Jika QR Code tidak muncul, reset koneksi untuk memulai ulang proses pairing.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="mb-3 text-xs font-medium text-stone-500">
+                    Scan QR Code ini melalui WhatsApp &gt; Perangkat Tertaut
+                  </p>
+                  <QRCode value={qr} />
+                  <p className="mt-3 text-center text-xs text-stone-400">
+                    QR Code akan kadaluarsa dalam beberapa menit. Scan segera sebelum masa berlaku habis.
+                  </p>
+                </>
+              )}
+              {resetButton}
+            </div>
+
+            {/* Divider */}
+            <div className="flex items-center gap-3">
+              <div className="h-px flex-1 bg-stone-200" />
+              <span className="text-xs font-medium text-stone-400">ATAU</span>
+              <div className="h-px flex-1 bg-stone-200" />
+            </div>
+
+            {/* Pairing Code Section */}
+            {pairingCode ? (
+              <div className="rounded-lg border-2 border-teal-200 bg-teal-50 p-5 text-center">
+                <p className="mb-1 text-xs font-medium text-teal-600">Kode Pairing</p>
+                <p className="mb-3 text-3xl font-bold tracking-[0.3em] text-teal-900 select-all">
+                  {formatPairingCode(pairingCode)}
                 </p>
-              </>
+                <p className="text-xs text-teal-700">
+                  Buka WhatsApp di ponsel → <span className="font-semibold">Perangkat Tertaut</span> → <span className="font-semibold">Hubungkan dengan nomor telepon</span>
+                  <br />
+                  Masukkan kode di atas untuk menghubungkan.
+                </p>
+              </div>
             ) : (
-              <>
-                <p className="mb-3 text-xs font-medium text-stone-500">
-                  Scan QR Code ini melalui WhatsApp &gt; Perangkat Tertaut
+              <div className="rounded-lg border border-stone-200 bg-white p-4">
+                <p className="mb-3 text-xs font-medium text-stone-600">
+                  Punya HP aja? Masukkan nomor WhatsApp untuk dapat kode pairing
                 </p>
-                <QRCode value={qr} />
-                <p className="mt-3 text-center text-xs text-stone-400">
-                  QR Code akan kadaluarsa dalam beberapa menit. Scan segera sebelum masa berlaku habis.
+                <div className="flex gap-2">
+                  <input
+                    type="tel"
+                    value={pairingInput}
+                    onChange={(e) => { setPairingInput(e.target.value); setPairingError(null) }}
+                    onKeyDown={(e) => { if (e.key === 'Enter') handleSubmitPairing() }}
+                    placeholder="+6281234567890"
+                    className="min-w-0 flex-1 rounded-lg border border-stone-300 px-3 py-2 text-sm text-stone-900 placeholder:text-stone-400 focus:border-teal-500 focus:outline-none focus:ring-1 focus:ring-teal-500"
+                  />
+                  <Button
+                    size="sm"
+                    onClick={handleSubmitPairing}
+                    loading={requestingPairing}
+                    disabled={requestingPairing || !pairingInput.trim()}
+                  >
+                    {requestingPairing ? 'Meminta...' : 'Minta Kode'}
+                  </Button>
+                </div>
+                {pairingError && (
+                  <p className="mt-2 text-xs text-red-600">{pairingError}</p>
+                )}
+                <p className="mt-2 text-xs text-stone-400">
+                  Contoh: +6281234567890 atau 081234567890
                 </p>
-              </>
+              </div>
             )}
-            {resetButton}
           </div>
         )}
       </Card>
@@ -183,11 +283,11 @@ export default function WaSessionTab({ qr, connection, phone, connectedAt, onDis
           </li>
           <li className="flex gap-2">
             <span className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-teal-400" />
-            Session akan tetap aktif hingga Anda putuskan. Setelah diputuskan, scan QR baru untuk menghubungkan ulang.
+            Atau masukkan nomor HP untuk dapat kode pairing — ketik kode tersebut di <span className="font-medium text-stone-600">Perangkat Tertaut &gt; Hubungkan dengan nomor telepon</span>.
           </li>
           <li className="flex gap-2">
             <span className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-teal-400" />
-            Klik <span className="font-medium text-stone-600">Putuskan</span> untuk memutuskan session kapan saja.
+            Session akan tetap aktif hingga Anda putuskan. Setelah diputuskan, scan QR baru untuk menghubungkan ulang.
           </li>
           <li className="flex gap-2">
             <span className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400" />

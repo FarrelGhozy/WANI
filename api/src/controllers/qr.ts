@@ -2,10 +2,11 @@ import type { Request, Response } from "express"
 import type { z } from "zod"
 import { WaSessionModel } from "@/src/models/wa-session"
 import { sendResponse } from "@/src/utils/response"
-import { upsertQrSchema } from "@/src/schemas/wa-session"
+import { upsertQrSchema, pairingSchema } from "@/src/schemas/wa-session"
 import { clearBotCreds } from "@/src/utils/wa-bot-db"
 
 type UpsertQrBody = z.infer<typeof upsertQrSchema>
+type PairingBody = z.infer<typeof pairingSchema>
 
 export async function getQr(_req: Request, res: Response): Promise<void> {
   const session = await WaSessionModel.find()
@@ -18,6 +19,8 @@ export async function getStatus(_req: Request, res: Response): Promise<void> {
     status: session?.status ?? "disconnected",
     phone: session?.phone ?? null,
     connectedAt: session?.updatedAt?.toISOString() ?? null,
+    pairingPhone: session?.pairingPhone ?? null,
+    pairingCode: session?.pairingCode ?? null,
   })
 }
 
@@ -25,9 +28,18 @@ export async function upsertQr(
   req: Request<Record<string, string>, any, UpsertQrBody>,
   res: Response,
 ): Promise<void> {
-  const { qr, status, phone } = req.body
-  await WaSessionModel.upsert({ qr, status, phone })
+  const { qr, status, phone, pairingCode, pairingPhone } = req.body
+  await WaSessionModel.upsert({ qr, status, phone, pairingCode, pairingPhone })
   sendResponse(res, 200, "qr updated")
+}
+
+export async function requestPairing(
+  req: Request<Record<string, string>, any, PairingBody>,
+  res: Response,
+): Promise<void> {
+  const { phone } = req.body
+  await WaSessionModel.upsert({ pairingPhone: phone, pairingCode: null })
+  sendResponse(res, 200, "pairing code requested", { phone })
 }
 
 export async function clearQr(_req: Request, res: Response): Promise<void> {
