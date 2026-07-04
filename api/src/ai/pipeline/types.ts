@@ -7,6 +7,7 @@ import type {
   ProductEntry,
   CompletionResult,
 } from "@/src/types/ai"
+import type { RetrievalResult } from "@/src/types/knowledge"
 import { TraceContext } from "@/src/debug/tracer"
 
 /**
@@ -29,6 +30,7 @@ export interface PipelineContext {
   storeInfo?: StoreInfo
   products?: ProductEntry[]
   aiConfig?: Record<string, any>
+  knowledgeContext?: RetrievalResult[]
 
   systemPrompt?: string
   historyMessages?: ChatMessage[]
