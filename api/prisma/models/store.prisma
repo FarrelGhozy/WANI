@@ -1,6 +1,6 @@
-// Single-store configuration (one row, id = "default").
 model Store {
-  id             String   @id @default("default")
+  id             String   @id @default(uuid())
+  ownerId        String   @unique
   businessName   String   @default("Toko")
   phone          String   @default("")
   logoUrl        String?

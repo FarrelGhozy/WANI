@@ -1,6 +1,6 @@
-// Single-row store website config (id = "default").
 model WebSite {
-  id        String   @id @default("default")
+  id        String   @id @default(uuid())
+  ownerId   String   @unique
   config    Json     @default("{}")
   published Boolean  @default(false)
   createdAt DateTime @default(now())

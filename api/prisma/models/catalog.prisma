@@ -1,14 +1,18 @@
 model Category {
   id          String    @id @default(uuid())
-  name        String    @unique
+  ownerId     String
+  name        String
   description String?
   createdAt   DateTime  @default(now())
 
   products Product[]
+
+  @@unique([ownerId, name])
 }
 
 model Product {
   id          String   @id @default(uuid())
+  ownerId     String
   categoryId  String?
   name        String
   description String?
@@ -22,5 +26,5 @@ model Product {
   category   Category?   @relation(fields: [categoryId], references: [id])
   orderItems OrderItem[]
 
-  @@index([name])
+  @@index([ownerId, name])
 }

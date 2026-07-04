@@ -1,5 +1,6 @@
 model Order {
   id             String      @id @default(uuid())
+  ownerId        String
   customerId     String
   status         OrderStatus @default(PENDING)
   totalAmount    Decimal     @default(0) @db.Decimal(12, 2)
@@ -13,9 +14,8 @@ model Order {
   items    OrderItem[]
   payment  Payment?
 
-  @@index([customerId])
-  // ponytail: composite covers status filter + default createdAt sort; btree scans both directions
-  @@index([status, createdAt])
+  @@index([ownerId, customerId])
+  @@index([ownerId, status, createdAt])
 }
 
 model OrderItem {

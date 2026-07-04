@@ -1,7 +1,6 @@
-// Structured payment methods for store (QRIS, Bank Transfer, E-Wallet, COD)
 model StorePaymentMethod {
   id            String   @id @default(uuid())
-  storeId       String   @default("default")
+  ownerId       String
   type          String   // QRIS | BANK_TRANSFER | E_WALLET | COD
   label         String
   accountName   String?
@@ -16,5 +15,5 @@ model StorePaymentMethod {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  @@index([storeId])
+  @@index([ownerId])
 }

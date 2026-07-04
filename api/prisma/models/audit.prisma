@@ -1,12 +1,13 @@
 model ActivityLog {
   id          String   @id @default(uuid())
+  ownerId     String
   type        String
   referenceId String?
   description String   @db.Text
   metadata    Json?
   createdAt   DateTime @default(now())
 
-  @@index([createdAt])
+  @@index([ownerId, createdAt])
 }
 
 // Daily LLM usage, keyed by date (YYYY-MM-DD). Backs the cost/budget guardrail.

@@ -1,6 +1,6 @@
-// Single AI agent configuration (one row, id = "default").
 model AiConfig {
-  id              String   @id @default("default")
+  id              String   @id @default(uuid())
+  ownerId         String   @unique
   isActive        Boolean  @default(true)
   systemPrompt    String   @default("") @db.Text
   model           String   @default("deepseek-v4-flash-free")

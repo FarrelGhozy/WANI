@@ -1,5 +1,6 @@
 model Conversation {
   id            String             @id @default(uuid())
+  ownerId       String
   customerId    String
   status        ConversationStatus @default(ACTIVE)
   lastMessageAt DateTime?
@@ -9,12 +10,13 @@ model Conversation {
   customer Customer  @relation(fields: [customerId], references: [id])
   messages Message[]
 
-  @@index([status])
-  @@index([customerId])
+  @@index([ownerId, status])
+  @@index([ownerId, customerId])
 }
 
 model Message {
   id             String      @id @default(uuid())
+  ownerId        String
   conversationId String
   role           MessageRole
   content        String      @db.Text
@@ -26,5 +28,5 @@ model Message {
 
   conversation Conversation @relation(fields: [conversationId], references: [id])
 
-  @@index([conversationId, createdAt])
+  @@index([ownerId, conversationId, createdAt])
 }

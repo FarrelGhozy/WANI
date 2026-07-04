@@ -1,6 +1,7 @@
 model Customer {
   id          String   @id @default(uuid())
-  phone       String   @unique
+  ownerId     String
+  phone       String
   name        String
   notes       String?
   totalOrders Int      @default(0)
@@ -9,4 +10,7 @@ model Customer {
 
   orders        Order[]
   conversations Conversation[]
+
+  @@unique([ownerId, phone])
+  @@index([ownerId])
 }
