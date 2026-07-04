@@ -1,0 +1,31 @@
+// RAG knowledge base — documents are chunked, embedded, and searched via pgvector.
+model KnowledgeDocument {
+  id         String   @id @default(uuid())
+  storeId    String   @default("default")
+  title      String
+  content    String   @db.Text
+  source     String?
+  isActive   Boolean  @default(true)
+  chunkCount Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  chunks KnowledgeChunk[]
+
+  @@index([storeId])
+}
+
+model KnowledgeChunk {
+  id          String   @id @default(uuid())
+  documentId  String
+  content     String   @db.Text
+  // ponytail: Prisma can't type vector natively; managed via $queryRaw
+  embedding   Unsupported("vector(1536)")?
+  chunkIndex  Int
+  tokenCount  Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  document KnowledgeDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+}
