@@ -9,11 +9,18 @@ import type { PipelineStep } from "../types"
 export const messageBuilderStep: PipelineStep = {
   name: "build_messages",
   async run(ctx) {
+    const ragText = ctx.knowledgeContext && ctx.knowledgeContext.length > 0
+      ? ctx.knowledgeContext
+          .map((r) => `[${r.documentTitle}]\n${r.content}`)
+          .join("\n\n---\n\n")
+      : null
+
     const systemPrompt = buildSystemPrompt(
       ctx.storeInfo!,
       ctx.products!,
       ctx.aiConfig?.knowledgeBase ?? null,
       ctx.aiConfig?.systemPrompt ?? null,
+      ragText,
     )
     ctx.systemPrompt = systemPrompt
 
