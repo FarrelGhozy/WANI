@@ -12,6 +12,7 @@ export function WaStatusProvider({ children }: { children: ReactNode }) {
   )
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useWaStatusContext(): WaStatus {
   const ctx = useContext(WaStatusContext)
   if (!ctx) {
