@@ -29,8 +29,15 @@ export default function Website() {
 
   function handlePreview(slug?: string) {
     const s = slug || latestSlug
-    if (s) window.open(`/s/${s}/`, '_blank')
-    else toast('Belum ada website yang di-generate', 'error')
+    if (s) {
+      const a = document.createElement('a')
+      a.href = `/s/${s}/`
+      a.target = '_blank'
+      a.rel = 'noopener noreferrer'
+      a.click()
+    } else {
+      toast('Belum ada website yang di-generate', 'warning')
+    }
   }
 
   async function handleDownload(slug?: string) {
@@ -79,6 +86,14 @@ export default function Website() {
           <h1 className="text-2xl font-bold tracking-tight text-stone-900">Website</h1>
           <p className="mt-1 text-sm text-stone-500">Kelola website toko Anda — generate, preview, dan download</p>
         </div>
+        <Button
+          size="sm"
+          className="lg:hidden"
+          loading={generating}
+          onClick={handleGenerate}
+        >
+          Generate
+        </Button>
       </div>
 
       {error && (
@@ -315,23 +330,25 @@ export default function Website() {
                 const checked = sp.key in config.socialMedia
                 const url = checked ? config.socialMedia[sp.key] || '' : ''
                 return (
-                  <div key={sp.key} className="flex items-start gap-3">
-                    <input
-                      type="checkbox"
-                      checked={checked}
-                      onChange={() => {
-                        const next = { ...config.socialMedia }
-                        if (checked) {
-                          delete next[sp.key]
-                        } else {
-                          next[sp.key] = ''
-                        }
-                        updateConfig({ socialMedia: next })
-                      }}
-                      className="mt-2.5 h-4 w-4 rounded border-stone-300 text-teal-600 focus:ring-teal-500"
-                    />
-                    <div className="flex-1 space-y-1">
+                  <div key={sp.key} className="flex flex-col gap-2 sm:flex-row sm:items-start sm:gap-3">
+                    <div className="flex items-center gap-2 sm:mt-2.5">
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={() => {
+                          const next = { ...config.socialMedia }
+                          if (checked) {
+                            delete next[sp.key]
+                          } else {
+                            next[sp.key] = ''
+                          }
+                          updateConfig({ socialMedia: next })
+                        }}
+                        className="h-4 w-4 rounded border-stone-300 text-teal-600 focus:ring-teal-500"
+                      />
                       <label className="text-sm font-medium text-stone-700">{sp.label}</label>
+                    </div>
+                    <div className="flex-1">
                       <input
                         value={url}
                         onChange={(e) => {

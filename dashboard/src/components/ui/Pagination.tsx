@@ -10,7 +10,7 @@ export default function Pagination({ page, totalPages, onPageChange }: Paginatio
   return (
     <div className="flex items-center justify-between border-t border-stone-100 pt-4">
       <p className="text-xs text-stone-500">
-        Page {page} of {totalPages}
+        Halaman {page} dari {totalPages}
       </p>
       <div className="flex items-center gap-1">
         <button
