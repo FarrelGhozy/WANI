@@ -14,6 +14,8 @@ model Order {
   payment  Payment?
 
   @@index([customerId])
+  // ponytail: composite covers status filter + default createdAt sort; btree scans both directions
+  @@index([status, createdAt])
 }
 
 model OrderItem {
