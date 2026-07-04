@@ -29,6 +29,17 @@ export const env = {
     jwtExpires: process.env.JWT_EXPIRES ?? "7d"
   },
 
+  rag: {
+    openaiApiKey: process.env.OPENAI_API_KEY ?? "",
+    embeddingModel: process.env.EMBEDDING_MODEL ?? "text-embedding-3-small",
+    embeddingDim: num("EMBEDDING_DIM", 1536),
+    embeddingBatchSize: num("EMBEDDING_BATCH_SIZE", 100),
+    chunkSize: num("KNOWLEDGE_CHUNK_SIZE", 500),
+    chunkOverlap: num("KNOWLEDGE_CHUNK_OVERLAP", 100),
+    topK: num("KNOWLEDGE_TOP_K", 3),
+    similarityThreshold: num("KNOWLEDGE_SIMILARITY_THRESHOLD", 0.7),
+  },
+
   guardrails: {
     maxInputChars: num("MAX_INPUT_CHARS", 4000),
     maxReplyChars: num("MAX_REPLY_CHARS", 1500),
