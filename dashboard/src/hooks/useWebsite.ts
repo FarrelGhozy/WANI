@@ -5,7 +5,7 @@ import { useProducts } from '@/hooks/useProducts.ts'
 import { useProductsContext } from '@/contexts/ProductsContext.tsx'
 import type { WebsiteConfig, GenerationLog } from '@/types.ts'
 
-const API_BASE = window.__ENV__?.API_URL ?? '/api'
+const API_BASE = import.meta.env.VITE_API_URL || window.__ENV__?.API_URL || '/api'
 
 export type { WebsiteConfig, GenerationLog }
 
