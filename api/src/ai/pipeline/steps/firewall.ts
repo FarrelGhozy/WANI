@@ -12,6 +12,7 @@ export const firewallStep: PipelineStep = {
   name: "firewall",
   async run(ctx) {
     const blocked = await runInputFirewall({
+      ownerId: ctx.ownerId,
       normalized: ctx.normalized!,
       customerPhone: ctx.customerPhone,
       conversationId: ctx.conversationId!,
@@ -19,6 +20,7 @@ export const firewallStep: PipelineStep = {
     })
     if (blocked) {
       await MessageModel.append({
+        ownerId: ctx.ownerId,
         conversationId: ctx.conversationId!,
         role: "BOT",
         content: STEP_REPLIES.INJECTION,
@@ -38,6 +40,7 @@ export const firewallStep: PipelineStep = {
 }
 
 async function runInputFirewall(ctx: {
+  ownerId: string
   normalized: string
   customerPhone?: string
   conversationId?: string
@@ -49,7 +52,7 @@ async function runInputFirewall(ctx: {
   ctx.trace.set("verdict", verdict).set("reasons", scanResult.reasons)
 
   if (verdict === "BLOCK") {
-    await ActivityLogModel.log("injection_blocked", `T1 blocked: ${scanResult.reasons.join(", ")}`, ctx.conversationId!, {
+    await ActivityLogModel.log(ctx.ownerId, "injection_blocked", `T1 blocked: ${scanResult.reasons.join(", ")}`, ctx.conversationId!, {
       text: ctx.normalized, reasons: scanResult.reasons, tier: 1,
     })
     return true
@@ -64,7 +67,7 @@ async function runInputFirewall(ctx: {
       .set("classifier_confidence", classifierResult.confidence)
 
     if (classifierResult.verdict === "INJECTION") {
-      await ActivityLogModel.log("injection_blocked", `T2 blocked: ${classifierResult.reasons.join(", ")}`, ctx.conversationId!, {
+      await ActivityLogModel.log(ctx.ownerId, "injection_blocked", `T2 blocked: ${classifierResult.reasons.join(", ")}`, ctx.conversationId!, {
         text: ctx.normalized, reasons: classifierResult.reasons, tier: 2,
       })
       return true
@@ -79,7 +82,7 @@ async function runInputFirewall(ctx: {
       ctx.trace.set("judge_verdict", judgeResult.verdict).set("judge_reasons", judgeResult.reasons)
 
       if (judgeResult.verdict === "BLOCK") {
-        await ActivityLogModel.log("injection_blocked", `T3 blocked: ${judgeResult.reasons.join(", ")}`, ctx.conversationId!, {
+        await ActivityLogModel.log(ctx.ownerId, "injection_blocked", `T3 blocked: ${judgeResult.reasons.join(", ")}`, ctx.conversationId!, {
           text: ctx.normalized, reasons: judgeResult.reasons, tier: 3,
         })
         return true

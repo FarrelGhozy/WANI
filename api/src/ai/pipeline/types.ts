@@ -20,6 +20,7 @@ export interface PipelineContext {
   trace: TraceContext
 
   // Populated by steps (in execution order)
+  ownerId: string
   normalized?: string
   customerId?: string
   customerPhone?: string

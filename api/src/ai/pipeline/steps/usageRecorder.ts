@@ -9,7 +9,7 @@ export const usageRecorderStep: PipelineStep = {
   name: "record_usage",
   async run(ctx) {
     await recordLlmUsage(ctx.completion!.usage)
-    await ActivityLogModel.log("llm_call", `LLM call completed (${ctx.llmIntent})`, ctx.conversationId!, {
+    await ActivityLogModel.log(ctx.ownerId, "llm_call", `LLM call completed (${ctx.llmIntent})`, ctx.conversationId!, {
       intent: ctx.llmIntent,
       model: ctx.completion!.model,
       usage: ctx.completion!.usage,

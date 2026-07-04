@@ -10,7 +10,7 @@ export type DashboardStats = {
   qr: { qr: string | null; status: string; phone: string | null }
 }
 
-export async function getDashboardStats(): Promise<DashboardStats> {
+export async function getDashboardStats(ownerId: string): Promise<DashboardStats> {
   const todayStart = new Date()
   todayStart.setHours(0, 0, 0, 0)
 
@@ -22,11 +22,11 @@ export async function getDashboardStats(): Promise<DashboardStats> {
     conversationsActive,
     waSession,
   ] = await Promise.all([
-    prisma.order.count({ where: { createdAt: { gte: todayStart } } }),
-    prisma.order.count({ where: { status: "PENDING" } }),
-    prisma.product.count({ where: { isAvailable: true } }),
-    prisma.customer.count(),
-    prisma.conversation.count({ where: { status: "ACTIVE" } }),
+    prisma.order.count({ where: { ownerId, createdAt: { gte: todayStart } } }),
+    prisma.order.count({ where: { ownerId, status: "PENDING" } }),
+    prisma.product.count({ where: { ownerId, isAvailable: true } }),
+    prisma.customer.count({ where: { ownerId } }),
+    prisma.conversation.count({ where: { ownerId, status: "ACTIVE" } }),
     WaSessionModel.find(),
   ])
 

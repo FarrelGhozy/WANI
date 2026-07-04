@@ -9,7 +9,7 @@ export const budgetStep: PipelineStep = {
   name: "budget_check",
   async run(ctx) {
     if (await isBudgetExceeded()) {
-      await ActivityLogModel.log("budget_exceeded", "Daily LLM budget exceeded", ctx.conversationId!)
+      await ActivityLogModel.log(ctx.ownerId, "budget_exceeded", "Daily LLM budget exceeded", ctx.conversationId!)
       return {
         kind: "break",
         result: {

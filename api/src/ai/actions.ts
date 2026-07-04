@@ -28,7 +28,7 @@ async function handleOrder(
   ctx: ActionCtx,
 ): Promise<ActionResult> {
   const names = output.items.map((i) => i.name)
-  const productMap = await ProductModel.findByNames(names)
+  const productMap = await ProductModel.findByNames(ctx.ownerId, names)
   const resolved: Array<{ productId: string; productName: string; unitPrice: number; qty: number }> = []
   const unmatched: string[] = []
 
@@ -51,9 +51,9 @@ async function handleOrder(
     return { reply: `Maaf, produk ${list} tidak ditemukan di katalog kami. Bisa cek nama produknya kembali?` }
   }
 
-  const { order } = await OrderModel.createFromItems(ctx.customerId, resolved, output.notes)
+  const { order } = await OrderModel.createFromItems(ctx.ownerId, ctx.customerId, resolved, output.notes)
   await CustomerModel.incrementOrders(ctx.customerId)
-  await ActivityLogModel.log("order_created", `Order ${order.id} created from WA chat`, order.id, {
+  await ActivityLogModel.log(ctx.ownerId, "order_created", `Order ${order.id} created from WA chat`, order.id, {
     items: resolved,
     notes: output.notes,
   })
@@ -63,7 +63,7 @@ async function handleOrder(
   )
   const total = Number(order.totalAmount).toLocaleString("id-ID")
 
-  const paymentMethods = await StorePaymentMethodModel.listActive()
+  const paymentMethods = await StorePaymentMethodModel.listActive(ctx.ownerId)
   const qrisMethod = paymentMethods.find((pm) => pm.type === "QRIS" && pm.qrImageUrl)
   const paymentLines = paymentMethods.map((pm) => {
     switch (pm.type) {
@@ -122,7 +122,7 @@ async function handleComplaint(
 ): Promise<ActionResult> {
   if (output.escalate) {
     await ConversationModel.setStatus(ctx.conversationId, "ESCALATED")
-    await ActivityLogModel.log("complaint_escalated", "Complaint escalated to human", ctx.conversationId, {
+    await ActivityLogModel.log(ctx.ownerId, "complaint_escalated", "Complaint escalated to human", ctx.conversationId, {
       reply: output.reply,
     })
   }
@@ -134,7 +134,7 @@ async function handleEscalate(
   ctx: ActionCtx,
 ): Promise<ActionResult> {
   await ConversationModel.setStatus(ctx.conversationId, "ESCALATED")
-  await ActivityLogModel.log("escalated", `Escalated: ${output.reason}`, ctx.conversationId, {
+  await ActivityLogModel.log(ctx.ownerId, "escalated", `Escalated: ${output.reason}`, ctx.conversationId, {
     reason: output.reason,
   })
   return { reply: "Baik, akan kami hubungkan dengan CS manusia. Mohon tunggu sebentar ya." }

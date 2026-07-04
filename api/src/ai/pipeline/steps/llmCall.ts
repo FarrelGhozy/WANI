@@ -26,6 +26,7 @@ export const llmCallStep: PipelineStep = {
 
     if (!cbResult.allowed) {
       await ActivityLogModel.log(
+        ctx.ownerId,
         "llm_failed",
         "LLM call failed (circuit breaker)",
         ctx.conversationId!,

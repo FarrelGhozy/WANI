@@ -75,30 +75,34 @@ export default function Products() {
           <h1 className="text-2xl font-semibold tracking-tight text-stone-900">Produk</h1>
           <p className="mt-1 text-sm text-stone-500">{products.length} produk UMKM Anda</p>
         </div>
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           {/* View toggle */}
           <div className="flex overflow-hidden rounded-lg border border-stone-300 bg-white">
             <button
               onClick={() => setView('list')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-colors ${
+              className={`flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 text-xs font-medium transition-colors ${
                 view === 'list' ? 'bg-teal-50 text-teal-700' : 'text-stone-500 hover:text-stone-700'
               }`}
+              title="Tampilan List"
+              aria-label="Tampilan List"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
                 <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
               </svg>
-              List
+              <span className="hidden sm:inline">List</span>
             </button>
             <button
               onClick={() => setView('card')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-colors ${
+              className={`flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 text-xs font-medium transition-colors ${
                 view === 'card' ? 'bg-teal-50 text-teal-700' : 'text-stone-500 hover:text-stone-700'
               }`}
+              title="Tampilan Grid"
+              aria-label="Tampilan Grid"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
                 <rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" />
               </svg>
-              Grid
+              <span className="hidden sm:inline">Grid</span>
             </button>
           </div>
           <Button variant="secondary" icon={

@@ -4,6 +4,7 @@ import { ProductModel, CategoryModel } from "@/src/models/catalog"
 import { sendResponse } from "@/src/utils/response"
 import { NotFoundError } from "@/src/utils/errors"
 import { getValidatedQuery } from "@/src/middleware/validate"
+import { getOwnerId, getOwnerIdOrFirst } from "@/src/middleware/owner"
 import { createProductSchema, updateProductSchema, productQuerySchema, createCategorySchema, updateCategorySchema } from "@/src/schemas/product"
 
 type CreateProductBody = z.infer<typeof createProductSchema>
@@ -16,7 +17,8 @@ export async function listProducts(
   req: Request<Record<string, string>, any, any, ProductQuery>,
   res: Response,
 ): Promise<void> {
-  const result = await ProductModel.list(getValidatedQuery<ProductQuery>(req))
+  const ownerId = await getOwnerIdOrFirst(req)
+  const result = await ProductModel.list(ownerId, getValidatedQuery<ProductQuery>(req))
   sendResponse(res, 200, "products retrieved", result)
 }
 
@@ -35,7 +37,8 @@ export async function createProduct(
   req: Request<Record<string, string>, any, CreateProductBody>,
   res: Response,
 ): Promise<void> {
-  const product = await ProductModel.createProduct(req.body)
+  const ownerId = getOwnerId(req)
+  const product = await ProductModel.createProduct(ownerId, req.body)
   sendResponse(res, 201, "product created", product)
 }
 
@@ -43,6 +46,7 @@ export async function updateProduct(
   req: Request<{ id: string }, any, UpdateProductBody>,
   res: Response,
 ): Promise<void> {
+  const ownerId = getOwnerId(req)
   const existing = await ProductModel.getByIdWithCategory(req.params.id)
   if (!existing) {
     throw new NotFoundError("product not found")
@@ -55,6 +59,7 @@ export async function deleteProduct(
   req: Request<{ id: string }>,
   res: Response,
 ): Promise<void> {
+  getOwnerId(req)
   const existing = await ProductModel.getByIdWithCategory(req.params.id)
   if (!existing) {
     throw new NotFoundError("product not found")
@@ -64,10 +69,11 @@ export async function deleteProduct(
 }
 
 export async function listCategories(
-  _req: Request,
+  req: Request,
   res: Response,
 ): Promise<void> {
-  const items = await CategoryModel.listAll()
+  const ownerId = await getOwnerIdOrFirst(req)
+  const items = await CategoryModel.listAll(ownerId)
   sendResponse(res, 200, "categories retrieved", { items })
 }
 
@@ -75,7 +81,8 @@ export async function createCategory(
   req: Request<Record<string, string>, any, CreateCategoryBody>,
   res: Response,
 ): Promise<void> {
-  const category = await CategoryModel.createCategory(req.body)
+  const ownerId = getOwnerId(req)
+  const category = await CategoryModel.createCategory(ownerId, req.body)
   sendResponse(res, 201, "category created", category)
 }
 
@@ -83,6 +90,7 @@ export async function updateCategory(
   req: Request<{ id: string }, any, UpdateCategoryBody>,
   res: Response,
 ): Promise<void> {
+  getOwnerId(req)
   const existing = await CategoryModel.getByIdWithCount(req.params.id)
   if (!existing) {
     throw new NotFoundError("category not found")
@@ -95,6 +103,7 @@ export async function deleteCategory(
   req: Request<{ id: string }>,
   res: Response,
 ): Promise<void> {
+  getOwnerId(req)
   const existing = await CategoryModel.getByIdWithCount(req.params.id)
   if (!existing) {
     throw new NotFoundError("category not found")

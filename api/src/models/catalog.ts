@@ -65,18 +65,18 @@ export class ProductModel extends BaseModel {
     return this.db.product
   }
 
-  static async listAvailable(): Promise<ReturnType<typeof toProductResponse>[]> {
+  static async listAvailable(ownerId: string): Promise<ReturnType<typeof toProductResponse>[]> {
     const rows = await this.delegate.findMany({
-      where: { isAvailable: true },
+      where: { ownerId, isAvailable: true },
       include: { category: true },
       orderBy: { name: "asc" },
     })
     return rows.map(toProductResponse)
   }
 
-  static async findByNames(names: string[]): Promise<Map<string, Product & { category?: Category | null }>> {
+  static async findByNames(ownerId: string, names: string[]): Promise<Map<string, Product & { category?: Category | null }>> {
     const rows = await this.delegate.findMany({
-      where: { name: { in: names, mode: "insensitive" } },
+      where: { ownerId, name: { in: names, mode: "insensitive" } },
       include: { category: true },
     })
     const map = new Map<string, Product & { category?: Category | null }>()
@@ -86,15 +86,16 @@ export class ProductModel extends BaseModel {
     return map
   }
 
-  static async listAll(): Promise<ProductResponse[]> {
+  static async listAll(ownerId: string): Promise<ProductResponse[]> {
     const rows = await this.delegate.findMany({
+      where: { ownerId },
       include: { category: true },
       orderBy: { name: "asc" },
     })
     return rows.map(toProductResponse)
   }
 
-  static async list(params: {
+  static async list(ownerId: string, params: {
     page: number | string
     limit: number | string
     search?: string
@@ -104,7 +105,7 @@ export class ProductModel extends BaseModel {
     order: string
   }): Promise<ProductListResult> {
     const { page, limit, skip } = this.paginate(params.page, params.limit)
-    const where: Record<string, unknown> = {}
+    const where: Record<string, unknown> = { ownerId }
 
     if (params.search) {
       where.name = { contains: params.search, mode: "insensitive" }
@@ -138,7 +139,7 @@ export class ProductModel extends BaseModel {
     return row ? toProductResponse(row) : null
   }
 
-  static async createProduct(data: {
+  static async createProduct(ownerId: string, data: {
     name: string
     categoryId?: string | null
     description?: string | null
@@ -149,6 +150,7 @@ export class ProductModel extends BaseModel {
   }): Promise<ProductResponse> {
     const row = await this.delegate.create({
       data: {
+        ownerId,
         name: data.name,
         categoryId: data.categoryId ?? null,
         description: data.description ?? null,
@@ -201,8 +203,9 @@ export class CategoryModel extends BaseModel {
     return this.db.category
   }
 
-  static async listAll(): Promise<CategoryResponse[]> {
+  static async listAll(ownerId: string): Promise<CategoryResponse[]> {
     const rows = await this.delegate.findMany({
+      where: { ownerId },
       include: { _count: { select: { products: true } } },
       orderBy: { name: "asc" },
     })
@@ -217,12 +220,13 @@ export class CategoryModel extends BaseModel {
     return row ? toCategoryResponse(row) : null
   }
 
-  static async createCategory(data: {
+  static async createCategory(ownerId: string, data: {
     name: string
     description?: string | null
   }): Promise<CategoryResponse> {
     const row = await this.delegate.create({
       data: {
+        ownerId,
         name: data.name,
         description: data.description ?? null,
       },

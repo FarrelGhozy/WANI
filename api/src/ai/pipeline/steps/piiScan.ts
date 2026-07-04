@@ -13,7 +13,7 @@ export const piiScanStep: PipelineStep = {
       const types = [...new Set(matches.map((m) => m.type))]
       ctx.piiTypes = types
       ctx.trace.set("pii_matched", types)
-      await ActivityLogModel.log("pii_detected", `PII detected: ${types.join(", ")}`, ctx.conversationId!, {
+      await ActivityLogModel.log(ctx.ownerId, "pii_detected", `PII detected: ${types.join(", ")}`, ctx.conversationId!, {
         piiTypes: types,
       })
     }

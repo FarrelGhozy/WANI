@@ -52,19 +52,19 @@ export class CustomerModel extends BaseModel {
     return this.db.customer
   }
 
-  static async upsertByPhone(phone: string, name?: string): Promise<Customer> {
-    const existing = await this.delegate.findUnique({ where: { phone } })
+  static async upsertByOwnerPhone(ownerId: string, phone: string, name?: string): Promise<Customer> {
+    const existing = await this.delegate.findUnique({ where: { ownerId_phone: { ownerId, phone } } })
     if (existing) {
       if (name && existing.name !== name) {
         return this.delegate.update({
-          where: { phone },
+          where: { ownerId_phone: { ownerId, phone } },
           data: { name },
         })
       }
       return existing
     }
     return this.delegate.create({
-      data: { phone, name: name ?? phone },
+      data: { ownerId, phone, name: name ?? phone },
     })
   }
 
@@ -75,7 +75,7 @@ export class CustomerModel extends BaseModel {
     })
   }
 
-  static async list(params: {
+  static async list(ownerId: string, params: {
     page: number | string
     limit: number | string
     search?: string
@@ -83,7 +83,7 @@ export class CustomerModel extends BaseModel {
     order: string
   }): Promise<CustomerListResult> {
     const { page, limit, skip } = this.paginate(params.page, params.limit)
-    const where: Record<string, unknown> = {}
+    const where: Record<string, unknown> = { ownerId }
 
     if (params.search) {
       where.OR = [

@@ -22,7 +22,8 @@ import type { PipelineContext } from "@/src/ai/pipeline/types"
 
 function makeCtx(overrides: Partial<PipelineContext> = {}): PipelineContext {
   return {
-    input: { phone: "628123456789", text: "Halo" },
+    ownerId: "test",
+    input: { ownerId: "test", phone: "628123456789", text: "Halo" },
     conversationId: "conv-1",
     finalReply: "Halo juga! Ada yang bisa dibantu?",
     trace: { set: () => null as any, begin: () => null as any } as any,
@@ -49,6 +50,7 @@ describe("outboundPersisterStep", () => {
 
     expect(mockAppend).toHaveBeenCalledTimes(1)
     expect(mockAppend).toHaveBeenCalledWith({
+      ownerId: "test",
       conversationId: "conv-1",
       role: "BOT",
       content: "Halo juga! Ada yang bisa dibantu?",

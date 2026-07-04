@@ -9,6 +9,7 @@ import type { Product } from "@db/client"
 import { OrderModel } from "@/src/models/order"
 import { sendResponse } from "@/src/utils/response"
 import { BadRequestError, InternalServerError, NotFoundError } from "@/src/utils/errors"
+import { getOwnerId, getOwnerIdOrFirst } from "@/src/middleware/owner"
 import { updateWebsiteSchema, generateWebsiteSchema } from "@/src/schemas/website"
 import { generate, createZipStream } from "@web-gen/index.ts"
 
@@ -22,8 +23,9 @@ function getConfigValue<T>(config: Record<string, unknown>, key: string, fallbac
   return (config[key] as T) ?? fallback
 }
 
-export async function getWebsiteConfig(_req: Request, res: Response): Promise<void> {
-  const row = await WebSiteModel.getConfig()
+export async function getWebsiteConfig(req: Request, res: Response): Promise<void> {
+  const ownerId = await getOwnerIdOrFirst(req)
+  const row = await WebSiteModel.getByOwner(ownerId)
   const config = (row?.config as Record<string, unknown>) ?? {}
   sendResponse(res, 200, "website config retrieved", config)
 }
@@ -32,7 +34,8 @@ export async function updateWebsiteConfig(
   req: Request<Record<string, string>, any, UpdateWebsiteBody>,
   res: Response,
 ): Promise<void> {
-  const row = await WebSiteModel.upsertConfig(req.body as Record<string, unknown>)
+  const ownerId = getOwnerId(req)
+  const row = await WebSiteModel.upsertByOwner(ownerId, req.body as Record<string, unknown>)
   sendResponse(res, 200, "website config updated", row.config)
 }
 
@@ -51,23 +54,24 @@ export async function generateWebsite(
   req: Request<Record<string, string>, any, GenerateWebsiteBody>,
   res: Response,
 ): Promise<void> {
-  const store = await StoreModel.find()
+  const ownerId = getOwnerId(req)
+  const store = await StoreModel.findByOwner(ownerId)
   if (!store) {
     throw new BadRequestError("store not configured — set store info first")
   }
 
-  const products = await ProductModel.getAll() as Product[]
+  const products = await ProductModel.listAll(ownerId)
   const availableProducts = products.filter((p) => p.isAvailable)
 
-  const webRow = await WebSiteModel.getConfig()
+  const webRow = await WebSiteModel.getByOwner(ownerId)
   const config = (webRow?.config as Record<string, unknown>) ?? {}
   const selectedIds: string[] = getConfigValue(config, "selectedProductIds", [])
   const selectedProducts = selectedIds.length > 0
     ? availableProducts.filter((p) => selectedIds.includes(p.id))
     : availableProducts
 
-  const { totalOrders } = await OrderModel.getStats()
-  const stats = await OrderModel.getStatusCounts()
+  const { totalOrders } = await OrderModel.getStats(ownerId)
+  const stats = await OrderModel.getStatusCounts(ownerId)
 
   const theme = getConfigValue(config, "theme", "classic")
   const slug = makeSlug()
@@ -132,7 +136,7 @@ export async function generateWebsite(
   })
 
   if (!result.success) {
-    await WebSiteModel.createGeneration({
+    await WebSiteModel.createGeneration(ownerId, {
       slug,
       status: "failed",
       productCount: selectedProducts.length,
@@ -141,7 +145,7 @@ export async function generateWebsite(
     throw new InternalServerError(result.error ?? "generate failed")
   }
 
-  await WebSiteModel.createGeneration({
+  await WebSiteModel.createGeneration(ownerId, {
     slug,
     status: "success",
     productCount: selectedProducts.length,
@@ -162,12 +166,14 @@ export async function generateWebsite(
   sendResponse(res, 200, "website generated", { slug, outputPath: result.outputPath })
 }
 
-export async function listGenerations(_req: Request, res: Response): Promise<void> {
-  const gens = await WebSiteModel.listGenerations()
+export async function listGenerations(req: Request, res: Response): Promise<void> {
+  const ownerId = await getOwnerIdOrFirst(req)
+  const gens = await WebSiteModel.listGenerations(ownerId)
   sendResponse(res, 200, "generations retrieved", gens)
 }
 
 export async function deleteGeneration(req: Request, res: Response): Promise<void> {
+  const ownerId = getOwnerId(req)
   const gen = await WebSiteModel.getGenerationById(req.params.id as string)
   if (!gen) {
     throw new NotFoundError("generation not found")
@@ -183,7 +189,7 @@ export async function deleteGeneration(req: Request, res: Response): Promise<voi
     const target = readlinkSync(latestLink)
     if (target === gen.slug) {
       unlinkSync(latestLink)
-      const next = await WebSiteModel.getLatestGeneration()
+      const next = await WebSiteModel.getLatestGeneration(ownerId)
       if (next) {
         symlinkSync(next.slug, latestLink)
       }
@@ -195,10 +201,11 @@ export async function deleteGeneration(req: Request, res: Response): Promise<voi
 }
 
 export async function downloadWebsite(req: Request, res: Response): Promise<void> {
+  const ownerId = await getOwnerIdOrFirst(req)
   const slug = (req.query.slug as string) || ""
   const gen = slug
-    ? await WebSiteModel.getGenerationBySlug(slug)
-    : await WebSiteModel.getLatestGeneration()
+    ? await WebSiteModel.getGenerationByOwnerSlug(ownerId, slug)
+    : await WebSiteModel.getLatestGeneration(ownerId)
 
   if (!gen) {
     throw new NotFoundError("no generated website found — generate first")
@@ -216,8 +223,9 @@ export async function downloadWebsite(req: Request, res: Response): Promise<void
   stream.pipe(res)
 }
 
-export async function publishWebsite(_req: Request, res: Response): Promise<void> {
-  const latest = await WebSiteModel.getLatestGeneration()
+export async function publishWebsite(req: Request, res: Response): Promise<void> {
+  const ownerId = getOwnerId(req)
+  const latest = await WebSiteModel.getLatestGeneration(ownerId)
   if (!latest) {
     throw new NotFoundError("no generated website found — generate first")
   }
@@ -226,6 +234,6 @@ export async function publishWebsite(_req: Request, res: Response): Promise<void
     throw new NotFoundError("generated files not found on disk")
   }
 
-  await WebSiteModel.markPublished()
+  await WebSiteModel.markPublished(ownerId)
   sendResponse(res, 200, "website published")
 }

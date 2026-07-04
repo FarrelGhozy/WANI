@@ -6,6 +6,7 @@ import { MessageModel } from "@/src/models/message"
 import { sendResponse } from "@/src/utils/response"
 import { NotFoundError } from "@/src/utils/errors"
 import { getValidatedQuery } from "@/src/middleware/validate"
+import { getOwnerId, getOwnerIdOrFirst } from "@/src/middleware/owner"
 import { customerQuerySchema, updateCustomerSchema } from "@/src/schemas/customer"
 import { updateConversationStatusSchema, sendMessageSchema } from "@/src/schemas/customer"
 
@@ -18,7 +19,8 @@ export async function listCustomers(
   req: Request<Record<string, string>, any, any, CustomerQuery>,
   res: Response,
 ): Promise<void> {
-  const result = await CustomerModel.list(getValidatedQuery<CustomerQuery>(req))
+  const ownerId = await getOwnerIdOrFirst(req)
+  const result = await CustomerModel.list(ownerId, getValidatedQuery<CustomerQuery>(req))
   sendResponse(res, 200, "customers retrieved", result)
 }
 
@@ -37,6 +39,7 @@ export async function updateCustomer(
   req: Request<{ id: string }, any, UpdateCustomerBody>,
   res: Response,
 ): Promise<void> {
+  getOwnerId(req)
   await CustomerModel.getOrThrow(req.params.id, "customer")
   const customer = await CustomerModel.update(req.params.id, req.body)
   sendResponse(res, 200, "customer updated", customer)
@@ -68,6 +71,7 @@ export async function updateConversationStatus(
   req: Request<{ id: string }, any, UpdateConvStatusBody>,
   res: Response,
 ): Promise<void> {
+  getOwnerId(req)
   await ConversationModel.setStatus(req.params.id, req.body.status)
   sendResponse(res, 200, "conversation status updated")
 }
@@ -76,7 +80,9 @@ export async function sendMessage(
   req: Request<{ id: string }, any, SendMessageBody>,
   res: Response,
 ): Promise<void> {
+  const ownerId = getOwnerId(req)
   const msg = await MessageModel.append({
+    ownerId,
     conversationId: req.params.id,
     role: "HUMAN",
     content: req.body.text,

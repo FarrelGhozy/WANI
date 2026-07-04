@@ -12,6 +12,7 @@ export const rateLimitStep: PipelineStep = {
     if (!rate.allowed) {
       if (rate.notify) {
         await MessageModel.append({
+          ownerId: ctx.ownerId,
           conversationId: ctx.conversationId!,
           role: "BOT",
           content: STEP_REPLIES.RATE_LIMIT,

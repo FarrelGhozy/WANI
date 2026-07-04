@@ -6,20 +6,16 @@ export class StoreModel extends BaseModel {
     return this.db.store
   }
 
-  static async find(): Promise<Store> {
-    const store = await this.getById<Store>("default")
-    if (store) return store
-    return this.db.store.create({
-      data: { id: "default", businessName: "Toko", phone: "" },
-    })
+  static async findByOwner(ownerId: string): Promise<Store | null> {
+    return this.delegate.findUnique({ where: { ownerId } })
   }
 
-  static async upsert(data: Partial<Store>): Promise<Store> {
-    const { id, createdAt, updatedAt, ...rest } = data
+  static async upsertByOwner(ownerId: string, data: Partial<Store>): Promise<Store> {
+    const { ownerId: _, id, createdAt, updatedAt, ...rest } = data as Record<string, unknown>
     return this.db.store.upsert({
-      where: { id: "default" },
-      create: { id: "default", businessName: "Toko", phone: "", ...rest },
-      update: rest,
+      where: { ownerId },
+      create: { ownerId, businessName: "Toko", phone: "", ...rest } as any,
+      update: rest as any,
     })
   }
 }

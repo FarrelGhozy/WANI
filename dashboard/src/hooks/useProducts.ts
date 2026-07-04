@@ -18,7 +18,7 @@ export function useProducts() {
 
   const fetchData = useCallback(async () => {
     const [prodRes, catRes] = await Promise.all([
-      fetchApi<{ items: Product[]; total: number }>('/products?limit=100'),
+      fetchApi<{ items: Product[]; total: number }>('/products?limit=500'),
       fetchApi<{ items: Category[] }>('/products/categories'),
     ])
     return { products: prodRes.data?.items ?? [], categories: catRes.data?.items ?? [] }

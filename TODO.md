@@ -26,48 +26,39 @@ Registrasi → login → liat dashboard kosong, bukan data user lain.
 - [x] 2a. Buat helper `ownerFilter()` / `getOwnerId()` di `api/src/middleware/owner.ts`
 - [x] 2b. Pastikan `req.user.id` selalu ada setelah `requireJwt`
 
-### Tahap 3: Migration Script — Backfill data existing
+### Tahap 3: ✅ Migration — Backfill data existing
 
-- [ ] 3a. Buat script `api/scripts/backfill-owner.ts` — assign semua data ke user pertama (atau prompt user mana)
-- [ ] 3b. Run script & verify
+- [x] 3a. Migration `20260704223100_add_owner_id` handles backfill via `COALESCE(subquery, nil_uuid)` — works on fresh & existing deployments
+- [x] 3b. Already applied via `bun run prisma:migrate`
 
-### Tahap 4: Controllers — Scope queries by `ownerId`
+### Tahap 4: ✅ Controllers + AI Pipeline — Scope queries by `ownerId`
 
-- [ ] 4a. `store.ts` — semua queries pake `ownerId: req.user.id`
-- [ ] 4b. `ai-config.ts` — semua queries pake `ownerId`
-- [ ] 4c. `products.ts` — semua queries pake `ownerId`
-- [ ] 4d. `categories.ts` — semua queries pake `ownerId`
-- [ ] 4e. `orders.ts` — semua queries pake `ownerId`
-- [ ] 4f. `customers.ts` — semua queries pake `ownerId`
-- [ ] 4g. `conversations.ts` — semua queries pake `ownerId`
-- [ ] 4h. `payment-methods.ts` — semua queries pake `ownerId`
-- [ ] 4i. `website.ts` — semua queries pake `ownerId`
-- [ ] 4j. `logs.ts` — semua queries pake `ownerId`
-- [ ] 4k. `upload.ts` — verify, mungkin perlu owner context
-- [ ] 4l. `qr.ts` — WaSession tetap global (no change)
-- [ ] 4m. `auth.ts` — no change (User model sendiri)
-- [ ] 4n. `dashboard.ts` — stats perlu di-scope
+- [x] 4a. `store.ts` — `getOwnerId(req)` for JWT, `getOwnerIdOrFirst(req)` for public
+- [x] 4b. `ai-config.ts` — same pattern
+- [x] 4c. `product.ts` — `ProductModel.list/create/update` now accept ownerId
+- [x] 4d. `category.ts` — `CategoryModel.listAll/createCategory` now accept ownerId
+- [x] 4e. `order.ts` — `OrderModel.list/createFromItems/getStats/getStatusCounts` now accept ownerId
+- [x] 4f. `customer.ts` — `CustomerModel.list/upsertByOwnerPhone` now accept ownerId
+- [x] 4g. `conversation.ts` — `ConversationModel.findOrCreateActive` now accepts ownerId
+- [x] 4h. `store-payment.ts` — `listByOwner/listActive/hasAny` instead of `listByStore`/`storeId`
+- [x] 4i. `website.ts` — all queries scoped by ownerId
+- [x] 4j. `log.ts` — `ActivityLogModel.log/list` now accept ownerId
+- [x] 4k. `upload.ts` — unchanged (handles file upload, no owner scope needed)
+- [x] 4l. `qr.ts` — WaSession tetap global (no change)
+- [x] 4m. `auth.ts` — no change (User model sendiri)
+- [x] 4n. `dashboard.ts` — `getDashboardStats(ownerId)` scopes all counts
+- [x] 4o. AI pipeline: `PipelineInput.ownerId` → `PipelineContext.ownerId` → `ActionCtx.ownerId` propagated through all steps (contextLoader → products/payment/store/aiConfig by owner, ensureCustomer → upsertByOwnerPhone, actions → order/activityLog scoped, firewall/outputGuardrails → activityLog scoped)
+- [x] 4p. WA bot: sends `ownerId` from `OWNER_ID` env var in chat requests
+- [x] 4q. All 223 tests pass
 
-### Tahap 5: Routes — Verify middleware chain
+### Tahap 5: Frontend — Verify
 
-- [ ] 5a. Cek semua route public → tetap public (GET products, orders, dll untuk WA bot)
-- [ ] 5b. Cek route yg pake `requireAuth` (bot) → no ownerId (WaSession, chat global)
-- [ ] 5c. Cek route yg pake `requireJwt` (dashboard) → harus pake owner scoping
+- [ ] 5a. Login sebagai user baru → liat dashboard kosong
+- [ ] 5b. Tambah store → setup wizard
+- [ ] 5c. Sidebar tampilin nama user (udah ada dari `useAuth`)
+- [ ] 5d. Test CRUD semua fitur sebagai user baru
 
-### Tahap 6: AI Pipeline — Scope context loading
+### Tahap 6: Test
 
-- [ ] 6a. `pipeline.ts` — `loadContext()` harus pake owner ID dari mana? Bot message → cari owner dari customer/conversation
-- [ ] 6b. Atau: bot punya `ownerId` default (system user)
-
-### Tahap 7: Frontend — Verify
-
-- [ ] 7a. Login sebagai user baru → liat dashboard kosong
-- [ ] 7b. Tambah store → setup wizard
-- [ ] 7c. Sidebar tampilin nama user (udah ada dari `useAuth`)
-- [ ] 7d. Test CRUD semua fitur sebagai user baru
-
-### Tahap 8: Test
-
-- [ ] 8a. `bun test` di API — update test yg broken karena ownerId
-- [ ] 8b. Manual test: register 2 user, verify data terisolasi
-- [ ] 8c. Test WA bot flow masih jalan
+- [ ] 6a. Manual test: register 2 user, verify data terisolasi
+- [ ] 6b. Test WA bot flow masih jalan

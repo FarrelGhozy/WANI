@@ -2,6 +2,7 @@ import { BaseModel } from "@/src/models/base"
 import type { Message, $Enums } from "@db/client"
 
 export interface AppendData {
+  ownerId: string
   conversationId: string
   role: $Enums.MessageRole
   content: string
@@ -37,6 +38,7 @@ export class MessageModel extends BaseModel {
     return this.delegate.create({
       data: {
         id: crypto.randomUUID(),
+        ownerId: data.ownerId,
         conversationId: data.conversationId,
         role: data.role,
         content: data.content,

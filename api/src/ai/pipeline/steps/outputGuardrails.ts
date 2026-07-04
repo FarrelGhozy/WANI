@@ -13,6 +13,7 @@ export const outputGuardrailsStep: PipelineStep = {
   name: "output_guardrails",
   async run(ctx) {
     const params = {
+      ownerId: ctx.ownerId,
       reply: ctx.actionReply!,
       intent: ctx.llmIntent!,
       normalized: ctx.normalized!,
@@ -27,6 +28,7 @@ export const outputGuardrailsStep: PipelineStep = {
 }
 
 interface OutputGuardrailParams {
+  ownerId: string
   reply: string
   intent: string
   normalized: string
@@ -37,7 +39,7 @@ interface OutputGuardrailParams {
 }
 
 async function runOutputGuardrails(params: OutputGuardrailParams): Promise<string> {
-  const { reply, intent, normalized, convId, storeInfo, products, trace } = params
+  const { ownerId, reply, intent, normalized, convId, storeInfo, products, trace } = params
 
   // Layer 1 — sanitize
   trace.begin("output_scan")
@@ -47,7 +49,7 @@ async function runOutputGuardrails(params: OutputGuardrailParams): Promise<strin
   const outputResult = scanOutput(finalReply)
   trace.set("scan_result", outputResult.reason ?? "pass")
   if (outputResult.blocked) {
-    await ActivityLogModel.log("output_blocked", `Output scan: ${outputResult.reason}`, convId, {
+    await ActivityLogModel.log(ownerId, "output_blocked", `Output scan: ${outputResult.reason}`, convId, {
       reason: outputResult.reason, intent,
     })
     return STEP_REPLIES.LEAK
@@ -58,7 +60,7 @@ async function runOutputGuardrails(params: OutputGuardrailParams): Promise<strin
   const piiFound = scanPii(finalReply)
   if (piiFound.length > 0) {
     trace.set("pii_redacted", piiFound.map((m) => m.type))
-    await ActivityLogModel.log("pii_output", `PII in outbound reply: ${piiFound.map((m) => m.type).join(", ")}`, convId, {
+    await ActivityLogModel.log(ownerId, "pii_output", `PII in outbound reply: ${piiFound.map((m) => m.type).join(", ")}`, convId, {
       piiTypes: piiFound.map((m) => m.type), intent,
     })
     for (const m of piiFound.sort((a, b) => b.start - a.start)) {
@@ -87,7 +89,7 @@ async function runOutputGuardrails(params: OutputGuardrailParams): Promise<strin
     trace.set("grounded", grounding.grounded).set("unsupported_claims", grounding.unsupportedClaims)
 
     if (!grounding.grounded) {
-      await ActivityLogModel.log("grounding_failed", `Unsupported claims: ${grounding.unsupportedClaims.join(", ")}`, convId, {
+      await ActivityLogModel.log(ownerId, "grounding_failed", `Unsupported claims: ${grounding.unsupportedClaims.join(", ")}`, convId, {
         unsupportedClaims: grounding.unsupportedClaims, intent,
       })
       return "Maaf, ada informasi yang kurang tepat dari jawaban saya sebelumnya. " +

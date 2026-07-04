@@ -6,14 +6,14 @@ export class ConversationModel extends BaseModel {
     return this.db.conversation
   }
 
-  static async findOrCreateActive(customerId: string): Promise<Conversation> {
+  static async findOrCreateActive(ownerId: string, customerId: string): Promise<Conversation> {
     const existing = await this.delegate.findFirst({
-      where: { customerId, status: "ACTIVE" },
+      where: { ownerId, customerId, status: "ACTIVE" },
       orderBy: { createdAt: "desc" },
     })
     if (existing) return existing
     return this.delegate.create({
-      data: { customerId },
+      data: { ownerId, customerId },
     })
   }
 

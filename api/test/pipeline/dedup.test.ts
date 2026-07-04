@@ -4,7 +4,8 @@ import type { PipelineContext } from "@/src/ai/pipeline/types"
 
 function makeCtx(overrides: Partial<PipelineContext> = {}): PipelineContext {
   return {
-    input: { phone: "62812", text: "halo" },
+    ownerId: "test",
+    input: { ownerId: "test", phone: "62812", text: "halo" },
     trace: { set: () => null as any, begin: () => null as any } as any,
     customerId: "cust-1",
     conversationId: "conv-1",

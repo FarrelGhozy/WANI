@@ -8,6 +8,7 @@ export const persistInboundStep: PipelineStep = {
   name: "persist_inbound",
   async run(ctx) {
     await MessageModel.append({
+      ownerId: ctx.ownerId,
       conversationId: ctx.conversationId!,
       role: "CUSTOMER",
       content: ctx.normalized!,

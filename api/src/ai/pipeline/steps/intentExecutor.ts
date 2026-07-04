@@ -8,6 +8,7 @@ export const intentExecutorStep: PipelineStep = {
   name: "execute_intent",
   async run(ctx) {
     const ctxAction = {
+      ownerId: ctx.ownerId,
       customerId: ctx.customerId!,
       conversationId: ctx.conversationId!,
       greetingMessage: ctx.aiConfig?.greetingMessage ?? null,

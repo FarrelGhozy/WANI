@@ -152,9 +152,9 @@ describe("OrderModel.createFromItems", () => {
     mockOrderCreate.mockResolvedValueOnce({ id: "order-new" })
     mockOrderItemCreateMany.mockResolvedValueOnce({ count: 2 })
 
-    const result = await OrderModel.createFromItems("c1", [
-      { name: "Nasi Goreng", qty: 2 },
-      { name: "Es Teh", qty: 1 },
+    const result = await OrderModel.createFromItems("owner-1", "c1", [
+      { productId: "p1", productName: "Nasi Goreng", unitPrice: 25000, qty: 2 },
+      { productId: "p2", productName: "Es Teh", unitPrice: 5000, qty: 1 },
     ])
 
     expect(result.order.id).toBe("order-new")

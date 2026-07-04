@@ -37,18 +37,12 @@ function buildSteps(status: OrderStatus, createdAt: string, updatedAt: string, p
     if (s.status === 'PENDING') {
       time = createdAt
     } else if (done) {
-      if (s.status === 'CONFIRMED') time = paidAt ?? addMin(createdAt, 5)
-      else if (s.status === 'PROCESSING') time = addMin(createdAt, 10)
+      if (s.status === 'CONFIRMED') time = paidAt ?? null
+      else if (s.status === 'PROCESSING') time = paidAt ?? null
       else if (s.status === 'COMPLETED') time = updatedAt
     }
     return { ...s, time, done }
   })
-}
-
-function addMin(time: string, min: number): string {
-  const d = new Date(time)
-  d.setMinutes(d.getMinutes() + min)
-  return d.toISOString()
 }
 
 function fmt(time: string) {

@@ -47,7 +47,7 @@ function connectionLabel(status: string): string {
 
 export default function Dashboard() {
   const navigate = useNavigate()
-  const { qr, connection, phone, loading: waLoading } = useWaStatusContext()
+  const { qr, connection, phone } = useWaStatusContext()
   const { allOrders, loading: ordersLoading } = useOrders()
   const { products, loading: prodLoading } = useProductsContext()
   const { allCustomers, loading: custLoading } = useCustomers()
@@ -66,7 +66,7 @@ export default function Dashboard() {
     return () => { cancelled = true }
   }, [])
 
-  const loading = waLoading || ordersLoading || prodLoading || custLoading
+  const coreLoading = ordersLoading || prodLoading || custLoading
 
   const totalRevenue = useMemo(
     () => allOrders
@@ -95,7 +95,7 @@ export default function Dashboard() {
     [allCustomers],
   )
 
-  if (loading) {
+  if (coreLoading) {
     return (
       <div className="space-y-6">
         <Skeleton variant="text" className="h-6 w-48" />

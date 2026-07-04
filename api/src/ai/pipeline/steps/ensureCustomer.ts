@@ -8,8 +8,8 @@ import type { PipelineStep } from "../types"
 export const ensureCustomerStep: PipelineStep = {
   name: "ensure_customer",
   async run(ctx) {
-    const customer = await CustomerModel.upsertByPhone(ctx.input.phone, ctx.input.name)
-    const conv = await ConversationModel.findOrCreateActive(customer.id)
+    const customer = await CustomerModel.upsertByOwnerPhone(ctx.ownerId, ctx.input.phone, ctx.input.name)
+    const conv = await ConversationModel.findOrCreateActive(ctx.ownerId, customer.id)
 
     ctx.customerId = customer.id
     ctx.customerPhone = customer.phone

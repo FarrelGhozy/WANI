@@ -24,6 +24,7 @@ export class ActivityLogModel extends BaseModel {
   }
 
   static async log(
+    ownerId: string,
     type: string,
     description: string,
     referenceId?: string | null,
@@ -31,6 +32,7 @@ export class ActivityLogModel extends BaseModel {
   ): Promise<void> {
     await this.delegate.create({
       data: {
+        ownerId,
         type,
         description,
         referenceId: referenceId ?? null,
@@ -39,7 +41,7 @@ export class ActivityLogModel extends BaseModel {
     })
   }
 
-  static async list(params: {
+  static async list(ownerId: string, params: {
     page: number | string
     limit: number | string
     type?: string
@@ -50,7 +52,7 @@ export class ActivityLogModel extends BaseModel {
     order: "asc" | "desc"
   }): Promise<LogListResult> {
     const { page, limit, skip } = this.paginate(params.page, params.limit)
-    const where: Record<string, unknown> = {}
+    const where: Record<string, unknown> = { ownerId }
 
     if (params.type) where.type = params.type
     if (params.referenceId) where.referenceId = params.referenceId

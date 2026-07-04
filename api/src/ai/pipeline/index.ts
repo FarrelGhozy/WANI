@@ -55,6 +55,7 @@ export async function processMessage(
   const ctx: PipelineContext = {
     input,
     trace: trace ?? new TraceContext("pipeline"),
+    ownerId: input.ownerId,
   }
   return runSteps(steps, ctx)
 }

@@ -1,9 +1,10 @@
-import { useRef, useState, useCallback } from 'react'
+import { useRef, useState, useCallback, useMemo } from 'react'
 import type { ReactNode } from 'react'
 import { Link } from 'react-router'
 import { useStoreContext } from '@/contexts/StoreContext.tsx'
 import { useProductsContext } from '@/contexts/ProductsContext.tsx'
 import { useToast } from '@/hooks/useToast.ts'
+import { useUnsavedChanges } from '@/hooks/useUnsavedChanges.ts'
 import { uploadFile } from '@/lib/upload.ts'
 import { mediaUrl } from '@/lib/media.ts'
 import Card from '@/components/ui/Card.tsx'
@@ -217,8 +218,6 @@ function validateHours(hours: HoursState): string | null {
 export default function StoreTab() {
   const { store, updateStore: onUpdate } = useStoreContext()
   const fileRef = useRef<HTMLInputElement>(null)
-
-  if (!store) return null
   const { categories, createCategory, updateCategory, deleteCategory } = useProductsContext()
   const [categoryModalOpen, setCategoryModalOpen] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -226,15 +225,28 @@ export default function StoreTab() {
   const { toast } = useToast()
 
   const [form, setForm] = useState(() => ({
-    businessName: store.businessName,
-    phone: cleanPhone(store.phone),
-    address: store.address ?? '',
-    businessHours: store.businessHours ?? null,
-    shippingInfo: store.shippingInfo ?? null,
-    returnPolicy: store.returnPolicy ?? null,
+    businessName: store?.businessName ?? '',
+    phone: cleanPhone(store?.phone ?? ''),
+    address: store?.address ?? '',
+    businessHours: store?.businessHours ?? null,
+    shippingInfo: store?.shippingInfo ?? null,
+    returnPolicy: store?.returnPolicy ?? null,
   }))
 
+  const isDirty = useMemo(() => {
+    if (!store) return false
+    return form.businessName !== store.businessName
+      || form.phone !== cleanPhone(store.phone)
+      || form.address !== (store.address ?? '')
+      || form.businessHours !== (store.businessHours ?? null)
+      || form.shippingInfo !== (store.shippingInfo ?? null)
+      || form.returnPolicy !== (store.returnPolicy ?? null)
+  }, [form, store])
+
+  useUnsavedChanges(isDirty)
+
   const handleSave = useCallback(async () => {
+    if (!store) return
     const errs: Record<string, string> = {}
     if (!form.businessName.trim()) errs.businessName = 'Nama bisnis wajib diisi'
     const hoursErr = validateHours(parseToHoursState(form.businessHours))
@@ -258,16 +270,19 @@ export default function StoreTab() {
     } finally {
       setSaving(false)
     }
-  }, [form, onUpdate, toast])
+  }, [form, onUpdate, toast, store])
 
   const handleToggle = useCallback(async () => {
+    if (!store) return
     try {
       await onUpdate({ isActive: !store.isActive })
       toast(store.isActive ? 'Toko berhasil dinonaktifkan' : 'Toko berhasil diaktifkan', 'success')
     } catch {
       toast('Gagal mengubah status toko', 'error')
     }
-  }, [store.isActive, onUpdate, toast])
+  }, [store, onUpdate, toast])
+
+  if (!store) return null
 
   async function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]

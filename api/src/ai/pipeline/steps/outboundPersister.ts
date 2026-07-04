@@ -9,6 +9,7 @@ export const outboundPersisterStep: PipelineStep = {
   name: "persist_outbound",
   async run(ctx) {
     const msg = await MessageModel.append({
+      ownerId: ctx.ownerId,
       conversationId: ctx.conversationId!,
       role: "BOT",
       content: ctx.finalReply!,

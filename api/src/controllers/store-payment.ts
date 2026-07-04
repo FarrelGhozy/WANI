@@ -4,6 +4,7 @@ import type { Prisma } from "@db/client"
 import { StorePaymentMethodModel } from "@/src/models/store-payment"
 import { sendResponse } from "@/src/utils/response"
 import { NotFoundError } from "@/src/utils/errors"
+import { getOwnerId, getOwnerIdOrFirst } from "@/src/middleware/owner"
 import {
   createPaymentMethodSchema,
   updatePaymentMethodSchema,
@@ -13,10 +14,11 @@ type CreateBody = z.infer<typeof createPaymentMethodSchema>
 type UpdateBody = z.infer<typeof updatePaymentMethodSchema>
 
 export async function listPaymentMethods(
-  _req: Request,
+  req: Request,
   res: Response,
 ): Promise<void> {
-  const methods = await StorePaymentMethodModel.listByStore()
+  const ownerId = await getOwnerIdOrFirst(req)
+  const methods = await StorePaymentMethodModel.listByOwner(ownerId)
   sendResponse(res, 200, "payment methods retrieved", methods)
 }
 
@@ -24,13 +26,14 @@ export async function createPaymentMethod(
   req: Request<Record<string, string>, unknown, CreateBody>,
   res: Response,
 ): Promise<void> {
+  const ownerId = getOwnerId(req)
   const data: Prisma.StorePaymentMethodCreateInput = {
     type: req.body.type,
     label: req.body.label,
-    storeId: "default",
+    ownerId,
     isActive: true,
     sortOrder: 0,
-  }
+  } as any
   if ("accountName" in req.body) data.accountName = req.body.accountName ?? null
   if ("accountNumber" in req.body) data.accountNumber = req.body.accountNumber ?? null
   if ("bankName" in req.body) data.bankName = req.body.bankName ?? null
@@ -47,6 +50,7 @@ export async function updatePaymentMethod(
   req: Request<{ id: string }, any, UpdateBody>,
   res: Response,
 ): Promise<void> {
+  getOwnerId(req)
   const existing = await StorePaymentMethodModel.getById(req.params.id)
   if (!existing) throw new NotFoundError("payment method not found")
 
@@ -58,6 +62,7 @@ export async function deletePaymentMethod(
   req: Request<{ id: string }>,
   res: Response,
 ): Promise<void> {
+  getOwnerId(req)
   const existing = await StorePaymentMethodModel.getById(req.params.id)
   if (!existing) throw new NotFoundError("payment method not found")
 

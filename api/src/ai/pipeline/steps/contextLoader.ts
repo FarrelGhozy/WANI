@@ -12,10 +12,10 @@ export const contextLoaderStep: PipelineStep = {
   name: "load_context",
   async run(ctx) {
     const [store, products, aiConfig, paymentMethods] = await Promise.all([
-      StoreModel.find(),
-      ProductModel.listAvailable(),
-      AiConfigModel.find(),
-      StorePaymentMethodModel.listActive(),
+      StoreModel.findByOwner(ctx.ownerId),
+      ProductModel.listAvailable(ctx.ownerId),
+      AiConfigModel.findByOwner(ctx.ownerId),
+      StorePaymentMethodModel.listActive(ctx.ownerId),
     ])
 
     const isActive = aiConfig?.isActive ?? true
@@ -31,7 +31,7 @@ export const contextLoaderStep: PipelineStep = {
       }
     }
 
-    ctx.aiConfig = aiConfig
+    ctx.aiConfig = aiConfig ?? undefined
     ctx.products = products
 
     // --- build store info ---

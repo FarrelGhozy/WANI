@@ -1,8 +1,9 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import { useProductsContext } from '@/contexts/ProductsContext.tsx'
 import type { ProductFormData } from '@/hooks/useProducts.ts'
 import { useToast } from '@/hooks/useToast.ts'
+import { useUnsavedChanges } from '@/hooks/useUnsavedChanges.ts'
 import { uploadFile } from '@/lib/upload.ts'
 import { mediaUrl } from '@/lib/media.ts'
 import Button from '@/components/ui/Button.tsx'
@@ -48,6 +49,19 @@ export default function ProductForm() {
   const [newCategoryName, setNewCategoryName] = useState('')
   const [newCategoryDesc, setNewCategoryDesc] = useState('')
   const [creatingCategory, setCreatingCategory] = useState(false)
+  const [initialForm, setInitialForm] = useState<ProductFormData>(form)
+
+  const isDirty = useMemo(() => {
+    return form.name !== initialForm.name
+      || form.price !== initialForm.price
+      || form.stock !== initialForm.stock
+      || form.categoryId !== initialForm.categoryId
+      || form.description !== initialForm.description
+      || form.isAvailable !== initialForm.isAvailable
+      || form.imageUrl !== initialForm.imageUrl
+  }, [form, initialForm])
+
+  useUnsavedChanges(isDirty)
 
   useEffect(() => {
     return () => {
@@ -68,19 +82,18 @@ export default function ProductForm() {
     if (id) {
       const product = getProduct(id)
       if (product) {
-        const timer = setTimeout(() => {
-          setForm({
-            name: product.name,
-            price: product.price,
-            stock: product.stock,
-            categoryId: product.categoryId ?? '',
-            description: product.description ?? '',
-            isAvailable: product.isAvailable,
-            imageUrl: product.imageUrl ?? '',
-          })
-          setPriceDisplay(formatPriceInput(String(product.price)))
-        }, 0)
-        return () => clearTimeout(timer)
+        const formData: ProductFormData = {
+          name: product.name,
+          price: product.price,
+          stock: product.stock,
+          categoryId: product.categoryId ?? '',
+          description: product.description ?? '',
+          isAvailable: product.isAvailable,
+          imageUrl: product.imageUrl ?? '',
+        }
+        setForm(formData)
+        setInitialForm(formData)
+        setPriceDisplay(formatPriceInput(String(product.price)))
       }
     }
   }, [id, getProduct])
@@ -162,10 +175,11 @@ export default function ProductForm() {
   return (
     <div className="mx-auto max-w-2xl space-y-6">
       {/* Back */}
-      <button
-        onClick={() => navigate('/products')}
-        className="inline-flex items-center gap-1.5 text-sm text-stone-500 transition-colors hover:text-stone-700"
-      >
+        <button
+          type="button"
+          onClick={() => navigate('/products')}
+          className="inline-flex items-center gap-1.5 text-sm text-stone-500 transition-colors hover:text-stone-700"
+        >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
         Kembali ke Produk
       </button>
@@ -205,6 +219,10 @@ export default function ProductForm() {
                 onChange={(e) => {
                   set('imageUrl', e.target.value)
                   pendingFile.current = null
+                  if (previewUrl) {
+                    URL.revokeObjectURL(previewUrl)
+                    setPreviewUrl(null)
+                  }
                 }}
               />
               <div className="flex items-center gap-3">
@@ -253,17 +271,15 @@ export default function ProductForm() {
             />
             {showNewCategory ? (
               <div className="mt-2 space-y-2 rounded-lg border border-teal-200 bg-teal-50 p-3">
-                <input
+                <Input
                   value={newCategoryName}
                   onChange={(e) => setNewCategoryName(e.target.value)}
                   placeholder="Nama kategori baru"
-                  className="h-9 w-full rounded-md border border-stone-300 bg-white px-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
                 />
-                <input
+                <Input
                   value={newCategoryDesc}
                   onChange={(e) => setNewCategoryDesc(e.target.value)}
                   placeholder="Deskripsi (opsional)"
-                  className="h-9 w-full rounded-md border border-stone-300 bg-white px-2 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
                 />
                 <div className="flex gap-2">
                   <Button size="sm" onClick={handleCreateCategory} loading={creatingCategory} disabled={!newCategoryName.trim()}>

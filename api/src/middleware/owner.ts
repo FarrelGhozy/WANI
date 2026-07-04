@@ -1,11 +1,34 @@
 import type { Request } from "express"
+import { prisma } from "@/src/config/db"
 import { UnauthorizedError } from "@/src/utils/errors"
+
+let _firstOwnerId: string | null = null
+
+async function getFirstOwnerId(): Promise<string> {
+  if (_firstOwnerId) return _firstOwnerId
+  try {
+    const user = await prisma.user.findFirst({ orderBy: { createdAt: "asc" } })
+    if (user?.id) {
+      _firstOwnerId = user.id
+      return _firstOwnerId
+    }
+  } catch {
+    // Prisma unavailable (test env), fall through to "default"
+  }
+  _firstOwnerId = "default"
+  return _firstOwnerId
+}
 
 export function getOwnerId(req: Request): string {
   if (!req.user?.id) {
     throw new UnauthorizedError("authentication required")
   }
   return req.user.id
+}
+
+export async function getOwnerIdOrFirst(req: Request): Promise<string> {
+  if (req.user?.id) return req.user.id
+  return getFirstOwnerId()
 }
 
 export function ownerFilter(ownerId: string): { ownerId: string } {

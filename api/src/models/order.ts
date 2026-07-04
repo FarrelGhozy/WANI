@@ -97,6 +97,7 @@ export class OrderModel extends BaseModel {
   }
 
   static async createFromItems(
+    ownerId: string,
     customerId: string,
     items: CreateItemInput[],
     notes?: string,
@@ -117,6 +118,7 @@ export class OrderModel extends BaseModel {
       const o = await tx.order.create({
         data: {
           id: orderId,
+          ownerId,
           customerId,
           totalAmount,
           notes: notes ?? null,
@@ -132,7 +134,7 @@ export class OrderModel extends BaseModel {
     return { order, orderItems }
   }
 
-  static async list(params: {
+  static async list(ownerId: string, params: {
     page: number | string
     limit: number | string
     status?: string
@@ -143,7 +145,7 @@ export class OrderModel extends BaseModel {
     order: string
   }): Promise<OrderListResult> {
     const { page, limit, skip } = this.paginate(params.page, params.limit)
-    const where: Record<string, unknown> = {}
+    const where: Record<string, unknown> = { ownerId }
 
     if (params.status) where.status = params.status
     if (params.customerId) where.customerId = params.customerId
@@ -250,15 +252,15 @@ export class OrderModel extends BaseModel {
     return toOrderResponse(row)
   }
 
-  static async getStats(): Promise<{ totalOrders: number }> {
-    const totalOrders = await this.delegate.count()
+  static async getStats(ownerId: string): Promise<{ totalOrders: number }> {
+    const totalOrders = await this.delegate.count({ where: { ownerId } })
     return { totalOrders }
   }
 
-  static async getStatusCounts(): Promise<{ completed: number; pending: number }> {
+  static async getStatusCounts(ownerId: string): Promise<{ completed: number; pending: number }> {
     const [completed, pending] = await Promise.all([
-      this.delegate.count({ where: { status: "COMPLETED" } }),
-      this.delegate.count({ where: { status: "PENDING" } }),
+      this.delegate.count({ where: { ownerId, status: "COMPLETED" } }),
+      this.delegate.count({ where: { ownerId, status: "PENDING" } }),
     ])
     return { completed, pending }
   }

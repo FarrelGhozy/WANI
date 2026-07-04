@@ -86,6 +86,7 @@ export interface ProductEntry {
 // ---- Action types (ex: ai/actions.ts) ----
 
 export interface ActionCtx {
+  ownerId: string
   customerId: string
   conversationId: string
   greetingMessage?: string | null
@@ -99,6 +100,7 @@ export interface ActionResult {
 // ---- Pipeline types (ex: ai/pipeline.ts) ----
 
 export interface PipelineInput {
+  ownerId: string
   phone: string
   name?: string
   text: string

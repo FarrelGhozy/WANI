@@ -6,6 +6,7 @@ import { MessageModel } from "@/src/models/message"
 import { sendResponse } from "@/src/utils/response"
 import { NotFoundError } from "@/src/utils/errors"
 import { getValidatedQuery } from "@/src/middleware/validate"
+import { getOwnerId, getOwnerIdOrFirst } from "@/src/middleware/owner"
 import {
   orderQuerySchema,
   updateOrderStatusSchema,
@@ -65,7 +66,8 @@ export async function listOrders(
   req: Request<Record<string, string>, any, any, OrderQuery>,
   res: Response,
 ): Promise<void> {
-  const result = await OrderModel.list(getValidatedQuery<OrderQuery>(req))
+  const ownerId = await getOwnerIdOrFirst(req)
+  const result = await OrderModel.list(ownerId, getValidatedQuery<OrderQuery>(req))
   sendResponse(res, 200, "orders retrieved", result)
 }
 
@@ -89,12 +91,14 @@ export async function updateOrderStatus(
   req: Request<{ id: string }, any, UpdateStatusBody>,
   res: Response,
 ): Promise<void> {
+  const ownerId = getOwnerId(req)
   const order = await OrderModel.updateStatus(req.params.id, req.body.status as $Enums.OrderStatus)
 
   const statusMsg = STATUS_MSGS[order.status]
   if (statusMsg) {
-    const conv = await ConversationModel.findOrCreateActive(order.customerId)
+    const conv = await ConversationModel.findOrCreateActive(ownerId, order.customerId)
     await MessageModel.append({
+      ownerId,
       conversationId: conv.id,
       role: "BOT",
       msgType: "notification",
@@ -110,6 +114,7 @@ export async function updateOrderNotes(
   req: Request<{ id: string }, any, UpdateNotesBody>,
   res: Response,
 ): Promise<void> {
+  getOwnerId(req)
   const order = await OrderModel.updateNotes(req.params.id, req.body.notes)
   sendResponse(res, 200, "order notes updated", order)
 }
@@ -118,6 +123,7 @@ export async function updateOrderPayment(
   req: Request<{ id: string }, any, UpdatePaymentBody>,
   res: Response,
 ): Promise<void> {
+  const ownerId = getOwnerId(req)
   const order = await OrderModel.updatePayment(req.params.id, {
     method: req.body.method as $Enums.PaymentMethod,
     amount: req.body.amount,
@@ -126,8 +132,9 @@ export async function updateOrderPayment(
   })
 
   if (order.status === "CONFIRMED") {
-    const conv = await ConversationModel.findOrCreateActive(order.customerId)
+    const conv = await ConversationModel.findOrCreateActive(ownerId, order.customerId)
     await MessageModel.append({
+      ownerId,
       conversationId: conv.id,
       role: "BOT",
       msgType: "notification",

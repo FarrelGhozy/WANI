@@ -140,7 +140,7 @@ export default function OrderDetail() {
 
         {/* Actions */}
         {order.status !== 'CANCELLED' && (
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
             {paymentPending && (
               <Button size="sm" variant="secondary" onClick={openPaymentModal}>
                 Konfirmasi Pembayaran
