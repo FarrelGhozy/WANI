@@ -12,6 +12,7 @@ import logRoutes from "@/src/routes/log"
 import usageRoutes from "@/src/routes/usage"
 import authRoutes from "@/src/routes/auth"
 import websiteRoutes from "@/src/routes/website"
+import knowledgeRoutes from "@/src/routes/knowledge"
 import uploadRoutes from "@/src/routes/upload"
 import outgoingRoutes from "@/src/routes/outgoing"
 import monitoringRoutes from "@/src/routes/monitoring"
@@ -33,6 +34,7 @@ router.use("/logs", logRoutes)
 router.use("/usage", usageRoutes)
 router.use("/auth", authRoutes)
 router.use("/website", websiteRoutes)
+router.use("/knowledge", knowledgeRoutes)
 router.use("/upload", uploadRoutes)
 router.use("/outgoing", outgoingRoutes)
 router.use("/", monitoringRoutes)
