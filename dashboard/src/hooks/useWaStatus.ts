@@ -17,16 +17,18 @@ export function useWaStatus(pollInterval = 5000): WaStatus {
 
   const poll = useCallback(async () => {
     try {
-      const [qrRes, statusRes] = await Promise.all([
-        fetchApi<{ qr: string | null }>('/qr'),
-        fetchApi<{ status: string; phone: string | null; connectedAt: string | null; pairingPhone: string | null; pairingCode: string | null }>('/qr/status'),
-      ])
-      setQr(qrRes.data?.qr ?? '')
+      const statusRes = await fetchApi<{ status: string; phone: string | null; connectedAt: string | null; pairingPhone: string | null; pairingCode: string | null }>('/qr/status')
       setConnection(statusRes.data?.status ?? 'disconnected')
       setPhone(statusRes.data?.phone ?? '')
       setConnectedAt(statusRes.data?.connectedAt ?? null)
       setPairingCode(statusRes.data?.pairingCode ?? null)
       setPairingPhone(statusRes.data?.pairingPhone ?? null)
+
+      if (statusRes.data?.status !== 'connected') {
+        const qrRes = await fetchApi<{ qr: string | null }>('/qr')
+        setQr(qrRes.data?.qr ?? '')
+      }
+
       setLoading(false)
       setError(null)
     } catch (e) {
