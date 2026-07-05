@@ -1,5 +1,5 @@
 import { Component, type ReactNode } from 'react'
-import { AlertCircle, RefreshCw } from 'lucide-react'
+import { AlertCircleIcon, RefreshIcon } from '@/components/Icons.tsx'
 
 interface ErrorBoundaryProps {
   children: ReactNode
@@ -37,7 +37,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
         <div className="flex min-h-[400px] items-center justify-center p-6">
           <div className="max-w-md text-center">
             <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-red-100">
-              <AlertCircle size={24} className="text-red-600" />
+              <AlertCircleIcon size={24} className="text-red-600" />
             </div>
             <h2 className="text-lg font-semibold text-stone-900">
               Terjadi Kesalahan
@@ -49,7 +49,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
               onClick={this.handleRetry}
               className="mt-5 inline-flex items-center gap-2 rounded-lg bg-stone-900 px-4 py-2.5 text-sm font-medium text-white hover:bg-stone-800 transition-colors"
             >
-              <RefreshCw size={14} />
+              <RefreshIcon size={14} />
               Coba Lagi
             </button>
           </div>

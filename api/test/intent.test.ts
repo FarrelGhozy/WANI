@@ -62,9 +62,7 @@ describe("intent classification evaluation", () => {
     expect(intents.has("unknown")).toBe(true)
   })
 
-  test("requires OPENROUTER_API_KEY for live eval", () => {
-    if (!apiKey) {
-      console.log("Skipping live LLM eval — set OPENROUTER_API_KEY to run")
-    }
+  test.skipIf(!apiKey)("requires OPENROUTER_API_KEY for live eval", () => {
+    expect(apiKey).toBeTruthy()
   })
 })

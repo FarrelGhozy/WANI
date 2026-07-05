@@ -35,18 +35,44 @@ export async function usePrismaAuthState(db: PrismaClient): Promise<{
       )
     },
     async set(data) {
+      const deletes: Array<{ type: string; id: string }> = []
+      const upserts: Array<{ type: string; id: string; data: string }> = []
+
       for (const [type, entries] of Object.entries(data)) {
         for (const [id, value] of Object.entries(entries!)) {
           if (value === null) {
-            await db.signalKey.deleteMany({ where: { type, id } })
+            deletes.push({ type, id })
           } else {
-            await db.signalKey.upsert({
-              where: { type_id: { type, id } },
-              create: { type, id, data: JSON.stringify(value, BufferJSON.replacer) },
-              update: { data: JSON.stringify(value, BufferJSON.replacer) },
-            })
+            upserts.push({ type, id, data: JSON.stringify(value, BufferJSON.replacer) })
           }
         }
+      }
+
+      if (deletes.length > 0) {
+        const grouped = deletes.reduce(
+          (acc, { type, id }) => {
+            (acc[type] ??= []).push(id)
+            return acc
+          },
+          {} as Record<string, string[]>,
+        )
+        await Promise.all(
+          Object.entries(grouped).map(([type, ids]) =>
+            db.signalKey.deleteMany({ where: { type, id: { in: ids } } }),
+          ),
+        )
+      }
+
+      if (upserts.length > 0) {
+        await Promise.all(
+          upserts.map(({ type, id, data }) =>
+            db.signalKey.upsert({
+              where: { type_id: { type, id } },
+              create: { type, id, data },
+              update: { data },
+            }),
+          ),
+        )
       }
     },
   }

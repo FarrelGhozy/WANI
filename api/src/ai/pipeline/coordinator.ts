@@ -14,6 +14,7 @@ export async function runSteps(
   ctx: PipelineContext,
 ): Promise<PipelineResult> {
   for (const step of steps) {
+    ctx.trace.begin(step.name)
     const outcome = await step.run(ctx)
     if (outcome.kind === "break") {
       return outcome.result

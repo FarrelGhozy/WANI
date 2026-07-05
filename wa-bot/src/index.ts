@@ -112,10 +112,6 @@ async function main() {
       const phone = jid.replace(/[^0-9]/g, "");
       const pushName = msg.pushName || phone;
 
-      // Safety net: receiving messages confirms connection
-      api.delete("/api/qr").catch(e => logger.warn({ err: e?.response?.data ?? String(e) }, "qr safety net: clear failed"));
-      api.post("/api/qr", { status: "connected" }).catch(e => logger.warn({ err: e?.response?.data ?? String(e) }, "qr safety net: status update failed"));
-
       logger.info({ phone, text, pushName }, "message received");
 
       try {

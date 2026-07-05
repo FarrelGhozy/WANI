@@ -1,6 +1,6 @@
 import { createPortal } from 'react-dom'
 import type { ReactNode } from 'react'
-import { Check, X, Info, AlertTriangle } from 'lucide-react'
+import { CheckIcon, CloseIcon, InfoIcon, AlertTriangleIcon } from '@/components/Icons.tsx'
 import type { Toast } from '@/hooks/useToast'
 
 const colors: Record<Toast['type'], string> = {
@@ -11,10 +11,10 @@ const colors: Record<Toast['type'], string> = {
 }
 
 const icons: Record<Toast['type'], ReactNode> = {
-  success: <Check size={16} />,
-  error: <X size={16} />,
-  info: <Info size={16} />,
-  warning: <AlertTriangle size={16} />,
+  success: <CheckIcon size={16} />,
+  error: <CloseIcon size={16} />,
+  info: <InfoIcon size={16} />,
+  warning: <AlertTriangleIcon size={16} />,
 }
 
 interface ToastContainerProps {
@@ -52,7 +52,7 @@ export default function ToastContainer({ toasts, onRemove }: ToastContainerProps
             onClick={() => onRemove(t.id)}
             className="ml-2 shrink-0 text-current/60 hover:text-current"
           >
-            <X size={14} />
+            <CloseIcon size={14} />
           </button>
         </div>
       ))}

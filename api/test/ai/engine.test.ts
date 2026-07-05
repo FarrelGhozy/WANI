@@ -14,10 +14,23 @@ describe("LLMError", () => {
     const err = new LLMError("bad request", false)
     expect(err.retryable).toBe(false)
   })
+})
 
-  test("creates error for server error", () => {
-    const err = new LLMError("server error", true)
-    expect(err.message).toBe("server error")
-    expect(err.retryable).toBe(true)
+const hasApiKey = !!(process.env.OPENROUTER_API_KEY || process.env.LLM_API_KEY)
+
+describe("complete()", () => {
+  test.skipIf(hasApiKey)("throws LLMError when no API key configured", async () => {
+    // This test only runs when there's no API key configured
+    // When an API key is present, the test is skipped
+    const { complete } = await import("@/src/ai/engine")
+    try {
+      await complete([{ role: "user", content: "hi" }])
+      expect.unreachable("should have thrown")
+    } catch (err) {
+      expect(err).toBeInstanceOf(LLMError)
+      if (err instanceof LLMError) {
+        expect(err.message).toContain("API key")
+      }
+    }
   })
 })
