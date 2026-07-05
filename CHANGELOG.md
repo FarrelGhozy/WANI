@@ -11,6 +11,10 @@ Tags follow the format `{service}-v{semver}` (e.g. `api-v1.0.7`).
 - **🔒 api: protect GET /store and GET /ai-config with requireJwt**  
   `GET /api/store` and `GET /api/ai-config` were previously public and hard-coded to `ownerId = "default"`, causing all logged-in users to see the same store regardless of which account they used. Both routes now require JWT authentication and correctly scope data to the requesting user.
 
+### Fixed
+- **🔥 api: auto-create Store on user registration** (#105)  
+  Previously, newly registered users had no store until they opened Settings for the first time. The `register` controller now calls `StoreModel.upsertByOwner` immediately after creating the user, ensuring every account has a ready-to-use store from the start.
+
 ### Added (since api-v1.0.6)
 - Multi-tenant schema: `ownerId` added to all user-owned data models (`Store`, `Product`, `Order`, `Customer`, `Conversation`, `AiConfig`, `Website`, `UsageCounter`, `ActivityLog`).
 - Owner-scoping utilities: `getOwnerId()`, `getOwnerIdOrFirst()`, `ownerFilter()`, `ownerWhere()` in `api/src/middleware/owner.ts`.
