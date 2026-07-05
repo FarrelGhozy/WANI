@@ -16,8 +16,6 @@ function getJwtSecret(): string {
   return randomBytes(32).toString("hex")
 }
 
-const JWT_SECRET = getJwtSecret()
-
 export interface JwtPayload {
   id: string
   email: string
@@ -32,7 +30,7 @@ export function requireJwt(req: Request, _res: Response, next: NextFunction): vo
 
   const token = header.slice(7)
   try {
-    const payload = jwt.verify(token, JWT_SECRET) as JwtPayload
+    const payload = jwt.verify(token, getJwtSecret()) as JwtPayload
     req.user = payload
     next()
   } catch {
