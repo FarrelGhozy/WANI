@@ -49,4 +49,9 @@ describe("Rate limiting", () => {
     expect(res.headers["ratelimit-limit"]).toBeTruthy()
     expect(res.headers["ratelimit-remaining"]).toBeTruthy()
   })
+
+  test("returns 401 on protected store endpoint without auth", async () => {
+    const res = await request(app).get("/api/store")
+    expect(res.status).toBe(401)
+  })
 })
