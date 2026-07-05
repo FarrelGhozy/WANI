@@ -17,7 +17,11 @@
 <section class="py-24">
 <div class="max-w-6xl mx-auto px-6 md:px-12">
 <div class="mb-16 reveal"><p class="text-xs text-stone-400 uppercase tracking-[0.2em] mb-4">Katalog</p><h1 class="font-serif text-4xl md:text-6xl text-stone-900">Semua Produk</h1><p class="text-stone-500 mt-4">Dari {{store.businessName}}</p></div>
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-stone-200">
+<div class="max-w-md mx-auto mb-12 relative">
+  <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-stone-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+  <input type="text" id="productSearch" placeholder="Cari produk..." class="w-full pl-12 pr-4 py-3 bg-white border border-stone-200 text-stone-800 placeholder-stone-400 focus:outline-none focus:border-stone-400 transition-all" autocomplete="off" />
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-stone-200" id="productGrid">
 {{#products}}
 <a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="group bg-stone-50 p-8 hover:bg-white transition-colors duration-500 reveal">
 <div class="aspect-[4/5] mb-6 overflow-hidden bg-stone-100">
@@ -46,4 +50,21 @@
 {{>footer}}
 
 <script>(function(){var o=new IntersectionObserver(function(e){e.forEach(function(e){if(e.isIntersecting)e.target.classList.add('visible')})},{threshold:0.05,rootMargin:'0px 0px -40px 0px'});document.querySelectorAll('.reveal').forEach(function(e){o.observe(e)})})();</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const search = document.getElementById('productSearch')
+    if (!search) return
+    const cards = document.querySelectorAll('#productGrid > a')
+    search.addEventListener('input', function() {
+      const q = search.value.toLowerCase().trim()
+      cards.forEach(function(card) {
+        const name = card.querySelector('h2')
+        const text = name ? name.textContent.toLowerCase() : ''
+        card.style.display = text.includes(q) ? '' : 'none'
+      })
+    })
+  })
+</script>
+
 </body></html>

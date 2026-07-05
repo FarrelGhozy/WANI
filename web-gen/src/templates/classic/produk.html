@@ -67,6 +67,18 @@
   </section>
 
   <!-- ============================================================ -->
+  <!-- PRODUCT SEARCH -->
+  <!-- ============================================================ -->
+  <section class="pb-8 bg-background">
+    <div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop">
+      <div class="max-w-md mx-auto relative">
+        <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-on-surface-variant pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <input type="text" id="productSearch" placeholder="Cari produk..." class="w-full pl-12 pr-4 py-3 bg-surface border border-outline-variant rounded-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all" autocomplete="off" />
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ -->
   <!-- PRODUCT GRID -->
   <!-- ============================================================ -->
   <section class="pb-24 bg-background">
@@ -196,6 +208,22 @@
     text-shadow: 0 2px 20px rgba(184,134,11,0.15);
   }
 </style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const search = document.getElementById('productSearch')
+    if (!search) return
+    const cards = document.querySelectorAll('.grid > .group')
+    search.addEventListener('input', function() {
+      const q = search.value.toLowerCase().trim()
+      cards.forEach(function(card) {
+        const name = card.querySelector('h3')
+        const text = name ? name.textContent.toLowerCase() : ''
+        card.style.display = text.includes(q) ? '' : 'none'
+      })
+    })
+  })
+</script>
 
 </body>
 </html>
