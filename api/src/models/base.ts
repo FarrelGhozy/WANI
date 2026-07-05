@@ -61,4 +61,19 @@ export abstract class BaseModel {
   protected static listResult<T>(items: T[], total: number, page: number, limit: number) {
     return { items, total, page, limit, totalPages: Math.ceil(total / limit) }
   }
+
+  protected static async findManyPaginated<T>(
+    where: Record<string, unknown>,
+    skip: number,
+    take: number,
+    orderBy: Record<string, string>,
+    page: number,
+    limit: number,
+  ): Promise<{ items: T[]; total: number; page: number; limit: number; totalPages: number }> {
+    const [rows, total] = await Promise.all([
+      this.delegate.findMany({ where, skip, take, orderBy }),
+      this.delegate.count({ where }),
+    ])
+    return this.listResult(rows as T[], total, page, limit)
+  }
 }

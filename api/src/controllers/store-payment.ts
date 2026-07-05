@@ -1,6 +1,5 @@
 import type { Request, Response } from "express"
 import type { z } from "zod"
-import type { Prisma } from "@db/client"
 import { StorePaymentMethodModel } from "@/src/models/store-payment"
 import { sendResponse } from "@/src/utils/response"
 import { NotFoundError } from "@/src/utils/errors"
@@ -27,13 +26,13 @@ export async function createPaymentMethod(
   res: Response,
 ): Promise<void> {
   const ownerId = getOwnerId(req)
-  const data: Prisma.StorePaymentMethodCreateInput = {
+  const data: Record<string, unknown> = {
     type: req.body.type,
     label: req.body.label,
     ownerId,
     isActive: true,
     sortOrder: 0,
-  } as any
+  }
   if ("accountName" in req.body) data.accountName = req.body.accountName ?? null
   if ("accountNumber" in req.body) data.accountNumber = req.body.accountNumber ?? null
   if ("bankName" in req.body) data.bankName = req.body.bankName ?? null

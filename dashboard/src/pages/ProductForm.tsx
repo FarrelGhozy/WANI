@@ -98,7 +98,7 @@ export default function ProductForm() {
     /* eslint-enable react-hooks/set-state-in-effect */
   }, [id, getProduct])
 
-  function set<K extends keyof ProductFormData>(key: K, value: ProductFormData[K]) {
+  function setField<K extends keyof ProductFormData>(key: K, value: ProductFormData[K]) {
     setForm((prev) => ({ ...prev, [key]: value }))
     setErrors((prev) => ({ ...prev, [key]: undefined }))
   }
@@ -118,7 +118,7 @@ export default function ProductForm() {
     try {
       const cat = await createCategory({ name: newCategoryName.trim(), description: newCategoryDesc.trim() || null })
       if (cat) {
-        set('categoryId', cat.id)
+        setField('categoryId', cat.id)
         toast('Kategori berhasil ditambahkan', 'success')
       }
       setShowNewCategory(false)
@@ -217,7 +217,7 @@ export default function ProductForm() {
                 hint="Tempel link gambar atau upload file"
                 value={form.imageUrl ?? ''}
                 onChange={(e) => {
-                  set('imageUrl', e.target.value)
+                  setField('imageUrl', e.target.value)
                   pendingFile.current = null
                   if (previewUrl) {
                     URL.revokeObjectURL(previewUrl)
@@ -259,7 +259,7 @@ export default function ProductForm() {
               label="Nama Produk"
               placeholder="Nasi Goreng Spesial"
               value={form.name}
-              onChange={(e) => set('name', e.target.value)}
+              onChange={(e) => setField('name', e.target.value)}
               error={errors.name}
             />
             <Select
@@ -267,7 +267,7 @@ export default function ProductForm() {
               options={categories.map((c) => ({ value: c.id, label: c.name }))}
               placeholder="Tanpa Kategori"
               value={form.categoryId ?? ''}
-              onChange={(e) => set('categoryId', e.target.value)}
+              onChange={(e) => setField('categoryId', e.target.value)}
             />
             {showNewCategory ? (
               <div className="mt-2 space-y-2 rounded-lg border border-teal-200 bg-teal-50 p-3">
@@ -306,7 +306,7 @@ export default function ProductForm() {
               label="Deskripsi"
               placeholder="Deskripsi produk..."
               value={form.description ?? ''}
-              onChange={(e) => set('description', e.target.value)}
+              onChange={(e) => setField('description', e.target.value)}
               rows={3}
             />
           </div>
@@ -324,7 +324,7 @@ export default function ProductForm() {
               onChange={(e) => {
                 const raw = e.target.value
                 const num = parsePrice(raw)
-                set('price', num)
+                setField('price', num)
                 setPriceDisplay(formatPriceInput(raw))
               }}
               error={errors.price}
@@ -335,7 +335,7 @@ export default function ProductForm() {
               min={0}
               placeholder="0"
               value={form.stock}
-              onChange={(e) => set('stock', Math.max(0, Number(e.target.value)))}
+              onChange={(e) => setField('stock', Math.max(0, Number(e.target.value)))}
               error={errors.stock}
             />
           </div>
@@ -347,7 +347,7 @@ export default function ProductForm() {
                   type="radio"
                   name="availability"
                   checked={form.isAvailable}
-                  onChange={() => set('isAvailable', true)}
+                  onChange={() => setField('isAvailable', true)}
                   className="h-4 w-4 accent-teal-600"
                 />
                 Aktif
@@ -357,7 +357,7 @@ export default function ProductForm() {
                   type="radio"
                   name="availability"
                   checked={!form.isAvailable}
-                  onChange={() => set('isAvailable', false)}
+                  onChange={() => setField('isAvailable', false)}
                   className="h-4 w-4 accent-red-500"
                 />
                 Nonaktif
