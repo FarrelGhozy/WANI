@@ -209,21 +209,22 @@
   }
 </style>
 
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const search = document.getElementById('productSearch')
-    if (!search) return
-    const cards = document.querySelectorAll('.grid > .group')
-    search.addEventListener('input', function() {
-      const q = search.value.toLowerCase().trim()
-      cards.forEach(function(card) {
-        const name = card.querySelector('h3')
-        const text = name ? name.textContent.toLowerCase() : ''
-        card.style.display = text.includes(q) ? '' : 'none'
+  <script>
+    // Client-side product search — filters by product name (case-insensitive)
+    document.addEventListener('DOMContentLoaded', function() {
+      const search = document.getElementById('productSearch')
+      if (!search) return
+      const cards = document.querySelectorAll('.grid > .group')
+      search.addEventListener('input', function() {
+        const q = search.value.toLowerCase().trim()
+        cards.forEach(function(card) {
+          const name = card.querySelector('h3')
+          const text = name ? name.textContent.toLowerCase() : ''
+          card.style.display = text.includes(q) ? '' : 'none'
+        })
       })
     })
-  })
-</script>
+  </script>
 
 </body>
 </html>
