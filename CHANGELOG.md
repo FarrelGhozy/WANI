@@ -1,57 +1,55 @@
 # Changelog
 
-All notable changes to the WANI project are documented in this file.
-Tags follow the format `{service}-v{semver}` (e.g. `api-v1.0.7`).
+## api v1.0.7 — 2026-07-05
 
----
+### What's Changed
 
-## api-v1.0.7 — 2026-07-05
+- **JWT protection for store/ai-config** — `GET /api/store` and `GET /api/ai-config` now require `requireJwt`, fixing cross-user store leakage
+- **Auto-create Store on register** — `POST /api/auth/register` now calls `StoreModel.upsertByOwner` immediately after user creation (fixes #105)
+- **Multi-tenant schema** — `ownerId` added to all user-owned models: `Store`, `Product`, `Order`, `Customer`, `Conversation`, `AiConfig`, `Website`, `UsageCounter`, `ActivityLog`
+- **Owner-scoping utilities** — `getOwnerId()`, `getOwnerIdOrFirst()`, `ownerFilter()`, `ownerWhere()` in middleware
+- **Pairing code login** — QR + pairing code dual mode for WhatsApp Bot
+- **Composite DB index** — `Order(status, createdAt)` for faster order-list queries
+- **Helmet CORP fix** — `crossOriginResourcePolicy` added to prevent cross-origin image blocking
+- **Unit + integration tests** — 223 tests across auth, store, products, guardrails, AI pipeline, circuit breaker
 
-### Security
-- **🔒 api: protect GET /store and GET /ai-config with requireJwt**  
-  `GET /api/store` and `GET /api/ai-config` were previously public and hard-coded to `ownerId = "default"`, causing all logged-in users to see the same store regardless of which account they used. Both routes now require JWT authentication and correctly scope data to the requesting user.
+## wa-bot v1.0.7 — 2026-06-27
 
-### Fixed
-- **🔥 api: auto-create Store on user registration** (#105)  
-  Previously, newly registered users had no store until they opened Settings for the first time. The `register` controller now calls `StoreModel.upsertByOwner` immediately after creating the user, ensuring every account has a ready-to-use store from the start.
+### What's Changed
 
-### Added
-- Multi-tenant schema: `ownerId` added to all user-owned data models (`Store`, `Product`, `Order`, `Customer`, `Conversation`, `AiConfig`, `Website`, `UsageCounter`, `ActivityLog`).
-- Owner-scoping utilities: `getOwnerId()`, `getOwnerIdOrFirst()`, `ownerFilter()`, `ownerWhere()`.
-- Pairing code login for WhatsApp Bot (QR + code dual mode).
-- Composite DB index on `Order(status, createdAt)`.
-- `crossOriginResourcePolicy` added to Helmet config.
-- Unit + integration test suite (223 tests) for auth, store, products, guardrails, and AI pipeline.
+- **Baileys v6 → v7 migration** — new `baileys` package, LID handshake support
+- **Prisma auth state** — replaced `useMultiFileAuthState()` with `usePrismaAuthState()`, PostgreSQL persistent auth
+- **History sync disabled** — `shouldSyncHistoryMessage: () => false`
+- **Message filtering** — only process `notify` type, only `@s.whatsapp.net` JIDs
+- **Phone extraction fix** — parse from `sock.user.id` (absent `phoneNumber` field in v7)
+- **QR/status sync** — handle `receivedPendingNotifications`, safety net on incoming message
+- **Debug logging** — `connection.update` fields, incoming messages, API errors
+- **Unit tests added** — 11 tests for `usePrismaAuthState()`, mock Prisma pattern
+- **CI workflow** — `bun test` runs before Docker build
 
----
+## dashboard v1.0.4 — 2026-06-27
 
-## api-v1.0.6 — 2025-06-xx
+### What's Changed
 
-### Added
-- Composite index on `Order(status, createdAt)` for dashboard order-list performance.
+- **Toast system** — global singleton with `useSyncExternalStore`, lucide-react icons, top-right
+- **Toast added** — all 11 mutation pages (Store, Products, Orders, Customers, Website, etc.)
+- **StoreTab overhaul** — local form state, Simpan Perubahan saves all at once
+- **Business hours editor** — 7-day per-row time picker with BUKA/LIBUR toggle
+- **Payment checkboxes** — QRIS, Transfer Bank, E-Wallet, COD, Tunai
+- **Placeholders + hints** — every input field has example text
+- **Time format** — 24-hour `TimeSelect` dropdowns (HH:mm), replaces native `type="time"`
+- **AiTab** — local state, save on button click, OpenCode Zen help text
+- **Layout fix** — empty chat panel centered with `absolute inset-0`
+- **Date formatting** — WIB timezone, 24-hour, long month names
 
----
+## api v1.0.3 — 2026-06-27
 
-## dashboard-v1.0.8 — 2025-06-xx
+### What's Changed
 
-### Fixed
-- Multiple lint fixes (react-refresh/only-export-components, missing deps, set-state-in-effect).
-- Mobile logout button added to Topbar.
-
-### Added
-- Route progress bar, `type=button` fixes, Input consistency, `formatDate` fixes.
-- Mobile UX improvements & full Indonesian localization.
-- Unsaved-changes warning dialog and raised data limit to 500.
-- Independent dashboard loading & full breadcrumb navigation.
-- Skeleton loading states and inline error handling across all pages.
-- Enhanced toast system with `apiError`, warning type, and action support.
-- Global `ErrorBoundary` with retry UI.
-
----
-
-## wa-bot-v1.0.8 — 2025-06-xx
-
-### Fixed
-- Replaced silent catch blocks with structured logging + backoff.
-
----
+- **LLM provider-agnostic** — `LLM_BASE_URL` + `LLM_API_KEY` env vars, no longer hardcoded to OpenRouter
+- **Model default changes** — `deepseek-v4-flash-free`, fallback `north-mini-code-free`
+- **Guardrail models** — all updated to `north-mini-code-free`
+- **Logger improvements** — printf format supports string/number metadata, colorful console
+- **Pipeline refactored** — modular architecture, 18-step orchestrator
+- **ConnectedAt timestamp** — wired end-to-end with dashboard
+- **wa-bot reset endpoint** — `POST /api/qr/reset` clears bot credentials
