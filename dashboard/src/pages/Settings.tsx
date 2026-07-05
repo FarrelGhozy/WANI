@@ -8,6 +8,7 @@ import StoreTab from '@/components/StoreTab.tsx'
 import AiTab from '@/components/AiTab.tsx'
 import WaSessionTab from '@/components/WaSessionTab.tsx'
 import { Skeleton, SkeletonCard } from '@/components/ui/Skeleton.tsx'
+import type { AiConfig } from '@/hooks/useSettings.ts'
 
 const tabs = [
   { id: 'store', label: 'Toko' },
@@ -47,7 +48,7 @@ export default function Settings() {
   const [resetting, setResetting] = useState(false)
   const [requestingPairing, setRequestingPairing] = useState(false)
 
-  const handleAiUpdate = useCallback(async (patch: Partial<import('@/hooks/useSettings.ts').AiConfig>) => {
+  const handleAiUpdate = useCallback(async (patch: Partial<AiConfig>) => {
     try {
       await updateAiConfig(patch)
       toast('Konfigurasi AI berhasil disimpan', 'success')

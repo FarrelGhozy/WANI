@@ -2,7 +2,7 @@ import { useState } from 'react'
 import Card from '@/components/ui/Card.tsx'
 import Button from '@/components/ui/Button.tsx'
 import QRCode from '@/components/QRCode.tsx'
-import { formatDate } from '@/utils/format'
+import { formatDate } from '@/utils/format.ts'
 
 interface WaSessionTabProps {
   qr: string

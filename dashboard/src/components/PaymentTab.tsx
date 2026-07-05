@@ -1,14 +1,14 @@
 import { useState, useRef } from 'react'
-import { usePaymentMethods } from '@/hooks/usePaymentMethods'
-import type { StorePaymentMethod, PaymentMethodType, CreatePaymentMethodData } from '@/hooks/usePaymentMethods'
-import { useToast } from '@/hooks/useToast'
+import { usePaymentMethods } from '@/hooks/usePaymentMethods.ts'
+import type { StorePaymentMethod, PaymentMethodType, CreatePaymentMethodData } from '@/hooks/usePaymentMethods.ts'
+import { useToast } from '@/hooks/useToast.ts'
 import { uploadFile } from '@/lib/upload.ts'
 import { mediaUrl } from '@/lib/media.ts'
-import Button from '@/components/ui/Button'
-import Modal from '@/components/ui/Modal'
-import Spinner from '@/components/ui/Spinner'
-import Input from '@/components/ui/Input'
-import Select from '@/components/ui/Select'
+import Button from '@/components/ui/Button.tsx'
+import Modal from '@/components/ui/Modal.tsx'
+import Spinner from '@/components/ui/Spinner.tsx'
+import Input from '@/components/ui/Input.tsx'
+import Select from '@/components/ui/Select.tsx'
 
 const TYPE_CONFIG: Record<PaymentMethodType, { icon: string; label: string; color: string }> = {
   QRIS: { icon: '\u25A6', label: 'QRIS', color: 'bg-emerald-50 text-emerald-600' },

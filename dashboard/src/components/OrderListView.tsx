@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router'
 import type { Order, OrderStatus, OrderSortField } from '@/hooks/useOrders.ts'
 import Badge from '@/components/ui/Badge.tsx'
-import { formatPrice, formatDate } from '@/utils/format'
+import { formatPrice, formatDate } from '@/utils/format.ts'
 
 interface OrderListViewProps {
   orders: Order[]

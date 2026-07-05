@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react'
-import { fetchApi } from '@/lib/api'
-import { getErrorMessage } from '@/hooks/useToast'
+import { fetchApi } from '@/lib/api.ts'
+import { getErrorMessage } from '@/hooks/useToast.ts'
 import type { StoreProfile, AiConfig } from '@/types.ts'
 
 export type { StoreProfile, AiConfig }
@@ -64,7 +64,7 @@ export function useSettings() {
     }
   }, [])
 
-  return { store, aiConfig, loading, error, updateStore, updateAiConfig, reload: useCallback(async () => {
+  const reload = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
@@ -76,5 +76,7 @@ export function useSettings() {
     } finally {
       setLoading(false)
     }
-  }, [fetchConfigs]) }
+  }, [fetchConfigs])
+
+  return { store, aiConfig, loading, error, updateStore, updateAiConfig, reload }
 }

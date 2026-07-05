@@ -14,8 +14,8 @@ vi.mock('@/hooks/useToast', async () => {
   return { ...actual }
 })
 
-import { useOrders } from '../useOrders'
-import type { Order } from '@/types'
+import { useOrders } from '../useOrders.ts'
+import type { Order } from '@/types.ts'
 
 const mockApiOrder = {
   id: 'order-001',

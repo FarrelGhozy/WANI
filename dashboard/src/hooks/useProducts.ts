@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback, useEffect } from 'react'
-import { fetchApi } from '@/lib/api'
-import { getErrorMessage } from '@/hooks/useToast'
+import { fetchApi } from '@/lib/api.ts'
+import { getErrorMessage } from '@/hooks/useToast.ts'
 import type { Category, Product, ProductFormData } from '@/types.ts'
 
 export type { Category, Product, ProductFormData }
@@ -176,6 +176,20 @@ export function useProducts() {
     }
   }, [])
 
+  const reload = useCallback(async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      const { products, categories } = await fetchData()
+      setAllProducts(products)
+      setAllCategories(categories)
+    } catch (e) {
+      setError(getErrorMessage(e, 'Gagal memuat produk'))
+    } finally {
+      setLoading(false)
+    }
+  }, [fetchData])
+
   return {
     products: filtered,
     categories: allCategories,
@@ -186,18 +200,6 @@ export function useProducts() {
     sortField, sortDir, toggleSort,
     getProduct, createProduct, updateProduct, deleteProduct,
     createCategory, updateCategory, deleteCategory,
-    reload: useCallback(async () => {
-      setLoading(true)
-      setError(null)
-      try {
-        const { products, categories } = await fetchData()
-        setAllProducts(products)
-        setAllCategories(categories)
-      } catch (e) {
-        setError(getErrorMessage(e, 'Gagal memuat produk'))
-      } finally {
-        setLoading(false)
-      }
-    }, [fetchData]),
+    reload,
   }
 }

@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from 'react'
-import { fetchApi } from '@/lib/api'
-import { getErrorMessage } from '@/hooks/useToast'
-import type { StorePaymentMethod, PaymentMethodType } from '@/types'
+import { fetchApi } from '@/lib/api.ts'
+import { getErrorMessage } from '@/hooks/useToast.ts'
+import type { StorePaymentMethod, PaymentMethodType } from '@/types.ts'
 
 export type { StorePaymentMethod, PaymentMethodType }
 

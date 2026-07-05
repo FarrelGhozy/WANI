@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
-import { fetchApi } from '@/lib/api'
-import { getErrorMessage } from '@/hooks/useToast'
+import { fetchApi } from '@/lib/api.ts'
+import { getErrorMessage } from '@/hooks/useToast.ts'
 import type { MessageRole, ConversationStatus, Message, Conversation, Customer } from '@/types.ts'
 
 export type { MessageRole, ConversationStatus, Message, Conversation, Customer }
@@ -143,6 +143,19 @@ export function useCustomers() {
     customers.find((c) => c.id === selectedId) ?? null,
   [customers, selectedId])
 
+  const reload = useCallback(async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      const items = await fetchCustomers()
+      setCustomers(items)
+    } catch (e) {
+      setError(getErrorMessage(e, 'Gagal memuat pelanggan'))
+    } finally {
+      setLoading(false)
+    }
+  }, [fetchCustomers])
+
   return {
     customers: filtered,
     allCustomers: customers,
@@ -154,17 +167,6 @@ export function useCustomers() {
     conversation,
     convLoading,
     sendMessage,
-    reload: useCallback(async () => {
-      setLoading(true)
-      setError(null)
-      try {
-        const items = await fetchCustomers()
-        setCustomers(items)
-      } catch (e) {
-        setError(getErrorMessage(e, 'Gagal memuat pelanggan'))
-      } finally {
-        setLoading(false)
-      }
-    }, [fetchCustomers]),
+    reload,
   }
 }

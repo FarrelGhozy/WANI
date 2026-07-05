@@ -4,14 +4,14 @@ import { useWaStatusContext } from '@/contexts/WaStatusContext.tsx'
 import { useOrders } from '@/hooks/useOrders.ts'
 import { useProductsContext } from '@/contexts/ProductsContext.tsx'
 import { useCustomers } from '@/hooks/useCustomers.ts'
-import { fetchApi } from '@/lib/api'
+import { fetchApi } from '@/lib/api.ts'
 import StatusCard from '@/components/StatusCard.tsx'
 import Card from '@/components/ui/Card.tsx'
 import { Skeleton, SkeletonCard } from '@/components/ui/Skeleton.tsx'
 import Badge from '@/components/ui/Badge.tsx'
 import QRCode from '@/components/QRCode.tsx'
 import { SignalIcon, BagIcon, ClipboardIcon, PeopleIcon } from '@/components/Icons.tsx'
-import { formatPrice } from '@/utils/format'
+import { formatPrice } from '@/utils/format.ts'
 
 const statusBadgeVariant: Record<string, 'amber' | 'teal' | 'green' | 'gray' | 'red'> = {
   PENDING: 'amber',

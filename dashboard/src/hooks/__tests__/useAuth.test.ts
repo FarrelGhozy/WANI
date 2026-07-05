@@ -9,7 +9,7 @@ vi.mock('@/lib/api', () => ({
   fetchApi: mockFetchApi,
 }))
 
-import { useAuth } from '../useAuth'
+import { useAuth } from '../useAuth.ts'
 
 const AUTH_TOKEN_KEY = 'wani_auth_token'
 const AUTH_USER_KEY = 'wani_auth_user'

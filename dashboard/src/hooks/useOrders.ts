@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback, useEffect } from 'react'
-import { fetchApi } from '@/lib/api'
-import { getErrorMessage } from '@/hooks/useToast'
+import { fetchApi } from '@/lib/api.ts'
+import { getErrorMessage } from '@/hooks/useToast.ts'
 import type { OrderStatus, OrderSortField, OrderItem, Payment, Order } from '@/types.ts'
 export type { OrderStatus, OrderSortField, OrderItem, Payment, Order }
 
@@ -57,7 +57,7 @@ const statusFlow: Record<OrderStatus, OrderStatus[]> = {
   CANCELLED: [],
 }
 
-export { formatPrice } from '@/utils/format'
+export { formatPrice } from '@/utils/format.ts'
 
 export function useOrders() {
   const [orders, setOrders] = useState<Order[]>([])
@@ -196,6 +196,19 @@ export function useOrders() {
     }
   }, [orders])
 
+  const reload = useCallback(async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      const items = await fetchOrders()
+      setOrders(items)
+    } catch (e) {
+      setError(getErrorMessage(e, 'Gagal memuat pesanan'))
+    } finally {
+      setLoading(false)
+    }
+  }, [fetchOrders])
+
   return {
     orders: filtered,
     allOrders: orders,
@@ -206,17 +219,6 @@ export function useOrders() {
     sortField, sortDir, toggleSort,
     getOrder, updateStatus, nextStatuses,
     confirmPayment,
-    reload: useCallback(async () => {
-      setLoading(true)
-      setError(null)
-      try {
-        const items = await fetchOrders()
-        setOrders(items)
-      } catch (e) {
-        setError(getErrorMessage(e, 'Gagal memuat pesanan'))
-      } finally {
-        setLoading(false)
-      }
-    }, [fetchOrders]),
+    reload,
   }
 }

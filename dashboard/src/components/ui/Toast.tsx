@@ -1,7 +1,7 @@
 import { createPortal } from 'react-dom'
 import type { ReactNode } from 'react'
 import { CheckIcon, CloseIcon, InfoIcon, AlertTriangleIcon } from '@/components/Icons.tsx'
-import type { Toast } from '@/hooks/useToast'
+import type { Toast } from '@/hooks/useToast.ts'
 
 const colors: Record<Toast['type'], string> = {
   success: 'border-emerald-300 bg-emerald-50 text-emerald-800',

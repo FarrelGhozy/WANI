@@ -389,7 +389,9 @@ type ImageMap = Record<string, string>;
 function resolveUploadsDir(params: GenerateParams): string {
   if (params.uploadsDir) return params.uploadsDir;
   if (process.env.UPLOADS_DIR) return process.env.UPLOADS_DIR;
-  // fallback: assumes web-gen and api are sibling directories
+  // Try WANI_ROOT env var (set in docker-compose), fall back to sibling assumption
+  const waniRoot = process.env.WANI_ROOT;
+  if (waniRoot) return join(waniRoot, "api", "uploads");
   return join(dirname(TEMPLATES_DIR), "..", "api", "uploads");
 }
 

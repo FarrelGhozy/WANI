@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import type { Conversation, Message } from '@/hooks/useCustomers.ts'
 import { useToast } from '@/hooks/useToast.ts'
 import Badge from '@/components/ui/Badge.tsx'
-import { formatDate } from '@/utils/format'
+import { formatDate } from '@/utils/format.ts'
 
 interface ChatViewProps {
   customerName: string

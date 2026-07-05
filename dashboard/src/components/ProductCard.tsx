@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import type { Product } from '@/hooks/useProducts.ts'
 import Badge from '@/components/ui/Badge.tsx'
-import { formatPrice } from '@/utils/format'
+import { formatPrice } from '@/utils/format.ts'
 import { mediaUrl } from '@/lib/media.ts'
 
 interface ProductCardProps {

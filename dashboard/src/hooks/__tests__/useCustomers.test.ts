@@ -14,8 +14,8 @@ vi.mock('@/hooks/useToast', async () => {
   return { ...actual }
 })
 
-import { useCustomers } from '../useCustomers'
-import type { Customer } from '@/types'
+import { useCustomers } from '../useCustomers.ts'
+import type { Customer } from '@/types.ts'
 
 const mockCustomer: Customer = {
   id: 'c1',

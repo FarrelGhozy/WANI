@@ -14,8 +14,8 @@ vi.mock('@/hooks/useToast', async () => {
   return { ...actual }
 })
 
-import { useSettings } from '../useSettings'
-import type { StoreProfile, AiConfig } from '@/types'
+import { useSettings } from '../useSettings.ts'
+import type { StoreProfile, AiConfig } from '@/types.ts'
 
 const mockStore: StoreProfile = {
   id: 's1',

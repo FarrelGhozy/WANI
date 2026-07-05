@@ -8,7 +8,7 @@ import Modal from '@/components/ui/Modal.tsx'
 import Badge from '@/components/ui/Badge.tsx'
 import { Skeleton, SkeletonCard } from '@/components/ui/Skeleton.tsx'
 import ImageUpload from '@/components/ui/ImageUpload.tsx'
-import { formatDate } from '@/utils/format'
+import { formatDate } from '@/utils/format.ts'
 
 export default function Website() {
   const { config, logs, latestSlug, generating, availableProducts, updateConfig, generate, downloadZip, deleteGeneration, loading, error, reload } = useWebsite()

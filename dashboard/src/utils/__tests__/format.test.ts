@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { formatPrice, formatDate } from '../format'
+import { formatPrice, formatDate } from '../format.ts'
 
 describe('formatPrice', () => {
   it('formats zero correctly', () => {

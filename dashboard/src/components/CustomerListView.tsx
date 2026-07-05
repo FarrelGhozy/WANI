@@ -1,5 +1,5 @@
 import type { Customer, MessageRole } from '@/hooks/useCustomers.ts'
-import { formatDate } from '@/utils/format'
+import { formatDate } from '@/utils/format.ts'
 
 interface CustomerListViewProps {
   customers: Customer[]

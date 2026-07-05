@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { renderHook, act } from '@testing-library/react'
-import { getErrorMessage, useToast } from '../useToast'
+import { getErrorMessage, useToast } from '../useToast.ts'
 
 describe('getErrorMessage', () => {
   it('extracts message from Error instance', () => {

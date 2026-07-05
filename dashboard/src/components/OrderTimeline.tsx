@@ -1,5 +1,5 @@
 import type { OrderStatus } from '@/hooks/useOrders.ts'
-import { formatDate } from '@/utils/format'
+import { formatDate } from '@/utils/format.ts'
 
 interface TimelineStep {
   status: OrderStatus
@@ -38,7 +38,7 @@ function buildSteps(status: OrderStatus, createdAt: string, updatedAt: string, p
       time = createdAt
     } else if (done) {
       if (s.status === 'CONFIRMED') time = paidAt ?? null
-      else if (s.status === 'PROCESSING') time = paidAt ?? null
+      else if (s.status === 'PROCESSING') time = updatedAt
       else if (s.status === 'COMPLETED') time = updatedAt
     }
     return { ...s, time, done }
