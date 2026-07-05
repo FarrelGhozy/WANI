@@ -6,6 +6,13 @@ const mockUserCreate = mock((_args: any) => Promise.resolve({ id: "u1", name: "B
 const mockUserUpdate = mock((_args: any) => Promise.resolve({}))
 const mockStoreUpsert = mock((_args: any) => Promise.resolve({}))
 
+const mockSendEmail = mock((_to: string, _subject: string, _html: string) => Promise.resolve())
+
+mock.module("@/src/services/email", () => ({
+  sendEmail: mockSendEmail,
+  isEmailConfigured: () => true,
+}))
+
 mock.module("@/src/config/db", () => ({
   prisma: {
     user: {
@@ -25,6 +32,7 @@ mock.module("@/src/config/db", () => ({
 process.env.JWT_SECRET = "test-jwt-secret"
 
 import { register, login, me, logout } from "@/src/controllers/auth"
+import * as emailService from "@/src/services/email"
 import type { Request, Response } from "express"
 
 function mockReq(overrides: Partial<Request> = {}): Request {

@@ -29,6 +29,14 @@ export const env = {
     jwtExpires: process.env.JWT_EXPIRES ?? "7d"
   },
 
+  email: {
+    smtpHost: process.env.SMTP_HOST ?? "",
+    smtpPort: num("SMTP_PORT", 587),
+    smtpUser: process.env.SMTP_USER ?? "",
+    smtpPassword: process.env.SMTP_PASSWORD ?? "",
+    smtpFrom: process.env.SMTP_FROM ?? "WANI <noreply@wani.app>",
+  },
+
   guardrails: {
     maxInputChars: num("MAX_INPUT_CHARS", 4000),
     maxReplyChars: num("MAX_REPLY_CHARS", 1500),

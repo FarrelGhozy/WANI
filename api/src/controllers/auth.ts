@@ -5,6 +5,7 @@ import { UserModel } from "@/src/models/user"
 import { StoreModel } from "@/src/models/store"
 import { sendResponse } from "@/src/utils/response"
 import { hashPassword, verifyPassword } from "@/src/utils/auth"
+import { sendEmail } from "@/src/services/email"
 import { BadRequestError, UnauthorizedError } from "@/src/utils/errors"
 import {
   registerSchema,
@@ -115,9 +116,17 @@ export async function forgotPassword(
       resetPasswordExpires: expires,
     })
 
-    // TODO: send email with reset link
-    // Log for development debugging
-    console.log(`[DEV] Password reset token for ${req.body.email}: ${resetToken}`)
+    const resetUrl = `${req.headers.origin ?? "https://wani.app"}/reset-password?token=${resetToken}`
+    await sendEmail(
+      user.email,
+      "Reset Password WANI",
+      `<p>Hai ${user.name},</p>
+<p>Kamu meminta reset password. Klik link berikut untuk melanjutkan:</p>
+<p><a href="${resetUrl}">${resetUrl}</a></p>
+<p>Link ini berlaku 1 jam. Jika kamu tidak meminta reset password, abaikan email ini.</p>
+<br>
+<p>Salam,<br>Tim WANI</p>`,
+    )
     sendResponse(res, 200, "reset link sent")
     return
   }
