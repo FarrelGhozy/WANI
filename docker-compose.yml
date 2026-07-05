@@ -128,10 +128,37 @@ services:
         max-size: "10m"
         max-file: "3"
 
+  backup:
+    image: postgres:17-alpine
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      DATABASE_USER: ${DATABASE_USER}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
+      DATABASE_NAME_API: ${DATABASE_NAME_API}
+      DATABASE_NAME_BOT: ${DATABASE_NAME_BOT}
+      BACKUP_DIR: /backups
+      RETENTION_DAYS: 7
+    volumes:
+      - backups:/backups
+      - ./scripts/backup-db.sh:/backup.sh:ro
+    entrypoint: ["/bin/sh", "-c", "while true; do /backup.sh; sleep 86400; done"]
+    restart: unless-stopped
+    networks: [wani]
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
 volumes:
   pgdata:
   generated-sites:
   uploads:
+  backups:
 
 networks:
   wani:
