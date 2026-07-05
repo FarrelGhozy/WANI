@@ -11,7 +11,7 @@ import { sendResponse } from "@/src/utils/response"
 import { BadRequestError, InternalServerError, NotFoundError } from "@/src/utils/errors"
 import { getOwnerId, getOwnerIdOrFirst } from "@/src/middleware/owner"
 import { updateWebsiteSchema, generateWebsiteSchema } from "@/src/schemas/website"
-import { generate, createZipStream } from "@web-gen/index.ts"
+// web-gen is lazy-imported inside handlers to avoid loading it during tests
 
 type UpdateWebsiteBody = z.infer<typeof updateWebsiteSchema>
 type GenerateWebsiteBody = z.infer<typeof generateWebsiteSchema>
@@ -77,6 +77,7 @@ export async function generateWebsite(
   const slug = makeSlug()
   const outputDir = path.join(GENERATED_DIR, slug)
 
+  const { generate } = await import("@web-gen/index.ts")
   const result = await generate({
     slug,
     template: req.body.template,
@@ -219,6 +220,7 @@ export async function downloadWebsite(req: Request, res: Response): Promise<void
   res.setHeader("Content-Type", "application/zip")
   res.setHeader("Content-Disposition", `attachment; filename="website-${gen.slug}.zip"`)
 
+  const { createZipStream } = await import("@web-gen/index.ts")
   const stream = createZipStream({ sourceDir, slug: gen.slug })
   stream.pipe(res)
 }
