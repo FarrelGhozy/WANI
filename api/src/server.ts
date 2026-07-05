@@ -2,6 +2,7 @@ import express from "express"
 import helmet from "helmet"
 import cors from "cors"
 import morgan from "morgan"
+import { rateLimit } from "express-rate-limit"
 import path from "node:path"
 import routes from "@/src/routes"
 import { morganStream } from "@/src/config/logger"
@@ -19,19 +20,34 @@ app.use(metricsMiddleware)
 app.use(
   helmet({
     crossOriginResourcePolicy: { policy: "cross-origin" },
+    hsts: {
+      maxAge: 31_536_000,
+      includeSubDomains: true,
+      preload: true,
+    },
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'", "cdn.tailwindcss.com"],
-        styleSrc: ["'self'", "'unsafe-inline'", "fonts.googleapis.com", "fonts.gstatic.com", "googleapis.com"],
-        fontSrc: ["'self'", "fonts.gstatic.com", "googleapis.com", "fonts.googleapis.com"],
-        imgSrc: ["'self'", "data:", "blob:", "http://localhost:3001"],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
+        styleSrc: ["'self'", "'unsafe-inline'", "fonts.googleapis.com", "fonts.gstatic.com"],
+        fontSrc: ["'self'", "fonts.gstatic.com", "fonts.googleapis.com"],
+        imgSrc: ["'self'", "data:", "blob:"],
         connectSrc: ["'self'"],
+        frameAncestors: ["'none'"],
       },
     },
   })
 )
 app.use(cors())
+
+const globalRateLimit = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 120, // 120 requests per minute per IP
+  standardHeaders: true,
+  legacyHeaders: false,
+  skip: (req) => req.path === "/api/monitoring/health",
+})
+app.use(globalRateLimit)
 app.use(morgan(":method :url :status :response-time ms", { stream: morganStream }))
 app.use(express.json())
 app.use("/api", routes)
