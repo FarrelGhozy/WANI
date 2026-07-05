@@ -8,9 +8,10 @@ import { upsertStoreSchema } from "@/src/schemas/store"
 
 type UpsertStoreBody = z.infer<typeof upsertStoreSchema>
 
-export async function getStore(_req: Request, res: Response): Promise<void> {
-  const store = await StoreModel.findByOwner("default")
-  const hasPaymentMethods = await StorePaymentMethodModel.hasAny("default")
+export async function getStore(req: Request, res: Response): Promise<void> {
+  const ownerId = getOwnerId(req)
+  const store = await StoreModel.findByOwner(ownerId)
+  const hasPaymentMethods = await StorePaymentMethodModel.hasAny(ownerId)
   sendResponse(res, 200, "store retrieved", {
     ...store,
     hasPaymentMethods,

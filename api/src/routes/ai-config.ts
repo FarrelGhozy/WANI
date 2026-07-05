@@ -6,7 +6,7 @@ import { upsertAiConfigSchema } from "@/src/schemas/ai-config"
 
 const router = Router()
 
-router.get("/", aiConfigController.getAiConfig)
+router.get("/", requireJwt, aiConfigController.getAiConfig)
 router.put("/", requireJwt, validate({ body: upsertAiConfigSchema }), aiConfigController.upsertAiConfig)
 
 export default router
