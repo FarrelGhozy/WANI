@@ -304,9 +304,9 @@ Dua mekanisme auth:
 | `POST` | `/api/qr` | 🔒 | `upsertQr` | Push QR / update status (from wa-bot) |
 | `DELETE` | `/api/qr` | 🔒 | `clearQr` | Clear QR on successful connect |
 | `POST` | `/api/chat` | 🔒 | `postChat` | Process WA message → AI reply |
-| `GET` | `/api/store` | — | `getStore` | Store profile + `hasPaymentMethods` |
+| `GET` | `/api/store` | JWT | `getStore` | Store profile + `hasPaymentMethods` |
 | `PUT` | `/api/store` | JWT | `upsertStore` | Update store profile |
-| `GET` | `/api/ai-config` | — | `getAiConfig` | AI config (model, prompt, etc.) |
+| `GET` | `/api/ai-config` | JWT | `getAiConfig` | AI config (model, prompt, etc.) |
 | `PUT` | `/api/ai-config` | JWT | `upsertAiConfig` | Update AI config |
 | `GET` | `/api/products` | — | `listProducts` | Product list (paginated, searchable, filterable) |
 | `GET` | `/api/products/:id` | — | `getProduct` | Product detail with category |

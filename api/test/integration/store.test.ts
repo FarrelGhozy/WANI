@@ -78,7 +78,7 @@ describe("GET /api/store", () => {
     })
     mockPmCount.mockResolvedValueOnce(3)
 
-    const req = mockReq()
+    const req = mockReq({ user: { id: "u1", email: "admin@test.com", role: "admin" } })
     const res = mockRes()
 
     await getStore(req as any, res as any)
@@ -97,7 +97,7 @@ describe("GET /api/store", () => {
     })
     mockPmCount.mockResolvedValueOnce(0)
 
-    const req = mockReq()
+    const req = mockReq({ user: { id: "u1", email: "admin@test.com", role: "admin" } })
     const res = mockRes()
 
     await getStore(req as any, res as any)
