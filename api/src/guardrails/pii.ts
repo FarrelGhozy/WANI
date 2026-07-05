@@ -11,7 +11,7 @@ const PHONE_RE = /\b(?:\+?62|0)8[1-9][0-9]{6,11}\b/g
 const EMAIL_RE = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/g
 const API_KEY_RE = /\b(?:sk-[a-zA-Z0-9]{20,}|pk-[a-zA-Z0-9]{20,}|AKIA[0-9A-Z]{16}|[\w-]{20,}={0,2})\b/g
 const NIK_RE = /\b[1-9][0-9]{15}\b/g
-const ADDRESS_RE = /\b(?:Jl\.|Jalan|Gg\.|Gang|Dusun|Desa|Kel\.|Kelurahan|Kec\.|Kecamatan|RT\s*\d+\s*\/?\s*RW\s*\d+)\s+.{3,80}/gi
+const ADDRESS_RE = /\b(?:Jl\.|Jalan|Gg\.|Gang|Dusun|Desa|Kel\.|Kelurahan|Kec\.|Kecamatan|RT\s*\d+\s*\/?\s*RW\s*\d+)\s+.{3,80}?/gi
 
 function escapeRe(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")

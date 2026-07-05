@@ -27,3 +27,4 @@ export function hasLeak(text: string): boolean {
     lower.includes("## aturan output")
   )
 }
+

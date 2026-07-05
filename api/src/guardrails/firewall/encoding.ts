@@ -6,10 +6,13 @@ const BASE64_RE = /(?:[A-Za-z0-9+/]{40,}={0,2})(?:[^.]|$)/
 // Detect hex-encoded text (long hex strings)
 const HEX_RE = /\b(?:[0-9a-fA-F]{2}\s?){20,}\b/
 
-// Common leetspeak substitutions map for normalisation
-const LEETMAP: Record<string, string> = {
+const LEET_DIGIT_MAP: Record<string, string> = {
   "0": "o", "1": "i", "2": "z", "3": "e", "4": "a",
   "5": "s", "6": "g", "7": "t", "8": "b", "9": "p",
+}
+
+// Common leetspeak substitutions map for normalisation (symbols always applied)
+const LEET_SYMBOL_MAP: Record<string, string> = {
   "@": "a", "$": "s", "!": "i", "+": "t",
 }
 
@@ -52,10 +55,44 @@ export function detectObfuscation(text: string): boolean {
 
 /** Normalise leetspeak to plain text for pattern matching (NFKC first). */
 export function normalizeLeet(text: string): string {
-  return text
-    .normalize("NFKC")
-    .split("")
-    .map((ch) => LEETMAP[ch.toLowerCase()] ?? ch)
-    .join("")
-    .toLowerCase()
+  const normalized = text.normalize("NFKC")
+
+  // Tokenize: split on non-alphanumeric boundaries to isolate words/numbers.
+  // Digits are only mapped to letters when they appear mixed with actual letters
+  // (e.g. "1gn0r3" → "ignore"), not in purely numeric tokens ("2025", "Rp 25.000").
+  const tokens: string[] = []
+  let current = ""
+  for (const ch of normalized) {
+    const isAlphaNum = /[a-zA-Z0-9]/.test(ch)
+    if (isAlphaNum) {
+      current += ch
+    } else {
+      if (current) tokens.push(current)
+      tokens.push(ch)
+      current = ""
+    }
+  }
+  if (current) tokens.push(current)
+
+  const processed = tokens.map((token) => {
+    // Purely numeric tokens pass through unchanged (preserve prices, years, etc.)
+    if (/^[0-9]+$/.test(token)) return token
+    // Apply symbol map to all tokens; digit map only to mixed/alphabetic tokens
+    return token
+      .split("")
+      .map((ch) => {
+        const lower = ch.toLowerCase()
+        const symbolMapped = LEET_SYMBOL_MAP[lower]
+        if (symbolMapped) return symbolMapped
+        // Only apply digit-to-letter mapping when the token has at least one letter
+        if (/[a-zA-Z]/.test(token)) {
+          const digitMapped = LEET_DIGIT_MAP[lower]
+          if (digitMapped) return digitMapped
+        }
+        return ch
+      })
+      .join("")
+  })
+
+  return processed.join("").toLowerCase()
 }

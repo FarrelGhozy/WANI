@@ -3,20 +3,25 @@ import { prisma } from "@/src/config/db"
 import { UnauthorizedError } from "@/src/utils/errors"
 
 let _firstOwnerId: string | null = null
+let _pending: Promise<string> | null = null
 
 async function getFirstOwnerId(): Promise<string> {
   if (_firstOwnerId) return _firstOwnerId
-  try {
-    const user = await prisma.user.findFirst({ orderBy: { createdAt: "asc" } })
-    if (user?.id) {
-      _firstOwnerId = user.id
-      return _firstOwnerId
+  if (_pending) return _pending
+  _pending = (async () => {
+    try {
+      const user = await prisma.user.findFirst({ orderBy: { createdAt: "asc" } })
+      if (user?.id) {
+        _firstOwnerId = user.id
+        return _firstOwnerId
+      }
+    } catch {
+      // Prisma unavailable (test env), fall through to "default"
     }
-  } catch {
-    // Prisma unavailable (test env), fall through to "default"
-  }
-  _firstOwnerId = "default"
-  return _firstOwnerId
+    _firstOwnerId = "default"
+    return _firstOwnerId
+  })()
+  return _pending
 }
 
 export function getOwnerId(req: Request): string {

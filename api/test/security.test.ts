@@ -1,9 +1,10 @@
 import { expect, test, describe, beforeAll } from "bun:test"
 import request from "supertest"
 
-// Set required env vars before importing app
-process.env.LLM_API_KEY = "test-key"
-process.env.JWT_SECRET = "test-secret"
+beforeAll(() => {
+  process.env.LLM_API_KEY ??= "test-key"
+  process.env.JWT_SECRET ??= "test-secret"
+})
 
 import { app } from "@/src/server"
 

@@ -12,7 +12,13 @@ export class UserModel extends BaseModel {
     return this.db.user
   }
 
-  static async findByEmail(email: string) {
+  static async findByEmail(email: string): Promise<{
+    id: string
+    name: string
+    email: string
+    password: string
+    role: string
+  } | null> {
     return this.delegate.findUnique({ where: { email } }) as Promise<{
       id: string
       name: string
@@ -22,7 +28,7 @@ export class UserModel extends BaseModel {
     } | null>
   }
 
-  static async findByResetToken(token: string) {
+  static async findByResetToken(token: string): Promise<{ id: string; resetPasswordToken: string | null; resetPasswordExpires: Date | null } | null> {
     return this.delegate.findFirst({
       where: {
         resetPasswordToken: token,
@@ -35,7 +41,7 @@ export class UserModel extends BaseModel {
     name: string
     email: string
     password: string
-  }) {
+  }): Promise<UserPublic> {
     return this.delegate.create({
       data: {
         name: data.name,
