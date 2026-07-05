@@ -22,7 +22,7 @@ services:
         max-file: "3"
 
   api:
-    image: ghcr.io/farrelghozy/wani-api:latest
+    image: ghcr.io/farrelghozy/wani-api:api-v1.0.7
     depends_on:
       db:
         condition: service_healthy
@@ -75,7 +75,7 @@ services:
         max-file: "3"
 
   dashboard:
-    image: ghcr.io/farrelghozy/wani-dashboard:latest
+    image: ghcr.io/farrelghozy/wani-dashboard:dashboard-v1.0.8
     depends_on:
       api:
         condition: service_started
@@ -100,7 +100,7 @@ services:
         max-file: "3"
 
   wa-bot:
-    image: ghcr.io/farrelghozy/wani-wa-bot:latest
+    image: ghcr.io/farrelghozy/wani-wa-bot:wa-bot-v1.0.8
     depends_on:
       db:
         condition: service_healthy
