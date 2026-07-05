@@ -3,6 +3,7 @@ import { env } from "@/src/config/env"
 
 let transporter: nodemailer.Transporter | null = null
 
+/** Lazily create and cache the nodemailer transporter. */
 function getTransporter(): nodemailer.Transporter | null {
   if (transporter) return transporter
   if (!env.email.smtpHost || !env.email.smtpUser || !env.email.smtpPassword) {
@@ -36,6 +37,18 @@ export async function sendEmail(
     subject,
     html,
   })
+}
+
+/** Verify that SMTP credentials are present and the server is reachable. */
+export async function verifyConnection(): Promise<boolean> {
+  const t = getTransporter()
+  if (!t) return false
+  try {
+    await t.verify()
+    return true
+  } catch {
+    return false
+  }
 }
 
 export function isEmailConfigured(): boolean {
