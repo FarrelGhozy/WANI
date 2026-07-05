@@ -12,6 +12,7 @@
 - **Composite DB index** — `Order(status, createdAt)` for faster order-list queries
 - **Helmet CORP fix** — `crossOriginResourcePolicy` added to prevent cross-origin image blocking
 - **Unit + integration tests** — 223 tests across auth, store, products, guardrails, AI pipeline, circuit breaker
+- **Email system** — `nodemailer` SMTP integration, `EmailService` abstraction, forgot password now sends real reset link email (fixes #67)
 
 ## wa-bot v1.0.7 — 2026-06-27
 
