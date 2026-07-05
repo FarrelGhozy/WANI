@@ -49,7 +49,7 @@ Registrasi → login → liat dashboard kosong, bukan data user lain.
 - [x] 4n. `dashboard.ts` — `getDashboardStats(ownerId)` scopes all counts
 - [x] 4o. AI pipeline: `PipelineInput.ownerId` → `PipelineContext.ownerId` → `ActionCtx.ownerId` propagated through all steps (contextLoader → products/payment/store/aiConfig by owner, ensureCustomer → upsertByOwnerPhone, actions → order/activityLog scoped, firewall/outputGuardrails → activityLog scoped)
 - [x] 4p. WA bot: sends `ownerId` from `OWNER_ID` env var in chat requests
-- [x] 4q. All 223 tests pass
+- [x] 4q. All 238 tests pass (0 fail)
 
 ### Tahap 5: Frontend — Verify
 
@@ -67,7 +67,37 @@ Registrasi → login → liat dashboard kosong, bukan data user lain.
 
 # Code Review Findings — 2026-07-04
 
-## 🔴 HIGH PRIORITY
+## Status: 19/19 HIGH ✅ | 5/24 MEDIUM ✅ (M6/M7: kept, used in tests)
+
+## 🔴 HIGH PRIORITY — All resolved ✅
+
+| # | Fix | Commit |
+|---|---|---|
+| H1 | `llmCall.ts` — `chat()` → `complete()` with history `[system, ...history, current]` | code review batch |
+| H2 | `routes/website.ts` — added `requireJwt` on `/download` | code review batch |
+| H3 | `controllers/log.ts` — Prisma → `ActivityLogModel.getDailyUsage()` | code review batch |
+| H4 | `circuit-breaker.ts` — added mutex lock (`withLock()`) | `9e48cc8` |
+| H5 | `coordinator.ts` — added `ctx.trace.begin(step.name)` per step | `9e48cc8` |
+| H6 | `firewall/context.ts` — periodic cleanup every 10 min + `lastAccess` | code review batch |
+| H7 | `actions.ts` — try/catch wrapping `handleIntent()` | code review batch |
+| H8 | 3 context files — `useMemo` wrapper | code review batch |
+| H9 | `useWebsite.ts` — 500ms debounce on `updateConfig()` | code review batch |
+| H10 | `security.test.ts` — fix assert: `GET /api/store` → `PUT /api/store` | code review batch |
+| H11 | `intent.test.ts` — `skipIf(!apiKey)` instead of no-op | `9e48cc8` |
+| H12 | `dedup.test.ts` — added waMsgId exists/not-exists cases | `9e48cc8` |
+| H13 | New test files: `budget.test.ts`, `grounding.test.ts`, `engine.test.ts`, `actions.test.ts` | `9e48cc8` |
+| H14 | `useAuth.ts` — guard before destructuring `json.data` | code review batch |
+| H15 | `useWebsite.ts` — removed `useProductsSafe()`, use `useContext` directly | `9e48cc8` |
+| H16 | `ErrorBoundary.tsx` + `Toast.tsx` — replaced `lucide-react` with `Icons.tsx` SVGs | `9e48cc8` |
+| H17 | `wa-bot/src/index.ts` — removed fire-and-forget QR safety net per-message | `9e48cc8` |
+| H18 | `whatsapp-auth.ts` — batch deletes per type, parallel upserts | `9e48cc8` |
+| H19 | `order.prisma` — added `@@index([orderId])` + `@@index([productId])` + migration | `9e48cc8` |
+
+**Tests**: 238 pass, 5 skip, 0 fail (was 223 pass, 2 fail)
+
+---
+
+## 🟡 MEDIUM PRIORITY
 
 ### H1 — History percakapan TIDAK pernah dikirim ke LLM [BUG FUNGSIONAL]
 **File:** `api/src/ai/pipeline/steps/messageBuilder.ts:28` + `steps/llmCall.ts:18-25`
@@ -146,32 +176,32 @@ Batch of 1000 keys = 1000 sequential upsert/delete.
 
 ## 🟡 MEDIUM PRIORITY
 
-| # | File | Masalah |
-|---|------|---------|
-| M1 | `models/*.ts` (4 files) | Pola pagination/where duplikasi di 4 model — bisa di-helper-in ke BaseModel |
-| M2 | `controllers/store-payment.ts:36` | `as any` pada Prisma input object — ganti dengan conditional spreading |
-| M3 | `middleware/owner.ts:5` | Module-level mutable state + race condition first access |
-| M4 | `models/user.ts:15,25,34` | Missing return type annotations — pakai `as Promise<...>` aja |
-| M5 | `controllers/store-payment.ts:37-43` | Redundant `in` checks setelah Zod validation |
-| M6 | `input.ts:36`, `output.ts:21`, `pii.ts:55` | 3 exported functions (`detectInjection`, `hasLeak`, `hasPii`) — dead code |
-| M7 | `firewall/context.ts:16-18` | `resetConversationState` defined tapi zero callers |
-| M8 | `pii.ts:14` | `ADDRESS_RE` — greedy `.{3,80}` + long alternation → ReDoS potencial |
-| M9 | `firewall/encoding.ts:10-14` | Leetspeak normalizer convert ALL digits → false positive di harga/alamat |
-| M10 | `pii.ts:10-14` / `firewall/output.ts:6-12` | PII patterns duplikasi di 2 tempat — drift risk |
-| M11 | `hooks/*.ts` | `useCallback` di return statement — non-idiomatic, risk hooks violation |
-| M12 | `pages/Settings.tsx:50` | Dynamic `import()` expression sebagai type annotation |
-| M13 | Banyak file | Inconsistent `.ts`/`.tsx` extensions di imports |
-| M14 | `pages/ProductForm.tsx:101` | `set()` function name shadow `setForm` — confusing |
-| M15 | `components/OrderTimeline.tsx:41` | PROCESSING step pake `paidAt` timestamp — semantically wrong |
-| M16 | `hooks/useWaStatus.ts` | Fetch `/qr` unnecessary setelah connected |
-| M17 | `api/test/security.test.ts:5-6` | Env vars di module scope — shared mutable state antar test |
-| M18 | `wa-bot/src/config/db.ts:6-12` | Non-null assertion tanpa validation — `"undefined"` literal di URL |
-| M19 | `wa-bot/src/config/db.ts:19` | Pool `max: 1` bottleneck throughput |
-| M20 | `init-dbs.sh:5-6` | Hardcoded DB names — ignore .env vars |
-| M21 | `web-gen/src/generator.ts:389-393` | Fallback path assume co-located packages |
-| M22 | Banyak model Prisma | Missing indexes (categoryId, isAvailable, phone, ownerId+type) |
-| M23 | `.env.example:19` | default `LLM_BASE_URL` non-standard (opencode.ai, bukan openrouter.ai) |
-| M24 | `pipeline/index.ts` | 18-step pipeline gak punya integration test sama sekali |
+| # | File | Masalah | Status |
+|---|------|---------|--------|
+| M1 | `models/*.ts` (4 files) | Pola pagination/where duplikasi — tambah `findManyPaginated` helper di BaseModel | ✅ `b9b1fe9` |
+| M2 | `controllers/store-payment.ts:36` | `as any` pada Prisma input — ganti `Record<string, unknown>` | ✅ `b9b1fe9` |
+| M3 | `middleware/owner.ts:5` | Module-level mutable state + race condition first access | |
+| M4 | `models/user.ts:15,25,34` | Missing return type annotations — pakai `as Promise<...>` aja | |
+| M5 | `controllers/store-payment.ts:37-43` | Redundant `in` checks — partial fix with M2 | ✅ `b9b1fe9` |
+| M6 | `input.ts:36`, `output.ts:21`, `pii.ts:55` | 3 exported functions (`detectInjection`, `hasLeak`, `hasPii`) | ⏭️ kept — used in tests |
+| M7 | `firewall/context.ts:16-18` | `resetConversationState` defined tapi zero callers | ⏭️ kept — used in tests |
+| M8 | `pii.ts:14` | `ADDRESS_RE` — greedy `.{3,80}` + long alternation → ReDoS potencial | |
+| M9 | `firewall/encoding.ts:10-14` | Leetspeak normalizer convert ALL digits → false positive di harga/alamat | |
+| M10 | `pii.ts:10-14` / `firewall/output.ts:6-12` | PII patterns duplikasi di 2 tempat — drift risk | |
+| M11 | `hooks/*.ts` | `useCallback` di return statement — non-idiomatic, risk hooks violation | |
+| M12 | `pages/Settings.tsx:50` | Dynamic `import()` expression sebagai type annotation | |
+| M13 | Banyak file | Inconsistent `.ts`/`.tsx` extensions di imports | |
+| M14 | `pages/ProductForm.tsx:101` | `set()` function name shadow `setForm` | ✅ `b9b1fe9` |
+| M15 | `components/OrderTimeline.tsx:41` | PROCESSING step pake `paidAt` timestamp — semantically wrong | |
+| M16 | `hooks/useWaStatus.ts` | Fetch `/qr` unnecessary setelah connected | ✅ `e485309` |
+| M17 | `api/test/security.test.ts:5-6` | Env vars di module scope — shared mutable state antar test | |
+| M18 | `wa-bot/src/config/db.ts:6-12` | Non-null assertion tanpa validation — `"undefined"` literal di URL | |
+| M19 | `wa-bot/src/config/db.ts:19` | Pool `max: 1` bottleneck throughput | |
+| M20 | `init-dbs.sh:5-6` | Hardcoded DB names — ignore .env vars | |
+| M21 | `web-gen/src/generator.ts:389-393` | Fallback path assume co-located packages | |
+| M22 | Banyak model Prisma | Missing indexes (categoryId, isAvailable, phone, ownerId+type) | |
+| M23 | `.env.example:19` | default `LLM_BASE_URL` non-standard (opencode.ai, bukan openrouter.ai) | |
+| M24 | `pipeline/index.ts` | 18-step pipeline gak punya integration test sama sekali | |
 
 ---
 
