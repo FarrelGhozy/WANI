@@ -4,6 +4,7 @@ const mockUserFindUnique = mock((_args: any) => Promise.resolve(null))
 const mockUserFindFirst = mock((_args: any) => Promise.resolve(null))
 const mockUserCreate = mock((_args: any) => Promise.resolve({ id: "u1", name: "Budi", email: "test@test.com", role: "admin" }))
 const mockUserUpdate = mock((_args: any) => Promise.resolve({}))
+const mockStoreUpsert = mock((_args: any) => Promise.resolve({}))
 
 mock.module("@/src/config/db", () => ({
   prisma: {
@@ -12,6 +13,9 @@ mock.module("@/src/config/db", () => ({
       findFirst: mockUserFindFirst,
       create: mockUserCreate,
       update: mockUserUpdate,
+    },
+    store: {
+      upsert: mockStoreUpsert,
     },
     $transaction: mock((fn: any) => fn({ user: {} })),
   } as any,
@@ -51,6 +55,7 @@ describe("POST /api/auth/register", () => {
   beforeEach(() => {
     mockUserFindUnique.mockReset()
     mockUserCreate.mockReset()
+    mockStoreUpsert.mockReset()
   })
 
   test("registers a new user successfully", async () => {
@@ -71,6 +76,7 @@ describe("POST /api/auth/register", () => {
     expect(body.status).toBe("success")
     expect(body.data.token).toBeTruthy()
     expect(body.data.user.email).toBe("budi@test.com")
+    expect(mockStoreUpsert).toHaveBeenCalled()
   })
 
   test("rejects duplicate email", async () => {

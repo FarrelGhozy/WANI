@@ -2,6 +2,7 @@ import type { Request, Response } from "express"
 import type { z } from "zod"
 import jwt from "jsonwebtoken"
 import { UserModel } from "@/src/models/user"
+import { StoreModel } from "@/src/models/store"
 import { sendResponse } from "@/src/utils/response"
 import { hashPassword, verifyPassword } from "@/src/utils/auth"
 import { BadRequestError, UnauthorizedError } from "@/src/utils/errors"
@@ -46,6 +47,11 @@ export async function register(
     name: req.body.name,
     email: req.body.email,
     password: hashed,
+  })
+
+  await StoreModel.upsertByOwner(user.id, {
+    businessName: req.body.name || "Toko",
+    phone: "",
   })
 
   const token = signToken({ id: user.id, email: user.email, role: user.role })
