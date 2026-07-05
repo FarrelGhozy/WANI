@@ -13,7 +13,7 @@
 - **Helmet CORP fix** — `crossOriginResourcePolicy` added to prevent cross-origin image blocking
 - **Unit + integration tests** — 223 tests across auth, store, products, guardrails, AI pipeline, circuit breaker
 - **Email system** — `nodemailer` SMTP integration, `EmailService` abstraction, forgot password now sends real reset link email (fixes #67)
-- **Security hardening** — stricter CSP (removed localhost & CDN refs), HSTS header, X-Frame-Options, global rate limiter (120 req/min) (progress on #74)
+- **Security hardening** — stricter CSP, HSTS, X-Frame-Options, global rate limit (120 req/min), auth brute-force protection (10/15min), forgot-password rate limit (3/hour), security headers test suite (fixes #74)
 - **Product search in all templates** — client-side filter added to `classic`, `modern`, `vibrant`, `minimalist`, `cyberpunk` HTML templates (fixes #69)
 - **Automated DB backup** — `scripts/backup-db.sh` with `pg_dump`, daily cron via Docker backup service, 7-day retention (fixes #73)
 
