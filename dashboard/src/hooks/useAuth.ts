@@ -24,7 +24,8 @@ export function useAuth() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       })
-      const { token, user: userData } = json.data!
+      if (!json.data) throw new Error(json.message || 'Login gagal: data kosong')
+      const { token, user: userData } = json.data
       localStorage.setItem(AUTH_TOKEN_KEY, token)
       localStorage.setItem(AUTH_USER_KEY, JSON.stringify(userData))
       setUser(userData)
@@ -74,7 +75,8 @@ export function useAuth() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password }),
       })
-      const { token, user: userData } = json.data!
+      if (!json.data) throw new Error(json.message || 'Registrasi gagal: data kosong')
+      const { token, user: userData } = json.data
       localStorage.setItem(AUTH_TOKEN_KEY, token)
       localStorage.setItem(AUTH_USER_KEY, JSON.stringify(userData))
       setUser(userData)

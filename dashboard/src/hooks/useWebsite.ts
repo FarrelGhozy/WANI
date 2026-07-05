@@ -1,12 +1,19 @@
-import { useState, useCallback, useMemo, useEffect } from 'react'
+import { useState, useCallback, useMemo, useEffect, useContext, useRef } from 'react'
 import { fetchApi } from '@/lib/api.ts'
 import { getErrorMessage } from '@/hooks/useToast.ts'
 import { useProducts } from '@/hooks/useProducts.ts'
+import { ProductsContext } from '@/contexts/ProductsContext.tsx'
 import type { WebsiteConfig, GenerationLog } from '@/types.ts'
 
 const API_BASE = import.meta.env.VITE_API_URL || window.__ENV__?.API_URL || '/api'
 
 export type { WebsiteConfig, GenerationLog }
+
+function useProductsSafe() {
+  const ctx = useContext(ProductsContext)
+  const fallback = useProducts()
+  return ctx ?? fallback
+}
 
 const defaultConfig: WebsiteConfig = {
   heroHeadline: 'Selamat Datang di Toko Kami',
@@ -31,7 +38,7 @@ function getToken(): string | null {
 }
 
 export function useWebsite() {
-  const { products } = useProducts()
+  const { products } = useProductsSafe()
   const [config, setConfig] = useState<WebsiteConfig>(defaultConfig)
   const [logs, setLogs] = useState<GenerationLog[]>([])
   const [loading, setLoading] = useState(true)
@@ -68,19 +75,21 @@ export function useWebsite() {
     return () => { cancelled = true }
   }, [fetchConfig])
 
-  const updateConfig = useCallback(async (patch: Partial<WebsiteConfig>) => {
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined)
+  const updateConfig = useCallback((patch: Partial<WebsiteConfig>) => {
     setConfig((prev) => ({ ...prev, ...patch }))
-    try {
-      await fetchApi('/website', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(patch),
-      })
-    } catch (e) {
-      const msg = getErrorMessage(e, 'Gagal menyimpan konfigurasi')
-      setError(msg)
-      throw e
-    }
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    debounceRef.current = setTimeout(async () => {
+      try {
+        await fetchApi('/website', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(patch),
+        })
+      } catch (e) {
+        setError(getErrorMessage(e, 'Gagal menyimpan konfigurasi'))
+      }
+    }, 500)
   }, [])
 
   const availableProducts = useMemo(() => {

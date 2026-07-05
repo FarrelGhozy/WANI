@@ -1,6 +1,5 @@
 import type { Request, Response } from "express"
 import type { z } from "zod"
-import { prisma } from "@/src/config/db"
 import { ActivityLogModel } from "@/src/models/activity-log"
 import { sendResponse } from "@/src/utils/response"
 import { getValidatedQuery } from "@/src/middleware/validate"
@@ -22,11 +21,6 @@ export async function getUsage(
   _req: Request,
   res: Response,
 ): Promise<void> {
-  const today = new Date().toISOString().slice(0, 10)
-  const counter = await prisma.usageCounter.findUnique({ where: { id: today } })
-  sendResponse(res, 200, "usage retrieved", {
-    llmCalls: counter?.llmCalls ?? 0,
-    tokensIn: counter?.tokensIn ?? 0,
-    tokensOut: counter?.tokensOut ?? 0,
-  })
+  const usage = await ActivityLogModel.getDailyUsage()
+  sendResponse(res, 200, "usage retrieved", usage)
 }

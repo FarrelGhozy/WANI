@@ -37,3 +37,20 @@ export function requireJwt(req: Request, _res: Response, next: NextFunction): vo
     throw new UnauthorizedError("invalid or expired token")
   }
 }
+
+export function optionalJwt(req: Request, _res: Response, next: NextFunction): void {
+  const header = req.headers.authorization
+  if (!header?.startsWith("Bearer ")) {
+    next()
+    return
+  }
+
+  const token = header.slice(7)
+  try {
+    const payload = jwt.verify(token, JWT_SECRET) as JwtPayload
+    req.user = payload
+  } catch {
+    // Invalid token — silently ignore, req.user stays undefined
+  }
+  next()
+}

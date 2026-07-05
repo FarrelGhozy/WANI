@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useEffect } from 'react'
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
 import { fetchApi } from '@/lib/api'
 import { getErrorMessage } from '@/hooks/useToast'
 import type { MessageRole, ConversationStatus, Message, Conversation, Customer } from '@/types.ts'
@@ -34,8 +34,11 @@ export function useCustomers() {
   }, [fetchCustomers])
 
   // Auto-load conversation when selected customer changes
+  const prevSelected = useRef(selectedId)
   useEffect(() => {
     let cancelled = false
+    if (prevSelected.current !== selectedId) setConvLoading(true)
+    prevSelected.current = selectedId
     ;(async () => {
       if (!selectedId) {
         if (!cancelled) setConversation(null)

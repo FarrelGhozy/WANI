@@ -296,7 +296,7 @@ export default function StoreTab() {
     }
   }
 
-  const initial = store.businessName.charAt(0).toUpperCase()
+  const initial = (store?.businessName ?? 'T').charAt(0).toUpperCase()
 
   return (
     <>

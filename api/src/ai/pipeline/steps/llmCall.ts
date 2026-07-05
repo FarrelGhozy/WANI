@@ -1,4 +1,4 @@
-import { chat } from "@/src/ai/engine"
+import { complete } from "@/src/ai/engine"
 import { withCircuit } from "@/src/ai/circuit-breaker"
 import { wrapCustomerMessage } from "@/src/ai/prompts"
 import { ActivityLogModel } from "@/src/models/activity-log"
@@ -15,8 +15,14 @@ export const llmCallStep: PipelineStep = {
     const model = ctx.aiConfig?.model || env.ai.defaultModel
     const maxTokens = ctx.aiConfig?.maxTokens ?? env.ai.maxTokens
 
+    const messages = [
+      { role: "system" as const, content: ctx.systemPrompt! },
+      ...(ctx.historyMessages ?? []),
+      { role: "user" as const, content: wrapCustomerMessage(ctx.normalized!) },
+    ]
+
     const cbResult = await withCircuit(async () =>
-      chat(ctx.systemPrompt!, wrapCustomerMessage(ctx.normalized!), {
+      complete(messages, {
         model,
         maxTokens,
         temperature: ctx.aiConfig ? Number(ctx.aiConfig.temperature) : env.ai.temperature,

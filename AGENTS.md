@@ -19,9 +19,10 @@ Bot pushes QR/status → API stores in WaSession DB → Dashboard polls GET /api
 - **api/src/controllers/** — Request handlers using `sendResponse()` unified JSON format
 - **api/src/models/** — `BaseModel<T>` abstract class with Prisma delegate pattern (getAll/getById/create/update/delete)
 - **api/src/schemas/** — Zod v4 schemas (upsertQrSchema, etc.)
-- **api/src/middleware/** — `requireAuth` (Bearer API_TOKEN), `requireJwt` (JWT-based), `validate` (safeParseAsync), `errorHandler` (AppError-aware)
+- **api/src/middleware/** — `requireAuth` (Bearer API_TOKEN), `requireJwt` (JWT-based), `optionalJwt` (silent JWT parse, no error on missing), `validate` (safeParseAsync), `errorHandler` (AppError-aware)
 - **api/src/utils/** — `AppError` subclasses (BadRequest/Unauthorized/Forbidden/NotFound/InternalServer), `sendResponse()`
 - **api/src/config/** — PrismaClient singleton (driver adapter `@prisma/adapter-pg`), Winston logger
+- **api/src/services/email.ts** — Nodemailer SMTP transport for password reset emails
 - **api/src/ai/** — Orchestrated pipeline: `processMessage()` in `pipeline.ts`, intent action handlers in `actions.ts`, circuit breaker, OpenRouter LLM engine with retry+fallback, intent-based output schemas (order/inquiry/greeting/complaint/unknown/escalate), hardened system prompt builder with canary
 - **api/src/guardrails/** — Multi-layer defense: PII scanner/redactor, ML classifier (OpenRouter fast model), deep LLM-judge, output grounding check. Plus per-customer sliding-window rate limit, regex injection detection (EN+ID), daily LLM budget tracker, output sanitizer + leak detector. 3-tier injection defense (T1 regex → T2 classifier → T3 judge) with conditional slow path
 - **dashboard/vite.config.ts** — `@vitejs/plugin-react` + `@rolldown/plugin-babel` with `reactCompilerPreset`, Tailwind v4, **proxies `/api` → `http://localhost:3001`**
@@ -168,6 +169,7 @@ Database `wani_api` + `wa_bot` dibuat otomatis via `init-dbs.sh`.
 - Bot expects API to be running first (POSTs QR on `connection.update`)
 - Both databases on same PG server: `wani_api` (api) + `wa_bot` (bot)
 - `import.meta.env.PROD == null` check in `api/src/config/db.ts` — this is always true under Bun; the global Prisma cache works in both dev and prod
+- `optionalJwt` middleware applied globally in `api/src/server.ts` — silently parses JWT on all `/api` routes; `req.user` available for public endpoints when JWT is present, falls through when absent
 
 ## Stack Stability
 
@@ -212,7 +214,7 @@ incoming WA msg
   ├─ 8. isBudgetExceeded()     — daily LLM call budget (UsageCounter table)
   ├─ 9. load context           — Store, Product, AiConfig, build system prompt
   ├─10. build messages         — history (10) + current message (wrapped in delimiters)
-  ├─11. complete() via OpenRouter (circuit breaker, retry, fallback model)
+  ├─11. complete() via OpenRouter (circuit breaker, retry, fallback model) — kirim `[system, ...history (10), current]` bukan cuma `[system, current]`
   ├─12. parse LLM output       — JSON extraction + LLMOutputSchema validation
   ├─13. handleIntent()         — execute action (create order, log escalation, etc.)
   ├─14. sanitizeReply()        — strip code fences, cap length
@@ -375,6 +377,10 @@ git commit -m "🔥 api: add products CRUD — route, schema, controller, model"
 | 2 | `38cdbbe` | Dashboard: PaymentTab, dynamic form per type, QRIS upload, 4th tab |
 | 3 | `8250ba7` | Dashboard: warning banner, confirm payment modal, URL-driven tab |
 | 4 | `df0c17e` | AI integration: buildSystemPrompt loads payment methods, handleOrder includes payment info, bot sends QRIS as image |
+| 5 | `ac83571` | Multi-tenant: 12 Prisma models + ownerId scoped indexes + migration backfill |
+| 6 | — | Multi-tenant: middleware `optionalJwt` global, `getOwnerIdOrFirst` pattern, 13 models scoped |
+| 7 | — | Multi-tenant: AI pipeline + WA bot ownerId propagation, controller scoping, 231 tests pass |
+| 8 | — | Code review: H1 history ke LLM, H2 website auth, H3 Prisma→Model, H6 convMemory cleanup, H7 error boundary, H8 memoize contexts, H9 debounce, H10 security test, H14 useAuth guard |
 
 ### Key Decisions
 
@@ -385,3 +391,8 @@ git commit -m "🔥 api: add products CRUD — route, schema, controller, model"
 - **Warning banner only** — no feature blocking if no payment method
 - **No payment gateway** — all manual verification
 - **Port 5432 di docker-compose dihapus** — conflict dengan `facegate-db`, cukup internal Docker network
+- **`optionalJwt` global middleware** — silent JWT parse on all `/api` routes, enables public endpoints to prefer authenticated user when JWT present, fallback to first DB user when absent
+- **`getOwnerIdOrFirst(req)`** — standard pattern for public GET endpoints: JWT user → first DB user → `"default"` fallback
+- **`ownerId` as plain String** — no explicit Prisma `@relation` to User (avoids circular deps, simplifies migration)
+- **WA bot `ownerId` optional** — server auto-resolves, bot config stays simple
+- **WaSession stays single-row global** — one WhatsApp connection shared by all users

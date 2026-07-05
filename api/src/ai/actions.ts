@@ -6,20 +6,29 @@ import { ConversationModel } from "@/src/models/conversation"
 import { ActivityLogModel } from "@/src/models/activity-log"
 import { StorePaymentMethodModel } from "@/src/models/store-payment"
 
+import { logger } from "@/src/config/logger"
+
 export async function handleIntent(output: LLMOutput, ctx: ActionCtx): Promise<ActionResult> {
-  switch (output.intent) {
-    case "order":
-      return handleOrder(output, ctx)
-    case "inquiry":
-      return handleInquiry(output)
-    case "greeting":
-      return handleGreeting(output, ctx)
-    case "complaint":
-      return handleComplaint(output, ctx)
-    case "escalate":
-      return handleEscalate(output, ctx)
-    case "unknown":
-      return { reply: output.reply }
+  try {
+    switch (output.intent) {
+      case "order":
+        return await handleOrder(output, ctx)
+      case "inquiry":
+        return handleInquiry(output)
+      case "greeting":
+        return handleGreeting(output, ctx)
+      case "complaint":
+        return await handleComplaint(output, ctx)
+      case "escalate":
+        return await handleEscalate(output, ctx)
+      case "unknown":
+        return { reply: output.reply }
+    }
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err)
+    logger.error({ err: msg, intent: output.intent }, "handleIntent failed")
+    await ActivityLogModel.log(ctx.ownerId, "action_failed", `Intent handler error: ${msg}`, ctx.conversationId)
+    return { reply: "Maaf, sistem sedang sibuk. Coba sebentar lagi." }
   }
 }
 

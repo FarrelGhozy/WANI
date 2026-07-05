@@ -62,3 +62,138 @@ Registrasi → login → liat dashboard kosong, bukan data user lain.
 
 - [ ] 6a. Manual test: register 2 user, verify data terisolasi
 - [ ] 6b. Test WA bot flow masih jalan
+
+---
+
+# Code Review Findings — 2026-07-04
+
+## 🔴 HIGH PRIORITY
+
+### H1 — History percakapan TIDAK pernah dikirim ke LLM [BUG FUNGSIONAL]
+**File:** `api/src/ai/pipeline/steps/messageBuilder.ts:28` + `steps/llmCall.ts:18-25`
+Step 10 load 10 history messages ke `ctx.historyMessages`, tapi Step 11 panggil `chat()` yang cuma kirim `[system, user]`. AI gak punya memori percakapan.
+
+### H2 — Download website publik tanpa auth [SECURITY]
+**File:** `api/src/routes/website.ts:12`
+`GET /api/website/download` gak pake `requireJwt`. Siapa pun bisa download ZIP.
+
+### H3 — Prisma langsung dari controller (violasi arsitektur)
+**Files:** `controllers/log.ts:26`, `controllers/monitoring.ts:12`, `models/dashboard.ts:25-29`, `models/customer.ts:147,158`
+4 tempat bypass Model layer — panggil Prisma langsung.
+
+### H4 — Circuit breaker race condition
+**File:** `api/src/ai/circuit-breaker.ts:10-47`
+State mutable module-level tanpa locking. Di concurrent request, state machine unpredictable.
+
+### H5 — TraceContext `set()` no-op di 9 dari 11 step [DATA LOSS]
+Semua step file kecuali firewall + output guardrails. `trace.set()` diam-diam gak nulis karena `currentStep` kosong.
+
+### H6 — `convMemory` gak pernah di-cleanup [MEMORY LEAK]
+**File:** `api/src/guardrails/firewall/context.ts:14`
+Map per-customer tumbuh terus seumur proses.
+
+### H7 — Intent handlers gak punya error boundary
+**File:** `api/src/ai/actions.ts:54-59`
+`handleOrder` dan handlers lain gak punya try-catch. DB failure → unhandled rejection → 500.
+
+### H8 — Context values gak di-memoize [PERFORMANCE]
+**Files:** `dashboard/src/contexts/*.tsx`
+Tiap render bikin object value baru → semua consumer re-render tiap poll/data fetch.
+
+### H9 — Website page API call tiap keystroke [PERFORMANCE]
+**File:** `dashboard/src/hooks/useWebsite.ts:78-91`
+`updateConfig()` dipanggil tiap onChange tanpa debounce. ~5 request/detik.
+
+### H10 — Security test assert status code salah [TEST FAIL]
+**File:** `api/test/security.test.ts:53-56`
+Test expect 401 di `GET /api/store` yang PUBLIC.
+
+### H11 — Intent test zero assertions
+**File:** `api/test/intent.test.ts:65-69`
+Test tanpa `expect()` — pass vacuously.
+
+### H12 — Dedup logic untested (critical path)
+**File:** `api/test/pipeline/dedup.test.ts` (22 lines, 1 test case)
+Dedup path (`waMsgId` provided) never tested.
+
+### H13 — `complete()`, `handleIntent()`, `processMessage()`, budget, grounding — ZERO test coverage
+**Files:** `engine.ts`, `actions.ts`, `pipeline/index.ts`, `budget.ts`, `classifier.ts`
+
+### H14 — Non-null assertion di `useAuth.login()` [TYPE SAFETY]
+**File:** `dashboard/src/hooks/useAuth.ts:27`
+`json.data!` — kalo API return `data: null`, destructuring throw runtime error.
+
+### H15 — `useWebsite` duplicate `useProducts` instance via fallback
+**File:** `dashboard/src/hooks/useWebsite.ts:12-16`
+`useProductsSafe()` creates 2nd independent `useProducts()` instance kalo di luar ProductsProvider.
+
+### H16 — `lucide-react` dipake cuma buat 6 icon (inkonsisten)
+**Files:** `ErrorBoundary.tsx:2`, `Toast.tsx:3`
+171 line inline SVG icons di `Icons.tsx`, tapi 2 component import dari `lucide-react`.
+
+### H17 — API calls fire-and-forget tiap pesan WA [WA BOT]
+**File:** `wa-bot/src/index.ts:116-117`
+Tiap inbound message, bot kirim 2 fire-and-forget API call tanpa rate limit.
+
+### H18 — SignalKeyStore `set()` O(n) sequential DB queries
+**File:** `wa-bot/src/services/whatsapp-auth.ts:37-51`
+Batch of 1000 keys = 1000 sequential upsert/delete.
+
+### H19 — `OrderItem` gak punya index di foreign keys
+**File:** `api/prisma/models/order.prisma:21-31`
+
+---
+
+## 🟡 MEDIUM PRIORITY
+
+| # | File | Masalah |
+|---|------|---------|
+| M1 | `models/*.ts` (4 files) | Pola pagination/where duplikasi di 4 model — bisa di-helper-in ke BaseModel |
+| M2 | `controllers/store-payment.ts:36` | `as any` pada Prisma input object — ganti dengan conditional spreading |
+| M3 | `middleware/owner.ts:5` | Module-level mutable state + race condition first access |
+| M4 | `models/user.ts:15,25,34` | Missing return type annotations — pakai `as Promise<...>` aja |
+| M5 | `controllers/store-payment.ts:37-43` | Redundant `in` checks setelah Zod validation |
+| M6 | `input.ts:36`, `output.ts:21`, `pii.ts:55` | 3 exported functions (`detectInjection`, `hasLeak`, `hasPii`) — dead code |
+| M7 | `firewall/context.ts:16-18` | `resetConversationState` defined tapi zero callers |
+| M8 | `pii.ts:14` | `ADDRESS_RE` — greedy `.{3,80}` + long alternation → ReDoS potencial |
+| M9 | `firewall/encoding.ts:10-14` | Leetspeak normalizer convert ALL digits → false positive di harga/alamat |
+| M10 | `pii.ts:10-14` / `firewall/output.ts:6-12` | PII patterns duplikasi di 2 tempat — drift risk |
+| M11 | `hooks/*.ts` | `useCallback` di return statement — non-idiomatic, risk hooks violation |
+| M12 | `pages/Settings.tsx:50` | Dynamic `import()` expression sebagai type annotation |
+| M13 | Banyak file | Inconsistent `.ts`/`.tsx` extensions di imports |
+| M14 | `pages/ProductForm.tsx:101` | `set()` function name shadow `setForm` — confusing |
+| M15 | `components/OrderTimeline.tsx:41` | PROCESSING step pake `paidAt` timestamp — semantically wrong |
+| M16 | `hooks/useWaStatus.ts` | Fetch `/qr` unnecessary setelah connected |
+| M17 | `api/test/security.test.ts:5-6` | Env vars di module scope — shared mutable state antar test |
+| M18 | `wa-bot/src/config/db.ts:6-12` | Non-null assertion tanpa validation — `"undefined"` literal di URL |
+| M19 | `wa-bot/src/config/db.ts:19` | Pool `max: 1` bottleneck throughput |
+| M20 | `init-dbs.sh:5-6` | Hardcoded DB names — ignore .env vars |
+| M21 | `web-gen/src/generator.ts:389-393` | Fallback path assume co-located packages |
+| M22 | Banyak model Prisma | Missing indexes (categoryId, isAvailable, phone, ownerId+type) |
+| M23 | `.env.example:19` | default `LLM_BASE_URL` non-standard (opencode.ai, bukan openrouter.ai) |
+| M24 | `pipeline/index.ts` | 18-step pipeline gak punya integration test sama sekali |
+
+---
+
+## 🟢 LOW PRIORITY (nice to have)
+
+| # | File | Masalah |
+|---|------|---------|
+| L1 | `middleware/owner.ts:34,38` | Dead code: `ownerFilter`, `ownerWhere` — gak dipake |
+| L2 | `models/store.ts:17-18` | `as any` di upsert spread |
+| L3 | Routes `:id` tanpa Zod | Param validation missing di beberapa routes |
+| L4 | `controllers/order.ts:23-63` | Helper functions bikin controller bloat |
+| L5 | `config/db.ts:26` | `import.meta.env.PROD == null` guard — fragile |
+| L6 | `types/ai.ts:12-18` vs `schemas.ts:41-48` | Type union vs Zod union — no compile-time bridge |
+| L7 | `pii.ts:12` | `API_KEY_RE` — `[\w-]{20,}` matches normal identifiers (UUID, JWT) |
+| L8 | `prompts.ts:66-133` | No product count cap di system prompt |
+| L9 | `components/Icons.tsx` | 4 unused icon exports |
+| L10 | `pages/Website.tsx` | 512-line page — should split menjadi sub-components |
+| L11 | `lib/api.ts:10-17` | Auth token dikirim ke semua request termasuk public |
+| L12 | `api/tsconfig.json:8` | `jsx: "react-jsx"` di backend — dead config |
+| L13 | `web-gen/tsconfig.json:21` | `include: ["src"]` — test dir gak di-typecheck |
+| L14 | `generator.ts:264-273` | `spawnSync` ENOENT error silent |
+| L15 | Docker healthcheck | WA Bot healthcheck hanya cek PID 1 |
+| L16 | Prisma relations | No `onDelete` cascade rules |
+| L17 | `Store.paymentMethods` | Legacy String field duplikasi dengan `StorePaymentMethod` model |
+| L18 | Rate limiter tests | Hardcoded ke config default — fragile |

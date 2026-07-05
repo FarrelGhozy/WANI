@@ -1,4 +1,4 @@
-import { createContext, useContext, type ReactNode } from 'react'
+import { createContext, useContext, useMemo, type ReactNode } from 'react'
 import { useSettings } from '@/hooks/useSettings.ts'
 import type { StoreProfile, AiConfig } from '@/hooks/useSettings.ts'
 
@@ -15,9 +15,13 @@ interface StoreContextType {
 const StoreContext = createContext<StoreContextType | null>(null)
 
 export function StoreProvider({ children }: { children: ReactNode }) {
-  const settings = useSettings()
+  const { store, aiConfig, loading, error, updateStore, updateAiConfig, reload } = useSettings()
+  const value = useMemo(
+    () => ({ store, aiConfig, loading, error, updateStore, updateAiConfig, reload }),
+    [store, aiConfig, loading, error, updateStore, updateAiConfig, reload],
+  )
   return (
-    <StoreContext.Provider value={settings}>
+    <StoreContext.Provider value={value}>
       {children}
     </StoreContext.Provider>
   )

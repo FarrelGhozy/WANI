@@ -1,4 +1,5 @@
 import { BaseModel } from "@/src/models/base"
+import { prisma } from "@/src/config/db"
 import type { Prisma } from "@db/client"
 
 export type LogEntry = {
@@ -82,5 +83,15 @@ export class ActivityLogModel extends BaseModel {
       page,
       limit,
     )
+  }
+
+  static async getDailyUsage(): Promise<{ llmCalls: number; tokensIn: number; tokensOut: number }> {
+    const today = new Date().toISOString().slice(0, 10)
+    const counter = await prisma.usageCounter.findUnique({ where: { id: today } })
+    return {
+      llmCalls: counter?.llmCalls ?? 0,
+      tokensIn: counter?.tokensIn ?? 0,
+      tokensOut: counter?.tokensOut ?? 0,
+    }
   }
 }

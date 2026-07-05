@@ -1,4 +1,4 @@
-import { createContext, useContext, type ReactNode } from 'react'
+import { createContext, useContext, useMemo, type ReactNode } from 'react'
 import { useProducts } from '@/hooks/useProducts.ts'
 import type { Product, Category, ProductFormData } from '@/types.ts'
 
@@ -24,12 +24,31 @@ interface ProductsContextType {
   reload: () => Promise<void>
 }
 
-const ProductsContext = createContext<ProductsContextType | null>(null)
+export const ProductsContext = createContext<ProductsContextType | null>(null)
 
 export function ProductsProvider({ children }: { children: ReactNode }) {
-  const products = useProducts()
+  const {
+    products, categories, loading, error, search, setSearch,
+    categoryFilter, setCategoryFilter, sortField, sortDir, toggleSort,
+    getProduct, createProduct, updateProduct, deleteProduct,
+    createCategory, updateCategory, deleteCategory, reload,
+  } = useProducts()
+  const value = useMemo(
+    () => ({
+      products, categories, loading, error, search, setSearch,
+      categoryFilter, setCategoryFilter, sortField, sortDir, toggleSort,
+      getProduct, createProduct, updateProduct, deleteProduct,
+      createCategory, updateCategory, deleteCategory, reload,
+    }),
+    [
+      products, categories, loading, error, search, setSearch,
+      categoryFilter, setCategoryFilter, sortField, sortDir, toggleSort,
+      getProduct, createProduct, updateProduct, deleteProduct,
+      createCategory, updateCategory, deleteCategory, reload,
+    ],
+  )
   return (
-    <ProductsContext.Provider value={products}>
+    <ProductsContext.Provider value={value}>
       {children}
     </ProductsContext.Provider>
   )

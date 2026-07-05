@@ -50,8 +50,8 @@ describe("Rate limiting", () => {
     expect(res.headers["ratelimit-remaining"]).toBeTruthy()
   })
 
-  test("returns 401 on protected store endpoint without auth", async () => {
-    const res = await request(app).get("/api/store")
+  test("returns 401 on protected store PUT endpoint without auth", async () => {
+    const res = await request(app).put("/api/store").send({ businessName: "test" })
     expect(res.status).toBe(401)
   })
 })

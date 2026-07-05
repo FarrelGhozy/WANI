@@ -9,9 +9,20 @@ interface ConversationState {
   identityChallenges: number
   suspiciousScore: number
   lastNTurns: Array<{ text: string; score: number }>
+  lastAccess: number
 }
 
 const convMemory = new Map<string, ConversationState>()
+
+// Periodic cleanup to prevent Map leak — runs every 10 minutes.
+const CLEANUP_INTERVAL_MS = 600_000
+const MAX_IDLE_MS = 30 * 60 * 1000 // 30 minutes
+setInterval(() => {
+  const cutoff = Date.now() - MAX_IDLE_MS
+  for (const [key, state] of convMemory) {
+    if (state.lastAccess < cutoff) convMemory.delete(key)
+  }
+}, CLEANUP_INTERVAL_MS).unref()
 
 export function resetConversationState(key: string): void {
   convMemory.delete(key)
@@ -24,10 +35,11 @@ export function resetConversationState(key: string): void {
 export function analyzeTurn(key: string, text: string): ScanResult {
   let state = convMemory.get(key)
   if (!state) {
-    state = { identityChallenges: 0, suspiciousScore: 0, lastNTurns: [] }
+    state = { identityChallenges: 0, suspiciousScore: 0, lastNTurns: [], lastAccess: Date.now() }
     convMemory.set(key, state)
   }
 
+  state.lastAccess = Date.now()
   const result = scanInput(text)
   let turnScore = 0
 

@@ -7,6 +7,7 @@ import morgan from "morgan"
 import { metricsMiddleware } from "@/src/config/metrics"
 import { morganStream } from "@/src/config/logger"
 import { errorHandler } from "@/src/middleware/error"
+import { optionalJwt } from "@/src/middleware/jwt"
 import routes from "@/src/routes"
 import { sendResponse } from "@/src/utils/response"
 
@@ -73,7 +74,7 @@ app.use("/api/auth/forgot-password", forgotPasswordRateLimit)
 
 app.use(morgan(":method :url :status :response-time ms", { stream: morganStream }))
 app.use(express.json())
-app.use("/api", routes)
+app.use("/api", optionalJwt, routes)
 
 const generatedDir = path.resolve(import.meta.dir, "..", "generated-sites")
 
