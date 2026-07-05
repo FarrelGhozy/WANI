@@ -35,3 +35,4 @@ find "$BACKUP_DIR" -name "*.dump" -mtime +$RETENTION_DAYS -delete
 echo "[$(date)] Cleaned up backups older than $RETENTION_DAYS days"
 
 echo "[$(date)] All backups completed successfully"
+
