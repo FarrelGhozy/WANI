@@ -25,6 +25,11 @@ function getJwtSecret(): string {
   throw new Error("JWT_SECRET not configured")
 }
 
+function createResetUrl(origin: string | undefined, token: string): string {
+  const base = origin ?? "https://wani.app"
+  return `${base}/reset-password?token=${token}`
+}
+
 function signToken(user: { id: string; email: string; role: string }): string {
   return jwt.sign(
     { id: user.id, email: user.email, role: user.role },
@@ -116,7 +121,7 @@ export async function forgotPassword(
       resetPasswordExpires: expires,
     })
 
-    const resetUrl = `${req.headers.origin ?? "https://wani.app"}/reset-password?token=${resetToken}`
+    const resetUrl = createResetUrl(req.headers.origin, resetToken)
     await sendEmail(
       user.email,
       "Reset Password WANI",
