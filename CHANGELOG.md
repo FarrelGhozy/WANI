@@ -13,6 +13,9 @@
 - **Helmet CORP fix** — `crossOriginResourcePolicy` added to prevent cross-origin image blocking
 - **Unit + integration tests** — 223 tests across auth, store, products, guardrails, AI pipeline, circuit breaker
 - **Email system** — `nodemailer` SMTP integration, `EmailService` abstraction, forgot password now sends real reset link email (fixes #67)
+- **Security hardening** — stricter CSP (removed localhost & CDN refs), HSTS header, X-Frame-Options, global rate limiter (120 req/min) (progress on #74)
+- **Product search in all templates** — client-side filter added to `classic`, `modern`, `vibrant`, `minimalist`, `cyberpunk` HTML templates (fixes #69)
+- **Automated DB backup** — `scripts/backup-db.sh` with `pg_dump`, daily cron via Docker backup service, 7-day retention (fixes #73)
 
 ## wa-bot v1.0.7 — 2026-06-27
 
