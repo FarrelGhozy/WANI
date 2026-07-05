@@ -48,6 +48,29 @@ const globalRateLimit = rateLimit({
   skip: (req) => req.path === "/api/monitoring/health",
 })
 app.use(globalRateLimit)
+
+// Stricter rate limit for auth endpoints (brute force protection)
+const authRateLimit = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // 10 login/register attempts per 15 min per IP
+  standardHeaders: true,
+  legacyHeaders: false,
+  skipSuccessfulRequests: true,
+  message: "Too many auth attempts, please try again later",
+})
+app.use("/api/auth/login", authRateLimit)
+app.use("/api/auth/register", authRateLimit)
+
+// Stricter rate limit for forgot password (prevents email enumeration abuse)
+const forgotPasswordRateLimit = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 3, // 3 forgot password requests per hour per IP
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: "Too many password reset requests, please try again later",
+})
+app.use("/api/auth/forgot-password", forgotPasswordRateLimit)
+
 app.use(morgan(":method :url :status :response-time ms", { stream: morganStream }))
 app.use(express.json())
 app.use("/api", routes)
