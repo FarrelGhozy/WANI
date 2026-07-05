@@ -1,14 +1,14 @@
-import express from "express"
-import helmet from "helmet"
-import cors from "cors"
-import morgan from "morgan"
-import { rateLimit } from "express-rate-limit"
 import path from "node:path"
-import routes from "@/src/routes"
+import cors from "cors"
+import express from "express"
+import { rateLimit } from "express-rate-limit"
+import helmet from "helmet"
+import morgan from "morgan"
+import { metricsMiddleware } from "@/src/config/metrics"
 import { morganStream } from "@/src/config/logger"
 import { errorHandler } from "@/src/middleware/error"
+import routes from "@/src/routes"
 import { sendResponse } from "@/src/utils/response"
-import { metricsMiddleware } from "@/src/config/metrics"
 
 export const app = express()
 
