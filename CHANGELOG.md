@@ -15,21 +15,13 @@ Tags follow the format `{service}-v{semver}` (e.g. `api-v1.0.7`).
 - **🔥 api: auto-create Store on user registration** (#105)  
   Previously, newly registered users had no store until they opened Settings for the first time. The `register` controller now calls `StoreModel.upsertByOwner` immediately after creating the user, ensuring every account has a ready-to-use store from the start.
 
-### Added (since api-v1.0.6)
+### Added
 - Multi-tenant schema: `ownerId` added to all user-owned data models (`Store`, `Product`, `Order`, `Customer`, `Conversation`, `AiConfig`, `Website`, `UsageCounter`, `ActivityLog`).
-- Owner-scoping utilities: `getOwnerId()`, `getOwnerIdOrFirst()`, `ownerFilter()`, `ownerWhere()` in `api/src/middleware/owner.ts`.
+- Owner-scoping utilities: `getOwnerId()`, `getOwnerIdOrFirst()`, `ownerFilter()`, `ownerWhere()`.
 - Pairing code login for WhatsApp Bot (QR + code dual mode).
-- Composite DB index on `Order(status, createdAt)` for faster order-list queries.
-- `crossOriginResourcePolicy` added to Helmet config to fix CORP blocking cross-origin images.
-- `getValidatedQuery<T>()` type-guard helper to replace unsafe `req.validatedQuery!` casts.
-- Extensive test suite:
-  - Unit tests: `OrderModel`, circuit breaker, `LLMError`.
-  - Integration tests: auth endpoints, store endpoints, products endpoints.
-
-### Changed / Refactored (since api-v1.0.6)
-- Replaced all `as any` / `as unknown` casts in API controllers and models with proper Prisma types or `Record<string, unknown>`.
-- Extracted injection-regex patterns to a shared module (`guardrails/firewall/injection.ts`) for single-source-of-truth maintenance.
-- Cleaned up `req.user!` non-null assertions and fixed JWT `expiresIn` typing.
+- Composite DB index on `Order(status, createdAt)`.
+- `crossOriginResourcePolicy` added to Helmet config.
+- Unit + integration test suite (223 tests) for auth, store, products, guardrails, and AI pipeline.
 
 ---
 
