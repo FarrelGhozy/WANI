@@ -41,6 +41,14 @@ describe("JWT token", () => {
   test("handles malformed token", () => {
     expect(() => jwt.verify("not-a-token", JWT_SECRET)).toThrow()
   })
+
+  test("token contains iat and exp claims", () => {
+    const token = signToken({ id: "u1", email: "a@b.com", role: "admin" })
+    const decoded = jwt.decode(token) as any
+    expect(decoded.iat).toBeTruthy()
+    expect(decoded.exp).toBeTruthy()
+    expect(decoded.exp - decoded.iat).toBe(7 * 24 * 60 * 60)
+  })
 })
 
 // ── UserModel.toPublic ───────────────────────────────────────
