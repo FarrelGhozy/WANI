@@ -16,4 +16,5 @@ model StorePaymentMethod {
   updatedAt     DateTime @updatedAt
 
   @@index([ownerId])
+  @@index([ownerId, isActive])
 }

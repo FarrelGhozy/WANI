@@ -8,6 +8,7 @@ model ActivityLog {
   createdAt   DateTime @default(now())
 
   @@index([ownerId, createdAt])
+  @@index([ownerId, type, createdAt])
 }
 
 // Daily LLM usage, keyed by date (YYYY-MM-DD). Backs the cost/budget guardrail.
