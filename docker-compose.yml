@@ -128,6 +128,7 @@ services:
         max-size: "10m"
         max-file: "3"
 
+  # ── Automated daily backup service ──────────────────────────
   backup:
     image: postgres:17-alpine
     depends_on:
