@@ -47,6 +47,7 @@ export default function Settings() {
 
   const [resetting, setResetting] = useState(false)
   const [requestingPairing, setRequestingPairing] = useState(false)
+  const [refreshingPairing, setRefreshingPairing] = useState(false)
 
   const handleAiUpdate = useCallback(async (patch: Partial<AiConfig>) => {
     try {
@@ -85,6 +86,18 @@ export default function Settings() {
       throw e
     } finally {
       setRequestingPairing(false)
+    }
+  }, [toast, apiError])
+
+  const handleRefreshPairing = useCallback(async () => {
+    setRefreshingPairing(true)
+    try {
+      await fetchApi('/qr/refresh-pairing', { method: 'POST' })
+      toast('Kode pairing baru diminta', 'info')
+    } catch (e) {
+      apiError(e, 'Gagal memperbarui kode pairing')
+    } finally {
+      setRefreshingPairing(false)
     }
   }, [toast, apiError])
 
@@ -152,8 +165,10 @@ export default function Settings() {
           onConnect={handleConnect}
           onReset={handleReset}
           onRequestPairing={handleRequestPairing}
+          onRefreshPairing={handleRefreshPairing}
           resetting={resetting}
           requestingPairing={requestingPairing}
+          refreshingPairing={refreshingPairing}
         />
       )}
     </div>

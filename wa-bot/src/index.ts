@@ -61,7 +61,7 @@ async function main() {
     if (qr) {
       logger.info("QR code received");
       qrcode.generate(qr, { small: true });
-      api.post("/api/qr", { qr, pairingCode: null }).catch(e => logger.error({ err: e?.response?.data ?? e }, "push QR failed"));
+      api.post("/api/qr", { qr }).catch(e => logger.error({ err: e?.response?.data ?? e }, "push QR failed"));
 
       // Check if pairing code was requested via dashboard
       checkAndGeneratePairingCode();

@@ -13,5 +13,6 @@ router.post("/", requireAuth, validate({ body: upsertQrSchema }), qrController.u
 router.delete("/", requireAuth, qrController.clearQr)
 router.post("/reset", requireJwt, qrController.resetQr)
 router.post("/pairing", requireJwt, validate({ body: pairingSchema }), qrController.requestPairing)
+router.post("/refresh-pairing", requireJwt, qrController.refreshPairing)
 
 export default router

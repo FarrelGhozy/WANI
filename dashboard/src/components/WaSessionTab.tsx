@@ -15,8 +15,10 @@ interface WaSessionTabProps {
   onConnect: () => void
   onReset: () => void
   onRequestPairing: (phone: string) => Promise<void>
+  onRefreshPairing: () => Promise<void>
   resetting: boolean
   requestingPairing: boolean
+  refreshingPairing: boolean
 }
 
 function normalizePhone(input: string): string {
@@ -55,8 +57,8 @@ const isMockQr = (qr: string) => !qr || qr === 'mock-qr-data-for-development'
 export default function WaSessionTab({
   qr, connection, phone, connectedAt,
   pairingCode,
-  onDisconnect, onReset, onRequestPairing,
-  resetting, requestingPairing,
+  onDisconnect, onReset, onRequestPairing, onRefreshPairing,
+  resetting, requestingPairing, refreshingPairing,
 }: WaSessionTabProps) {
   const [confirming, setConfirming] = useState(false)
   const [pairingInput, setPairingInput] = useState('')
@@ -225,7 +227,16 @@ export default function WaSessionTab({
             {/* Pairing Code Section */}
             {pairingCode ? (
               <div className="rounded-lg border-2 border-teal-200 bg-teal-50 p-5 text-center">
-                <p className="mb-1 text-xs font-medium text-teal-600">Kode Pairing</p>
+                <div className="mb-3 flex items-center justify-center gap-2">
+                  <p className="text-xs font-medium text-teal-600">Kode Pairing</p>
+                  <button
+                    onClick={onRefreshPairing}
+                    disabled={refreshingPairing}
+                    className="text-xs text-teal-500 underline hover:text-teal-700 disabled:opacity-50"
+                  >
+                    {refreshingPairing ? 'Memperbarui...' : 'Refresh'}
+                  </button>
+                </div>
                 <p className="mb-3 text-3xl font-bold tracking-[0.3em] text-teal-900 select-all">
                   {formatPairingCode(pairingCode)}
                 </p>
