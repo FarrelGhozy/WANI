@@ -24,6 +24,7 @@ interface ProductsContextType {
   reload: () => Promise<void>
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const ProductsContext = createContext<ProductsContextType | null>(null)
 
 export function ProductsProvider({ children }: { children: ReactNode }) {
