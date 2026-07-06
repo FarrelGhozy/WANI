@@ -49,6 +49,6 @@ export async function clearQr(_req: Request, res: Response): Promise<void> {
 
 export async function resetQr(_req: Request, res: Response): Promise<void> {
   await clearBotCreds()
-  await WaSessionModel.upsert({ qr: null, status: "disconnected", phone: null })
+  await WaSessionModel.upsert({ qr: null, status: "disconnected", phone: null, pairingPhone: null, pairingCode: null })
   sendResponse(res, 200, "reset berhasil — bot akan scan QR baru")
 }
