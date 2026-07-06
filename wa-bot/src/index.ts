@@ -171,7 +171,13 @@ async function main() {
       const { data } = await api.get("/api/qr/status");
       const st = data?.data;
       if (st?.status === "disconnected" && !st?.phone && !st?.qr) {
-        logger.info("reset detected — restarting with fresh creds");
+        logger.info("reset detected — logging out");
+        try {
+          await sock?.logout();
+          logger.info("logout successful");
+        } catch (logoutErr) {
+          logger.error({ err: String(logoutErr) }, "logout failed");
+        }
         if (pollTimer) clearInterval(pollTimer);
         pollTimer = null;
         sock?.end(undefined);
