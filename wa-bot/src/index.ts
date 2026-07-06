@@ -172,8 +172,15 @@ async function main() {
           logger.error({ err: String(logoutErr) }, "logout failed");
         }
         if (pollTimer) clearInterval(pollTimer);
+        pollTimer = null;
         sock?.end(undefined);
-        process.exit(0);
+        isReconnecting = true;
+        setTimeout(() => {
+          main().catch((err) => {
+            logger.error(err);
+            process.exit(1);
+          });
+        }, 1000);
       }
     } catch (err) {
       logger.error({ err: String(err) }, "pollResetSignal failed");
