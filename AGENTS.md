@@ -40,7 +40,7 @@ Bot pushes QR/status → API stores in WaSession DB → Dashboard polls GET /api
 - `bun run prisma:migrate` — apply dev migrations
 - `bun run prisma:migrate -- --name <nama>` — create named dev migration (wajib jalanin setiap ada perubahan schema!)
 - `bun run prisma:deploy` — apply production migrations
-- `bun test` — run unit + guardrail tests (Bun's built-in `bun:test`)
+- `bun run test` — run unit + guardrail tests (`bun run test:e2e` for integration tests)
 
 **Dashboard** (`dashboard/`):
 - `bun run dev` — Vite dev server (HMR, port 5173)
@@ -166,7 +166,7 @@ Database `wani_api` + `wa_bot` dibuat otomatis via `init-dbs.sh`.
 - `tsc -b` before vite build ensures type errors block the build
 - Prisma schemas split across `prisma/models/*.prisma` (not a single schema.prisma), output to `generated/prisma/` (gitignored)
 - Prisma uses `prisma.config.ts` (not `prisma/schema.prisma` as config) with Prisma 7's `defineConfig` — migrations path set there
-- Tests use Bun's built-in `bun:test` runner (`bun test`)
+- Tests use Bun's built-in `bun:test` runner (via `bun run test`)
 - WaSession is single-row (`id: "default"`), always upserted
 - Bot expects API to be running first (POSTs QR on `connection.update`)
 - Both databases on same PG server: `wani_api` (api) + `wa_bot` (bot)
@@ -339,7 +339,7 @@ Tiap pekerjaan backend dikerjakan dalam tahapan kecil (per fitur/endpoint/kompon
                    ▼
 ┌──────────────────────────────────────────┐
 │  3. Verify — type check, lint, test     │
-│     (bun test / tsc --noEmit)            │
+│     (bun run test / tsc --noEmit)        │
 └──────────────────┬───────────────────────┘
                    ▼
 ┌──────────────────────────────────────────┐
@@ -385,8 +385,8 @@ git commit -m "🔥 api: add products CRUD — route, schema, controller, model"
 
 ### Test Status
 
-- `bun test test/` → 238 pass, 0 fail, 5 skip (env-based SMTP/API key)
-- `bun test e2e/` → 6 pass, 0 fail (pipeline integration)
+- `bun run test` → 238 pass, 0 fail, 5 skip (env-based SMTP/API key)
+- `bun run test:e2e` → 6 pass, 0 fail (pipeline integration)
 - Dashboard `vitest run` → 97 pass, 0 fail (7 test files)
 - Dashboard `bun run build` → clean (519 KB JS, 50 KB CSS)
 
@@ -398,5 +398,5 @@ git commit -m "🔥 api: add products CRUD — route, schema, controller, model"
 - **Owner scoping at Model layer** — Controllers call Model methods which add `where: { ownerId }` internally
 - **WaSession stays single-row global** — one WhatsApp connection shared by all users
 - **M9 leet normalization** — tokenized: digit→letter only in tokens with letters, preserves prices/years
-- **E2E tests in `e2e/`** — isolated from unit tests via `bun test e2e/` (avoids `mock.module` global leakage)
-- **Merge `d6d9c1f`** — kept our test scripts (`bun test test/` + `e2e/`), took their screenshots
+- **E2E tests in `e2e/`** — isolated from unit tests via `bun run test:e2e` (avoids `mock.module` global leakage)
+- **Merge `d6d9c1f`** — kept our test scripts (`bun run test` + `bun run test:e2e`), took their screenshots
