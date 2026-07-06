@@ -8,16 +8,12 @@ type VerifyState = 'loading' | 'success' | 'error'
 
 export default function VerifyEmailPage() {
   const [searchParams] = useSearchParams()
-  const [state, setState] = useState<VerifyState>('loading')
-  const [message, setMessage] = useState('')
+  const token = searchParams.get('token')
+  const [state, setState] = useState<VerifyState>(token ? 'loading' : 'error')
+  const [message, setMessage] = useState(token ? '' : 'Token verifikasi tidak ditemukan')
 
   useEffect(() => {
-    const token = searchParams.get('token')
-    if (!token) {
-      setState('error')
-      setMessage('Token verifikasi tidak ditemukan')
-      return
-    }
+    if (!token) return
 
     let cancelled = false
 
@@ -37,7 +33,7 @@ export default function VerifyEmailPage() {
     })()
 
     return () => { cancelled = true }
-  }, [searchParams])
+  }, [token])
 
   return (
     <div className="space-y-5 text-center">

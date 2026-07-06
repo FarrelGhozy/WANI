@@ -32,7 +32,6 @@ function getToken(): string | null {
 
 export function useWebsite() {
   const productsCtx = useContext(ProductsContext)
-  const products = productsCtx?.products ?? []
   const [config, setConfig] = useState<WebsiteConfig>(defaultConfig)
   const [logs, setLogs] = useState<GenerationLog[]>([])
   const [loading, setLoading] = useState(true)
@@ -87,8 +86,9 @@ export function useWebsite() {
   }, [])
 
   const availableProducts = useMemo(() => {
+    const products = productsCtx?.products ?? []
     return products.filter((p) => p.isAvailable)
-  }, [products])
+  }, [productsCtx])
 
   const latestSlug = useMemo(() => {
     const success = logs.filter((l) => l.status === 'success')
