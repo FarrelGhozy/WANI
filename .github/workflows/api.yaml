@@ -42,7 +42,7 @@ jobs:
         working-directory: api
 
       - name: Run Tests
-        run: bun test
+        run: bun run test:all
         working-directory: api
 
       - name: Log in to GHCR
