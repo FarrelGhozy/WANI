@@ -1,4 +1,4 @@
-import { expect, test, describe, beforeEach, afterAll, mock } from "bun:test"
+import { expect, test, describe, beforeEach, mock } from "bun:test"
 
 // Set env vars (read at env module import time — before any other test file loads)
 process.env.LLM_API_KEY = "test-key"
@@ -8,8 +8,10 @@ process.env.CLASSIFIER_ENABLED = "false"
 process.env.JUDGE_ENABLED = "false"
 process.env.GROUNDING_CHECK_ENABLED = "false"
 
-// ── Mock non-DB modules that other tests don't mock ──────────────────────
-// (Must mock these before imports to avoid conflicts with other test files)
+// ── Mock all modules the pipeline touches ──────────────────────────────
+// NOTE: This test file mocks many modules globally via Bun's mock.module().
+// It MUST run in its own `bun test` process (see package.json scripts) so
+// the mocks don't leak into other test files that need the real modules.
 
 const mockComplete = mock().mockImplementation(
   async () => ({ content: JSON.stringify({ intent: "greeting", reply: "Halo! Ada yang bisa kami bantu?" }), model: "test", finishReason: "stop", usage: { promptTokens: 10, completionTokens: 5 } }),
@@ -27,33 +29,28 @@ const mockHandleIntent = mock().mockImplementation(
 )
 
 const mockNormalizeInput = mock((text: string) => text.trim())
-
 const mockScanPii = mock(() => [] as { type: string; value: string; start: number; end: number }[])
-
 const mockCheckRateLimit = mock(() => ({ allowed: true, notify: false }))
-
 const mockIsBudgetExceeded = mock().mockResolvedValue(false)
-
 const mockAnalyzeTurn = mock(() => ({ reasons: [] as string[] }))
-
 const mockClassifyVerdict = mock((_reasons: string[]) => "SAFE" as const)
 
 mock.module("@/src/ai/engine", () => ({ complete: mockComplete }))
-mock.module("@/src/ai/circuit-breaker", () => ({ withCircuit: mockWithCircuit }))
+mock.module("@/src/ai/circuit-breaker", () => ({ withCircuit: mockWithCircuit, getCircuitState: mock(() => ({ state: "closed", failures: 0 })), resetCircuit: mock(() => {}) }))
 mock.module("@/src/ai/actions", () => ({ handleIntent: mockHandleIntent }))
 mock.module("@/src/guardrails/input", () => ({ normalizeInput: mockNormalizeInput }))
 mock.module("@/src/guardrails/pii", () => ({ scanPii: mockScanPii }))
 mock.module("@/src/guardrails/ratelimit", () => ({ checkRateLimit: mockCheckRateLimit }))
-mock.module("@/src/guardrails/budget", () => ({ isBudgetExceeded: mockIsBudgetExceeded }))
+mock.module("@/src/guardrails/budget", () => ({ isBudgetExceeded: mockIsBudgetExceeded, recordLlmUsage: mock(() => Promise.resolve()) }))
 mock.module("@/src/guardrails/firewall", () => ({ analyzeTurn: mockAnalyzeTurn, classifyVerdict: mockClassifyVerdict }))
 mock.module("@/src/guardrails/classifier", () => ({
   classifyInput: mock<typeof import("@/src/guardrails/classifier").classifyInput>(() => Promise.resolve({ verdict: "SAFE" as const, reasons: [], confidence: 1 })),
   judgeInput: mock<typeof import("@/src/guardrails/classifier").judgeInput>(() => Promise.resolve({ verdict: "SAFE" as const, reasons: [] })),
 }))
 
-// Also mock models that other pipeline tests mock, to ensure our full mocks
-// take precedence when running alongside other test files
+// Model mocks — must mock every model the pipeline steps touch
 const mockMsg = { id: "msg-1", ownerId: "owner-1", conversationId: "conv-1", role: "USER", content: "test", msgType: "text", waMsgId: null, metadata: null, createdAt: new Date().toISOString() }
+
 mock.module("@/src/models/message", () => ({
   MessageModel: {
     findByWaMsgId: mock(() => Promise.resolve(null)),
@@ -69,12 +66,50 @@ mock.module("@/src/models/conversation", () => ({
     setStatus: mock(() => Promise.resolve(undefined)),
   },
 }))
+mock.module("@/src/models/customer", () => ({
+  CustomerModel: {
+    upsertByOwnerPhone: mock(() => Promise.resolve({ id: "cust-1", ownerId: "owner-1", phone: "628123456789", name: "Test User", notes: null, totalOrders: 0, createdAt: new Date(), updatedAt: new Date() })),
+    incrementOrders: mock(() => Promise.resolve(undefined)),
+  },
+}))
+mock.module("@/src/models/store", () => ({
+  StoreModel: {
+    findByOwner: mock(() => Promise.resolve({ id: "store-1", ownerId: "owner-1", businessName: "Toko Test", phone: "62812", address: null, businessHours: null, paymentMethods: null, shippingInfo: null, returnPolicy: null, greetingMessage: null, createdAt: new Date(), updatedAt: new Date() })),
+    upsertByOwner: mock(() => Promise.resolve({ id: "store-1" })),
+  },
+}))
+mock.module("@/src/models/catalog", () => ({
+  ProductModel: {
+    listAvailable: mock(() => Promise.resolve([])),
+    findByNames: mock(() => Promise.resolve(new Map())),
+  },
+}))
+mock.module("@/src/models/ai-config", () => ({
+  AiConfigModel: {
+    findByOwner: mock(() => Promise.resolve(null)),
+  },
+}))
+mock.module("@/src/models/store-payment", () => ({
+  StorePaymentMethodModel: {
+    listActive: mock(() => Promise.resolve([])),
+    hasAny: mock(() => Promise.resolve(false)),
+  },
+}))
+mock.module("@/src/models/order", () => ({
+  OrderModel: {
+    createFromItems: mock(() => Promise.resolve({ order: { id: "order-1", totalAmount: 55000 } })),
+  },
+}))
+mock.module("@/src/models/activity-log", () => ({
+  ActivityLogModel: {
+    log: mock(() => Promise.resolve(undefined)),
+  },
+}))
 
 import { processMessage } from "@/src/ai/pipeline"
 
 describe("AI Pipeline Integration", () => {
   beforeEach(() => {
-    // Reset mock call counts between tests
     mockComplete.mockClear()
     mockHandleIntent.mockClear()
   })

@@ -115,7 +115,7 @@ describe("usePrismaAuthState", () => {
 
     expect((db.signalKey.deleteMany as any)).toHaveBeenCalledTimes(1)
     expect((db.signalKey.deleteMany as any)).toHaveBeenCalledWith(
-      expect.objectContaining({ where: { type: "session", id: "k1" } }),
+      expect.objectContaining({ where: { type: "session", id: { in: ["k1"] } } }),
     )
   })
 

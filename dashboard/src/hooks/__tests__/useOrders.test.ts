@@ -84,7 +84,7 @@ describe('useOrders', () => {
         customerPhone: '08123456789',
       })
       expect(result.current.allOrders[0].items[0].productName).toBe('Nasi Goreng')
-      expect(mockFetchApi).toHaveBeenCalledWith('/orders?limit=100')
+      expect(mockFetchApi).toHaveBeenCalledWith('/orders?limit=500')
     })
   })
 
