@@ -53,15 +53,26 @@ Registrasi → login → liat dashboard kosong, bukan data user lain.
 
 ### Tahap 5: Frontend — Verify
 
-- [ ] 5a. Login sebagai user baru → liat dashboard kosong
-- [ ] 5b. Tambah store → setup wizard
-- [ ] 5c. Sidebar tampilin nama user (udah ada dari `useAuth`)
-- [ ] 5d. Test CRUD semua fitur sebagai user baru
+- [x] 5a. Login sebagai user baru → liat dashboard kosong + welcome banner + CTA atur toko
+- [x] 5b. Tambah store → form "Buat Toko" di Settings → Store tab kalo store masih null
+- [x] 5c. Sidebar tampilin nama user (`user?.name`) kalo store blom ada
+- [x] 5d. Test CRUD semua fitur sebagai user baru — produk, store, payment methods (via API)
 
 ### Tahap 6: Test
 
-- [ ] 6a. Manual test: register 2 user, verify data terisolasi
-- [ ] 6b. Test WA bot flow masih jalan
+- [x] 6a. Manual test: register 2 user, verify data terisolasi ✅
+  - User 1: store `User Satu` (ownerId `9c8f0...`), produk `Produk User 1`
+  - User 2: store `User Dua` (ownerId `49ce7...`), produk `Produk User 2`
+  - Zero cross-contamination: tiap user cuma liat data sendiri
+- [x] 6b. Test WA bot flow masih jalan ✅
+  - `POST /api/chat` → greeting → `"Halo! Ada yang bisa kami bantu?"` (intent: greeting)
+  - `POST /api/chat` → order request → context-aware reply about available products (intent: inquiry)
+  - Pipeline 18-step works end-to-end (guardrails → LLM → intent → sanitize)
+
+### Bug Fixes Found During Testing
+
+- **`jwt.ts:50`** — `optionalJwt` used `JWT_SECRET` (undefined constant) instead of `getJwtSecret()`. Caused `req.user` to never be set for public endpoints with JWT, breaking `getOwnerIdOrFirst(req)` fallback for authenticated requests.
+- **`routes/store.ts:9`** — `GET /api/store` used `requireJwt` middleware, but spec says public (`—`). Controller already uses `getOwnerIdOrFirst(req)` for public fallback. Removed `requireJwt`.
 
 ---
 

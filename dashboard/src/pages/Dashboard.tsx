@@ -1,12 +1,14 @@
 import { useMemo, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router'
 import { useWaStatusContext } from '@/contexts/WaStatusContext.tsx'
+import { useStoreContext } from '@/contexts/StoreContext.tsx'
 import { useOrders } from '@/hooks/useOrders.ts'
 import { useProductsContext } from '@/contexts/ProductsContext.tsx'
 import { useCustomers } from '@/hooks/useCustomers.ts'
 import { fetchApi } from '@/lib/api.ts'
 import StatusCard from '@/components/StatusCard.tsx'
 import Card from '@/components/ui/Card.tsx'
+import Button from '@/components/ui/Button.tsx'
 import { Skeleton, SkeletonCard } from '@/components/ui/Skeleton.tsx'
 import Badge from '@/components/ui/Badge.tsx'
 import QRCode from '@/components/QRCode.tsx'
@@ -48,6 +50,7 @@ function connectionLabel(status: string): string {
 export default function Dashboard() {
   const navigate = useNavigate()
   const { qr, connection, phone } = useWaStatusContext()
+  const { store, loading: storeLoading } = useStoreContext()
   const { allOrders, loading: ordersLoading } = useOrders()
   const { products, loading: prodLoading } = useProductsContext()
   const { allCustomers, loading: custLoading } = useCustomers()
@@ -95,7 +98,7 @@ export default function Dashboard() {
     [allCustomers],
   )
 
-  if (coreLoading) {
+  if (coreLoading || storeLoading) {
     return (
       <div className="space-y-6">
         <Skeleton variant="text" className="h-6 w-48" />
@@ -105,6 +108,24 @@ export default function Dashboard() {
           ))}
         </div>
         <SkeletonCard height="h-64" />
+      </div>
+    )
+  }
+
+  if (!store) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 text-center">
+        <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-teal-100 text-teal-600">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </div>
+        <h2 className="text-xl font-semibold text-stone-900">Selamat Datang di WANI!</h2>
+        <p className="mt-2 text-sm text-stone-500 max-w-md">
+          Anda belum memiliki toko. Mulai dengan mengatur profil toko, produk, dan metode pembayaran.
+        </p>
+        <div className="mt-6 flex gap-3">
+          <Button onClick={() => navigate('/settings?tab=store')}>Atur Toko</Button>
+          <Button variant="secondary" onClick={() => navigate('/settings?tab=payment')}>Metode Pembayaran</Button>
+        </div>
       </div>
     )
   }

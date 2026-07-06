@@ -234,19 +234,20 @@ export default function StoreTab() {
   }))
 
   const isDirty = useMemo(() => {
-    if (!store) return false
-    return form.businessName !== store.businessName
-      || form.phone !== cleanPhone(store.phone)
-      || form.address !== (store.address ?? '')
-      || form.businessHours !== (store.businessHours ?? null)
-      || form.shippingInfo !== (store.shippingInfo ?? null)
-      || form.returnPolicy !== (store.returnPolicy ?? null)
+    const s = store
+    const blank = { businessName: '', phone: '', address: '', businessHours: null, shippingInfo: null, returnPolicy: null }
+    const ref = s ?? blank
+    return form.businessName !== ref.businessName
+      || form.phone !== cleanPhone(ref.phone)
+      || form.address !== (ref.address ?? '')
+      || form.businessHours !== (ref.businessHours ?? null)
+      || form.shippingInfo !== (ref.shippingInfo ?? null)
+      || form.returnPolicy !== (ref.returnPolicy ?? null)
   }, [form, store])
 
-  useUnsavedChanges(isDirty)
+  useUnsavedChanges(!store ? false : isDirty)
 
   const handleSave = useCallback(async () => {
-    if (!store) return
     const errs: Record<string, string> = {}
     if (!form.businessName.trim()) errs.businessName = 'Nama bisnis wajib diisi'
     const hoursErr = validateHours(parseToHoursState(form.businessHours))
@@ -264,7 +265,7 @@ export default function StoreTab() {
         shippingInfo: form.shippingInfo || null,
         returnPolicy: form.returnPolicy || null,
       })
-      toast('Pengaturan toko berhasil disimpan', 'success')
+      toast(store ? 'Pengaturan toko berhasil disimpan' : 'Toko berhasil dibuat', 'success')
     } catch {
       toast('Gagal menyimpan pengaturan toko', 'error')
     } finally {
@@ -282,11 +283,9 @@ export default function StoreTab() {
     }
   }, [store, onUpdate, toast])
 
-  if (!store) return null
-
   async function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
-    if (!file) return
+    if (!file || !store) return
     const result = await uploadFile(file, 'store')
     if (result.success && result.url) {
       await onUpdate({ logoUrl: result.url })
@@ -296,7 +295,61 @@ export default function StoreTab() {
     }
   }
 
-  const initial = (store?.businessName ?? 'T').charAt(0).toUpperCase()
+  const initial = (store?.businessName || form.businessName || 'T').charAt(0).toUpperCase()
+
+  if (!store) {
+    return (
+      <>
+        <Card accent="teal">
+          <div className="mb-6 flex items-center gap-4">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-teal-100 text-teal-600">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </div>
+            <div>
+              <h2 className="text-lg font-semibold text-stone-900">Selamat Datang di WANI!</h2>
+              <p className="text-sm text-stone-500">Isi profil toko Anda untuk memulai</p>
+            </div>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2 md:gap-5">
+            <Input
+              label="Nama Bisnis"
+              value={form.businessName}
+              onChange={(e) => { setForm((prev) => ({ ...prev, businessName: e.target.value })); setErrors((prev) => ({ ...prev, businessName: '' })) }}
+              placeholder="Contoh: Warung Nasi Goreng"
+              error={errors.businessName}
+            />
+            <Input
+              label="TELEPON"
+              value={form.phone}
+              onChange={(e) => setForm((prev) => ({ ...prev, phone: e.target.value }))}
+              prefix="+62"
+              placeholder="81234567890"
+              hint="Masukkan nomor setelah +62, cukup angka"
+            />
+            <div className="sm:col-span-2">
+              <Textarea
+                label="Alamat"
+                value={form.address}
+                onChange={(e) => setForm((prev) => ({ ...prev, address: e.target.value }))}
+                placeholder="Contoh: Jl. Merdeka No. 123, RT 01 RW 02, Kel. Sukamaju, Kec. Sukasari, Kota Bandung 40123"
+                rows={3}
+              />
+            </div>
+            <Field label="Jam Operasional" error={errors.businessHours}>
+              <BusinessHoursEditor
+                value={form.businessHours}
+                onChange={(v) => { setForm((prev) => ({ ...prev, businessHours: v })); setErrors((prev) => ({ ...prev, businessHours: '' })) }}
+              />
+            </Field>
+          </div>
+          <div className="mt-6 flex justify-end">
+            <Button size="sm" loading={saving} onClick={handleSave}>Buat Toko</Button>
+          </div>
+        </Card>
+      </>
+    )
+  }
 
   return (
     <>

@@ -36,9 +36,9 @@ function statusLabel(status: string) {
 
 export default function Sidebar({ connection }: SidebarProps) {
   const navigate = useNavigate()
-  const { logout } = useAuth()
+  const { logout, user } = useAuth()
   const { store } = useStoreContext()
-  const storeName = store?.businessName ?? 'WANI'
+  const storeName = store?.businessName ?? user?.name ?? 'WANI'
   const storeLogoUrl = store?.logoUrl ?? null
   const initial = storeName.charAt(0).toUpperCase()
 

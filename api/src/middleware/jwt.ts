@@ -47,7 +47,7 @@ export function optionalJwt(req: Request, _res: Response, next: NextFunction): v
 
   const token = header.slice(7)
   try {
-    const payload = jwt.verify(token, JWT_SECRET) as JwtPayload
+    const payload = jwt.verify(token, getJwtSecret()) as JwtPayload
     req.user = payload
   } catch {
     // Invalid token — silently ignore, req.user stays undefined

@@ -365,34 +365,35 @@ git commit -m "🔥 api: add products CRUD — route, schema, controller, model"
 - Generated files (Prisma client, node_modules) masuk `.gitignore` — jangan di-stage.
 - Migrations file (`prisma/migrations/`) ikut di-commit — itu bagian dari schema versioning.
 
-## Progress — Manual Payment Flow
+## Progress — Multi-Tenant + Code Review
 
-**Tujuan:** Ganti payment gateway (Midtrans/Xendit) dengan manual payment flow. Store owner input QRIS/bank/e-wallet sendiri, konfirmasi bayar manual via dashboard.
+**Tujuan:** Data isolation per-user (ownerId scoping) + hardening via code review (19 HIGH + 24 MEDIUM).
 
 ### Done
 
-| Tahap | Commit | Deskripsi |
-|-------|--------|-----------|
-| 1 | `0dddfe0` | API: Prisma model, Zod schema, CRUD, upload, auto-CONFIRMED on PAID |
-| 2 | `38cdbbe` | Dashboard: PaymentTab, dynamic form per type, QRIS upload, 4th tab |
-| 3 | `8250ba7` | Dashboard: warning banner, confirm payment modal, URL-driven tab |
-| 4 | `df0c17e` | AI integration: buildSystemPrompt loads payment methods, handleOrder includes payment info, bot sends QRIS as image |
-| 5 | `ac83571` | Multi-tenant: 12 Prisma models + ownerId scoped indexes + migration backfill |
-| 6 | — | Multi-tenant: middleware `optionalJwt` global, `getOwnerIdOrFirst` pattern, 13 models scoped |
-| 7 | — | Multi-tenant: AI pipeline + WA bot ownerId propagation, controller scoping, 231 tests pass |
-| 8 | — | Code review: H1 history ke LLM, H2 website auth, H3 Prisma→Model, H6 convMemory cleanup, H7 error boundary, H8 memoize contexts, H9 debounce, H10 security test, H14 useAuth guard |
+| Tahap | Deskripsi |
+|-------|-----------|
+| 1 | Prisma schema — 12 models + `ownerId` + scoped indexes (`@@unique([ownerId, phone])`, dll) |
+| 2 | Middleware — `optionalJwt` global, `getOwnerIdOrFirst(req)` pattern, `owner.ts` race-safe |
+| 3 | Migration — backfill existing data via `COALESCE(subquery, nil_uuid)`, works fresh & existing |
+| 4 | Controllers + AI pipeline + WA bot — all queries scoped by `ownerId`, full propagation (238 tests) |
+| H1–H19 | **19/19 HIGH** — history→LLM, circuit-breaker mutex, convMemory cleanup, error boundary, context memo, debounce, WA bot safety net, SignalKeyStore batch, OrderItem indexes |
+| M1–M24 | **24/24 MEDIUM** — `findManyPaginated` helper, ReDoS fix, leet normalization tokenized, PII dedup, useCallback extracted, import cleanup, env var guards, Prisma indexes, e2e integration test |
+
+### Test Status
+
+- `bun test test/` → 238 pass, 0 fail, 5 skip (env-based SMTP/API key)
+- `bun test e2e/` → 6 pass, 0 fail (pipeline integration)
+- Dashboard `vitest run` → 97 pass, 0 fail (7 test files)
+- Dashboard `bun run build` → clean (519 KB JS, 50 KB CSS)
 
 ### Key Decisions
 
-- **QRIS upload via file upload** (not URL) — WA bot kirim gambar langsung ke customer
-- **StorePaymentMethod model terpisah** — bukan JSON field, cleaner CRUD + type safety
-- **Multi-part upload via multer** (2.2.0) with Express 5
-- **Auto-CONFIRMED** ketika payment marked PAID
-- **Warning banner only** — no feature blocking if no payment method
-- **No payment gateway** — all manual verification
-- **Port 5432 di docker-compose dihapus** — conflict dengan `facegate-db`, cukup internal Docker network
-- **`optionalJwt` global middleware** — silent JWT parse on all `/api` routes, enables public endpoints to prefer authenticated user when JWT present, fallback to first DB user when absent
-- **`getOwnerIdOrFirst(req)`** — standard pattern for public GET endpoints: JWT user → first DB user → `"default"` fallback
-- **`ownerId` as plain String** — no explicit Prisma `@relation` to User (avoids circular deps, simplifies migration)
-- **WA bot `ownerId` optional** — server auto-resolves, bot config stays simple
+- **`ownerId` as plain String** — no Prisma `@relation` to User (avoids circular deps, simplifies migration)
+- **`optionalJwt` globally** — silent JWT parse on all `/api` routes, public endpoints prefer auth'd user when JWT present
+- **`getOwnerIdOrFirst(req)`** — JWT user → first DB user → `"default"` fallback for public GET endpoints
+- **Owner scoping at Model layer** — Controllers call Model methods which add `where: { ownerId }` internally
 - **WaSession stays single-row global** — one WhatsApp connection shared by all users
+- **M9 leet normalization** — tokenized: digit→letter only in tokens with letters, preserves prices/years
+- **E2E tests in `e2e/`** — isolated from unit tests via `bun test e2e/` (avoids `mock.module` global leakage)
+- **Merge `d6d9c1f`** — kept our test scripts (`bun test test/` + `e2e/`), took their screenshots

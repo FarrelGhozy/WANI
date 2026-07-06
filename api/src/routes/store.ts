@@ -6,7 +6,7 @@ import { upsertStoreSchema } from "@/src/schemas/store"
 
 const router = Router()
 
-router.get("/", requireJwt, storeController.getStore)
+router.get("/", storeController.getStore)
 router.put("/", requireJwt, validate({ body: upsertStoreSchema }), storeController.upsertStore)
 
 export default router
