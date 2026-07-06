@@ -37,7 +37,10 @@ services:
       NODE_ENV: production
       API_TOKEN: ${API_TOKEN}
       JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRES: ${JWT_EXPIRES}
+      LLM_API_KEY: ${LLM_API_KEY}
       OPENROUTER_API_KEY: ${OPENROUTER_API_KEY}
+      LLM_BASE_URL: ${LLM_BASE_URL}
       LLM_MODEL: ${LLM_MODEL}
       LLM_FALLBACK_MODEL: ${LLM_FALLBACK_MODEL}
       LLM_MAX_TOKENS: ${LLM_MAX_TOKENS}
@@ -55,6 +58,11 @@ services:
       JUDGE_MODEL: ${JUDGE_MODEL}
       GROUNDING_CHECK_ENABLED: ${GROUNDING_CHECK_ENABLED}
       GROUNDING_MODEL: ${GROUNDING_MODEL}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+      SMTP_FROM: ${SMTP_FROM}
     expose:
       - "3001"
     volumes:
@@ -81,8 +89,6 @@ services:
         condition: service_started
     environment:
       VITE_API_URL: /api
-      API_HOST: api
-      API_PORT: "3001"
     ports:
       - "5173:80"
     restart: unless-stopped
@@ -114,6 +120,7 @@ services:
       DATABASE_NAME: ${DATABASE_NAME_BOT}
       API_URL: ${API_URL}
       API_TOKEN: ${API_TOKEN}
+      OUTGOING_POLL_INTERVAL: ${OUTGOING_POLL_INTERVAL}
     restart: unless-stopped
     networks: [wani]
     healthcheck:
