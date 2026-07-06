@@ -2,7 +2,8 @@
 
 graphify-out
 .env
-.env.*.local
+.env.*
+!.env.example
 Docs/*.aux
 Docs/*.toc
 Docs/*.lof

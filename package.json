@@ -6,5 +6,8 @@
     "dev:api": "cd api && bun --watch run src/index.ts",
     "dev:bot": "cd wa-bot && bun --watch run src/index.ts",
     "dev:dash": "cd dashboard && bun run dev"
+  },
+  "dependencies": {
+    "playwright": "^1.61.1"
   }
 }
