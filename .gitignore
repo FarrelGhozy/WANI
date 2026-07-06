@@ -1,8 +1,11 @@
 # Project wide .gitignore file
 
+node_modules/
+bun.lock
 graphify-out
 .env
-.env.*.local
+.env.*
+!.env.example
 Docs/*.aux
 Docs/*.toc
 Docs/*.lof
