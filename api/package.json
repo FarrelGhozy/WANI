@@ -9,9 +9,8 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:deploy": "prisma migrate deploy",
-    "test": "bun test --path-ignore-patterns \"**/pipeline/integration.test.ts\"",
-    "test:integration": "bun test test/pipeline/integration.test.ts",
-    "test:all": "bun test --path-ignore-patterns \"**/pipeline/integration.test.ts\" && bun test test/pipeline/integration.test.ts"
+    "test": "bun test",
+    "test:e2e": "bun test e2e/"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7",

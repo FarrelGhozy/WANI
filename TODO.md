@@ -67,7 +67,7 @@ Registrasi → login → liat dashboard kosong, bukan data user lain.
 
 # Code Review Findings — 2026-07-04
 
-## Status: 19/19 HIGH ✅ | 5/24 MEDIUM ✅ (M6/M7: kept, used in tests)
+## Status: 19/19 HIGH ✅ | 24/24 MEDIUM ✅ (M6/M7 kept, used in tests)
 
 ## 🔴 HIGH PRIORITY — All resolved ✅
 
@@ -93,7 +93,7 @@ Registrasi → login → liat dashboard kosong, bukan data user lain.
 | H18 | `whatsapp-auth.ts` — batch deletes per type, parallel upserts | `9e48cc8` |
 | H19 | `order.prisma` — added `@@index([orderId])` + `@@index([productId])` + migration | `9e48cc8` |
 
-**Tests**: 238 pass, 5 skip, 0 fail (was 223 pass, 2 fail)
+**Tests**: 129 pass (unit), 6 pass (e2e), 0 fail. Dashboard `bun run build` clean.
 
 ---
 
@@ -180,28 +180,28 @@ Batch of 1000 keys = 1000 sequential upsert/delete.
 |---|------|---------|--------|
 | M1 | `models/*.ts` (4 files) | Pola pagination/where duplikasi — tambah `findManyPaginated` helper di BaseModel | ✅ `b9b1fe9` |
 | M2 | `controllers/store-payment.ts:36` | `as any` pada Prisma input — ganti `Record<string, unknown>` | ✅ `b9b1fe9` |
-| M3 | `middleware/owner.ts:5` | Module-level mutable state + race condition first access | |
-| M4 | `models/user.ts:15,25,34` | Missing return type annotations — pakai `as Promise<...>` aja | |
+| M3 | `middleware/owner.ts:5` | Module-level mutable state + race condition first access | ✅ |
+| M4 | `models/user.ts:15,25,34` | Missing return type annotations — pakai `as Promise<...>` aja | ✅ |
 | M5 | `controllers/store-payment.ts:37-43` | Redundant `in` checks — partial fix with M2 | ✅ `b9b1fe9` |
 | M6 | `input.ts:36`, `output.ts:21`, `pii.ts:55` | 3 exported functions (`detectInjection`, `hasLeak`, `hasPii`) | ⏭️ kept — used in tests |
 | M7 | `firewall/context.ts:16-18` | `resetConversationState` defined tapi zero callers | ⏭️ kept — used in tests |
-| M8 | `pii.ts:14` | `ADDRESS_RE` — greedy `.{3,80}` + long alternation → ReDoS potencial | |
-| M9 | `firewall/encoding.ts:10-14` | Leetspeak normalizer convert ALL digits → false positive di harga/alamat | |
-| M10 | `pii.ts:10-14` / `firewall/output.ts:6-12` | PII patterns duplikasi di 2 tempat — drift risk | |
-| M11 | `hooks/*.ts` | `useCallback` di return statement — non-idiomatic, risk hooks violation | |
-| M12 | `pages/Settings.tsx:50` | Dynamic `import()` expression sebagai type annotation | |
-| M13 | Banyak file | Inconsistent `.ts`/`.tsx` extensions di imports | |
+| M8 | `pii.ts:14` | `ADDRESS_RE` — greedy `.{3,80}` + long alternation → ReDoS potencial | ✅ |
+| M9 | `firewall/encoding.ts:10-14` | Leetspeak normalizer convert ALL digits → false positive di harga/alamat | ✅ |
+| M10 | `pii.ts:10-14` / `firewall/output.ts:6-12` | PII patterns duplikasi di 2 tempat — drift risk | ✅ |
+| M11 | `hooks/*.ts` | `useCallback` di return statement — non-idiomatic, risk hooks violation | ✅ |
+| M12 | `pages/Settings.tsx:50` | Dynamic `import()` expression sebagai type annotation | ✅ |
+| M13 | Banyak file | Inconsistent `.ts`/`.tsx` extensions di imports | ✅ |
 | M14 | `pages/ProductForm.tsx:101` | `set()` function name shadow `setForm` | ✅ `b9b1fe9` |
-| M15 | `components/OrderTimeline.tsx:41` | PROCESSING step pake `paidAt` timestamp — semantically wrong | |
+| M15 | `components/OrderTimeline.tsx:41` | PROCESSING step pake `paidAt` timestamp — semantically wrong | ✅ |
 | M16 | `hooks/useWaStatus.ts` | Fetch `/qr` unnecessary setelah connected | ✅ `e485309` |
-| M17 | `api/test/security.test.ts:5-6` | Env vars di module scope — shared mutable state antar test | |
-| M18 | `wa-bot/src/config/db.ts:6-12` | Non-null assertion tanpa validation — `"undefined"` literal di URL | |
-| M19 | `wa-bot/src/config/db.ts:19` | Pool `max: 1` bottleneck throughput | |
-| M20 | `init-dbs.sh:5-6` | Hardcoded DB names — ignore .env vars | |
-| M21 | `web-gen/src/generator.ts:389-393` | Fallback path assume co-located packages | |
-| M22 | Banyak model Prisma | Missing indexes (categoryId, isAvailable, phone, ownerId+type) | |
-| M23 | `.env.example:19` | default `LLM_BASE_URL` non-standard (opencode.ai, bukan openrouter.ai) | |
-| M24 | `pipeline/index.ts` | 18-step pipeline gak punya integration test sama sekali | |
+| M17 | `api/test/security.test.ts:5-6` | Env vars di module scope — shared mutable state antar test | ✅ |
+| M18 | `wa-bot/src/config/db.ts:6-12` | Non-null assertion tanpa validation — `"undefined"` literal di URL | ✅ |
+| M19 | `wa-bot/src/config/db.ts:19` | Pool `max: 1` bottleneck throughput | ✅ |
+| M20 | `init-dbs.sh:5-6` | Hardcoded DB names — ignore .env vars | ✅ |
+| M21 | `web-gen/src/generator.ts:389-393` | Fallback path assume co-located packages | ✅ |
+| M22 | Banyak model Prisma | Missing indexes (categoryId, isAvailable, phone, ownerId+type) | ✅ |
+| M23 | `.env.example:19` | default `LLM_BASE_URL` non-standard (opencode.ai, bukan openrouter.ai) | ✅ |
+| M24 | `pipeline/index.ts` | 18-step pipeline gak punya integration test sama sekali | ✅ `e2e/pipeline.test.ts` |
 
 ---
 
