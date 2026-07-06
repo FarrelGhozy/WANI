@@ -14,7 +14,7 @@ function getPool(): Pool {
 export async function clearBotCreds(): Promise<void> {
   const client = await getPool().connect()
   try {
-    await client.query('DELETE FROM "Creds"')
+    await client.query("DELETE FROM \"Creds\" WHERE id = 'pairing'")
     await client.query('DELETE FROM "SignalKey"')
   } finally {
     client.release()

@@ -28,8 +28,15 @@ let isReconnecting = false;
 let reconnectAttempts = 0;
 let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
 let pollErrors = 0;
+let isResetRestart = false;
 
 async function main() {
+  if (isResetRestart) {
+    await prisma.creds.deleteMany({ where: { id: "pairing" } });
+    await prisma.signalKey.deleteMany({});
+    isResetRestart = false;
+  }
+
   const { state, saveCreds } = await usePrismaAuthState(prisma);
 
   if (pollTimer) clearInterval(pollTimer);
@@ -54,7 +61,7 @@ async function main() {
     if (qr) {
       logger.info("QR code received");
       qrcode.generate(qr, { small: true });
-      api.post("/api/qr", { qr }).catch(e => logger.error({ err: e?.response?.data ?? e }, "push QR failed"));
+      api.post("/api/qr", { qr, pairingCode: null }).catch(e => logger.error({ err: e?.response?.data ?? e }, "push QR failed"));
 
       // Check if pairing code was requested via dashboard
       checkAndGeneratePairingCode();
@@ -164,19 +171,11 @@ async function main() {
       const { data } = await api.get("/api/qr/status");
       const st = data?.data;
       if (st?.status === "disconnected" && !st?.phone && !st?.qr) {
-        logger.info("reset detected — logging out");
-        try {
-          await sock?.logout();
-          logger.info("logout successful");
-        } catch (logoutErr) {
-          logger.error({ err: String(logoutErr) }, "logout failed");
-        }
-        await prisma.creds.deleteMany({});
-        await prisma.signalKey.deleteMany({});
-        logger.info("auth credentials cleared from DB");
+        logger.info("reset detected — restarting with fresh creds");
         if (pollTimer) clearInterval(pollTimer);
         pollTimer = null;
         sock?.end(undefined);
+        isResetRestart = true;
         isReconnecting = true;
         setTimeout(() => {
           main().catch((err) => {
