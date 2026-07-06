@@ -55,8 +55,12 @@ export default function LoginPage() {
   }
 
   const handleResend = useCallback(async () => {
-    await resendVerification(email)
-    setResent(true)
+    try {
+      await resendVerification(email)
+      setResent(true)
+    } catch {
+      // error already set by resendVerification
+    }
   }, [email, resendVerification])
 
   return (

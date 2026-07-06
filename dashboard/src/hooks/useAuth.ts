@@ -96,7 +96,9 @@ export function useAuth() {
         body: JSON.stringify({ email }),
       })
     } catch (e) {
-      setError(getErrorMessage(e, 'Gagal mengirim ulang verifikasi'))
+      const msg = getErrorMessage(e, 'Gagal mengirim ulang verifikasi')
+      setError(msg)
+      throw e
     } finally {
       setLoading(false)
     }

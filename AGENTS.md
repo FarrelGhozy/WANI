@@ -38,6 +38,7 @@ Bot pushes QR/status → API stores in WaSession DB → Dashboard polls GET /api
 - `bun run src/index.ts` — start Express server (port 3001)
 - `bun run prisma:generate` — generate Prisma client
 - `bun run prisma:migrate` — apply dev migrations
+- `bun run prisma:migrate -- --name <nama>` — create named dev migration (wajib jalanin setiap ada perubahan schema!)
 - `bun run prisma:deploy` — apply production migrations
 - `bun test` — run unit + guardrail tests (Bun's built-in `bun:test`)
 
@@ -51,6 +52,7 @@ Bot pushes QR/status → API stores in WaSession DB → Dashboard polls GET /api
 - `bun run src/index.ts` — start WhatsApp bot
 - `bun run prisma:generate` — generate Prisma client
 - `bun run prisma:migrate` — apply dev migrations
+- `bun run prisma:migrate -- --name <nama>` — create named dev migration (wajib jalanin setiap ada perubahan schema!)
 - `bun run prisma:deploy` — apply production migrations
 
 **Web-Gen** (`web-gen/`):
@@ -364,6 +366,7 @@ git commit -m "🔥 api: add products CRUD — route, schema, controller, model"
 - Hanya commit file dari `api/` ketika kerja backend — jangan campur package lain.
 - Generated files (Prisma client, node_modules) masuk `.gitignore` — jangan di-stage.
 - Migrations file (`prisma/migrations/`) ikut di-commit — itu bagian dari schema versioning.
+- **Wajib jalanin `bun run prisma:migrate -- --name <nama>` setiap ada perubahan di `prisma/models/*.prisma`** — jangan bikin migration manual. Migration akan auto-apply ke dev DB.
 
 ## Progress — Multi-Tenant + Code Review
 

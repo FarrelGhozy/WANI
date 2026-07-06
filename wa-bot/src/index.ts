@@ -147,7 +147,7 @@ async function main() {
       const { data } = await api.get("/api/qr/status");
       const pairingPhone = data?.data?.pairingPhone;
       const pairingCode = data?.data?.pairingCode;
-      if (pairingPhone && !pairingCode && sock) {
+      if (pairingPhone && !pairingCode && sock && !connected) {
         logger.info({ pairingPhone }, "generating pairing code");
         const code = await sock.requestPairingCode(pairingPhone);
         logger.info({ code }, "pairing code generated");
@@ -182,6 +182,7 @@ async function main() {
 
   async function pollOutgoing() {
     await pollResetSignal();
+    await checkAndGeneratePairingCode();
     try {
       pollErrors = 0
       const { data } = await api.get("/api/outgoing");
