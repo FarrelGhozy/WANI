@@ -171,6 +171,9 @@ async function main() {
         } catch (logoutErr) {
           logger.error({ err: String(logoutErr) }, "logout failed");
         }
+        await prisma.creds.deleteMany({});
+        await prisma.signalKey.deleteMany({});
+        logger.info("auth credentials cleared from DB");
         if (pollTimer) clearInterval(pollTimer);
         pollTimer = null;
         sock?.end(undefined);
