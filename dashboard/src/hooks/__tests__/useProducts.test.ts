@@ -46,7 +46,7 @@ const mockCategory2: Category = { id: 'c2', name: 'Minuman', description: null }
 
 function setupProductFetch(products: Product[] = [mockProduct, mockProduct2], categories: Category[] = [mockCategory, mockCategory2]) {
   mockFetchApi.mockImplementation(async (url: string) => {
-    if (url === '/products?limit=100') {
+    if (url === '/products?limit=500') {
       return { status: 'success', message: 'ok', data: { items: products, total: products.length } }
     }
     if (url === '/products/categories') {
@@ -73,7 +73,7 @@ describe('useProducts', () => {
 
       expect(result.current.products).toHaveLength(2)
       expect(result.current.categories).toHaveLength(2)
-      expect(mockFetchApi).toHaveBeenCalledWith('/products?limit=100')
+      expect(mockFetchApi).toHaveBeenCalledWith('/products?limit=500')
       expect(mockFetchApi).toHaveBeenCalledWith('/products/categories')
       expect(result.current.error).toBeNull()
     })
