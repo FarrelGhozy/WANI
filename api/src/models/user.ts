@@ -18,13 +18,18 @@ export class UserModel extends BaseModel {
     email: string
     password: string
     role: string
+    emailVerified: boolean
   } | null> {
-    return this.delegate.findUnique({ where: { email } }) as Promise<{
+    return this.delegate.findUnique({
+      where: { email },
+      select: { id: true, name: true, email: true, password: true, role: true, emailVerified: true },
+    }) as Promise<{
       id: string
       name: string
       email: string
       password: string
       role: string
+      emailVerified: boolean
     } | null>
   }
 

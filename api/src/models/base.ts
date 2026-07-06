@@ -62,6 +62,15 @@ export abstract class BaseModel {
     return { items, total, page, limit, totalPages: Math.ceil(total / limit) }
   }
 
+  static async ping(): Promise<boolean> {
+    try {
+      await prisma.$queryRaw`SELECT 1`
+      return true
+    } catch {
+      return false
+    }
+  }
+
   protected static async findManyPaginated<T>(
     where: Record<string, unknown>,
     skip: number,

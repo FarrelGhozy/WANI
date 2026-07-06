@@ -94,10 +94,7 @@ export async function login(
   req: Request<Record<string, string>, any, LoginBody>,
   res: Response,
 ): Promise<void> {
-  const user = await UserModel.delegate.findUnique({
-    where: { email: req.body.email },
-    select: { id: true, name: true, email: true, password: true, role: true, emailVerified: true },
-  })
+  const user = await UserModel.findByEmail(req.body.email)
   if (!user) {
     throw new UnauthorizedError("invalid email or password")
   }
@@ -219,10 +216,7 @@ export async function resendVerification(
   req: Request<Record<string, string>, any, ResendVerificationBody>,
   res: Response,
 ): Promise<void> {
-  const user = await UserModel.delegate.findUnique({
-    where: { email: req.body.email },
-    select: { id: true, name: true, email: true, emailVerified: true },
-  })
+  const user = await UserModel.findByEmail(req.body.email)
 
   if (user && !user.emailVerified) {
     const verificationToken = crypto.randomUUID()
