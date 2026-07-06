@@ -93,7 +93,11 @@ Registrasi → login → liat dashboard kosong, bukan data user lain.
 | H18 | `whatsapp-auth.ts` — batch deletes per type, parallel upserts | `9e48cc8` |
 | H19 | `order.prisma` — added `@@index([orderId])` + `@@index([productId])` + migration | `9e48cc8` |
 
-**Tests**: 129 pass (unit), 6 pass (e2e), 0 fail. Dashboard `bun run build` clean.
+**Tests**:
+- `bun run test` → 238 pass, 0 fail, 5 skip (env-based)
+- `bun run test:e2e` → 6 pass, 0 fail
+- Dashboard: `vitest run` → 97 pass, 0 fail (7 test files)
+- Dashboard `bun run build` → clean (519 KB JS, 50 KB CSS)
 
 ---
 
