@@ -7,7 +7,9 @@ import { WaStatusProvider } from '@/contexts/WaStatusContext.tsx'
 import LoginPage from '@/pages/LoginPage.tsx'
 import SignUpPage from '@/pages/SignUpPage.tsx'
 import ForgotPasswordPage from '@/pages/ForgotPasswordPage.tsx'
+import ResetPasswordPage from '@/pages/ResetPasswordPage.tsx'
 import VerifyEmailPage from '@/pages/VerifyEmailPage.tsx'
+import NotFoundPage from '@/pages/NotFoundPage.tsx'
 import Dashboard from '@/pages/Dashboard.tsx'
 import Products from '@/pages/Products.tsx'
 import ProductForm from '@/pages/ProductForm.tsx'
@@ -25,6 +27,7 @@ const router = createBrowserRouter([
       { path: '/signup',          element: <SignUpPage /> },
       { path: '/forgot-password', element: <ForgotPasswordPage /> },
       { path: '/verify-email',    element: <VerifyEmailPage /> },
+      { path: '/reset-password',  element: <ResetPasswordPage /> },
     ],
   },
   {
@@ -41,6 +44,10 @@ const router = createBrowserRouter([
       { path: 'website',       element: <Website /> },
       { path: 'settings',      element: <Settings /> },
     ],
+  },
+  {
+    path: '*',
+    element: <NotFoundPage />,
   },
 ])
 
