@@ -1,13 +1,12 @@
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router'
+import { useState, useCallback } from 'react'
+import { Link } from 'react-router'
 import { useAuth } from '@/hooks/useAuth.ts'
 import { MailIcon, LockIcon, EyeIcon, EyeOffIcon, UserIcon } from '@/components/Icons.tsx'
 import Button from '@/components/ui/Button.tsx'
 import Input from '@/components/ui/Input.tsx'
 
 export default function SignUpPage() {
-  const navigate = useNavigate()
-  const { register, loading, error } = useAuth()
+  const { register, resendVerification, loading, error } = useAuth()
 
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -16,6 +15,8 @@ export default function SignUpPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
+  const [registeredEmail, setRegisteredEmail] = useState<string | null>(null)
+  const [resent, setResent] = useState(false)
 
   function validate() {
     const errors: Record<string, string> = {}
@@ -34,7 +35,50 @@ export default function SignUpPage() {
     e.preventDefault()
     if (!validate()) return
     const success = await register(name.trim(), email, password)
-    if (success) navigate('/', { replace: true })
+    if (success) setRegisteredEmail(email)
+  }
+
+  const handleResend = useCallback(async () => {
+    if (!registeredEmail) return
+    await resendVerification(registeredEmail)
+    setResent(true)
+  }, [registeredEmail, resendVerification])
+
+  if (registeredEmail) {
+    return (
+      <div className="space-y-5 text-center">
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-teal-100">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="text-teal-600">
+            <path d="M22 2L11 13" /><path d="M22 2L15 22l-4-9-9-4z" />
+          </svg>
+        </div>
+        <h2 className="text-lg font-semibold text-stone-900">Cek Email Anda</h2>
+        <p className="text-sm text-stone-500">
+          Kami telah mengirim email verifikasi ke <span className="font-medium text-stone-700">{registeredEmail}</span>.
+          Silakan klik link di email untuk memverifikasi akun Anda.
+        </p>
+        <p className="text-xs text-stone-400">
+          {resent ? (
+            'Email verifikasi telah dikirim ulang!'
+          ) : (
+            <>Tidak menerima email? Periksa folder spam atau{' '}
+              <button
+                onClick={handleResend}
+                className="font-medium text-teal-600 hover:text-teal-700 underline underline-offset-2"
+              >
+                kirim ulang
+              </button>
+            </>
+          )}
+        </p>
+        <Link
+          to="/login"
+          className="inline-block text-sm font-medium text-teal-600 hover:text-teal-700"
+        >
+          Kembali ke Login
+        </Link>
+      </div>
+    )
   }
 
   return (

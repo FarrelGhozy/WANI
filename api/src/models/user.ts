@@ -37,6 +37,15 @@ export class UserModel extends BaseModel {
     }) as Promise<{ id: string; resetPasswordToken: string | null; resetPasswordExpires: Date | null } | null>
   }
 
+  static async findByVerificationToken(token: string): Promise<{ id: string; name: string; email: string; emailVerified: boolean; emailVerificationToken: string | null; emailVerificationExpires: Date | null } | null> {
+    return this.delegate.findFirst({
+      where: {
+        emailVerificationToken: token,
+        emailVerificationExpires: { gt: new Date() },
+      },
+    }) as Promise<{ id: string; name: string; email: string; emailVerified: boolean; emailVerificationToken: string | null; emailVerificationExpires: Date | null } | null>
+  }
+
   static async createUser(data: {
     name: string
     email: string

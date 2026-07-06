@@ -65,7 +65,11 @@ describe('useAuth', () => {
       const { result } = renderHook(() => useAuth())
 
       await act(async () => {
-        await result.current.login('test@example.com', 'wrong')
+        try {
+          await result.current.login('test@example.com', 'wrong')
+        } catch {
+          // login now re-throws so the caller can detect not-verified
+        }
       })
 
       expect(result.current.user).toBeNull()
@@ -76,11 +80,11 @@ describe('useAuth', () => {
   })
 
   describe('register', () => {
-    it('returns true and stores token on successful registration', async () => {
+    it('returns true on successful registration (no token)', async () => {
       mockFetchApi.mockResolvedValueOnce({
         status: 'success',
-        message: 'Registrasi berhasil',
-        data: { token: mockToken, user: mockUser },
+        message: 'registration successful, please check your email',
+        data: null,
       })
 
       const { result } = renderHook(() => useAuth())
@@ -91,8 +95,8 @@ describe('useAuth', () => {
       })
 
       expect(returnedValue).toBe(true)
-      expect(result.current.user).toEqual(mockUser)
-      expect(localStorage.getItem(AUTH_TOKEN_KEY)).toBe(mockToken)
+      expect(result.current.user).toBeNull()
+      expect(localStorage.getItem(AUTH_TOKEN_KEY)).toBeNull()
     })
 
     it('returns false on registration failure', async () => {

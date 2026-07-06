@@ -30,7 +30,9 @@ export function useAuth() {
       localStorage.setItem(AUTH_USER_KEY, JSON.stringify(userData))
       setUser(userData)
     } catch (e) {
-      setError(getErrorMessage(e, 'Login gagal'))
+      const msg = getErrorMessage(e, 'Login gagal')
+      setError(msg)
+      throw e
     } finally {
       setLoading(false)
     }
@@ -70,20 +72,31 @@ export function useAuth() {
     setLoading(true)
     setError(null)
     try {
-      const json = await fetchApi<{ token: string; user: User }>('/auth/register', {
+      await fetchApi('/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password }),
       })
-      if (!json.data) throw new Error(json.message || 'Registrasi gagal: data kosong')
-      const { token, user: userData } = json.data
-      localStorage.setItem(AUTH_TOKEN_KEY, token)
-      localStorage.setItem(AUTH_USER_KEY, JSON.stringify(userData))
-      setUser(userData)
       return true
     } catch (e) {
       setError(getErrorMessage(e, 'Registrasi gagal'))
       return false
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  const resendVerification = useCallback(async (email: string): Promise<void> => {
+    setLoading(true)
+    setError(null)
+    try {
+      await fetchApi('/auth/resend-verification', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      })
+    } catch (e) {
+      setError(getErrorMessage(e, 'Gagal mengirim ulang verifikasi'))
     } finally {
       setLoading(false)
     }
@@ -95,5 +108,5 @@ export function useAuth() {
     setUser(null)
   }, [])
 
-  return { user, isAuthenticated, login, register, logout, loading, error }
+  return { user, isAuthenticated, login, register, logout, loading, error, resendVerification }
 }
