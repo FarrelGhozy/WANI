@@ -1,5 +1,7 @@
 # Project wide .gitignore file
 
+node_modules/
+bun.lock
 graphify-out
 .env
 .env.*
