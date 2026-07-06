@@ -40,7 +40,7 @@ jobs:
         working-directory: wa-bot
 
       - name: Run Tests
-        run: bun test
+        run: bun run test
         working-directory: wa-bot
 
       - name: Log in to GHCR

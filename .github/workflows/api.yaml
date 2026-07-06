@@ -6,7 +6,7 @@ on:
       - main
     paths:
       - "api/**"
-      - "web-gen/**"    # API image bundles web-gen templates
+      - "web-gen/**" # API image bundles web-gen templates
     # For production deployment using semantic versioning
     tags:
       - "api-v*.*.*"
@@ -15,7 +15,7 @@ on:
       - main
     paths:
       - "api/**"
-      - "web-gen/**"    # API image bundles web-gen templates
+      - "web-gen/**" # API image bundles web-gen templates
 
 permissions:
   contents: read
@@ -42,7 +42,7 @@ jobs:
         working-directory: api
 
       - name: Run Tests
-        run: bun run test:all
+        run: bun run test
         working-directory: api
 
       - name: Log in to GHCR
