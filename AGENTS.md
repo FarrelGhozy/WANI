@@ -395,6 +395,7 @@ git commit -m "🔥 api: add products CRUD — route, schema, controller, model"
 | 7d | API WaSession model + controller — ownerId scoped, clearBotCreds(ownerId) — ✅ done |
 | 7e | API WaSession routes — restructured for dashboard vs bot, active-tenants endpoint — ✅ done |
 | 7f | wa-bot auth: `usePrismaAuthState(prisma, ownerId)` — ✅ done |
+| 7g | `BotInstance` class — extracted per-owner WASocket logic — ✅ done |
 | 7d–7e | API: WaSession model/routes/controllers scoped per ownerId, bot + dashboard split |
 | 7f | wa-bot auth: `usePrismaAuthState(prisma, ownerId)` |
 | 7g | `BotInstance` class — extracted per-owner WASocket logic |

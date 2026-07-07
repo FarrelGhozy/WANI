@@ -114,15 +114,15 @@ Tiap user bisa pairing nomor HP sendiri → bot manage N sockets dalam 1 process
 - [x] 7f2. `wa-bot/src/index.ts` — passing `ownerId` (sementara dari env, akan diganti BotManager)
 - [x] 7f3. `wa-bot/test/whatsapp-auth.test.ts` — tests updated, 11 pass
 
-#### 7g. wa-bot — BotInstance (file baru)
+#### 7g. wa-bot — BotInstance ✅
 
-- [ ] 7g1. `wa-bot/src/instance.ts` — class `BotInstance`, extracted logic dari `index.ts` saat ini:
-  - Constructor: `BotInstance(ownerId)`
-  - State: `sock`, `connected`, `wsAlive`, `reconnectAttempts`, `isReconnecting`, `pollTimer`, `pollErrors`, `reconnectTimer`, `cleanupRegistered`
-  - Methods: `start()`, `stop()`, `handleConnectionUpdate()`, `handleMessagesUpsert()`, `checkAndGeneratePairingCode()`, `pollOutgoing()`, `pollResetSignal()`
-  - Tiap instance punya `api` axios instance sendiri (base URL + API_TOKEN + ownerId header)
-  - Tiap instance polling `GET /api/qr/bot/:ownerId/*` (scoped)
-  - Tiap instance kirim `ownerId` di body `POST /api/chat`
+- [x] 7g1. `wa-bot/src/instance.ts` — class `BotInstance(ownerId)` with extracted logic:
+  - `start()`, `stop()`, `handleConnectionUpdate()`, `handleMessagesUpsert()`
+  - `checkAndGeneratePairingCode()`, `pollOutgoing()`, `pollResetSignal()`
+  - Own `api` per instance, ownerId in all requests
+  - Uses bot-scoped endpoints (`/api/qr/bot`, `/api/outgoing?ownerId=`)
+- [x] 7g2. `wa-bot/src/index.ts` — simplified: creates BotInstance
+- [x] 7g3. `api` — added `GET /api/qr/bot/:ownerId`, `listOutgoing(ownerId?)`
 
 #### 7h. wa-bot — BotManager (file baru)
 

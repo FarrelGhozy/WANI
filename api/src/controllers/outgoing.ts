@@ -2,8 +2,9 @@ import type { Request, Response } from "express"
 import { MessageModel } from "@/src/models/message"
 import { sendResponse } from "@/src/utils/response"
 
-export async function listOutgoing(_req: Request, res: Response): Promise<void> {
-  const items = await MessageModel.listOutgoing()
+export async function listOutgoing(req: Request, res: Response): Promise<void> {
+  const ownerId = req.query.ownerId as string | undefined
+  const items = await MessageModel.listOutgoing(ownerId)
   sendResponse(res, 200, "outgoing messages", { items })
 }
 

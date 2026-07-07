@@ -48,9 +48,10 @@ export class MessageModel extends BaseModel {
     })
   }
 
-  static async listOutgoing(): Promise<OutgoingItem[]> {
+  static async listOutgoing(ownerId?: string): Promise<OutgoingItem[]> {
     const messages = await this.delegate.findMany({
       where: {
+        ...(ownerId ? { ownerId } : {}),
         OR: [
           { role: "HUMAN", waMsgId: null },
           { msgType: "notification", waMsgId: null },
