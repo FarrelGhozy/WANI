@@ -136,10 +136,11 @@ Tiap user bisa pairing nomor HP sendiri → bot manage N sockets dalam 1 process
 
 - [x] 7i1. `wa-bot/src/index.ts` — `new BotManager().start()`, signal handlers in manager
 
-#### 7j. Dashboard — WaSessionTab
+#### 7j. Dashboard — WaSessionTab ✅
 
-- [ ] 7j1. Periksa `useWaStatus` hook — pastikan endpoint masi jalan (JWT auth, dapet data sendiri)
-- [ ] 7j2. Minor adjustment kalo ada perubahan response shape
+- [x] 7j1. `useWaStatus` hook — endpoints compatible (JWT auth via fetchApi)
+- [x] 7j2. All dashboard endpoints (`/qr`, `/qr/status`, `/qr/reset`, `/qr/pairing`, `/qr/refresh-pairing`) mapped to `requireJwt` routes ✅
+- [x] 7j3. Build clean — 535 KB JS, 51 KB CSS
 
 #### 7k. Backfill — Migration data existing
 
