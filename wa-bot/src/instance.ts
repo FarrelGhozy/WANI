@@ -18,7 +18,6 @@ export class BotInstance {
   private reconnectTimer: ReturnType<typeof setTimeout> | null = null
   private pollErrors = 0
   private isResetRestart = false
-  private cleanupRegistered = false
   private api = axios.create({
     baseURL: process.env.API_URL!,
     headers: { Authorization: `Bearer ${process.env.API_TOKEN}` }
@@ -61,16 +60,9 @@ export class BotInstance {
 
     const POLL_INTERVAL = Number(process.env.OUTGOING_POLL_INTERVAL ?? 3000)
     this.pollTimer = setInterval(() => this.pollOutgoing(), POLL_INTERVAL)
-
-    if (!this.cleanupRegistered) {
-      this.cleanupRegistered = true
-      process.on("SIGINT", () => this.stop("SIGINT"))
-      process.on("SIGTERM", () => this.stop("SIGTERM"))
-    }
   }
 
-  async stop(signal?: string): Promise<void> {
-    this.logger.info({ signal }, "shutting down")
+  async stop(): Promise<void> {
     if (this.reconnectTimer) {
       clearTimeout(this.reconnectTimer)
       this.reconnectTimer = null
@@ -79,11 +71,7 @@ export class BotInstance {
       clearInterval(this.pollTimer)
       this.pollTimer = null
     }
-    try {
-      await prisma.$disconnect()
-    } catch (err) {
-      this.logger.error({ err: String(err) }, "prisma disconnect failed")
-    }
+    this.sock?.end(undefined)
   }
 
   private async handleConnectionUpdate(

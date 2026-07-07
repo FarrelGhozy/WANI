@@ -1,9 +1,8 @@
-import { BotInstance } from "@/src/instance";
+import { BotManager } from "@/src/manager"
 
-const ownerId = process.env.OWNER_ID ?? "default";
-const instance = new BotInstance(ownerId);
+const manager = new BotManager()
 
-instance.start().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+manager.start().catch((err) => {
+  console.error(err)
+  process.exit(1)
+})

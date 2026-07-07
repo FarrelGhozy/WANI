@@ -126,17 +126,15 @@ Tiap user bisa pairing nomor HP sendiri → bot manage N sockets dalam 1 process
 
 #### 7h. wa-bot — BotManager (file baru)
 
-- [ ] 7h1. `wa-bot/src/manager.ts` — class `BotManager`:
+- [x] 7h1. `wa-bot/src/manager.ts` — class `BotManager`:
   - `Map<string, BotInstance>` — key by ownerId
-  - `start()`: load existing active tenants via `GET /api/qr/active-tenants`, start instance for each
-  - `stop()`: stop all instances cleanup
-  - `pollForNewTenants()`: every 10s, check active tenants → start new, stop removed
-  - `startInstance(ownerId)`: create + start BotInstance, store in Map
-  - `stopInstance(ownerId)`: stop + remove from Map
+  - Syncs with `GET /api/qr/active-tenants` every 10s
+  - Starts/stops instances as tenants change
+  - Graceful shutdown with Prisma disconnect
 
-#### 7i. wa-bot — Index (simplified)
+#### 7i. wa-bot — Index (simplified) ✅
 
-- [ ] 7i1. `wa-bot/src/index.ts` — sederhana: init `BotManager`, `manager.start()`, graceful shutdown `manager.stop()`
+- [x] 7i1. `wa-bot/src/index.ts` — `new BotManager().start()`, signal handlers in manager
 
 #### 7j. Dashboard — WaSessionTab
 
