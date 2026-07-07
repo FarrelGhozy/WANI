@@ -44,7 +44,7 @@ Registrasi → login → liat dashboard kosong, bukan data user lain.
 - [x] 4i. `website.ts` — all queries scoped by ownerId
 - [x] 4j. `log.ts` — `ActivityLogModel.log/list` now accept ownerId
 - [x] 4k. `upload.ts` — unchanged (handles file upload, no owner scope needed)
-- [x] 4l. `qr.ts` — WaSession tetap global (no change)
+- [x] 4l. ~~`qr.ts` — WaSession tetap global (no change)~~ → **direvisi di Tahap 7: Multi-Tenant Bot**
 - [x] 4m. `auth.ts` — no change (User model sendiri)
 - [x] 4n. `dashboard.ts` — `getDashboardStats(ownerId)` scopes all counts
 - [x] 4o. AI pipeline: `PipelineInput.ownerId` → `PipelineContext.ownerId` → `ActionCtx.ownerId` propagated through all steps (contextLoader → products/payment/store/aiConfig by owner, ensureCustomer → upsertByOwnerPhone, actions → order/activityLog scoped, firewall/outputGuardrails → activityLog scoped)
@@ -68,6 +68,98 @@ Registrasi → login → liat dashboard kosong, bukan data user lain.
   - `POST /api/chat` → greeting → `"Halo! Ada yang bisa kami bantu?"` (intent: greeting)
   - `POST /api/chat` → order request → context-aware reply about available products (intent: inquiry)
   - Pipeline 18-step works end-to-end (guardrails → LLM → intent → sanitize)
+
+### Tahap 7: Multi-Socket per Tenant (1 Process, N Sockets)
+
+**Goal:** Setiap user punya koneksi WhatsApp sendiri (WASocket terpisah).
+Tiap user bisa pairing nomor HP sendiri → bot manage N sockets dalam 1 process.
+
+#### 7a. Verifikasi & Branching
+
+- [ ] 7a1. Pastikan semua perubahan Tahap 1-6 udah tercommit di `main`
+- [ ] 7a2. Branch baru `feat/multi-tenant-bot` dibuat
+
+#### 7b. Migration & Schema — wa-bot
+
+- [ ] 7b1. `wa-bot/prisma/models/creds.prisma` — tambah `ownerId`, ganti `@id` jadi `@@id([ownerId, id])`
+- [ ] 7b2. `wa-bot/prisma/models/signal_key.prisma` — tambah `ownerId`, ganti `@id` jadi `@@id([ownerId, id])`
+- [ ] 7b3. Run `bun run prisma:migrate -- --name add_owner_id` di `wa-bot/`
+
+#### 7c. Migration & Schema — api
+
+- [ ] 7c1. `api/prisma/models/wa_session.prisma` — ganti `id String @id @default("default")` → `ownerId String @id`
+- [ ] 7c2. `api/src/types/wa-session.ts` — ganti `WaSessionData`: hapus `id`, pastikan `ownerId` jadi required
+- [ ] 7c3. `api/src/schemas/wa-session.ts` — tambah `ownerId: z.string()` di `upsertQrSchema`
+- [ ] 7c4. Run `bun run prisma:migrate -- --name multi_tenant_wa_session` di `api/`
+
+#### 7d. API — WaSession Model
+
+- [ ] 7d1. `api/src/models/wa-session.ts` — `find(ownerId)` ganti `getById("default")` → `getById(ownerId)`
+- [ ] 7d2. `upsert(ownerId, data)` — upsert pake `where: { ownerId }` + `create: { ownerId, ... }`
+- [ ] 7d3. Hapus `clearQr()` (gak perlu lagi, cukup upsert)
+
+#### 7e. API — WaSession Routes & Controller
+
+- [ ] 7e1. `api/src/routes/qr.ts` — restructure endpoint grouping:
+  - `${prefix}/qr` → JWT (dashboard user)
+  - `${prefix}/qr/bot` → API_TOKEN (bot)
+- [ ] 7e2. Dashboard endpoints: semua pake `requireJwt`, otomatis scoped ke `getOwnerId(req)`
+  - `GET /api/qr` → QR ku
+  - `GET /api/qr/status` → status ku
+  - `POST /api/qr/pairing` → minta pairing untuk ku
+  - `POST /api/qr/refresh-pairing` → refresh pairing ku
+  - `POST /api/qr/reset` → reset session ku
+- [ ] 7e3. Bot endpoints: pake `requireAuth`, terima `ownerId` dari body/path
+  - `POST /api/qr/bot` → upsert QR/pairingCode/pairingPhone (body: `{ ownerId, qr?, status?, ... }`)
+  - `DELETE /api/qr/bot/:ownerId` → clear QR untuk owner tertentu
+- [ ] 7e4. `GET /api/qr/active-tenants` → `requireAuth`, return list ownerId yg punya session aktif
+- [ ] 7e5. `api/src/controllers/qr.ts` — pisah handler jadi dashboard vs bot, scoped semua query by `ownerId`
+
+#### 7f. wa-bot — WhatsApp Auth
+
+- [ ] 7f1. `wa-bot/src/services/whatsapp-auth.ts` — `usePrismaAuthState(prisma, ownerId)`. Filter Creds by `ownerId + "pairing"`, filter SignalKey by `ownerId`
+
+#### 7g. wa-bot — BotInstance (file baru)
+
+- [ ] 7g1. `wa-bot/src/instance.ts` — class `BotInstance`, extracted logic dari `index.ts` saat ini:
+  - Constructor: `BotInstance(ownerId)`
+  - State: `sock`, `connected`, `wsAlive`, `reconnectAttempts`, `isReconnecting`, `pollTimer`, `pollErrors`, `reconnectTimer`, `cleanupRegistered`
+  - Methods: `start()`, `stop()`, `handleConnectionUpdate()`, `handleMessagesUpsert()`, `checkAndGeneratePairingCode()`, `pollOutgoing()`, `pollResetSignal()`
+  - Tiap instance punya `api` axios instance sendiri (base URL + API_TOKEN + ownerId header)
+  - Tiap instance polling `GET /api/qr/bot/:ownerId/*` (scoped)
+  - Tiap instance kirim `ownerId` di body `POST /api/chat`
+
+#### 7h. wa-bot — BotManager (file baru)
+
+- [ ] 7h1. `wa-bot/src/manager.ts` — class `BotManager`:
+  - `Map<string, BotInstance>` — key by ownerId
+  - `start()`: load existing active tenants via `GET /api/qr/active-tenants`, start instance for each
+  - `stop()`: stop all instances cleanup
+  - `pollForNewTenants()`: every 10s, check active tenants → start new, stop removed
+  - `startInstance(ownerId)`: create + start BotInstance, store in Map
+  - `stopInstance(ownerId)`: stop + remove from Map
+
+#### 7i. wa-bot — Index (simplified)
+
+- [ ] 7i1. `wa-bot/src/index.ts` — sederhana: init `BotManager`, `manager.start()`, graceful shutdown `manager.stop()`
+
+#### 7j. Dashboard — WaSessionTab
+
+- [ ] 7j1. Periksa `useWaStatus` hook — pastikan endpoint masi jalan (JWT auth, dapet data sendiri)
+- [ ] 7j2. Minor adjustment kalo ada perubahan response shape
+
+#### 7k. Backfill — Migration data existing
+
+- [ ] 7k1. Untuk user existing yg udah punya WaSession row default → insert ulang pake ownerId mereka
+- [ ] 7k2. wa-bot Creds/SignalKey existing → tambah ownerId (fallback ke owner pertama)
+
+#### 7l. Test
+
+- [ ] 7l1. `bun run test` di `api/` — semua existing tests pass
+- [ ] 7l2. `bun run tsc --noEmit` di `wa-bot/` — type check
+- [ ] 7l3. Manual: register 2 user, pairing masing-masing, verify AI reply pake data toko masing-masing
+- [ ] 7l4. Manual: disconnect user A → user B tetep jalan
+
 
 ### Bug Fixes Found During Testing
 
