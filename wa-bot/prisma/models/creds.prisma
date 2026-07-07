@@ -1,4 +1,7 @@
 model Creds {
-  id   String @id
-  data String
+  ownerId String @default("00000000-0000-0000-0000-000000000000")
+  id      String
+  data    String
+
+  @@id([ownerId, id])
 }
