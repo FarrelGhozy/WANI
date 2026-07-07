@@ -54,7 +54,7 @@ export async function clearQr(req: Request, res: Response): Promise<void> {
 }
 
 export async function clearBotQr(req: Request, res: Response): Promise<void> {
-  await WaSessionModel.clearQr(req.params.ownerId!)
+  await WaSessionModel.clearQr(req.params.ownerId! as string)
   sendResponse(res, 200, "qr cleared")
 }
 
@@ -64,7 +64,7 @@ export async function getActiveTenants(_req: Request, res: Response): Promise<vo
 }
 
 export async function getBotSession(req: Request, res: Response): Promise<void> {
-  const session = await WaSessionModel.find(req.params.ownerId!)
+  const session = await WaSessionModel.find(req.params.ownerId! as string)
   sendResponse(res, 200, "session retrieved", {
     status: session?.status ?? "disconnected",
     phone: session?.phone ?? null,
