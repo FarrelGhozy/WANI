@@ -1,7 +1,9 @@
 import { expect, test, describe, mock, afterEach } from "bun:test"
 
+const OWNER_ID = "user-1"
+
 const mockUpsert = mock((args: any) =>
-  Promise.resolve({ id: "default", qr: null, status: "disconnected", phone: null, updatedAt: new Date() }),
+  Promise.resolve({ ownerId: OWNER_ID, qr: null, status: "disconnected", phone: null, updatedAt: new Date() }),
 )
 
 mock.module("@/src/config/db", () => ({
@@ -9,7 +11,7 @@ mock.module("@/src/config/db", () => ({
     waSession: {
       upsert: mockUpsert,
       findUnique: mock((args: any) =>
-        Promise.resolve({ id: "default", qr: null, status: "disconnected", phone: "628123456789", updatedAt: new Date() }),
+        Promise.resolve({ ownerId: OWNER_ID, qr: null, status: "disconnected", phone: "628123456789", updatedAt: new Date() }),
       ),
     },
   } as any,
@@ -23,11 +25,11 @@ describe("WaSessionModel.upsert", () => {
   })
 
   test("upsert with phone passes phone to prisma", async () => {
-    await WaSessionModel.upsert({ qr: null, status: "disconnected", phone: null })
+    await WaSessionModel.upsert(OWNER_ID, { qr: null, status: "disconnected", phone: null })
 
     expect(mockUpsert).toHaveBeenCalledTimes(1)
     const call = mockUpsert.mock.calls[0]?.[0]
-    expect(call.where).toEqual({ id: "default" })
+    expect(call.where).toEqual({ ownerId: OWNER_ID })
     expect(call.update).toMatchObject({
       qr: null,
       status: "disconnected",
@@ -36,7 +38,7 @@ describe("WaSessionModel.upsert", () => {
   })
 
   test("upsert without phone does not include phone in update", async () => {
-    await WaSessionModel.upsert({ qr: null, status: "disconnected" })
+    await WaSessionModel.upsert(OWNER_ID, { qr: null, status: "disconnected" })
 
     expect(mockUpsert).toHaveBeenCalledTimes(1)
     const call = mockUpsert.mock.calls[0]?.[0]
@@ -48,12 +50,12 @@ describe("WaSessionModel.upsert", () => {
   })
 
   test("upsert status connecting has defaults in create", async () => {
-    await WaSessionModel.upsert({ status: "connecting" })
+    await WaSessionModel.upsert(OWNER_ID, { status: "connecting" })
 
     expect(mockUpsert).toHaveBeenCalledTimes(1)
     const call = mockUpsert.mock.calls[0]?.[0]
     expect(call.create).toMatchObject({
-      id: "default",
+      ownerId: OWNER_ID,
       qr: null,
       status: "connecting",
       phone: null,

@@ -92,11 +92,13 @@ Tiap user bisa pairing nomor HP sendiri → bot manage N sockets dalam 1 process
 - [x] 7c3. `api/src/schemas/wa-session.ts` — tambah `ownerId: z.string()` di `upsertQrSchema`
 - [x] 7c4. Run `prisma migrate deploy` di `api/`
 
-#### 7d. API — WaSession Model
+#### 7d. API — WaSession Model + Controller ✅
 
-- [ ] 7d1. `api/src/models/wa-session.ts` — `find(ownerId)` ganti `getById("default")` → `getById(ownerId)`
-- [ ] 7d2. `upsert(ownerId, data)` — upsert pake `where: { ownerId }` + `create: { ownerId, ... }`
-- [ ] 7d3. Hapus `clearQr()` (gak perlu lagi, cukup upsert)
+- [x] 7d1. `api/src/models/wa-session.ts` — `find(ownerId)`, `upsert(ownerId, data)`, `clearQr(ownerId)`
+- [x] 7d2. `api/src/controllers/qr.ts` — semua handler passing ownerId ke model
+- [x] 7d3. `api/src/utils/wa-bot-db.ts` — `clearBotCreds(ownerId)` scoped
+- [x] 7d4. `api/src/models/dashboard.ts` — `WaSessionModel.find(ownerId)`
+- [x] 7d5. Tests updated — 245 pass, 0 fail
 
 #### 7e. API — WaSession Routes & Controller
 

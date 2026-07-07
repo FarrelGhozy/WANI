@@ -27,7 +27,7 @@ export async function getDashboardStats(ownerId: string): Promise<DashboardStats
     prisma.product.count({ where: { ownerId, isAvailable: true } }),
     prisma.customer.count({ where: { ownerId } }),
     prisma.conversation.count({ where: { ownerId, status: "ACTIVE" } }),
-    WaSessionModel.find(),
+    WaSessionModel.find(ownerId),
   ])
 
   return {

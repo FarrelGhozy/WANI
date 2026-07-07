@@ -11,11 +11,11 @@ function getPool(): Pool {
   return pool
 }
 
-export async function clearBotCreds(): Promise<void> {
+export async function clearBotCreds(ownerId: string): Promise<void> {
   const client = await getPool().connect()
   try {
-    await client.query("DELETE FROM \"Creds\" WHERE id = 'pairing'")
-    await client.query('DELETE FROM "SignalKey"')
+    await client.query('DELETE FROM "Creds" WHERE "ownerId" = $1', [ownerId])
+    await client.query('DELETE FROM "SignalKey" WHERE "ownerId" = $1', [ownerId])
   } finally {
     client.release()
   }
