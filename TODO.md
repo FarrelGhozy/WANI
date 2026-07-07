@@ -79,11 +79,11 @@ Tiap user bisa pairing nomor HP sendiri → bot manage N sockets dalam 1 process
 - [ ] 7a1. Pastikan semua perubahan Tahap 1-6 udah tercommit di `main`
 - [ ] 7a2. Branch baru `feat/multi-tenant-bot` dibuat
 
-#### 7b. Migration & Schema — wa-bot
+#### 7b. Migration & Schema — wa-bot ✅
 
-- [ ] 7b1. `wa-bot/prisma/models/creds.prisma` — tambah `ownerId`, ganti `@id` jadi `@@id([ownerId, id])`
-- [ ] 7b2. `wa-bot/prisma/models/signal_key.prisma` — tambah `ownerId`, ganti `@id` jadi `@@id([ownerId, id])`
-- [ ] 7b3. Run `bun run prisma:migrate -- --name add_owner_id` di `wa-bot/`
+- [x] 7b1. `wa-bot/prisma/models/creds.prisma` — tambah `ownerId`, ganti `@id` jadi `@@id([ownerId, id])`
+- [x] 7b2. `wa-bot/prisma/models/signal_key.prisma` — tambah `ownerId`, ganti `@id` jadi `@@id([ownerId, id])`
+- [x] 7b3. Run `bun run prisma:migrate -- --name add_owner_id` di `wa-bot/`
 
 #### 7c. Migration & Schema — api
 
