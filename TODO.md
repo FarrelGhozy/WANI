@@ -100,22 +100,13 @@ Tiap user bisa pairing nomor HP sendiri → bot manage N sockets dalam 1 process
 - [x] 7d4. `api/src/models/dashboard.ts` — `WaSessionModel.find(ownerId)`
 - [x] 7d5. Tests updated — 245 pass, 0 fail
 
-#### 7e. API — WaSession Routes & Controller
+#### 7e. API — WaSession Routes & Controller ✅
 
-- [ ] 7e1. `api/src/routes/qr.ts` — restructure endpoint grouping:
-  - `${prefix}/qr` → JWT (dashboard user)
-  - `${prefix}/qr/bot` → API_TOKEN (bot)
-- [ ] 7e2. Dashboard endpoints: semua pake `requireJwt`, otomatis scoped ke `getOwnerId(req)`
-  - `GET /api/qr` → QR ku
-  - `GET /api/qr/status` → status ku
-  - `POST /api/qr/pairing` → minta pairing untuk ku
-  - `POST /api/qr/refresh-pairing` → refresh pairing ku
-  - `POST /api/qr/reset` → reset session ku
-- [ ] 7e3. Bot endpoints: pake `requireAuth`, terima `ownerId` dari body/path
-  - `POST /api/qr/bot` → upsert QR/pairingCode/pairingPhone (body: `{ ownerId, qr?, status?, ... }`)
-  - `DELETE /api/qr/bot/:ownerId` → clear QR untuk owner tertentu
-- [ ] 7e4. `GET /api/qr/active-tenants` → `requireAuth`, return list ownerId yg punya session aktif
-- [ ] 7e5. `api/src/controllers/qr.ts` — pisah handler jadi dashboard vs bot, scoped semua query by `ownerId`
+- [x] 7e1. `api/src/routes/qr.ts` — restructure: JWT on GET/reset/pairing, `/bot` for API_TOKEN
+- [x] 7e2. Dashboard endpoints: `GET /api/qr`, `GET /api/qr/status` → requireJwt, scoped by `req.user.id`
+- [x] 7e3. Bot endpoints: `POST /api/qr/bot` + `DELETE /api/qr/bot/:ownerId` → requireAuth
+- [x] 7e4. `GET /api/qr/active-tenants` → requireAuth, return list ownerId dengan session connected
+- [x] 7e5. `WaSessionModel.findActive()` — query by status "connected"
 
 #### 7f. wa-bot — WhatsApp Auth
 

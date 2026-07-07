@@ -53,6 +53,16 @@ export async function clearQr(req: Request, res: Response): Promise<void> {
   sendResponse(res, 200, "qr cleared")
 }
 
+export async function clearBotQr(req: Request, res: Response): Promise<void> {
+  await WaSessionModel.clearQr(req.params.ownerId!)
+  sendResponse(res, 200, "qr cleared")
+}
+
+export async function getActiveTenants(_req: Request, res: Response): Promise<void> {
+  const ownerIds = await WaSessionModel.findActive()
+  sendResponse(res, 200, "active tenants retrieved", { ownerIds })
+}
+
 export async function resetQr(req: Request, res: Response): Promise<void> {
   const ownerId = req.user!.id
   await clearBotCreds(ownerId)
