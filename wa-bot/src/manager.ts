@@ -24,6 +24,7 @@ export class BotManager {
 
   async start(): Promise<void> {
     this.logger.info("starting bot manager")
+    await this.waitForApi()
     await this.syncTenants()
     this.syncTimer = setInterval(() => this.syncTenants(), SYNC_INTERVAL)
     this.registerShutdown()
@@ -43,6 +44,21 @@ export class BotManager {
     } catch (err) {
       this.logger.error({ err: String(err) }, "prisma disconnect failed")
     }
+  }
+
+  private async waitForApi(maxRetries = 15, delay = 2000): Promise<void> {
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        await this.api.get("/api/health", { timeout: 3000 })
+        this.logger.info({ attempt }, "API is ready")
+        return
+      } catch {
+        if (attempt === maxRetries) break
+        this.logger.info({ attempt, delayMs: delay }, "waiting for API...")
+        await new Promise((r) => setTimeout(r, delay))
+      }
+    }
+    throw new Error("API not available after max retries")
   }
 
   private registerShutdown(): void {

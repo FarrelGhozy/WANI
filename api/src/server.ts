@@ -46,7 +46,7 @@ const globalRateLimit = rateLimit({
   max: 120, // 120 requests per minute per IP
   standardHeaders: true,
   legacyHeaders: false,
-  skip: (req) => req.path === "/api/monitoring/health",
+  skip: (req) => req.path === "/api/health",
 })
 app.use(globalRateLimit)
 
