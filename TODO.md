@@ -85,12 +85,12 @@ Tiap user bisa pairing nomor HP sendiri → bot manage N sockets dalam 1 process
 - [x] 7b2. `wa-bot/prisma/models/signal_key.prisma` — tambah `ownerId`, ganti `@id` jadi `@@id([ownerId, id])`
 - [x] 7b3. Run `bun run prisma:migrate -- --name add_owner_id` di `wa-bot/`
 
-#### 7c. Migration & Schema — api
+#### 7c. Migration & Schema — api ✅
 
-- [ ] 7c1. `api/prisma/models/wa_session.prisma` — ganti `id String @id @default("default")` → `ownerId String @id`
-- [ ] 7c2. `api/src/types/wa-session.ts` — ganti `WaSessionData`: hapus `id`, pastikan `ownerId` jadi required
-- [ ] 7c3. `api/src/schemas/wa-session.ts` — tambah `ownerId: z.string()` di `upsertQrSchema`
-- [ ] 7c4. Run `bun run prisma:migrate -- --name multi_tenant_wa_session` di `api/`
+- [x] 7c1. `api/prisma/models/wa_session.prisma` — ganti `id String @id @default("default")` → `ownerId String @id`
+- [x] 7c2. `api/src/types/wa-session.ts` — ganti `WaSessionData`: hapus `id`, pastikan `ownerId` jadi required
+- [x] 7c3. `api/src/schemas/wa-session.ts` — tambah `ownerId: z.string()` di `upsertQrSchema`
+- [x] 7c4. Run `prisma migrate deploy` di `api/`
 
 #### 7d. API — WaSession Model
 

@@ -1,6 +1,7 @@
 import { z } from "zod"
 
 export const upsertQrSchema = z.object({
+  ownerId: z.string().min(1, "Owner ID wajib diisi"),
   qr: z.string().nullable().optional(),
   status: z.string().optional(),
   phone: z.string().nullable().optional(),
