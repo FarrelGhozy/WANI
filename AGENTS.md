@@ -10,7 +10,7 @@ Four independent Bun packages (not a monorepo). Each has its own `bun.lock` and 
 ## Architecture
 
 ```
-Bot pushes QR/status → API stores in WaSession DB → Dashboard polls GET /api/qr
+BotManager polls active tenants → spawns BotInstance per owner → each instance pushes QR/status to API (scoped by ownerId) → Dashboard polls GET /api/qr (JWT-scoped)
 ```
 
 - **api/src/index.ts** — Express 5 entrypoint (helmet, cors, morgan→Winston, json parser), graceful shutdown
@@ -28,9 +28,11 @@ Bot pushes QR/status → API stores in WaSession DB → Dashboard polls GET /api
 - **dashboard/vite.config.ts** — `@vitejs/plugin-react` + `@rolldown/plugin-babel` with `reactCompilerPreset`, Tailwind v4, **proxies `/api` → `http://localhost:3001`**
 - **dashboard/src/index.css** — `@import "tailwindcss"` (Tailwind v4 CSS-first config, no `tailwind.config.*`)
 - **dashboard/src/hooks/** — Hooks use real API via `fetchApi()` (JWT auth from localStorage). `useWaStatus` and `useAuth` retain `MOCK = false` toggle for legacy compatibility.
-- **wa-bot/src/index.ts** — Baileys `makeWASocket`, QR terminal print + API POST, auto-reconnect, **forwards messages to API's POST /api/chat** and sends the AI reply back
+- **wa-bot/src/index.ts** — Entrypoint, inits `BotManager`, graceful shutdown
+- **wa-bot/src/manager.ts** — `BotManager` polls active tenants → spawns/removes `BotInstance` per ownerId
+- **wa-bot/src/instance.ts** — `BotInstance` owns one Baileys `makeWASocket`, QR/pairing, auto-reconnect, **forwards messages to API's POST /api/chat** with ownerId, sends AI reply back
 - **wa-bot/src/config/db.ts** — PrismaClient singleton (driver adapter `@prisma/adapter-pg`)
-- **wa-bot/src/services/whatsapp-auth.ts** — `usePrismaAuthState()` implementing `SignalKeyStore` (Creds + SignalKey tables)
+- **wa-bot/src/services/whatsapp-auth.ts** — `usePrismaAuthState(ownerId)` implementing `SignalKeyStore` scoped by ownerId (Creds + SignalKey tables)
 
 ## Commands
 
@@ -68,10 +70,11 @@ Semua endpoint **sudah diimplementasikan**. See `api/ARSITEKTUR.md` for the full
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
 | `POST` | `/api/upload` | 🔒 JWT | Upload file (QRIS image, etc.) |
-| `GET` | `/api/qr` | — | Get current QR code string |
-| `GET` | `/api/qr/status` | — | Get connection status + phone number |
-| `POST` | `/api/qr` | Bearer API_TOKEN | Push QR code / update status (Zod validated) |
-| `DELETE` | `/api/qr` | Bearer API_TOKEN | Clear QR on successful connection |
+| `GET` | `/api/qr` | 🔒 JWT | Get my QR code string |
+| `GET` | `/api/qr/status` | 🔒 JWT | Get my connection status + phone number |
+| `POST` | `/api/qr/bot` | Bearer API_TOKEN | Push QR/status (body: ownerId + data) |
+| `DELETE` | `/api/qr/bot/:ownerId` | Bearer API_TOKEN | Clear QR on successful connection |
+| `GET` | `/api/qr/active-tenants` | Bearer API_TOKEN | List ownerIds with active sessions |
 | `POST` | `/api/chat` | Bearer API_TOKEN | Process message through AI pipeline → reply |
 | `GET` | `/api/store` | — | Get store profile |
 | `PUT` | `/api/store` | 🔒 JWT | Update store profile |
@@ -167,7 +170,7 @@ Database `wani_api` + `wa_bot` dibuat otomatis via `init-dbs.sh`.
 - Prisma schemas split across `prisma/models/*.prisma` (not a single schema.prisma), output to `generated/prisma/` (gitignored)
 - Prisma uses `prisma.config.ts` (not `prisma/schema.prisma` as config) with Prisma 7's `defineConfig` — migrations path set there
 - Tests use Bun's built-in `bun:test` runner (via `bun run test`)
-- WaSession is single-row (`id: "default"`), always upserted
+- WaSession is multi-row (keyed by `ownerId`), always upserted
 - Bot expects API to be running first (POSTs QR on `connection.update`)
 - Both databases on same PG server: `wani_api` (api) + `wa_bot` (bot)
 - `import.meta.env.PROD == null` check in `api/src/config/db.ts` — this is always true under Bun; the global Prisma cache works in both dev and prod
@@ -383,20 +386,23 @@ git commit -m "🔥 api: add products CRUD — route, schema, controller, model"
 | H1–H19 | **19/19 HIGH** — history→LLM, circuit-breaker mutex, convMemory cleanup, error boundary, context memo, debounce, WA bot safety net, SignalKeyStore batch, OrderItem indexes |
 | M1–M24 | **24/24 MEDIUM** — `findManyPaginated` helper, ReDoS fix, leet normalization tokenized, PII dedup, useCallback extracted, import cleanup, env var guards, Prisma indexes, e2e integration test |
 
+### In Progress — Tahap 7: Multi-Tenant Bot (per-owner WASocket)
+
+| Sub-tahap | Deskripsi |
+|-----------|-----------|
+| 7b–7c | Schema + migration: Creds/SignalKey scoped by ownerId, WaSession multi-row |
+| 7d–7e | API: WaSession model/routes/controllers scoped per ownerId, bot + dashboard split |
+| 7f | wa-bot auth: `usePrismaAuthState(prisma, ownerId)` |
+| 7g | `BotInstance` class — extracted per-owner WASocket logic |
+| 7h | `BotManager` class — poll active tenants, spawn/stop instances |
+| 7i | wa-bot index — simplified entrypoint |
+| 7j | Dashboard — verify WaSessionTab masih jalan |
+| 7k | Backfill migration for existing data |
+| 7l | Test — unit, typecheck, manual multi-user |
+
 ### Test Status
 
-- `bun run test` → 238 pass, 0 fail, 5 skip (env-based SMTP/API key)
+- `bun run test` → 245 pass, 0 fail, 5 skip (env-based SMTP/API key)
 - `bun run test:e2e` → 6 pass, 0 fail (pipeline integration)
 - Dashboard `vitest run` → 97 pass, 0 fail (7 test files)
-- Dashboard `bun run build` → clean (519 KB JS, 50 KB CSS)
-
-### Key Decisions
-
-- **`ownerId` as plain String** — no Prisma `@relation` to User (avoids circular deps, simplifies migration)
-- **`optionalJwt` globally** — silent JWT parse on all `/api` routes, public endpoints prefer auth'd user when JWT present
-- **`getOwnerIdOrFirst(req)`** — JWT user → first DB user → `"default"` fallback for public GET endpoints
-- **Owner scoping at Model layer** — Controllers call Model methods which add `where: { ownerId }` internally
-- **WaSession stays single-row global** — one WhatsApp connection shared by all users
-- **M9 leet normalization** — tokenized: digit→letter only in tokens with letters, preserves prices/years
-- **E2E tests in `e2e/`** — isolated from unit tests via `bun run test:e2e` (avoids `mock.module` global leakage)
-- **Merge `d6d9c1f`** — kept our test scripts (`bun run test` + `bun run test:e2e`), took their screenshots
+- Dashboard `bun run build` → clean (535 KB JS, 50 KB CSS)
