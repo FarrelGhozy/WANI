@@ -108,9 +108,11 @@ Tiap user bisa pairing nomor HP sendiri → bot manage N sockets dalam 1 process
 - [x] 7e4. `GET /api/qr/active-tenants` → requireAuth, return list ownerId dengan session connected
 - [x] 7e5. `WaSessionModel.findActive()` — query by status "connected"
 
-#### 7f. wa-bot — WhatsApp Auth
+#### 7f. wa-bot — WhatsApp Auth ✅
 
-- [ ] 7f1. `wa-bot/src/services/whatsapp-auth.ts` — `usePrismaAuthState(prisma, ownerId)`. Filter Creds by `ownerId + "pairing"`, filter SignalKey by `ownerId`
+- [x] 7f1. `wa-bot/src/services/whatsapp-auth.ts` — `usePrismaAuthState(prisma, ownerId)`. Scoped Creds + SignalKey by ownerId
+- [x] 7f2. `wa-bot/src/index.ts` — passing `ownerId` (sementara dari env, akan diganti BotManager)
+- [x] 7f3. `wa-bot/test/whatsapp-auth.test.ts` — tests updated, 11 pass
 
 #### 7g. wa-bot — BotInstance (file baru)
 

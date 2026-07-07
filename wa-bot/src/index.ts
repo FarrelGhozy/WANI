@@ -32,13 +32,15 @@ let isResetRestart = false;
 let wsAlive = false;
 
 async function main() {
+  const ownerId = process.env.OWNER_ID ?? "default"
+
   if (isResetRestart) {
-    await prisma.creds.deleteMany({ where: { id: "pairing" } });
-    await prisma.signalKey.deleteMany({});
+    await prisma.creds.deleteMany({ where: { ownerId, id: "pairing" } });
+    await prisma.signalKey.deleteMany({ where: { ownerId } });
     isResetRestart = false;
   }
 
-  const { state, saveCreds } = await usePrismaAuthState(prisma);
+  const { state, saveCreds } = await usePrismaAuthState(prisma, ownerId);
 
   if (pollTimer) clearInterval(pollTimer);
   sock?.end(undefined);

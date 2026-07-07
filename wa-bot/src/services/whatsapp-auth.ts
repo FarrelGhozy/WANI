@@ -2,20 +2,25 @@ import type { PrismaClient } from "@db/client"
 import { initAuthCreds, BufferJSON, type AuthenticationState } from "baileys"
 import type { SignalKeyStore } from "baileys"
 
-export async function usePrismaAuthState(db: PrismaClient): Promise<{
+export async function usePrismaAuthState(
+  db: PrismaClient,
+  ownerId: string,
+): Promise<{
   state: AuthenticationState
   saveCreds: () => Promise<void>
 }> {
+  const credsId = "pairing"
+
   const writeCreds = async (creds: AuthenticationState["creds"]) => {
     await db.creds.upsert({
-      where: { id: "pairing" },
-      create: { id: "pairing", data: JSON.stringify(creds, BufferJSON.replacer) },
+      where: { ownerId_id: { ownerId, id: credsId } },
+      create: { ownerId, id: credsId, data: JSON.stringify(creds, BufferJSON.replacer) },
       update: { data: JSON.stringify(creds, BufferJSON.replacer) },
     })
   }
 
   const readCreds = async (): Promise<AuthenticationState["creds"]> => {
-    const row = await db.creds.findUnique({ where: { id: "pairing" } })
+    const row = await db.creds.findUnique({ where: { ownerId_id: { ownerId, id: credsId } } })
     if (row) {
       return JSON.parse(row.data, BufferJSON.reviver)
     }
@@ -27,7 +32,7 @@ export async function usePrismaAuthState(db: PrismaClient): Promise<{
   const keys: SignalKeyStore = {
     async get(type, ids) {
       const rows = await db.signalKey.findMany({
-        where: { type: type as string, id: { in: ids } },
+        where: { ownerId, type: type as string, id: { in: ids } },
       })
       const map = new Map(rows.map((r) => [r.id, r.data]))
       return Object.fromEntries(
@@ -58,7 +63,7 @@ export async function usePrismaAuthState(db: PrismaClient): Promise<{
         )
         await Promise.all(
           Object.entries(grouped).map(([type, ids]) =>
-            db.signalKey.deleteMany({ where: { type, id: { in: ids } } }),
+            db.signalKey.deleteMany({ where: { ownerId, type, id: { in: ids } } }),
           ),
         )
       }
@@ -67,8 +72,8 @@ export async function usePrismaAuthState(db: PrismaClient): Promise<{
         await Promise.all(
           upserts.map(({ type, id, data }) =>
             db.signalKey.upsert({
-              where: { type_id: { type, id } },
-              create: { type, id, data },
+              where: { ownerId_type_id: { ownerId, type, id } },
+              create: { ownerId, type, id, data },
               update: { data },
             }),
           ),

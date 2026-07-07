@@ -2,6 +2,8 @@ import { expect, test, describe, mock } from "bun:test"
 import type { PrismaClient } from "@db/client"
 import { usePrismaAuthState } from "@/src/services/whatsapp-auth"
 
+const OWNER_ID = "test-owner-id"
+
 function createMockDb(): PrismaClient {
   const db = {
     creds: {
@@ -22,7 +24,7 @@ function createMockDb(): PrismaClient {
 describe("usePrismaAuthState", () => {
   test("returns state and saveCreds", async () => {
     const db = createMockDb()
-    const { state, saveCreds } = await usePrismaAuthState(db)
+    const { state, saveCreds } = await usePrismaAuthState(db, OWNER_ID)
 
     expect(state.creds).toBeDefined()
     expect(typeof (state.creds as any).registrationId).toBe("number")
@@ -34,15 +36,15 @@ describe("usePrismaAuthState", () => {
 
   test("initializes creds when DB is empty", async () => {
     const db = createMockDb()
-    await usePrismaAuthState(db)
+    await usePrismaAuthState(db, OWNER_ID)
 
     const findCall = (db as any).creds.findUnique.mock.calls[0]?.[0]
     expect(findCall).toBeDefined()
-    expect(findCall.where).toEqual({ id: "pairing" })
+    expect(findCall.where).toEqual({ ownerId_id: { ownerId: OWNER_ID, id: "pairing" } })
 
     const upsertCall = (db as any).creds.upsert.mock.calls[0]?.[0]
     expect(upsertCall).toBeDefined()
-    expect(upsertCall.where).toEqual({ id: "pairing" })
+    expect(upsertCall.where).toEqual({ ownerId_id: { ownerId: OWNER_ID, id: "pairing" } })
   })
 
   test("reads existing creds from DB", async () => {
@@ -53,21 +55,24 @@ describe("usePrismaAuthState", () => {
       data: JSON.stringify(credsData),
     }))
 
-    const { state } = await usePrismaAuthState(db)
+    const { state } = await usePrismaAuthState(db, OWNER_ID)
 
     expect((state.creds as any).registrationId).toBe(123)
     expect((state.creds as any).me?.id).toBe("test-user")
   })
 
-  test("keys.get returns correct shape", async () => {
+  test("keys.get scoped by ownerId", async () => {
     const db = createMockDb()
     ;(db.signalKey.findMany as any) = mock(() => [
       { id: "k1", data: JSON.stringify({ key: "value1" }) },
       { id: "k2", data: JSON.stringify({ key: "value2" }) },
     ])
 
-    const { state } = await usePrismaAuthState(db)
+    const { state } = await usePrismaAuthState(db, OWNER_ID)
     const result = await state.keys.get("session", ["k1", "k2", "k3"])
+
+    const findManyCall = (db.signalKey.findMany as any).mock.calls[0]?.[0]
+    expect(findManyCall.where.ownerId).toBe(OWNER_ID)
 
     expect((result as any).k1).toEqual({ key: "value1" })
     expect((result as any).k2).toEqual({ key: "value2" })
@@ -76,16 +81,16 @@ describe("usePrismaAuthState", () => {
 
   test("keys.get with unknown type returns empty mapping", async () => {
     const db = createMockDb()
-    const { state } = await usePrismaAuthState(db)
+    const { state } = await usePrismaAuthState(db, OWNER_ID)
 
     const result = await state.keys.get("session", [])
 
     expect(result).toEqual({})
   })
 
-  test("keys.set upserts non-null values", async () => {
+  test("keys.set upserts with ownerId", async () => {
     const db = createMockDb()
-    const { state } = await usePrismaAuthState(db)
+    const { state } = await usePrismaAuthState(db, OWNER_ID)
 
     await state.keys.set({
       session: {
@@ -97,15 +102,15 @@ describe("usePrismaAuthState", () => {
     expect((db.signalKey.upsert as any)).toHaveBeenCalledTimes(2)
     expect((db.signalKey.upsert as any)).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: { type_id: { type: "session", id: "k1" } },
-        create: expect.objectContaining({ type: "session", id: "k1" }),
+        where: { ownerId_type_id: { ownerId: OWNER_ID, type: "session", id: "k1" } },
+        create: expect.objectContaining({ ownerId: OWNER_ID, type: "session", id: "k1" }),
       }),
     )
   })
 
-  test("keys.set deletes null values", async () => {
+  test("keys.set deletes scoped by ownerId", async () => {
     const db = createMockDb()
-    const { state } = await usePrismaAuthState(db)
+    const { state } = await usePrismaAuthState(db, OWNER_ID)
 
     await state.keys.set({
       session: {
@@ -115,13 +120,13 @@ describe("usePrismaAuthState", () => {
 
     expect((db.signalKey.deleteMany as any)).toHaveBeenCalledTimes(1)
     expect((db.signalKey.deleteMany as any)).toHaveBeenCalledWith(
-      expect.objectContaining({ where: { type: "session", id: { in: ["k1"] } } }),
+      expect.objectContaining({ where: { ownerId: OWNER_ID, type: "session", id: { in: ["k1"] } } }),
     )
   })
 
   test("keys.set handles mixed null and non-null", async () => {
     const db = createMockDb()
-    const { state } = await usePrismaAuthState(db)
+    const { state } = await usePrismaAuthState(db, OWNER_ID)
 
     await state.keys.set({
       session: {
@@ -136,7 +141,7 @@ describe("usePrismaAuthState", () => {
 
   test("keys.set handles empty data", async () => {
     const db = createMockDb()
-    const { state } = await usePrismaAuthState(db)
+    const { state } = await usePrismaAuthState(db, OWNER_ID)
 
     await state.keys.set({})
 
@@ -144,22 +149,22 @@ describe("usePrismaAuthState", () => {
     expect((db.signalKey.deleteMany as any)).not.toHaveBeenCalled()
   })
 
-  test("saveCreds calls creds.upsert", async () => {
+  test("saveCreds calls creds.upsert with ownerId", async () => {
     const db = createMockDb()
-    const { saveCreds } = await usePrismaAuthState(db)
+    const { saveCreds } = await usePrismaAuthState(db, OWNER_ID)
 
     ;(db.creds.upsert as any).mockClear()
     await saveCreds()
 
     expect((db.creds.upsert as any)).toHaveBeenCalledTimes(1)
     expect((db.creds.upsert as any)).toHaveBeenCalledWith(
-      expect.objectContaining({ where: { id: "pairing" } }),
+      expect.objectContaining({ where: { ownerId_id: { ownerId: OWNER_ID, id: "pairing" } } }),
     )
   })
 
   test("saveCreds serializes with BufferJSON.replacer", async () => {
     const db = createMockDb()
-    const { saveCreds } = await usePrismaAuthState(db)
+    const { saveCreds } = await usePrismaAuthState(db, OWNER_ID)
 
     ;(db.creds.upsert as any).mockClear()
     await saveCreds()
