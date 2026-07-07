@@ -398,18 +398,14 @@ git commit -m "🔥 api: add products CRUD — route, schema, controller, model"
 | 7g | `BotInstance` class — extracted per-owner WASocket logic — ✅ done |
 | 7h | `BotManager` class — poll active tenants, spawn/stop instances — ✅ done |
 | 7i | wa-bot index — simplified entrypoint — ✅ done |
-| 7d–7e | API: WaSession model/routes/controllers scoped per ownerId, bot + dashboard split |
-| 7f | wa-bot auth: `usePrismaAuthState(prisma, ownerId)` |
-| 7g | `BotInstance` class — extracted per-owner WASocket logic |
-| 7h | `BotManager` class — poll active tenants, spawn/stop instances |
-| 7i | wa-bot index — simplified entrypoint |
-| 7j | Dashboard — verify WaSessionTab masih jalan |
-| 7k | Backfill migration for existing data |
-| 7l | Test — unit, typecheck, manual multi-user |
+| 7j | Dashboard — verify WaSessionTab masih jalan — ✅ done |
+| 7k | Backfill migration for existing data — ✅ done |
+| 7l | Test — unit, typecheck, manual multi-user — ✅ done |
 
 ### Test Status
 
 - `bun run test` → 245 pass, 0 fail, 5 skip (env-based SMTP/API key)
 - `bun run test:e2e` → 6 pass, 0 fail (pipeline integration)
+- wa-bot `bun run test` → 11 pass, 0 fail
 - Dashboard `vitest run` → 97 pass, 0 fail (7 test files)
 - Dashboard `bun run build` → clean (535 KB JS, 50 KB CSS)
