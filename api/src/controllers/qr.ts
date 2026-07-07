@@ -42,7 +42,7 @@ export async function requestPairing(
 ): Promise<void> {
   const ownerId = req.user!.id
   const { phone } = req.body
-  await WaSessionModel.upsert(ownerId, { pairingPhone: phone, pairingCode: null })
+  await WaSessionModel.upsert(ownerId, { status: "connecting", pairingPhone: phone, pairingCode: null })
   sendResponse(res, 200, "pairing code requested", { phone })
 }
 
@@ -77,7 +77,7 @@ export async function getBotSession(req: Request, res: Response): Promise<void> 
 export async function resetQr(req: Request, res: Response): Promise<void> {
   const ownerId = req.user!.id
   await clearBotCreds(ownerId)
-  await WaSessionModel.upsert(ownerId, { qr: null, status: "disconnected", phone: null, pairingCode: null, pairingPhone: null })
+  await WaSessionModel.upsert(ownerId, { qr: null, status: "connecting", phone: null, pairingCode: null, pairingPhone: null })
   sendResponse(res, 200, "reset berhasil — bot akan scan QR baru")
 }
 

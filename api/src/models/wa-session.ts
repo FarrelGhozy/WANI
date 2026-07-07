@@ -28,7 +28,7 @@ export class WaSessionModel extends BaseModel {
 
   static async findActive(): Promise<string[]> {
     const rows = await this.delegate.findMany({
-      where: { status: "connected" },
+      where: { status: { not: "disconnected" } },
       select: { ownerId: true },
     }) as { ownerId: string }[]
     return rows.map(r => r.ownerId)

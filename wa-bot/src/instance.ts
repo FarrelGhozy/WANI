@@ -119,7 +119,8 @@ export class BotInstance {
       const reason = lastDisconnect?.error?.message ?? lastDisconnect?.error?.toString() ?? "unknown"
       const loggedOut = reason.includes("logged out")
       this.logger.info({ loggedOut, reason }, "connection closed")
-      this.api.post("/api/qr/bot", { ownerId: this.ownerId, status: "disconnected" })
+      const statusPayload = loggedOut ? "disconnected" : "reconnecting"
+      this.api.post("/api/qr/bot", { ownerId: this.ownerId, status: statusPayload })
         .catch(e => this.logger.error({ err: e?.response?.data ?? e }, "disconnect status failed"))
       if (!loggedOut && !this.isReconnecting) {
         this.isReconnecting = true
@@ -207,7 +208,7 @@ export class BotInstance {
     try {
       const { data } = await this.api.get(`/api/qr/bot/${this.ownerId}`)
       const st = data?.data
-      if (st?.status === "disconnected" && !st?.phone && !st?.qr) {
+      if ((st?.status === "disconnected" || st?.status === "connecting") && !st?.phone && !st?.qr) {
         this.logger.info("reset detected — logging out")
         try {
           await this.sock?.logout()

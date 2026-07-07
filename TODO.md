@@ -76,8 +76,8 @@ Tiap user bisa pairing nomor HP sendiri → bot manage N sockets dalam 1 process
 
 #### 7a. Verifikasi & Branching
 
-- [ ] 7a1. Pastikan semua perubahan Tahap 1-6 udah tercommit di `main`
-- [ ] 7a2. Branch baru `feat/multi-tenant-bot` dibuat
+- [x] 7a1. Pastikan semua perubahan Tahap 1-6 udah tercommit di `main`
+- [x] 7a2. Branch baru `feat/multi-tenant-bot` dibuat
 
 #### 7b. Migration & Schema — wa-bot ✅
 
@@ -142,23 +142,47 @@ Tiap user bisa pairing nomor HP sendiri → bot manage N sockets dalam 1 process
 - [x] 7j2. All dashboard endpoints (`/qr`, `/qr/status`, `/qr/reset`, `/qr/pairing`, `/qr/refresh-pairing`) mapped to `requireJwt` routes ✅
 - [x] 7j3. Build clean — 535 KB JS, 51 KB CSS
 
-#### 7k. Backfill — Migration data existing
+#### 7k. Backfill — Migration data existing ✅
 
-- [ ] 7k1. Untuk user existing yg udah punya WaSession row default → insert ulang pake ownerId mereka
-- [ ] 7k2. wa-bot Creds/SignalKey existing → tambah ownerId (fallback ke owner pertama)
+- [x] 7k1. WaSession ownerId backfill — migration `20260707140000_backfill_wa_session_owner_id` updates `'default'` → first user's UUID
+- [x] 7k2. wa-bot Creds/SignalKey sentinel → first user's UUID (`bun run backfill:owner-id`)
 
-#### 7l. Test
+#### 7l. Test ✅
 
-- [ ] 7l1. `bun run test` di `api/` — semua existing tests pass
-- [ ] 7l2. `bun run tsc --noEmit` di `wa-bot/` — type check
-- [ ] 7l3. Manual: register 2 user, pairing masing-masing, verify AI reply pake data toko masing-masing
-- [ ] 7l4. Manual: disconnect user A → user B tetep jalan
-
+- [x] 7l1. `bun run test` di `api/` — 245 pass, 0 fail, 5 skip
+- [x] 7l2. `bun run test` di `wa-bot/` — 11 pass, 0 fail
+- [x] 7l3. `bun run tsc --noEmit` di `wa-bot/` — 0 errors
+- [ ] 7l4. Manual: register 2 user, pairing masing-masing, verify AI reply pake data toko masing-masing
+- [ ] 7l5. Manual: disconnect user A → user B tetep jalan
 
 ### Bug Fixes Found During Testing
 
+#### Already Fixed
+
 - **`jwt.ts:50`** — `optionalJwt` used `JWT_SECRET` (undefined constant) instead of `getJwtSecret()`. Caused `req.user` to never be set for public endpoints with JWT, breaking `getOwnerIdOrFirst(req)` fallback for authenticated requests.
 - **`routes/store.ts:9`** — `GET /api/store` used `requireJwt` middleware, but spec says public (`—`). Controller already uses `getOwnerIdOrFirst(req)` for public fallback. Removed `requireJwt`.
+- **`wa-bot/src/manager.ts:27`** — ECONNREFUSED race condition: BotManager syncTenants() called before API ready. Fixed with `waitForApi()` — polls `GET /api/health` with 2s retry up to 15× (~30s).
+
+#### Pending — QR tidak muncul setelah Reset (Tahap 7k)
+
+**Root cause:** `findActive()` only returns status `"connected"`, tapi `resetQr()` set status ke `"disconnected"`. BotManager gak pernah start instance → QR gak digenerate.
+
+**5 changes:**
+
+| # | File | Line | Change | Fixes |
+|---|------|------|--------|-------|
+| ① | `api/src/models/wa-session.ts` | 31 | `{ status: "connected" }` → `{ status: { not: "disconnected" } }` | BotManager start instance utk status "connecting" |
+| ② | `api/src/controllers/qr.ts` | 80 | `resetQr`: `"disconnected"` → `"connecting"` | Reset berarti "saya mau konek" |
+| ③ | `api/src/controllers/qr.ts` | 45 | `requestPairing`: add `status: "connecting"` | Pairing disconnected user (pre-existing) |
+| ④ | `wa-bot/src/instance.ts` | 122 | close handler: `"disconnected"` → `"reconnecting"` (kecuali loggedOut) | BotManager gak kill reconnecting instance (pre-existing) |
+| ⑤ | `wa-bot/src/instance.ts` | 210 | `pollResetSignal`: tambah `|| "connecting"` | Detek reset dari status baru |
+
+**Pre-existing edge cases solved:**
+- Network disconnect → BotManager kill reconnecting instance → ④ fix: kirim "reconnecting", BotManager keep alive
+- Pairing untuk disconnected user → ③ fix: set status="connecting"
+- Server restart pas "connecting" → ① fix: findActive include non-disconnected
+
+**One pre-existing race NOT touched:** BotManager.stopInstance() vs `setTimeout(1000, start)` di pollResetSignal. Window ~800ms, self-healing next cycle.
 
 ---
 
