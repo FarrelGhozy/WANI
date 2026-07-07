@@ -13,6 +13,7 @@ router.post("/reset", requireJwt, qrController.resetQr)
 router.post("/pairing", requireJwt, validate({ body: pairingSchema }), qrController.requestPairing)
 router.post("/refresh-pairing", requireJwt, qrController.refreshPairing)
 
+router.get("/bot/:ownerId", requireAuth, qrController.getBotSession)
 router.post("/bot", requireAuth, validate({ body: upsertQrSchema }), qrController.upsertQr)
 router.delete("/bot/:ownerId", requireAuth, qrController.clearBotQr)
 router.get("/active-tenants", requireAuth, qrController.getActiveTenants)

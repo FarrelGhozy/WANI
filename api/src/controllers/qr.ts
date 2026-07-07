@@ -63,6 +63,17 @@ export async function getActiveTenants(_req: Request, res: Response): Promise<vo
   sendResponse(res, 200, "active tenants retrieved", { ownerIds })
 }
 
+export async function getBotSession(req: Request, res: Response): Promise<void> {
+  const session = await WaSessionModel.find(req.params.ownerId!)
+  sendResponse(res, 200, "session retrieved", {
+    status: session?.status ?? "disconnected",
+    phone: session?.phone ?? null,
+    qr: session?.qr ?? null,
+    pairingPhone: session?.pairingPhone ?? null,
+    pairingCode: session?.pairingCode ?? null,
+  })
+}
+
 export async function resetQr(req: Request, res: Response): Promise<void> {
   const ownerId = req.user!.id
   await clearBotCreds(ownerId)
