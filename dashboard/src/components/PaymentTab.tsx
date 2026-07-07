@@ -497,7 +497,7 @@ export default function PaymentTab() {
             label="Label Tampilan"
             value={form.label}
             onChange={(e) => setForm((prev) => ({ ...prev, label: e.target.value }))}
-            placeholder={'Label khusus (opsional)'}
+            placeholder={'Kosongkan untuk label otomatis'}
           />
 
           {(editing ? editing.type : activeType) !== 'COD' && (

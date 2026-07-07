@@ -26,4 +26,8 @@ export class StorePaymentMethodModel extends BaseModel {
     })
     return count > 0
   }
+
+  static async countByType(ownerId: string, type: string): Promise<number> {
+    return this.delegate.count({ where: { ownerId, type } })
+  }
 }

@@ -29,6 +29,7 @@ let reconnectAttempts = 0;
 let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
 let pollErrors = 0;
 let isResetRestart = false;
+let wsAlive = false;
 
 async function main() {
   if (isResetRestart) {
@@ -52,6 +53,7 @@ async function main() {
   sock.ev.on("creds.update", saveCreds);
 
   sock.ev.on("connection.update", (update) => {
+    wsAlive = true;
     const { connection, lastDisconnect, qr, receivedPendingNotifications } = update;
 
     const sockUser = sock?.user ? { id: sock.user.id, phoneNumber: sock.user.phoneNumber, lid: sock.user.lid, name: sock.user.name } : null;
@@ -81,6 +83,7 @@ async function main() {
     }
 
     if (connection === "close") {
+      wsAlive = false;
       connected = false;
       const reason = lastDisconnect?.error?.message ?? lastDisconnect?.error?.toString() ?? "unknown";
       const loggedOut = reason.includes("logged out");
@@ -150,6 +153,7 @@ async function main() {
   });
 
   async function checkAndGeneratePairingCode() {
+    if (!wsAlive) return;
     try {
       const { data } = await api.get("/api/qr/status");
       const pairingPhone = data?.data?.pairingPhone;
@@ -158,7 +162,7 @@ async function main() {
         logger.info({ pairingPhone }, "generating pairing code");
         const code = await sock.requestPairingCode(pairingPhone);
         logger.info({ code }, "pairing code generated");
-        await api.post("/api/qr", { pairingCode: code, pairingPhone: null });
+        await api.post("/api/qr", { pairingCode: code });
       }
     } catch (err) {
       logger.error({ err: String(err) }, "checkAndGeneratePairingCode failed");

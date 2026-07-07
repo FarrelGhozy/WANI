@@ -1,7 +1,7 @@
 import { z } from "zod"
 
 const paymentMethodBaseSchema = z.object({
-  label: z.string().min(1, "Label wajib diisi"),
+  label: z.string().optional().nullable(),
   instructions: z.string().optional().nullable(),
   isActive: z.boolean().optional(),
   sortOrder: z.number().int().min(0).optional(),
@@ -39,7 +39,7 @@ export const createPaymentMethodSchema = z.discriminatedUnion("type", [
 ])
 
 export const updatePaymentMethodSchema = z.object({
-  label: z.string().optional(),
+  label: z.string().optional().nullable(),
   instructions: z.string().optional().nullable(),
   isActive: z.boolean().optional(),
   sortOrder: z.number().int().min(0).optional(),

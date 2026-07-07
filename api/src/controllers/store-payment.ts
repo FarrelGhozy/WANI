@@ -26,9 +26,20 @@ export async function createPaymentMethod(
   res: Response,
 ): Promise<void> {
   const ownerId = getOwnerId(req)
+  let label = req.body.label
+  if (!label) {
+    const count = await StorePaymentMethodModel.countByType(ownerId, req.body.type)
+    const typeLabels: Record<string, string> = {
+      QRIS: "QRIS",
+      BANK_TRANSFER: "Bank Transfer",
+      E_WALLET: "E-Wallet",
+      COD: "COD",
+    }
+    label = `${typeLabels[req.body.type] ?? req.body.type} #${count + 1}`
+  }
   const data: Record<string, unknown> = {
     type: req.body.type,
-    label: req.body.label,
+    label,
     ownerId,
     isActive: true,
     sortOrder: 0,
