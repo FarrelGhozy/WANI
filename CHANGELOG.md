@@ -1,6 +1,6 @@
 # Changelog
 
-## api v1.0.7 — 2026-07-05
+## api v1.1.1 — 2026-07-08
 
 ### What's Changed
 
@@ -11,13 +11,13 @@
 - **Pairing code login** — QR + pairing code dual mode for WhatsApp Bot
 - **Composite DB index** — `Order(status, createdAt)` for faster order-list queries
 - **Helmet CORP fix** — `crossOriginResourcePolicy` added to prevent cross-origin image blocking
-- **Unit + integration tests** — 229 tests across auth, store, products, guardrails, AI pipeline, circuit breaker, security headers
+- **Unit + integration tests** — 238 tests across auth, store, products, guardrails, AI pipeline, circuit breaker, security headers
 - **Email system** — `nodemailer` SMTP integration, `EmailService` abstraction, forgot password now sends real reset link email (fixes #67)
 - **Security hardening** — stricter CSP, HSTS, X-Frame-Options, global rate limit (120 req/min), auth brute-force protection (10/15min), forgot-password rate limit (3/hour), security headers test suite (fixes #74)
 - **Product search in all templates** — client-side filter added to `classic`, `modern`, `vibrant`, `minimalist`, `cyberpunk` HTML templates (fixes #69)
 - **Automated DB backup** — `scripts/backup-db.sh` with `pg_dump` custom format, daily cron via Docker backup service, 7-day retention (fixes #73)
 
-## wa-bot v1.0.7 — 2026-06-27
+## wa-bot v1.1.1 — 2026-07-08
 
 ### What's Changed
 
@@ -28,10 +28,10 @@
 - **Phone extraction fix** — parse from `sock.user.id` (absent `phoneNumber` field in v7)
 - **QR/status sync** — handle `receivedPendingNotifications`, safety net on incoming message
 - **Debug logging** — `connection.update` fields, incoming messages, API errors
-- **Unit tests added** — 11 tests for `usePrismaAuthState()`, mock Prisma pattern
+- **Unit tests added** — tests for `usePrismaAuthState()`, mock Prisma pattern
 - **CI workflow** — `bun test` runs before Docker build
 
-## dashboard v1.0.4 — 2026-06-27
+## dashboard v1.1.2 — 2026-07-08
 
 ### What's Changed
 
