@@ -51,7 +51,7 @@
 ### What's Changed
 
 - **LLM provider-agnostic** — `LLM_BASE_URL` + `LLM_API_KEY` env vars, no longer hardcoded to OpenRouter
-- **Model default changes** — `deepseek-v4-flash-free`, fallback `north-mini-code-free`
+- **Model default changes** — `opencode/deepseek-v4-flash-free` via OpenCode Zen
 - **Guardrail models** — all updated to `north-mini-code-free`
 - **Logger improvements** — printf format supports string/number metadata, colorful console
 - **Pipeline refactored** — modular architecture, 18-step orchestrator

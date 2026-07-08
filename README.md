@@ -24,7 +24,7 @@ Platform omnichannel UMKM dengan AI chatbot WhatsApp, dashboard manajemen, dan w
 
 - **Bun 1.3+**
 - **PostgreSQL 17** — dua database: `wani_api` (api) + `wa_bot` (wa-bot)
-- **OpenRouter API key** (gratis) — untuk AI pipeline
+- **OpenCode Zen API key** (gratis) — untuk AI pipeline
 
 ---
 
@@ -34,7 +34,7 @@ Cara termudah: semua service berjalan di container.
 
 ```bash
 cp .env.example .env
-# Edit .env: isi POSTGRES_PASSWORD, JWT_SECRET, OPENROUTER_API_KEY
+# Edit .env: isi POSTGRES_PASSWORD, JWT_SECRET, LLM_API_KEY
 docker compose up --build
 ```
 
@@ -58,9 +58,8 @@ Semua konfigurasi lewat `.env` (root project). Lihat [`.env.example`](.env.examp
 | `DATABASE_USER` | | `postgres` | User PostgreSQL |
 | `API_TOKEN` | ✅ | — | Shared secret bot↔API auth |
 | `JWT_SECRET` | ✅ | — | Secret untuk JWT auth |
-| `OPENROUTER_API_KEY` | ✅ | — | API key LLM provider (dapat gratis di openrouter.ai) |
-| `LLM_MODEL` | | `deepseek-v4-flash-free` | Model utama |
-| `LLM_FALLBACK_MODEL` | | `google/gemini-2.0-flash-exp:free` | Cadangan |
+| `LLM_API_KEY` | ✅ | — | API key OpenCode Zen (dapat gratis di opencode.ai) |
+| `LLM_MODEL` | | `opencode/deepseek-v4-flash-free` | Model utama |
 
 ---
 
@@ -91,7 +90,7 @@ cp wa-bot/.env.example wa-bot/.env
 | `DATABASE_PASSWORD` | `postgres` | Password PostgreSQL |
 | `API_TOKEN` | `rahasia123` | Shared secret |
 | `JWT_SECRET` | `jwt-rahasia456` | Secret JWT |
-| `OPENROUTER_API_KEY` | `sk-or-v1-xxx` | API key OpenRouter |
+| `LLM_API_KEY` | `sk-xxx` | API key OpenCode Zen |
 
 **`wa-bot/.env`**:
 
@@ -150,7 +149,7 @@ WANI/
 
 Express 5 dengan layered architecture: routes → controllers → models → Prisma → PostgreSQL. Fitur utama:
 
-- **AI Pipeline 18-step** — normalize → guardrails 3-tier → LLM (OpenRouter) → intent handler → output scan
+- **AI Pipeline 18-step** — normalize → guardrails 3-tier → LLM (OpenCode Zen) → intent handler → output scan
 - **Circuit breaker** — 3 gagal beruntun → open 60s → half-open → retry
 - **Guardrails** — PII scanner, rate limit, budget tracker, injection defense (regex + classifier + LLM judge), output grounding
 - **Full CRUD** — Products, Categories, Orders, Customers, Conversations, Store Payment Methods
@@ -302,7 +301,7 @@ Store (single-row)
 WA message → normalize → upsert customer+conv → dedup → persist → rate limit
 → PII scan → 3-tier injection defense (regex → classifier → LLM judge)
 → budget check → load context (store + products + ai config)
-→ LLM (OpenRouter, circuit breaker, retry+fallback)
+→ LLM (OpenCode Zen, circuit breaker, retry)
 → parse JSON output → handle intent (order/inquiry/greeting/complaint/escalate)
 → sanitize → output scan → PII redact → grounding check → record → reply
 ```
@@ -331,3 +330,11 @@ Platform berjalan di **https://wani.utc.web.id/* — Dashboard production dengan
 - [`api/ARSITEKTUR.md`](api/ARSITEKTUR.md) — API architecture, endpoints, AI pipeline, guardrails, database schema
 - [`dashboard/ARCHITECTURE.md`](dashboard/ARCHITECTURE.md) — Component tree, routing, design system
 - [`dashboard/API_SPEC.md`](dashboard/API_SPEC.md) — Full API contract spec (request/response shapes)
+
+## Tautan
+
+| Tautan | URL |
+|--------|-----|
+| Website Live Demo | [https://wani.utc.web.id/](https://wani.utc.web.id/) |
+| Repository GitHub | [https://github.com/FarrelGhozy/WANI.git](https://github.com/FarrelGhozy/WANI.git) |
+| Proposal Projek | [https://docs.google.com/document/d/1CSzb5ozLBQJIwKp_Wc98Wl4170_KCNQGNEyUAyXO7JI/edit?usp=sharing](https://docs.google.com/document/d/1CSzb5ozLBQJIwKp_Wc98Wl4170_KCNQGNEyUAyXO7JI/edit?usp=sharing) |

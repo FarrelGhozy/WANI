@@ -1,6 +1,6 @@
 # api
 
-REST API server WANI — Express 5 + Prisma 7 + OpenRouter AI pipeline.
+REST API server WANI — Express 5 + Prisma 7 + OpenCode Zen AI pipeline.
 Bagian dari platform omnichannel [WANI](https://github.com/anomalyco/WANI).
 
 ```bash

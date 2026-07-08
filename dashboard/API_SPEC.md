@@ -180,12 +180,12 @@ Process incoming WhatsApp message through the 18-step AI pipeline and return a r
 6. `scanPii` — log PII matches (phone, email, NIK, API key, address)
 7. `3-tier injection defense`
    - **T1 regex** (always, ~0ms) — 9 attack-class groups → SAFE/BLOCK/UNCERTAIN
-   - **T2 classifier** (conditional) — OpenRouter fast model → SAFE/INJECTION/SUSPICIOUS
+   - **T2 classifier** (conditional) — fast model → SAFE/INJECTION/SUSPICIOUS
    - **T3 deep judge** (conditional) — LLM-as-judge with history → SAFE/BLOCK
 8. `isBudgetExceeded` — daily LLM call budget
 9. `load context` — Store + Product + AiConfig → system prompt
 10. `build messages` — history (10) + current message
-11. `LLM call via circuit breaker` — OpenRouter, retry (2×), fallback model, 30s timeout
+11. `LLM call via circuit breaker` — OpenCode Zen, retry (2×), 30s timeout
 12. `parse LLM output` — JSON extraction + Zod validation → 6 intents
 13. `handleIntent` — execute action (create order, log escalation, etc.)
 14. `sanitizeReply` — strip code fences, cap length

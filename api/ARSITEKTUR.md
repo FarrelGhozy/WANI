@@ -14,7 +14,7 @@
 | **DB Driver** | `@prisma/adapter-pg` (PostgreSQL) | 7.x |
 | **Validation** | Zod | 4.x |
 | **Logging** | Winston + Morgan | 3.x |
-| **AI Provider** | OpenRouter | REST API |
+| **AI Provider** | OpenCode Zen | REST API |
 | **Auth** | JWT (`jsonwebtoken`) | 9.x |
 | **File Upload** | Multer | 2.x |
 | **Testing** | Bun built-in (`bun:test`) | — |
@@ -161,7 +161,7 @@ api/
 │   │   ├── types.ts              # LLMOutput union, ChatMessage, CompletionOptions, CompletionResult, TokenUsage
 │   │   ├── schemas.ts            # Zod discriminated union LLMOutputSchema (6 intents)
 │   │   ├── circuit-breaker.ts    # withCircuit() — 3 failures → 60s open → half-open
-│   │   ├── engine.ts             # complete() — OpenRouter call + retry (2×) + fallback model + 30s timeout
+│   │   ├── engine.ts             # complete() — OpenCode Zen call + retry (2×) + 30s timeout
 │   │   ├── prompts.ts            # buildSystemPrompt() — canary, delimiters, security rules, output format, payment methods
 │   │   ├── actions.ts            # handleIntent() — order, inquiry, greeting, complaint, unknown, escalate
 │   │   ├── pipeline.ts           # processMessage() — 18-step orchestrator entry point
@@ -204,7 +204,7 @@ api/
     ├── firewall.test.ts          # 30+ tests: encoding, injection, verdict, context, output scan, PII
     ├── golden-reply.test.ts      # Safety checks for known-good replies
     ├── guardrails.test.ts        # Tests: normalizeInput, detectInjection, sanitizeReply, hasLeak, checkRateLimit
-    ├── intent.test.ts            # 45 test cases for 6 intents (requires OPENROUTER_API_KEY)
+    ├── intent.test.ts            # 45 test cases for 6 intents (requires LLM_API_KEY)
     ├── middleware.test.ts        # Middleware chain tests
     ├── response.test.ts          # sendResponse tests
     ├── schemas.test.ts           # Zod schema validation tests
@@ -289,9 +289,9 @@ wa-bot ──POST /api/chat──▶  requireAuth  ──▶  validate(chatReque
                     ┌─────────────┼──────────────┐
                     ▼             ▼              ▼
               guardrails      AI engine      database
-              (firewall,     (OpenRouter)   (Customer,
+              (firewall,     (OpenCode Zen) (Customer,
                PII, rate,    circuit breaker  Conversation,
-               budget)        retry+fallback  Message, Order,
+               budget)        retry           Message, Order,
                                               ActivityLog)
                     │             │              │
                     └─────────────┼──────────────┘
@@ -552,7 +552,7 @@ incoming WA msg
   │   │   └─ UNCERTAIN ────→ Tier 2
   │   │
   │   ├─ Tier 2 classifier [conditional, ~500-1000ms]
-  │   │   classifyInput() via OpenRouter fast model
+  │   │   classifyInput() via fast model
   │   │   ├─ SAFE       ──── proceed
   │   │   ├─ INJECTION  ──── blocked
   │   │   └─ SUSPICIOUS ────→ Tier 3
@@ -565,7 +565,7 @@ incoming WA msg
   ├─ 8. isBudgetExceeded()       — daily LLM call budget (UsageCounter)
   ├─ 9. load context             — Store + Products + AiConfig + PaymentMethods → build system prompt
   ├─10. build messages           — history (10) + current message (wrapped in delimiters)
-  ├─11. complete()               — OpenRouter via circuit breaker (retry 2×, fallback, 30s)
+  ├─11. complete()               — OpenCode Zen via circuit breaker (retry 2×, 30s)
   ├─12. parse LLM output         — JSON extraction + LLMOutputSchema validation
   ├─13. handleIntent()           — execute action per intent (order creates Order, may include payment info)
   ├─14. sanitizeReply()          — strip code fences, cap length
@@ -598,9 +598,8 @@ withCircuit<T>(fn, label = "llm"): Promise<CircuitResult<T>>
 ```
 complete(messages, options)
   │
-  ├─ POST https://openrouter.ai/api/v1/chat/completions
+  ├─ POST https://opencode.ai/zen/v1/chat/completions
   ├─ Retry: maxRetries=2, exponential backoff (1s, 2s, 10s cap)
-  ├─ Fallback: on first failure → switch to env.ai.fallbackModel
   ├─ Timeout: AbortController with 30s default
   ├─ Retryable: 429, 5xx, timeout, invalid response
   ├─ Non-retryable: missing API key, auth errors
