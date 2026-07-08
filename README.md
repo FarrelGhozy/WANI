@@ -2,7 +2,7 @@
 
 Platform omnichannel UMKM dengan AI chatbot WhatsApp, dashboard manajemen, dan website generator. Empat service independent (Bun + TypeScript) berbagi PostgreSQL backend.
 
-> **🌐 Live Demo:** [http://103.195.19.115:5173/](http://103.195.19.115:5173/)
+> **🌐 Live Demo:** [https://wani.utc.web.id/](https://wani.utc.web.id/)
 
 ```
 ┌──────────────┐  HTTP (Vite proxy)  ┌──────────────┐
