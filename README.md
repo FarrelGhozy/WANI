@@ -1,4 +1,21 @@
-# WANI — WhatsApp AI Native Integration
+# WANI — WhatsApp Niaga
+
+## PENGEMBANGAN PLATFORM DIGITAL OMNICHANNEL BERBASIS AI UNTUK PEMBERDAYAAN UMKM
+
+WANI (WhatsApp Niaga) adalah platform omnichannel berbasis AI yang dirancang untuk memberdayakan UMKM Indonesia. Dengan integrasi chatbot WhatsApp cerdas, dashboard manajemen toko, dan website generator otomatis, WANI membantu pelaku UMKM mengelola bisnis secara modern, efisien, dan profesional dalam satu ekosistem terpadu.
+
+![Bun](https://img.shields.io/badge/Bun-000?logo=bun&logoColor=fff)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=fff)
+![Node.js](https://img.shields.io/badge/Node.js-339933?logo=nodedotjs&logoColor=fff)
+![React](https://img.shields.io/badge/React_19-61DAFB?logo=react&logoColor=000)
+![Vite](https://img.shields.io/badge/Vite_8-646CFF?logo=vite&logoColor=fff)
+![Express](https://img.shields.io/badge/Express_5-000?logo=express&logoColor=fff)
+![Prisma](https://img.shields.io/badge/Prisma_7-2D3748?logo=prisma&logoColor=fff)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL_17-4169E1?logo=postgresql&logoColor=fff)
+![Baileys](https://img.shields.io/badge/Baileys_6-25D366?logo=whatsapp&logoColor=fff)
+![Astro](https://img.shields.io/badge/Astro_7-BC52EE?logo=astro&logoColor=fff)
+![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=fff)
+![OpenCode Zen](https://img.shields.io/badge/OpenCode_Zen-000?logo=lightning&logoColor=fff)
 
 Platform omnichannel UMKM dengan AI chatbot WhatsApp, dashboard manajemen, dan website generator. Empat service independent (Bun + TypeScript) berbagi PostgreSQL backend.
 
