@@ -12,7 +12,7 @@ WANI (WhatsApp Niaga) adalah platform omnichannel berbasis AI yang dirancang unt
 ![Express](https://img.shields.io/badge/Express_5-000?logo=express&logoColor=fff)
 ![Prisma](https://img.shields.io/badge/Prisma_7-2D3748?logo=prisma&logoColor=fff)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL_17-4169E1?logo=postgresql&logoColor=fff)
-![Baileys](https://img.shields.io/badge/Baileys_6-25D366?logo=whatsapp&logoColor=fff)
+![Baileys](https://img.shields.io/badge/Baileys_7-25D366?logo=whatsapp&logoColor=fff)
 ![Astro](https://img.shields.io/badge/Astro_7-BC52EE?logo=astro&logoColor=fff)
 ![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=fff)
 ![OpenCode Zen](https://img.shields.io/badge/OpenCode_Zen-000?logo=lightning&logoColor=fff)
@@ -32,7 +32,7 @@ Platform omnichannel UMKM dengan AI chatbot WhatsApp, dashboard manajemen, dan w
                                              │ POST/DELETE /api/qr
                                      ┌──────▼───────┐
                                      │   WA Bot     │
-                                     │  Baileys 6   │
+                                     │  Baileys 7   │
                                      │  Prisma 7    │
                                      └──────────────┘
 ```
@@ -59,6 +59,7 @@ docker compose up --build
 |---------|------|-------|
 | Dashboard | `5173` | http://localhost:5173 |
 | API | `3001` | http://localhost:3001 |
+| WA Bot | — | WhatsApp Web client |
 | PostgreSQL | `5432` | internal |
 
 Database `wani_api` + `wa_bot` dibuat otomatis via `init-dbs.sh`.
@@ -156,7 +157,7 @@ WANI/
 ├── api/            Express 5 + Prisma 7 — REST server + AI pipeline + guardrails
 ├── dashboard/      React 19 + Vite 8 — frontend UI
 ├── web-gen/        Bun + Astro 7 — static site generator UMKM
-├── wa-bot/         Baileys 6 + Prisma 7 — WhatsApp bot
+├── wa-bot/         Baileys 7 + Prisma 7 — WhatsApp bot
 ├── docker-compose.yml
 ├── .env.example
 └── init-dbs.sh
@@ -190,7 +191,7 @@ Semua hooks panggil real API (`fetchApi()` via Vite proxy `/api/*` → `localhos
 
 ### WA Bot (`wa-bot/`)
 
-Baileys 6 WhatsApp Web client dengan PostgreSQL persistent auth.
+Baileys 7 WhatsApp Web client dengan PostgreSQL persistent auth.
 
 - QR code → POST ke API + print terminal
 - Auto-reconnect (kecuali explicit logout)
@@ -278,7 +279,7 @@ Semua response format:
 
 ## Data Model
 
-### wani_api — 13 tabel
+### wani_api — 17 tabel
 
 ```
 Store (single-row)
@@ -286,6 +287,7 @@ Store (single-row)
   ├── WaSession (single-row)
   ├── WebSite (single-row)
   ├── StorePaymentMethod (multi-row)
+  ├── WebsiteGeneration (multi-row)
   ├── Category ──→ Product ──→ OrderItem
   Customer ──→ Order ─────────────┘
   │    │         └── Payment
@@ -336,7 +338,7 @@ Detail lengkap: [`api/ARSITEKTUR.md`](api/ARSITEKTUR.md)
 | Prisma generate | `bun run prisma:generate` | — | `bun run prisma:generate` | — |
 | Prisma migrate | `bun run prisma:migrate` | — | `bun run prisma:migrate` | — |
 | Prisma deploy | `bun run prisma:deploy` | — | `bun run prisma:deploy` | — |
-| Test | `bun test` | — | — | — |
+| Test | `bun test` | `bun test` | — | — |
 
 ## Live Demo
 
