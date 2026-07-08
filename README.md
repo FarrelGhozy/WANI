@@ -320,7 +320,7 @@ Detail lengkap: [`api/ARSITEKTUR.md`](api/ARSITEKTUR.md)
 
 ## Live Demo
 
-Platform berjalan di **http://103.195.19.115:5173/** — Dashboard production dengan real API backend.
+Platform berjalan di **https://wani.utc.web.id/* — Dashboard production dengan real API backend.
 
 ## Architecture Docs
 
