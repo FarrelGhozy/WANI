@@ -41,7 +41,7 @@ api/
 ├── prisma/
 │   ├── schema.prisma             # Generator + datasource config (referensi ke models/)
 │   ├── migrations/               # Auto-generated migration files
-│   └── models/                   # Schema per-domain (12 file)
+│   └── models/                   # Schema per-domain (13 file)
 │       ├── enums.prisma          # OrderStatus, PaymentMethod, PaymentStatus, MessageRole, ConversationStatus
 │       ├── store.prisma          # Store (single-row)
 │       ├── catalog.prisma        # Category, Product
@@ -53,7 +53,8 @@ api/
 │       ├── user.prisma           # User (auth)
 │       ├── store-payment.prisma  # StorePaymentMethod
 │       ├── wa_session.prisma     # WaSession (single-row)
-│       └── website.prisma        # WebSite (single-row)
+│       ├── website.prisma        # WebSite (single-row)
+│       └── website-generation.prisma  # WebsiteGeneration (audit log)
 │
 ├── generated/prisma/             # Prisma generated client (gitignored)
 ├── generated-sites/              # Generated static website output
@@ -66,7 +67,8 @@ api/
 │   ├── config/
 │   │   ├── db.ts                 # PrismaClient singleton (global cache, @prisma/adapter-pg)
 │   │   ├── env.ts                # Typed env accessor — num()/bool() helpers
-│   │   └── logger.ts             # Winston logger (Console transport) + morgan stream
+│   │   ├── logger.ts             # Winston logger (Console transport) + morgan stream
+│   │   └── metrics.ts            # Prometheus metrics (counter, histogram)
 │   │
 │   ├── routes/
 │   │   ├── index.ts              # Combines all routers under /api
@@ -84,9 +86,11 @@ api/
 │   │   ├── auth.ts               # POST /register, POST /login, GET /me, POST /logout, POST /forgot-password, POST /reset-password
 │   │   ├── website.ts            # GET /, PUT /, POST /generate, GET /download, POST /publish
 │   │   ├── upload.ts             # POST /
+│   │   ├── monitoring.ts         # GET /health, GET /metrics
+│   │   ├── outgoing.ts           # GET / (list outgoing wa-bot), PATCH /:id/delivered
 │   │   └── debug.ts              # Dev-only: GET /traces, GET /traces/:id, DELETE /traces, GET /status, POST /circuit/reset
 │   │
-│   ├── controllers/              # 14 controllers
+│   ├── controllers/              # 16 controllers
 │   │   ├── qr.ts                 # getQr, getStatus, upsertQr, clearQr
 │   │   ├── chat.ts               # postChat
 │   │   ├── store.ts              # getStore (includes hasPaymentMethods), upsertStore
@@ -100,6 +104,8 @@ api/
 │   │   ├── auth.ts               # register, login, me, logout, forgotPassword, resetPassword
 │   │   ├── upload.ts             # uploadFile (multer)
 │   │   ├── website.ts            # getWebsiteConfig, updateWebsiteConfig, generateWebsite, downloadWebsite, publishWebsite
+│   │   ├── monitoring.ts         # getHealth, getMetricsHandler
+│   │   ├── outgoing.ts           # listOutgoing, markDelivered
 │   │   └── debug.ts              # getRecentTraces, getTraceDetail, deleteTraces, getStatus, postResetCircuit
 │   │
 │   ├── schemas/                  # 12 Zod v4 schemas
@@ -122,10 +128,14 @@ api/
 │   │   ├── validate.ts           # validate({body?, query?, params?}) — Zod safeParseAsync
 │   │   └── error.ts              # errorHandler — AppError-aware, 500 fallback
 │   │
+│   ├── services/
+│   │   └── email.ts              # EmailService — nodemailer SMTP integration
+│   │
 │   ├── utils/
 │   │   ├── errors.ts             # AppError hierarchy (BadRequest, Unauthorized, Forbidden, NotFound, InternalServer)
 │   │   ├── response.ts           # sendResponse — unified JSON format
-│   │   └── auth.ts               # hashPassword, comparePassword helpers
+│   │   ├── auth.ts               # hashPassword, comparePassword helpers
+│   │   └── wa-bot-db.ts          # WA Bot DB config utility
 │   │
 │   ├── types/
 │   │   ├── express.d.ts          # Augmented Request type (validatedQuery, validatedParams, user)
@@ -154,7 +164,18 @@ api/
 │   │   ├── engine.ts             # complete() — OpenRouter call + retry (2×) + fallback model + 30s timeout
 │   │   ├── prompts.ts            # buildSystemPrompt() — canary, delimiters, security rules, output format, payment methods
 │   │   ├── actions.ts            # handleIntent() — order, inquiry, greeting, complaint, unknown, escalate
-│   │   └── pipeline.ts           # processMessage() — 18-step orchestrator
+│   │   ├── pipeline.ts           # processMessage() — 18-step orchestrator entry point
+│   │   └── pipeline/             # Pipeline step implementations
+│   │       ├── index.ts          # Barrel exports
+│   │       ├── coordinator.ts    # Step coordinator + trace integration
+│   │       ├── types.ts          # Pipeline context types
+│   │       └── steps/            # Individual step files (18 steps)
+│   │           ├── normalize.ts, ensureCustomer.ts, dedup.ts
+│   │           ├── persistInbound.ts, rateLimit.ts, piiScan.ts
+│   │           ├── firewall.ts, budget.ts, contextLoader.ts
+│   │           ├── messageBuilder.ts, llmCall.ts, outputParser.ts
+│   │           ├── intentExecutor.ts, outputGuardrails.ts
+│   │           ├── outboundPersister.ts, usageRecorder.ts
 │   │
 │   ├── guardrails/
 │   │   ├── input.ts              # normalizeInput (strip control chars + NFKC, cap length), detectInjection (regex EN+ID)
@@ -163,6 +184,7 @@ api/
 │   │   ├── ratelimit.ts          # checkRateLimit — in-memory sliding window (short + long), periodic cleanup
 │   │   ├── budget.ts             # isBudgetExceeded, recordLlmUsage — UsageCounter table, daily budget, cached todayKey
 │   │   ├── classifier.ts         # classifyInput (ML), judgeInput (deep LLM), checkGrounding (fact-check)
+│   │   ├── injection-patterns.ts # Regex patterns for injection detection
 │   │   └── firewall/
 │   │       ├── types.ts          # ScanResult, ScanVerdict, OutputScanResult
 │   │       ├── encoding.ts       # normalizeUnicode (NFKC), detectObfuscation (base64/hex/homoglyph), normalizeLeet
@@ -176,6 +198,8 @@ api/
 │
 └── test/
     ├── auth.test.ts              # Auth endpoint tests
+    ├── catalog.test.ts           # Product + Category tests
+    ├── email.test.ts             # Email service tests
     ├── errors.test.ts            # AppError tests
     ├── firewall.test.ts          # 30+ tests: encoding, injection, verdict, context, output scan, PII
     ├── golden-reply.test.ts      # Safety checks for known-good replies
@@ -183,7 +207,13 @@ api/
     ├── intent.test.ts            # 45 test cases for 6 intents (requires OPENROUTER_API_KEY)
     ├── middleware.test.ts        # Middleware chain tests
     ├── response.test.ts          # sendResponse tests
-    └── schemas.test.ts           # Zod schema validation tests
+    ├── schemas.test.ts           # Zod schema validation tests
+    ├── security.test.ts          # Security headers + auth tests
+    ├── wa-session.test.ts        # WA session tests
+    ├── ai/                       # AI pipeline tests
+    ├── integration/              # Integration tests
+    ├── models/                   # Model layer tests
+    └── pipeline/                 # Pipeline step unit tests
 ```
 
 ---
@@ -241,7 +271,7 @@ api/
 │                    Prisma ORM + PostgreSQL                        │
 │                                                                  │
 │  @prisma/adapter-pg — pool pg with max:1, timeout:5s            │
-│  14 tables across 12 files, 2 databases: wani_api + wa_bot      │
+│  16 tables across 13 files, 2 databases: wani_api + wa_bot      │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -304,7 +334,7 @@ Dua mekanisme auth:
 | `POST` | `/api/qr` | 🔒 | `upsertQr` | Push QR / update status (from wa-bot) |
 | `DELETE` | `/api/qr` | 🔒 | `clearQr` | Clear QR on successful connect |
 | `POST` | `/api/chat` | 🔒 | `postChat` | Process WA message → AI reply |
-| `GET` | `/api/store` | JWT | `getStore` | Store profile + `hasPaymentMethods` |
+| `GET` | `/api/store` | — | `getStore` | Store profile + `hasPaymentMethods` |
 | `PUT` | `/api/store` | JWT | `upsertStore` | Update store profile |
 | `GET` | `/api/ai-config` | JWT | `getAiConfig` | AI config (model, prompt, etc.) |
 | `PUT` | `/api/ai-config` | JWT | `upsertAiConfig` | Update AI config |
@@ -352,6 +382,10 @@ Dua mekanisme auth:
 | `DELETE` | `/api/debug/traces` | — | `deleteTraces` | Dev: clear trace buffer |
 | `GET` | `/api/debug/status` | — | `getStatus` | Dev: uptime + memory usage |
 | `POST` | `/api/debug/circuit/reset` | — | `postResetCircuit` | Dev: reset circuit breaker |
+| `GET` | `/api/health` | — | `getHealth` | Health check |
+| `GET` | `/api/metrics` | — | `getMetricsHandler` | Prometheus metrics |
+| `GET` | `/api/outgoing` | 🔒 | `listOutgoing` | List outgoing messages (wa-bot) |
+| `PATCH` | `/api/outgoing/:id/delivered` | 🔒 | `markDelivered` | Mark message delivered |
 | `GET` | `/s/:slug` | — | Express static | Serve generated static site |
 
 > 🔒 = `requireAuth` (Bearer API_TOKEN), JWT = `requireJwt` (JWT dari login)

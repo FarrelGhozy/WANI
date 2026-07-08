@@ -1,5 +1,6 @@
 {
   "name": "wa-bot",
+  "version": "1.1.1",
   "module": "src/index.ts",
   "type": "module",
   "private": true,

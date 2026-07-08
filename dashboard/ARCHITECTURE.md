@@ -204,7 +204,9 @@ dashboard/
 │   ├── assets/                  # Images, SVGs
 │   │
 │   ├── lib/                     # Core utilities
-│   │   └── api.ts               # Fetch wrapper (unified response parse)
+│   │   ├── api.ts               # Fetch wrapper (unified response parse)
+│   │   ├── media.ts             # Media/file utility helpers
+│   │   └── upload.ts            # File upload helper
 │   │
 │   ├── hooks/                   # Custom React hooks (real API via fetchApi)
 │   │   ├── useAuth.ts           # Login/register/logout/logged-in user
@@ -215,6 +217,13 @@ dashboard/
 │   │   ├── useSettings.ts       # Store profile + AI config
 │   │   ├── usePaymentMethods.ts # Payment method CRUD (QRIS/Bank/E-Wallet/COD)
 │   │   ├── useWebsite.ts        # Website config + generate
+│   │   ├── useToast.ts          # Global toast notification state
+│   │   └── useUnsavedChanges.ts # Unsaved form changes guard
+│   │
+│   ├── contexts/                # React Context providers
+│   │   ├── ProductsContext.tsx  # Products state provider
+│   │   ├── StoreContext.tsx     # Store state provider
+│   │   └── WaStatusContext.tsx  # WA connection status context + provider
 │   │
 │   ├── components/              # Shared UI components & feature components
 │   │   ├── ui/                  # Primitives
@@ -227,7 +236,11 @@ dashboard/
 │   │   │   ├── Select.tsx
 │   │   │   ├── Spinner.tsx
 │   │   │   ├── Pagination.tsx
-│   │   │   └── EmptyState.tsx
+│   │   │   ├── EmptyState.tsx
+│   │   │   ├── ImageUpload.tsx
+│   │   │   ├── Skeleton.tsx
+│   │   │   ├── Textarea.tsx
+│   │   │   └── Toast.tsx
 │   │   │
 │   │   ├── Layout.tsx           # Shell: sidebar + topbar + main + bottom nav
 │   │   ├── Sidebar.tsx          # Desktop navigation + WA status + store owner
@@ -261,7 +274,13 @@ dashboard/
 │   │   ├── Website.tsx          # Website config, generate, download
 │   │   ├── LoginPage.tsx        # Login form (email + password)
 │   │   ├── SignUpPage.tsx       # Registration form
-│   │   └── ForgotPasswordPage.tsx # Password reset flow
+│   │   ├── ForgotPasswordPage.tsx # Forgot password form
+│   │   ├── ResetPasswordPage.tsx  # Reset password with token
+│   │   ├── VerifyEmailPage.tsx    # Email verification confirmation
+│   │   └── NotFoundPage.tsx       # 404 catch-all page
+│
+│   └── utils/
+│       └── format.ts            # Date/currency/number formatting helpers
 ```
 
 ---
@@ -316,6 +335,8 @@ Semua UI primitives ada di `components/ui/`, menggunakan Tailwind utility classe
 /login              → LoginPage (public, AuthLayout)
 /signup             → SignUpPage (public, AuthLayout)
 /forgot-password    → ForgotPasswordPage (public, AuthLayout)
+/verify-email       → VerifyEmailPage (public, AuthLayout)
+/reset-password     → ResetPasswordPage (public, AuthLayout)
 /                   → Dashboard (QR + Status + quick stats)
 /products           → Products (CRUD table)
 /products/new       → ProductForm (create)
@@ -326,6 +347,7 @@ Semua UI primitives ada di `components/ui/`, menggunakan Tailwind utility classe
 /customers/:id      → Customers (state-driven, not a separate page)
 /website            → Website config + generate + download
 /settings           → Store + AI Config + WA Session + Pembayaran
+*                   → NotFoundPage (404 catch-all)
 ```
 
 React Router v8 dengan `createBrowserRouter`:
@@ -339,11 +361,13 @@ const router = createBrowserRouter([
       { path: '/login',           element: <LoginPage /> },
       { path: '/signup',          element: <SignUpPage /> },
       { path: '/forgot-password', element: <ForgotPasswordPage /> },
+      { path: '/verify-email',    element: <VerifyEmailPage /> },
+      { path: '/reset-password',  element: <ResetPasswordPage /> },
     ],
   },
   // Protected routes — Layout (with sidebar + topbar)
   {
-    element: <ProtectedRoute><Layout /></ProtectedRoute>,
+    element: <ProtectedRoute><WaStatusProvider><Layout /></WaStatusProvider></ProtectedRoute>,
     children: [
       { index: true,           element: <Dashboard /> },
       { path: 'products',     element: <Products /> },
@@ -356,6 +380,11 @@ const router = createBrowserRouter([
       { path: 'website',      element: <Website /> },
       { path: 'settings',     element: <Settings /> },
     ],
+  },
+  // 404 catch-all
+  {
+    path: '*',
+    element: <NotFoundPage />,
   },
 ])
 ```
@@ -597,13 +626,18 @@ createBrowserRouter([
     { path: '/login',           element: <LoginPage /> },
     { path: '/signup',          element: <SignUpPage /> },
     { path: '/forgot-password', element: <ForgotPasswordPage /> },
+    { path: '/verify-email',    element: <VerifyEmailPage /> },
+    { path: '/reset-password',  element: <ResetPasswordPage /> },
   ]},
 
   // Protected — Layout (with sidebar + topbar)
-  { element: <ProtectedRoute><Layout /></ProtectedRoute>, children: [
+  { element: <ProtectedRoute><WaStatusProvider><Layout /></WaStatusProvider></ProtectedRoute>, children: [
     { index: true,  element: <Dashboard /> },
     ... (existing 10 routes)
   ]},
+
+  // 404 catch-all
+  { path: '*', element: <NotFoundPage /> },
 ])
 ```
 
@@ -617,6 +651,9 @@ createBrowserRouter([
 | `pages/LoginPage.tsx` | Form email + password, validasi client-side, show/hide toggle, error alert, loading state. Link ke signup + forgot password |
 | `pages/SignUpPage.tsx` | Form nama + email + password + confirm, validasi match + min 8 char |
 | `pages/ForgotPasswordPage.tsx` | Form email → success state ("cek email Anda") → back to login |
+| `pages/ResetPasswordPage.tsx` | Form token + new password → success → redirect login |
+| `pages/VerifyEmailPage.tsx` | Email verification confirmation page |
+| `pages/NotFoundPage.tsx` | 404 page with link back to home/login |
 
 ### Data Flow Auth
 

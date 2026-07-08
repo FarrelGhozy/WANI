@@ -70,12 +70,20 @@ interface SiteConfig {
   heroHeadline: string
   heroSubheadline?: string
   aboutText: string
-  primaryColor: string      // hex, default "#059669"
-  secondaryColor: string    // hex, default "#f59e0b"
+  primaryColor: string         // hex, default "#059669"
+  secondaryColor: string       // hex, default "#f59e0b"
   phone?: string
   selectedProductIds: string[]
-  template: string          // default "default"
-  theme: string             // "classic" | "modern" | "vibrant" | "elegant"
+  template: string             // default "default"
+  theme: string                // "classic" | "modern" | "vibrant" | "elegant"
+  contactEmail?: string
+  contactMapsUrl?: string
+  socialMedia?: Record<string, string>  // platform → URL
+  heroImageUrl?: string | null
+  aboutImageUrl?: string | null
+  logoUrl?: string | null
+  faviconUrl?: string | null
+  ctaText?: string
 }
 ```
 
@@ -97,9 +105,18 @@ Ambil konfigurasi website generator.
     "aboutText": "Toko Ayu menyediakan...",
     "primaryColor": "#059669",
     "secondaryColor": "#f59e0b",
+    "phone": "6281234567890",
     "selectedProductIds": ["uuid-1", "uuid-2"],
     "template": "default",
-    "theme": "classic"
+    "theme": "classic",
+    "contactEmail": "toko@example.com",
+    "contactMapsUrl": "",
+    "socialMedia": {},
+    "heroImageUrl": null,
+    "aboutImageUrl": null,
+    "logoUrl": null,
+    "faviconUrl": null,
+    "ctaText": "Pesan Sekarang"
   }
 }
 ```
@@ -116,9 +133,18 @@ Buat atau update konfigurasi website generator. **Idempotent** — panggil perta
   "aboutText": "Toko Ayu menyediakan...",        // optional
   "primaryColor": "#059669",                     // optional, hex color
   "secondaryColor": "#f59e0b",                   // optional, hex color
+  "phone": "6281234567890",                      // optional
   "selectedProductIds": ["uuid-1", "uuid-2"],    // optional
   "template": "default",                         // optional
-  "theme": "classic"                             // optional, "classic"|"modern"|"vibrant"|"elegant"
+  "theme": "classic",                            // optional, "classic"|"modern"|"vibrant"|"elegant"
+  "contactEmail": "toko@example.com",            // optional
+  "contactMapsUrl": "",                          // optional
+  "socialMedia": {},                             // optional
+  "heroImageUrl": null,                          // optional
+  "aboutImageUrl": null,                         // optional
+  "logoUrl": null,                               // optional
+  "faviconUrl": null,                            // optional
+  "ctaText": "Pesan Sekarang"                    // optional
 }
 
 // Response 200
@@ -127,13 +153,7 @@ Buat atau update konfigurasi website generator. **Idempotent** — panggil perta
   "message": "website config updated",
   "data": {
     "heroHeadline": "Toko Ayu",
-    "heroSubheadline": "Kuliner enak sejak 2010",
-    "aboutText": "Toko Ayu menyediakan...",
-    "primaryColor": "#059669",
-    "secondaryColor": "#f59e0b",
-    "selectedProductIds": ["uuid-1", "uuid-2"],
-    "template": "default",
-    "theme": "classic"
+    // ... (same shape as GET response)
   }
 }
 ```
@@ -301,6 +321,8 @@ http://localhost:3001/s/default/kontak/     → kontak/index.html
 | `POST` | `/api/website/generate` | 🔒 JWT | ✅ Existing | Generate static site via web-gen |
 | `GET` | `/api/website/download` | 🔒 JWT | ✅ Existing | Download ZIP hasil generate |
 | `POST` | `/api/website/publish` | 🔒 JWT | ✅ Existing | Tandai sebagai published |
+| `GET` | `/api/website/generations` | 🔒 JWT | ✅ Existing | Riwayat generate |
+| `DELETE` | `/api/website/generations/:id` | 🔒 JWT | ✅ Existing | Hapus riwayat generate |
 | `GET` | `/s/:slug` | — | ✅ Existing | Serve generated static site |
 
 ---

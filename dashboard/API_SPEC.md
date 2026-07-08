@@ -1076,8 +1076,8 @@ Reset circuit breaker ke closed state.
 | `POST` | `/api/chat` | 🔒 | ✅ Existing | 18-step AI pipeline |
 | `GET` | `/api/store` | — | ✅ Existing | Settings tab: Store |
 | `PUT` | `/api/store` | 🔒 | ✅ Existing | Settings tab: Store |
-| `GET` | `/api/ai-config` | — | ✅ Existing | Settings tab: AI Agent |
-| `PUT` | `/api/ai-config` | 🔒 | ✅ Existing | Settings tab: AI Agent |
+| `GET` | `/api/ai-config` | 🔒 JWT | ✅ Existing | Settings tab: AI Agent |
+| `PUT` | `/api/ai-config` | 🔒 JWT | ✅ Existing | Settings tab: AI Agent |
 | `GET` | `/api/debug/traces` | — | ✅ Existing | |
 | `GET` | `/api/debug/traces/:id` | — | ✅ Existing | |
 | `DELETE` | `/api/debug/traces` | — | ✅ Existing | |
@@ -1111,6 +1111,8 @@ Reset circuit breaker ke closed state.
 | `POST` | `/api/website/generate` | 🔒 JWT | ✅ Existing | Web-Gen integration |
 | `GET` | `/api/website/download` | 🔒 JWT | ✅ Existing | Download ZIP |
 | `POST` | `/api/website/publish` | 🔒 JWT | ✅ Existing | Mark published |
+| `GET` | `/api/website/generations` | 🔒 JWT | ✅ Existing | List generation history |
+| `DELETE` | `/api/website/generations/:id` | 🔒 JWT | ✅ Existing | Delete generation record |
 | `POST` | `/api/auth/register` | — | ✅ Existing | |
 | `POST` | `/api/auth/login` | — | ✅ Existing | |
 | `GET` | `/api/auth/me` | 🔒 JWT | ✅ Existing | Auto-verify token |
@@ -1122,8 +1124,10 @@ Reset circuit breaker ke closed state.
 | `PUT` | `/api/store/payment-methods/:id` | 🔒 JWT | ✅ Existing | Update payment method |
 | `DELETE` | `/api/store/payment-methods/:id` | 🔒 JWT | ✅ Existing | Delete payment method |
 | `POST` | `/api/upload` | 🔒 JWT | ✅ Existing | Upload file |
-| `POST` | `/api/auth/forgot-password` | — | ✅ Existing | |
-| `POST` | `/api/auth/reset-password` | — | ✅ Existing | |
+| `GET` | `/api/health` | — | ✅ Existing | Health check |
+| `GET` | `/api/metrics` | — | ✅ Existing | Prometheus metrics |
+| `GET` | `/api/outgoing` | 🔒 | ✅ Existing | List outgoing wa-bot messages |
+| `PATCH` | `/api/outgoing/:id/delivered` | 🔒 | ✅ Existing | Mark message delivered |
 | `GET` | `/s/:slug` | — | ✅ Existing | Serve generated static site |
 
 ---

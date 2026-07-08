@@ -106,30 +106,52 @@ web-gen/
 │   ├── generator.ts             # Core logic: copy → inject → build → output
 │   ├── zip.ts                   # ZIP archive generator (archiver)
 │   ├── types.ts                 # Type definitions (SiteConfig, StoreData, dll)
+│   ├── build-css.ts             # Tailwind CSS build pipeline
+│   ├── build-fonts.ts           # Font asset build pipeline
+│   │
+│   ├── assets/
+│   │   └── fonts/
+│   │       └── fonts.css        # Font face declarations
+│   │
 │   └── templates/
-│       └── default/             # Template Astro standalone
-│           ├── astro.config.mjs
-│           ├── package.json
-│           └── src/
-│               ├── pages/
-│               │   ├── index.astro       — Home: Hero + About + Produk Unggulan
-│               │   ├── produk.astro      — Katalog produk lengkap (grid)
-│               │   └── kontak.astro      — Info toko + jam operasional
-│               ├── components/
-│               │   ├── Header.astro
-│               │   ├── Footer.astro
-│               │   ├── HeroSection.astro
-│               │   ├── ProductCard.astro
-│               │   ├── AboutSection.astro
-│               │   ├── ContactInfo.astro
-│               │   └── WaButton.astro         # Tombol "Pesan via WhatsApp"
-│               ├── layouts/
-│               │   └── BaseLayout.astro
-│               └── data/                  ← DI-GENERARE oleh generator.ts
-│                   ├── store.json
-│                   ├── products.json
-│                   ├── site-config.json
-│                   └── orders-stats.json
+│       ├── default/             # Template Astro 7 standalone
+│       │   ├── astro.config.mjs
+│       │   ├── package.json
+│       │   └── src/
+│       │       ├── pages/
+│       │       │   ├── index.astro       — Home: Hero + About + Produk Unggulan
+│       │       │   ├── produk.astro      — Katalog produk lengkap (grid)
+│       │       │   └── kontak.astro      — Info toko + jam operasional
+│       │       ├── components/
+│       │       │   ├── Header.astro
+│       │       │   ├── Footer.astro
+│       │       │   ├── HeroSection.astro
+│       │       │   ├── ProductCard.astro
+│       │       │   ├── AboutSection.astro
+│       │       │   ├── ContactInfo.astro
+│       │       │   └── WaButton.astro    # Tombol "Pesan via WhatsApp"
+│       │       ├── layouts/
+│       │       │   └── BaseLayout.astro
+│       │       ├── themes/               # CSS theme variants
+│       │       └── data/                 ← DI-GENERATE oleh generator.ts
+│       │           ├── store.json
+│       │           ├── products.json
+│       │           ├── site-config.json
+│       │           └── orders-stats.json
+│       │
+│       ├── classic/              # Flat HTML template (CSS-based)
+│       ├── modern/               # Flat HTML template (CSS-based)
+│       ├── vibrant/              # Flat HTML template (CSS-based)
+│       ├── minimalist/           # Flat HTML template (CSS-based)
+│       ├── cyberpunk/            # Flat HTML template (CSS-based)
+│       └── mini/                 # Flat HTML template (CSS-based)
+│
+├── templates_webgen/             # Design system templates (DESIGN.md each)
+│   ├── classic_renaissance/
+│   ├── neon_syndicate/
+│   ├── renaissance_modern/
+│   ├── wani_store_core/
+│   └── ... (12 template variants)
 │
 └── generated-sites/             # Output static files (gitignored, mostly unused)
     └── .gitkeep                  # Output utama ada di api/generated-sites/
@@ -137,9 +159,15 @@ web-gen/
 
 ### Template Naming Convention
 
-Template folder name = `slug` yang dipilih di API config. Default template `"default"` mengacu ke `src/templates/default/`.
+Dua jenis template:
 
-Template bisa ditambah di masa depan: `src/templates/modern/`, `src/templates/minimal/`, dll.
+1. **`default/`** — Template Astro 7 full-featured dengan multi-page (index, produk, kontak), komponen, dan theme CSS variants. Dipilih saat user tidak menspesifikasikan template lain.
+
+2. **Flat HTML templates** (`classic/`, `modern/`, `vibrant/`, `minimalist/`, `cyberpunk/`, `mini/`) — Template berbasis HTML statis + CSS. Data di-inject langsung ke placeholder di file HTML.
+
+Template folder name = `slug` yang dipilih di API config. `"default"` mengacu ke `src/templates/default/`, `"modern"` mengacu ke `src/templates/modern/`, dst.
+
+Design system templates (`templates_webgen/`) adalah referensi desain untuk tema yang bisa diaplikasikan ke template `default` via theme CSS.
 
 ---
 
@@ -167,17 +195,18 @@ Template bisa ditambah di masa depan: `src/templates/modern/`, `src/templates/mi
 │                                                                  │
 │  generate({ slug, template, store, products, config, stats })     │
 │   ├── 1. Resolve template path sesuai nama template              │
-│   ├── 2. Copy template/ → workingDir/ (fs.cpSync)                │
-│   ├── 3. Generate src/data/*.json ke workingDir:                 │
-│   │     - store.json         ← dari API Store                    │
-│   │     - products.json      ← dari API Products                 │
-│   │     - site-config.json   ← dari API site config (hero,       │
-│   │                            about, colors, contact info)      │
-│   │     - orders-stats.json  ← dari API Orders stats             │
-│   ├── 4. bun install --silent di workingDir                      │
-│   ├── 5. bunx astro build di workingDir                          │
-│   ├── 6. Copy workingDir/dist/ → outputDir/{slug}/               │
-│   └── 7. Bersihkan workingDir                                    │
+│   ├── 2. Jika template = "default" (Astro):                      │
+│   │   ├── Copy template/ → workingDir/ (fs.cpSync)                │
+│   │   ├── Generate src/data/*.json ke workingDir                  │
+│   │   ├── bun install --silent di workingDir                      │
+│   │   ├── bunx astro build di workingDir                          │
+│   │   └── Copy workingDir/dist/ → outputDir/{slug}/               │
+│   ├── 3. Jika template flat HTML (classic, modern, dll):         │
+│   │   ├── Baca file HTML template                                 │
+│   │   ├── Inject data (store, products, config) ke placeholder    │
+│   │   ├── Copy CSS assets                                         │
+│   │   └── Tulis output ke outputDir/{slug}/                       │
+│   └── 4. Bersihkan workingDir                                    │
 │                                                                  │
 │  return { success, outputPath }                                  │
 └──────────────────────────────────────────────────────────────────┘
@@ -202,9 +231,9 @@ Template bisa ditambah di masa depan: `src/templates/modern/`, `src/templates/mi
 
 ### Struktur Internal Template
 
-Setiap template adalah **project Astro standalone** — punya `package.json`, `astro.config.mjs`, dan `src/` sendiri.
+**Template `default/`** adalah **project Astro 7 standalone** — punya `package.json`, `astro.config.mjs`, dan `src/` sendiri. Template **tidak bisa di-build sendiri tanpa data**. Data berasal dari file `src/data/*.json` yang di-generate oleh `generator.ts`.
 
-Template **tidak bisa di-build sendiri tanpa data**. Data berasal dari file `src/data/*.json` yang di-generate oleh `generator.ts`.
+**Template flat HTML** (`classic/`, `modern/`, `vibrant/`, `minimalist/`, `cyberpunk/`, `mini/`) adalah file HTML statis dengan placeholder `{{DATA}}` yang di-replace langsung oleh generator. Masing-masing memiliki file `_navbar.html`, `_footer.html`, dan halaman (`produk.html`, `kontak.html`, `tentang.html`) + folder `assets/` untuk CSS.
 
 ### Cara Template Membaca Data
 
@@ -245,7 +274,7 @@ const stats = JSON.parse(fs.readFileSync("src/data/orders-stats.json", "utf-8"))
 
 ### Styling Template
 
-Template menggunakan **Tailwind CSS v4** (CDN via `<script src="https://unpkg.com/@tailwindcss/browser@4">` — no build step needed for CSS).
+Template `default/` menggunakan **Tailwind CSS v4** via `@tailwindcss/vite` plugin di Astro config. Flat HTML templates menggunakan CSS statis di folder `assets/` masing-masing.
 
 Warna diambil dari `site-config.json`:
 ```json
@@ -580,9 +609,8 @@ Semua command dijalankan dari direktori `web-gen/`.
 # Install dependencies
 bun install
 
-# Direct generate via CLI (standalone test)
-# Data diambil dari argumen atau file JSON
-bun run src/generator.ts --slug test --template default --data ./test-data.json
+# Build template (Astro default)
+bun run build:template
 
 # Type check
 bun run tsc --noEmit
