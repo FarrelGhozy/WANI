@@ -155,7 +155,7 @@ Express 5 dengan layered architecture: routes → controllers → models → Pri
 - **Guardrails** — PII scanner, rate limit, budget tracker, injection defense (regex + classifier + LLM judge), output grounding
 - **Full CRUD** — Products, Categories, Orders, Customers, Conversations, Store Payment Methods
 - **Auth** — JWT (login/register) + API Token (bot)
-- **~45 endpoints** — lihat [ARSITEKTUR.md](api/ARSITEKTUR.md) untuk daftar lengkap
+- **~55 endpoints** — lihat [ARSITEKTUR.md](api/ARSITEKTUR.md) untuk daftar lengkap
 
 ### Dashboard (`dashboard/`)
 
@@ -204,7 +204,7 @@ Semua response format:
 | `POST` | `/api/chat` | 🔒 API_TOKEN | Proses pesan WA → AI reply |
 | `GET` | `/api/store` | — | Profil toko + `hasPaymentMethods` |
 | `PUT` | `/api/store` | 🔒 JWT | Update profil toko |
-| `GET` | `/api/ai-config` | — | Konfigurasi AI |
+| `GET` | `/api/ai-config` | 🔒 JWT | Konfigurasi AI |
 | `PUT` | `/api/ai-config` | 🔒 JWT | Update AI config |
 | `GET` | `/api/products` | — | Daftar produk (paginated, searchable) |
 | `GET` | `/api/products/:id` | — | Detail produk |
@@ -251,6 +251,10 @@ Semua response format:
 | `DELETE` | `/api/debug/traces` | — | Clear traces (dev) |
 | `GET` | `/api/debug/status` | — | Server status (dev) |
 | `POST` | `/api/debug/circuit/reset` | — | Reset circuit breaker (dev) |
+| `GET` | `/api/health` | — | Health check |
+| `GET` | `/api/metrics` | — | Prometheus metrics |
+| `GET` | `/api/outgoing` | 🔒 API_TOKEN | List outgoing messages (wa-bot) |
+| `PATCH` | `/api/outgoing/:id/delivered` | 🔒 API_TOKEN | Mark message delivered |
 
 > 🔒 API_TOKEN = `requireAuth` (Bearer API_TOKEN), 🔒 JWT = `requireJwt` (JWT dari login)
 
@@ -312,7 +316,7 @@ Detail lengkap: [`api/ARSITEKTUR.md`](api/ARSITEKTUR.md)
 | Install | `bun install` | `bun install` | `bun install` | `bun install` |
 | Run dev | `bun run src/index.ts` | `bun run dev` | `bun run src/index.ts` | — |
 | Build | — | `bun run build` | — | `bun run build:template` |
-| Type check | — | `bun run lint` | — | `bun run tsc --noEmit` |
+| Type check | `bun run tsc --noEmit` | `bun run build` | — | `bun run tsc --noEmit` |
 | Prisma generate | `bun run prisma:generate` | — | `bun run prisma:generate` | — |
 | Prisma migrate | `bun run prisma:migrate` | — | `bun run prisma:migrate` | — |
 | Prisma deploy | `bun run prisma:deploy` | — | `bun run prisma:deploy` | — |
@@ -327,4 +331,3 @@ Platform berjalan di **https://wani.utc.web.id/* — Dashboard production dengan
 - [`api/ARSITEKTUR.md`](api/ARSITEKTUR.md) — API architecture, endpoints, AI pipeline, guardrails, database schema
 - [`dashboard/ARCHITECTURE.md`](dashboard/ARCHITECTURE.md) — Component tree, routing, design system
 - [`dashboard/API_SPEC.md`](dashboard/API_SPEC.md) — Full API contract spec (request/response shapes)
-- [`AGENTS.md`](AGENTS.md) — Agent guidance for AI-assisted development
