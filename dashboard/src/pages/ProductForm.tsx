@@ -150,7 +150,7 @@ export default function ProductForm() {
       }
       setTimeout(() => {
         setSaving(false)
-        navigate('/products')
+        navigate('/app/products')
       }, 300)
     } catch (e) {
       apiError(e, isEdit ? 'Gagal memperbarui produk' : 'Gagal membuat produk')
@@ -162,7 +162,7 @@ export default function ProductForm() {
     <div className="mx-auto max-w-2xl space-y-6">
       {/* Back */}
       <button
-        onClick={() => navigate('/products')}
+        onClick={() => navigate('/app/products')}
         className="inline-flex items-center gap-1.5 text-sm text-stone-500 transition-colors hover:text-stone-700"
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
@@ -351,7 +351,7 @@ export default function ProductForm() {
 
         {/* Actions */}
         <div className="flex items-center justify-end gap-3">
-          <Button type="button" variant="secondary" onClick={() => navigate('/products')}>
+          <Button type="button" variant="secondary" onClick={() => navigate('/app/products')}>
             Batal
           </Button>
           <Button type="submit" loading={saving}>

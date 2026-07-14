@@ -53,7 +53,7 @@ export default function ForgotPasswordPage() {
           kami akan mengirimkan tautan reset password.
         </p>
         <Link
-          to="/login"
+          to="/app/login"
           className="inline-block text-sm font-medium text-teal-600 hover:text-teal-700"
         >
           Kembali ke Login
@@ -93,7 +93,7 @@ export default function ForgotPasswordPage() {
       </Button>
 
       <p className="text-center text-sm text-stone-500">
-        <Link to="/login" className="font-medium text-teal-600 hover:text-teal-700">
+        <Link to="/app/login" className="font-medium text-teal-600 hover:text-teal-700">
           Kembali ke Login
         </Link>
       </p>

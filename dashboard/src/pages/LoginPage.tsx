@@ -17,7 +17,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (user && !loading) {
-      navigate('/', { replace: true })
+      navigate('/app', { replace: true })
     }
   }, [user, loading, navigate])
 
@@ -97,7 +97,7 @@ export default function LoginPage() {
       </div>
 
       <div className="text-right">
-        <Link to="/forgot-password" className="text-sm font-medium text-teal-600 hover:text-teal-700">
+        <Link to="/app/forgot-password" className="text-sm font-medium text-teal-600 hover:text-teal-700">
           Lupa password?
         </Link>
       </div>
@@ -108,7 +108,7 @@ export default function LoginPage() {
 
       <p className="text-center text-sm text-stone-500">
         Belum punya akun?{' '}
-        <Link to="/signup" className="font-medium text-teal-600 hover:text-teal-700">
+        <Link to="/app/signup" className="font-medium text-teal-600 hover:text-teal-700">
           Daftar
         </Link>
       </p>

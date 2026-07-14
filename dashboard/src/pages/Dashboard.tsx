@@ -133,7 +133,7 @@ export default function Dashboard() {
               <p className="mt-0.5 text-xs text-amber-700">
                 Pelanggan belum bisa melihat informasi pembayaran.{' '}
                 <button
-                  onClick={() => navigate('/settings?tab=payment')}
+                   onClick={() => navigate('/app/settings?tab=payment')}
                   className="font-medium underline underline-offset-2 transition-colors hover:text-amber-900"
                 >
                   Atur metode pembayaran
@@ -182,7 +182,7 @@ export default function Dashboard() {
           <h2 className="text-sm font-semibold text-stone-900">Pesanan Perlu Diproses</h2>
           {pendingProcessOrders.length > 0 && (
             <button
-              onClick={() => navigate('/orders')}
+                   onClick={() => navigate('/app/orders')}
               className="text-xs font-medium text-teal-600 transition-colors hover:text-teal-700"
             >
               Lihat Semua &rarr;
@@ -205,7 +205,7 @@ export default function Dashboard() {
             {pendingProcessOrders.slice(0, 5).map((order) => (
               <div
                 key={order.id}
-                onClick={() => navigate(`/orders/${order.id}`)}
+                       onClick={() => navigate(`/app/orders/${order.id}`)}
                 className="flex cursor-pointer items-center justify-between gap-3 px-1 py-3 transition-colors hover:bg-stone-50 -mx-1 rounded-lg"
               >
                 <div className="flex items-center gap-3 min-w-0">
@@ -295,7 +295,7 @@ export default function Dashboard() {
                   {lowStockProducts.map((product) => (
                     <div
                       key={product.id}
-                      onClick={() => navigate(`/products/${product.id}`)}
+                       onClick={() => navigate(`/app/products/${product.id}`)}
                       className="flex cursor-pointer items-center justify-between py-2 transition-colors hover:text-teal-600"
                     >
                       <span className="text-sm text-stone-700">{product.name}</span>

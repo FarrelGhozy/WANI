@@ -34,7 +34,7 @@ export default function SignUpPage() {
     e.preventDefault()
     if (!validate()) return
     const success = await register(name.trim(), email, password)
-    if (success) navigate('/', { replace: true })
+    if (success) navigate('/app', { replace: true })
   }
 
   return (
@@ -114,7 +114,7 @@ export default function SignUpPage() {
 
       <p className="text-center text-sm text-stone-500">
         Sudah punya akun?{' '}
-        <Link to="/login" className="font-medium text-teal-600 hover:text-teal-700">
+        <Link to="/app/login" className="font-medium text-teal-600 hover:text-teal-700">
           Masuk
         </Link>
       </p>
