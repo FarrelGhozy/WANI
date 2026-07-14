@@ -80,7 +80,6 @@ export default function SignUpPage() {
       </div>
     )
   }
-  }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">

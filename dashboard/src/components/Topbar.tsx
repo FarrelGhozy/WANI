@@ -1,4 +1,4 @@
-import { useLocation, useNavigate, Link } from 'react-router'
+import { useLocation, useNavigate } from 'react-router'
 import { useAuth } from '@/hooks/useAuth.ts'
 import { LogOutIcon } from '@/components/Icons.tsx'
 
