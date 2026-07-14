@@ -5,12 +5,12 @@ import { useStoreContext } from '@/contexts/StoreContext.tsx'
 import { GridIcon, BagIcon, ClipboardIcon, PeopleIcon, GlobeIcon, CogIcon, LogOutIcon } from '@/components/Icons.tsx'
 
 const navItems = [
-  { to: '/', icon: GridIcon, label: 'Dashboard' },
-  { to: '/products', icon: BagIcon, label: 'Produk' },
-  { to: '/orders', icon: ClipboardIcon, label: 'Pesanan' },
-  { to: '/customers', icon: PeopleIcon, label: 'Pelanggan' },
-  { to: '/website', icon: GlobeIcon, label: 'Website' },
-  { to: '/settings', icon: CogIcon, label: 'Pengaturan' },
+  { to: '/app', icon: GridIcon, label: 'Dashboard' },
+  { to: '/app/products', icon: BagIcon, label: 'Produk' },
+  { to: '/app/orders', icon: ClipboardIcon, label: 'Pesanan' },
+  { to: '/app/customers', icon: PeopleIcon, label: 'Pelanggan' },
+  { to: '/app/website', icon: GlobeIcon, label: 'Website' },
+  { to: '/app/settings', icon: CogIcon, label: 'Pengaturan' },
 ]
 
 interface SidebarProps {
@@ -43,7 +43,7 @@ export default function Sidebar({ connection }: SidebarProps) {
 
   const handleLogout = useCallback(() => {
     logout()
-    navigate('/login', { replace: true })
+    navigate('/app/login', { replace: true })
   }, [logout, navigate])
 
   return (
@@ -63,7 +63,7 @@ export default function Sidebar({ connection }: SidebarProps) {
           <NavLink
             key={item.to}
             to={item.to}
-            end={item.to === '/'}
+            end={item.to === '/app'}
             className={({ isActive }) =>
               `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 ${
                 isActive
