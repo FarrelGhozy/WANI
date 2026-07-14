@@ -64,7 +64,7 @@ export default function OrderListView({ orders, sortField, sortDir, onSort }: Or
           {orders.map((order) => (
             <tr
               key={order.id}
-              onClick={() => navigate(`/orders/${order.id}`)}
+               onClick={() => navigate(`/app/orders/${order.id}`)}
               className="cursor-pointer transition-colors hover:bg-stone-50"
             >
               <td className="max-sm:px-2 max-sm:py-2 sm:px-4 sm:py-3">
