@@ -4,6 +4,9 @@ WORKDIR /app
 COPY dashboard/package.json dashboard/bun.lock ./
 RUN bun install
 
+COPY landingpage/package.json landingpage/package-lock.json ../landingpage/
+RUN bun install --cwd ../landingpage
+
 COPY dashboard/ ./
 COPY landingpage/ ../landingpage/
 
