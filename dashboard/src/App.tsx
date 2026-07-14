@@ -4,6 +4,7 @@ import AuthLayout from '@/components/AuthLayout.tsx'
 import Layout from '@/components/Layout.tsx'
 import ProtectedRoute from '@/components/ProtectedRoute.tsx'
 import { WaStatusProvider } from '@/contexts/WaStatusContext.tsx'
+import LandingPage from '@/pages/LandingPage.tsx'
 import LoginPage from '@/pages/LoginPage.tsx'
 import SignUpPage from '@/pages/SignUpPage.tsx'
 import ForgotPasswordPage from '@/pages/ForgotPasswordPage.tsx'
@@ -17,15 +18,17 @@ import Settings from '@/pages/Settings.tsx'
 import Website from '@/pages/Website.tsx'
 
 const router = createBrowserRouter([
+  { index: true, element: <LandingPage /> },
   {
     element: <AuthLayout />,
     children: [
-      { path: '/login',           element: <LoginPage /> },
-      { path: '/signup',          element: <SignUpPage /> },
-      { path: '/forgot-password', element: <ForgotPasswordPage /> },
+      { path: '/app/login',           element: <LoginPage /> },
+      { path: '/app/signup',          element: <SignUpPage /> },
+      { path: '/app/forgot-password', element: <ForgotPasswordPage /> },
     ],
   },
   {
+    path: '/app',
     element: <ProtectedRoute><WaStatusProvider><Layout /></WaStatusProvider></ProtectedRoute>,
     children: [
       { index: true,           element: <Dashboard /> },
