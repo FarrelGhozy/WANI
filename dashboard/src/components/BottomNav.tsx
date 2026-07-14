@@ -2,12 +2,12 @@ import { NavLink } from 'react-router'
 import { GridIcon, BagIcon, ClipboardIcon, PeopleIcon, GlobeIcon, CogIcon } from '@/components/Icons.tsx'
 
 const navItems = [
-  { to: '/', icon: GridIcon, label: 'Dashboard' },
-  { to: '/products', icon: BagIcon, label: 'Produk' },
-  { to: '/orders', icon: ClipboardIcon, label: 'Pesanan' },
-  { to: '/customers', icon: PeopleIcon, label: 'Pelanggan' },
-  { to: '/website', icon: GlobeIcon, label: 'Website' },
-  { to: '/settings', icon: CogIcon, label: 'Setting' },
+  { to: '/app', icon: GridIcon, label: 'Dashboard' },
+  { to: '/app/products', icon: BagIcon, label: 'Produk' },
+  { to: '/app/orders', icon: ClipboardIcon, label: 'Pesanan' },
+  { to: '/app/customers', icon: PeopleIcon, label: 'Pelanggan' },
+  { to: '/app/website', icon: GlobeIcon, label: 'Website' },
+  { to: '/app/settings', icon: CogIcon, label: 'Setting' },
 ]
 
 export default function BottomNav() {
@@ -18,7 +18,7 @@ export default function BottomNav() {
           <NavLink
             key={item.to}
             to={item.to}
-            end={item.to === '/'}
+            end={item.to === '/app'}
             className="flex flex-col items-center gap-0.5 px-3 py-2"
           >
             {({ isActive }) => (

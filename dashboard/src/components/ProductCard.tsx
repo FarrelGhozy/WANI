@@ -49,7 +49,7 @@ export default function ProductCard({ product: item, onDelete }: ProductCardProp
           </span>
           <div className="flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
             <button
-              onClick={() => navigate(`/products/${item.id}`)}
+               onClick={() => navigate(`/app/products/${item.id}`)}
               className="rounded-lg p-1.5 text-stone-400 transition-colors hover:bg-stone-100 hover:text-teal-600"
               title="Edit"
             >

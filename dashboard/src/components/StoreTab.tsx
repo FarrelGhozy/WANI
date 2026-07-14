@@ -499,7 +499,7 @@ export default function StoreTab() {
             </div>
           </div>
           <Link
-            to="/website"
+            to="/app/website"
             className="w-full rounded-lg bg-amber-600 px-4 py-2 text-center text-sm font-medium text-white transition-colors hover:bg-amber-700 sm:w-auto sm:shrink-0"
           >
             Buka Website

@@ -72,13 +72,14 @@ export default function SignUpPage() {
           )}
         </p>
         <Link
-          to="/login"
+          to="/app/login"
           className="inline-block text-sm font-medium text-teal-600 hover:text-teal-700"
         >
           Kembali ke Login
         </Link>
       </div>
     )
+  }
   }
 
   return (
@@ -158,7 +159,7 @@ export default function SignUpPage() {
 
       <p className="text-center text-sm text-stone-500">
         Sudah punya akun?{' '}
-        <Link to="/login" className="font-medium text-teal-600 hover:text-teal-700">
+        <Link to="/app/login" className="font-medium text-teal-600 hover:text-teal-700">
           Masuk
         </Link>
       </p>

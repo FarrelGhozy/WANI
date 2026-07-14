@@ -67,7 +67,7 @@ export default function ProductListView({ products, onDelete, sortField, sortDir
           {products.map((item) => (
             <tr
               key={item.id}
-              onClick={() => navigate(`/products/${item.id}`)}
+               onClick={() => navigate(`/app/products/${item.id}`)}
               className="cursor-pointer border-b border-stone-50 transition-colors last:border-0 hover:bg-stone-50"
             >
               <td className="max-sm:px-2 max-sm:py-2 sm:px-4 sm:py-3">
@@ -90,7 +90,7 @@ export default function ProductListView({ products, onDelete, sortField, sortDir
               <td className="max-sm:px-2 max-sm:py-2 sm:px-4 sm:py-3">
                 <div className="flex items-center justify-end gap-1">
                   <button
-                    onClick={(e) => { e.stopPropagation(); navigate(`/products/${item.id}`) }}
+                     onClick={(e) => { e.stopPropagation(); navigate(`/app/products/${item.id}`) }}
                     className="rounded-lg p-1.5 text-stone-400 transition-colors hover:bg-stone-100 hover:text-teal-600"
                     title="Edit"
                   >

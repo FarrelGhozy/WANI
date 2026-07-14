@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from 'react-router'
+import { useLocation, useNavigate, Link } from 'react-router'
 import { useAuth } from '@/hooks/useAuth.ts'
 import { LogOutIcon } from '@/components/Icons.tsx'
 
@@ -11,11 +11,11 @@ const segmentLabels: Record<string, string> = {
 }
 
 function buildCrumbs(pathname: string): { label: string; to: string }[] {
-  const crumbs: { label: string; to: string }[] = [{ label: 'Beranda', to: '/' }]
-  const segments = pathname.split('/').filter(Boolean)
+  const crumbs: { label: string; to: string }[] = [{ label: 'Beranda', to: '/app' }]
+  const segments = pathname.split('/').filter(Boolean).slice(1)
   if (segments.length === 0) return crumbs
 
-  let accumulated = ''
+  let accumulated = '/app'
   for (let i = 0; i < segments.length; i++) {
     accumulated += '/' + segments[i]
     const label = segmentLabels[segments[i]]
@@ -56,7 +56,7 @@ export default function Topbar({ connection }: TopbarProps) {
 
   function handleLogout() {
     logout()
-    navigate('/login', { replace: true })
+    navigate('/app/login', { replace: true })
   }
 
   return (
