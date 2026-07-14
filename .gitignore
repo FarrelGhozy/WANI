@@ -13,3 +13,18 @@ Docs/*.lot
 Docs/*.log
 Docs/*.out
 .claude
+
+# trash ds store
+.DS_Store
+
+# design dna
+DESIGN_DNA.md
+
+# docs ds store
+docs/.DS_Store
+
+# landing page trash
+landingpage/.DS_Store
+landingpage/ATTRIBUTIONS.md
+landingpage/node_modules/
+landingpage/src/.DS_Store
