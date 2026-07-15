@@ -145,6 +145,9 @@ export interface AiConfig {
   knowledgeBase: string | null
   maxTokens: number
   temperature: number
+  llmBaseUrl: string | null
+  llmApiKey: string | null
+  fallbackModel: string | null
 }
 
 export interface WaStatus {
