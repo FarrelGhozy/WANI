@@ -6,6 +6,7 @@ import { CHAT_MESSAGES } from "./data.ts";
 export default function PhoneMockup() {
   const [visible, setVisible] = useState(1);
   const phoneRef = useRef<HTMLDivElement>(null);
+  const chatRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!phoneRef.current) return;
@@ -20,6 +21,12 @@ export default function PhoneMockup() {
     if (visible >= CHAT_MESSAGES.length) return;
     const t = setTimeout(() => setVisible((v) => v + 1), 1200);
     return () => clearTimeout(t);
+  }, [visible]);
+
+  useEffect(() => {
+    if (chatRef.current) {
+      chatRef.current.scrollTop = chatRef.current.scrollHeight;
+    }
   }, [visible]);
 
   return (
@@ -37,7 +44,7 @@ export default function PhoneMockup() {
             </div>
           </div>
 
-          <div className="flex flex-col gap-2 px-3 py-3" style={{ minHeight: 340 }}>
+          <div ref={chatRef} className="flex h-[440px] flex-col gap-2 overflow-y-auto px-3 py-3">
             {CHAT_MESSAGES.slice(0, visible).map((msg, i) => (
               <div
                 key={i}
