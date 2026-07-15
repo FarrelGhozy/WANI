@@ -45,7 +45,8 @@ export async function complete(
     throw new LLMError("LLM_API_KEY (or OPENROUTER_API_KEY) is not configured", false)
   }
 
-  const baseUrl = env.ai.llmBaseUrl
+  const baseUrl = options.baseUrl || env.ai.llmBaseUrl
+  const fallbackModel = options.fallbackModel || env.ai.fallbackModel
   const maxTokens = options.maxTokens ?? env.ai.maxTokens
   const temperature = options.temperature ?? env.ai.temperature
   const maxRetries = options.retries ?? 2
@@ -54,9 +55,8 @@ export async function complete(
   let model = options.model ?? env.ai.defaultModel
 
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
-    // After the first failed attempt, fall back to the secondary model once.
-    if (attempt > 0 && model !== env.ai.fallbackModel) {
-      model = env.ai.fallbackModel
+    if (attempt > 0 && model !== fallbackModel) {
+      model = fallbackModel
       logger.warn("Falling back to secondary LLM model", { fallback: true, model })
     }
 
