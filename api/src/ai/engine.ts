@@ -40,7 +40,8 @@ export async function complete(
   messages: ChatMessage[],
   options: CompletionOptions = {},
 ): Promise<CompletionResult> {
-  if (!env.ai.llmApiKey) {
+  const apiKey = options.apiKey || env.ai.llmApiKey
+  if (!apiKey) {
     throw new LLMError("LLM_API_KEY (or OPENROUTER_API_KEY) is not configured", false)
   }
 
