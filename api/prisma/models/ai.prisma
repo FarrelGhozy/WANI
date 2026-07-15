@@ -8,6 +8,9 @@ model AiConfig {
   knowledgeBase   String?  @db.Text
   maxTokens       Int      @default(2048)
   temperature     Decimal  @default(0.7) @db.Decimal(3, 2)
+  llmBaseUrl      String?
+  llmApiKey       String?
+  fallbackModel   String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 }
