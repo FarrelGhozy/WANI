@@ -66,10 +66,9 @@ export async function complete(
     try {
       const headers: Record<string, string> = {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${env.ai.llmApiKey}`,
+        Authorization: `Bearer ${apiKey}`,
       }
 
-      // OpenRouter-specific metadata headers
       if (baseUrl.includes("openrouter.ai")) {
         headers["HTTP-Referer"] = "https://wani.app"
         headers["X-Title"] = "WANI"
