@@ -8,6 +8,8 @@ import { useToast } from '@/hooks/useToast.ts'
 import { useWaStatusContext } from '@/contexts/WaStatusContext.tsx'
 import { StoreProvider } from '@/contexts/StoreContext.tsx'
 import { ProductsProvider } from '@/contexts/ProductsContext.tsx'
+import { TourProvider } from '@/contexts/TourContext.tsx'
+import TourOverlay from '@/components/TourOverlay.tsx'
 
 function NavProgress() {
   const navigation = useNavigation()
@@ -24,11 +26,14 @@ export default function Layout() {
   const { toasts, removeToast } = useToast()
 
   return (
-    <StoreProvider>
-      <ProductsProvider>
-        <LayoutInner connection={connection} toasts={toasts} removeToast={removeToast} />
-      </ProductsProvider>
-    </StoreProvider>
+    <TourProvider>
+      <StoreProvider>
+        <ProductsProvider>
+          <LayoutInner connection={connection} toasts={toasts} removeToast={removeToast} />
+          <TourOverlay />
+        </ProductsProvider>
+      </StoreProvider>
+    </TourProvider>
   )
 }
 
