@@ -39,6 +39,9 @@ const mockAiConfig: AiConfig = {
   systemPrompt: 'You are helpful',
   greetingMessage: null,
   knowledgeBase: null,
+  llmBaseUrl: null,
+  llmApiKey: null,
+  fallbackModel: null,
 }
 
 function setupConfigFetch(store = mockStore, aiConfig = mockAiConfig) {
