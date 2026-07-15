@@ -31,6 +31,9 @@ export default function AiTab({ config, onUpdate }: AiTabProps) {
   const [greetingMessage, setGreetingMessage] = useState(config.greetingMessage ?? '')
   const [systemPrompt, setSystemPrompt] = useState(config.systemPrompt)
   const [knowledgeBase, setKnowledgeBase] = useState(config.knowledgeBase ?? '')
+  const [llmBaseUrl, setLlmBaseUrl] = useState(config.llmBaseUrl ?? '')
+  const [llmApiKey, setLlmApiKey] = useState(config.llmApiKey ?? '')
+  const [fallbackModel, setFallbackModel] = useState(config.fallbackModel ?? '')
 
   const handleSave = useCallback(async () => {
     setSaving(true);
@@ -42,14 +45,17 @@ export default function AiTab({ config, onUpdate }: AiTabProps) {
         temperature,
         greetingMessage: greetingMessage || null,
         systemPrompt,
-        knowledgeBase: knowledgeBase || null
+        knowledgeBase: knowledgeBase || null,
+        llmBaseUrl: llmBaseUrl || null,
+        llmApiKey: llmApiKey || null,
+        fallbackModel: fallbackModel || null,
       });
     } catch {
       setDirty(true);
     } finally {
       setSaving(false);
     }
-  }, [model, maxTokens, temperature, greetingMessage, systemPrompt, knowledgeBase, onUpdate]);
+  }, [model, maxTokens, temperature, greetingMessage, systemPrompt, knowledgeBase, llmBaseUrl, llmApiKey, fallbackModel, onUpdate]);
 
   const handleToggle = useCallback(async () => {
     setSaving(true);
@@ -89,15 +95,7 @@ export default function AiTab({ config, onUpdate }: AiTabProps) {
             <code className="text-stone-500">north-mini-code-free</code>
           </p>
           <p className="mt-0.5 text-xs text-stone-400">
-            API Key via <code className="text-stone-500">LLM_API_KEY</code> —{" "}
-            <a
-              href="https://opencode.ai/zen"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-teal-600 underline"
-            >
-              OpenCode Zen
-            </a>
+            API Key bisa diatur di bawah atau via <code className="text-stone-500">LLM_API_KEY</code> env
           </p>
         </Field>
         <Field label="Token Maksimal">
@@ -124,6 +122,36 @@ export default function AiTab({ config, onUpdate }: AiTabProps) {
             className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
           />
           <p className="text-xs text-stone-400">Kreativitas respons. 0 = konsisten, 1 = seimbang, 2 = kreatif. Default: 0.7.</p>
+        </Field>
+        <Field label="LLM Base URL">
+          <input
+            type="text"
+            value={llmBaseUrl}
+            onChange={(e) => { setLlmBaseUrl(e.target.value); setDirty(true) }}
+            placeholder="https://openrouter.ai/api/v1/chat/completions"
+            className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+          />
+          <p className="text-xs text-stone-400">Endpoint OpenAI-compatible. Kosongkan untuk pakai bawaan sistem.</p>
+        </Field>
+        <Field label="API Key">
+          <input
+            type="password"
+            value={llmApiKey}
+            onChange={(e) => { setLlmApiKey(e.target.value); setDirty(true) }}
+            placeholder="sk-..."
+            className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+          />
+          <p className="text-xs text-stone-400">API key untuk LLM provider. Kosongkan untuk pakai bawaan sistem.</p>
+        </Field>
+        <Field label="Fallback Model">
+          <input
+            type="text"
+            value={fallbackModel}
+            onChange={(e) => { setFallbackModel(e.target.value); setDirty(true) }}
+            placeholder="north-mini-code-free"
+            className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+          />
+          <p className="text-xs text-stone-400">Model cadangan jika model utama gagal. Kosongkan untuk pakai bawaan.</p>
         </Field>
         <Field label="Pesan Sapaan">
           <textarea

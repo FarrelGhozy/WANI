@@ -35,6 +35,9 @@ export interface CompletionOptions {
   temperature?: number
   retries?: number
   timeout?: number
+  baseUrl?: string
+  apiKey?: string
+  fallbackModel?: string
 }
 
 export interface TokenUsage {

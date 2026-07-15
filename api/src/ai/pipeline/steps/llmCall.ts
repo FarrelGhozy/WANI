@@ -26,6 +26,9 @@ export const llmCallStep: PipelineStep = {
         model,
         maxTokens,
         temperature: ctx.aiConfig ? Number(ctx.aiConfig.temperature) : env.ai.temperature,
+        baseUrl: ctx.aiConfig?.llmBaseUrl || undefined,
+        apiKey: ctx.aiConfig?.llmApiKey || undefined,
+        fallbackModel: ctx.aiConfig?.fallbackModel || undefined,
         timeout: 30_000,
       }),
     )

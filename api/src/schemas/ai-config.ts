@@ -8,4 +8,7 @@ export const upsertAiConfigSchema = z.object({
   knowledgeBase: z.string().optional().nullable(),
   maxTokens: z.number().int().positive().optional(),
   temperature: z.number().min(0).max(2).optional(),
+  llmBaseUrl: z.string().optional().nullable(),
+  llmApiKey: z.string().optional().nullable(),
+  fallbackModel: z.string().optional().nullable(),
 })
