@@ -1,6 +1,7 @@
-# BAHA — WAHA Migration To-Do List
+# TODO: Multi-Tenant Data Isolation
 
-## Phase 1: Create WAHA Service
+**Goal:** Setiap user punya data sendiri (Store, Product, Order, Customer, dll).
+Registrasi → login → liat dashboard kosong, bukan data user lain.
 
 - [x] Add `axios` to `api/package.json` under `dependencies`
 - [ ] Create `api/src/services/waha.ts` — typed wrapper class for WAHA HTTP API
@@ -57,19 +58,19 @@
 - [ ] Modify `api/src/ai/pipeline/steps/outboundPersister.ts` — after persisting reply, call `waha.sendMessage(sessionId, phone, reply)` to push it to WAHA
 - [ ] Remove `api/src/models/message.ts` methods: `listOutgoing`, `markDelivered`
 
-## Phase 4: Cleanup Legacy Baileys Code
+### Tahap 3: ✅ Migration — Backfill data existing
 
 - [ ] Remove `api/src/utils/wa-bot-db.ts`
 - [ ] Remove `WABOT_DATABASE_URL` / `WA_BOT_DATABASE_URL` env var references if present
 - [ ] Remove `WAHA_SWAGGER_USERNAME`, `WAHA_SWAGGER_PASSWORD`, `WAHA_BASE_URL` from any remaining files
 
-## Phase 5: Update Tests
+### Tahap 4: ✅ Controllers + AI Pipeline — Scope queries by `ownerId`
 
 - [ ] Rewrite `api/test/wa-session.test.ts` — test session controller endpoints through consolidated routes
 - [ ] Remove/add tests affected by controller/route consolidation
 - [ ] Run full test suite `bun test`
 
-## Phase 6: Frontend — Dashboard
+### Tahap 5: Frontend — Verify
 
 - [ ] Update `dashboard/src/hooks/useWaStatus.ts` — poll `/api/sessions/:sessionId` (status) and `/api/sessions/:sessionId/qr` (QR) instead of flat `/api/qr/*` endpoints
 - [ ] Update `dashboard/src/components/WaSessionTab.tsx` — all action URLs changed to `/api/sessions/:sessionId/*`
