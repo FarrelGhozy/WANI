@@ -2,20 +2,17 @@ import { StoreModel } from "@/src/models/store"
 import { ProductModel } from "@/src/models/catalog"
 import { AiConfigModel } from "@/src/models/ai-config"
 import { StorePaymentMethodModel } from "@/src/models/store-payment"
-import type { PipelineStep } from "../types"
+import type { ClearedInput, EnrichedInput, Step } from "../types"
+import { ok, fail } from "../either"
 
-/**
- * Step 9 — Load context: store info, products, AI config, payment methods.
- * Returns a break result if the bot is inactive.
- */
-export const contextLoaderStep: PipelineStep = {
+export const contextLoaderStep: Step<ClearedInput, EnrichedInput> = {
   name: "load_context",
-  async run(ctx) {
+  async run(input, { trace }) {
     const [store, products, aiConfig, paymentMethods] = await Promise.all([
-      StoreModel.findByOwner(ctx.ownerId),
-      ProductModel.listAvailable(ctx.ownerId),
-      AiConfigModel.findByOwner(ctx.ownerId),
-      StorePaymentMethodModel.listActive(ctx.ownerId),
+      StoreModel.findByOwner(input.ownerId),
+      ProductModel.listAvailable(input.ownerId),
+      AiConfigModel.findByOwner(input.ownerId),
+      StorePaymentMethodModel.listActive(input.ownerId),
     ])
 
     const isActive = aiConfig?.isActive ?? true
