@@ -37,20 +37,6 @@ const pipeline = PipelineBuilder.start<PipelineInput>()
   .pipe(outboundPersisterStep)
   .build()
 
-/**
- * Entry point — process an inbound WhatsApp text through the
- * full AI pipeline (normalize → guardrails → LLM → output guardrails
- * → persist). Identical public signature to the previous monolithic
- * `pipeline.ts` for backward compatibility.
- */
-export async function processMessage(
-  input: PipelineInput,
-  trace?: TraceContext,
-): Promise<PipelineResult> {
-  const ctx: PipelineContext = {
-    input,
-    trace: trace ?? new TraceContext("pipeline"),
-    ownerId: input.ownerId,
-  }
-  return runSteps(steps, ctx)
+export async function processMessage(input: PipelineInput, trace?: TraceContext): Promise<PipelineResult> {
+  return pipeline(input, trace)
 }
