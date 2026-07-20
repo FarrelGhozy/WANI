@@ -1,28 +1,17 @@
 import { MessageModel } from "@/src/models/message"
-import type { PipelineStep } from "../types"
+import type { ClearedInput, Step } from "../types"
+import { ok, fail } from "../either"
 
-/**
- * Step 3 — Deduplicate by waMsgId (WhatsApp message ID).
- * Skips processing if this message was already received.
- */
-export const dedupStep: PipelineStep = {
+export const dedupStep: Step<ClearedInput, ClearedInput> = {
   name: "dedup",
-  async run(ctx) {
-    if (!ctx.input.waMsgId) return { kind: "continue" }
+  async run(input, _ctx) {
+    if (!input.waMsgId) return ok(input)
 
-    const exists = await MessageModel.existsByWaMsgId(ctx.input.waMsgId)
+    const exists = await MessageModel.existsByWaMsgId(input.waMsgId)
     if (exists) {
-      return {
-        kind: "break",
-        result: {
-          reply: "",
-          intent: "duplicate",
-          blocked: true,
-          qrisImageUrl: null,
-        },
-      }
+      return fail({ type: "short_circuit", reply: "", intent: "duplicate" })
     }
 
-    return { kind: "continue" }
+    return ok(input)
   },
 }
