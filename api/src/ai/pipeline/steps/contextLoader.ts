@@ -15,17 +15,8 @@ export const contextLoaderStep: Step<ClearedInput, EnrichedInput> = {
       StorePaymentMethodModel.listActive(input.ownerId),
     ])
 
-    const isActive = aiConfig?.isActive ?? true
-    if (!isActive) {
-      return {
-        kind: "break",
-        result: {
-          reply: "Maaf, bot sedang tidak aktif. CS manusia akan segera membantu Anda.",
-          intent: "inactive",
-          blocked: true,
-          qrisImageUrl: null,
-        },
-      }
+    if (aiConfig && !aiConfig.isActive) {
+      return fail({ type: "short_circuit", reply: "Maaf, bot sedang tidak aktif. CS manusia akan segera membantu Anda.", intent: "inactive" })
     }
 
     ctx.aiConfig = aiConfig ?? undefined
