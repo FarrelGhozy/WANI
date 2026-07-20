@@ -117,10 +117,21 @@ export interface PipelineResult {
   qrisImageUrl?: string | null
 }
 
-// ---- Circuit breaker (ex: ai/circuit-breaker.ts) ----
+// ---- Circuit breaker types (ex: ai/circuit-breaker) ----
 
-export interface CircuitResult<T> {
-  allowed: boolean
-  result?: T
-  error?: Error
+export enum State {
+  Closed = "closed",
+  Open = "open",
+  HalfOpen = "half-open",
 }
+
+export interface CircuitState {
+  state: State
+  failures: number
+}
+
+export type CircuitResult<T> =
+  | { allowed: true; result: T }
+  | { allowed: false; error?: Error }
+
+
