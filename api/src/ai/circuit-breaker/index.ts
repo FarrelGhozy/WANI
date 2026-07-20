@@ -83,3 +83,30 @@ class CircuitBreaker {
   }
 }
 
+class CircuitBreakerRegistry {
+  private readonly breakers = new Map<string, CircuitBreaker>();
+
+  get(label: string): CircuitBreaker {
+    const existing = this.breakers.get(label);
+    if (existing) return existing;
+    const cb = new CircuitBreaker(label);
+    this.breakers.set(label, cb);
+    return cb;
+  }
+
+  reset(label?: string): void {
+    if (label) this.breakers.get(label)?.reset();
+    else this.breakers.forEach((b) => b.reset());
+  }
+
+  states(): Record<string, CircuitState> {
+    const result: Record<string, CircuitState> = {};
+    for (const [k, b] of this.breakers) result[k] = b.state;
+    return result;
+  }
+
+  remove(label: string): void {
+    this.breakers.delete(label);
+  }
+}
+
