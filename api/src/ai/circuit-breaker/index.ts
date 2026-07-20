@@ -9,3 +9,77 @@ interface BreakerStatus {
   halfOpen: boolean;
 }
 
+class CircuitBreaker {
+  private status: BreakerStatus = {
+    failures: 0,
+    lastFailure: 0,
+    halfOpen: false,
+  };
+  private locked = false;
+  private queue: Array<() => void> = [];
+
+  constructor(
+    private readonly label: string,
+    private readonly threshold = 3,
+    private readonly cooldownMs = 60_000,
+  ) {}
+
+  get state(): CircuitState {
+    if (this.status.halfOpen)
+      return { state: State.HalfOpen, failures: this.status.failures };
+    if (this.status.failures >= this.threshold)
+      return { state: State.Open, failures: this.status.failures };
+    return { state: State.Closed, failures: this.status.failures };
+  }
+
+  reset(): void {
+    this.status = { failures: 0, lastFailure: 0, halfOpen: false };
+  }
+
+  async call<T>(fn: () => Promise<T>): Promise<CircuitResult<T>> {
+    if (this.locked) {
+      await new Promise<void>((r) => this.queue.push(r));
+    }
+    this.locked = true;
+    try {
+      return await this.callUnsafe(fn);
+    } finally {
+      this.locked = false;
+      const next = this.queue.shift();
+      if (next) next();
+    }
+  }
+
+  private shouldReject(now: number): boolean {
+    if (this.status.failures < this.threshold) return false;
+    if (now - this.status.lastFailure < this.cooldownMs) return true;
+    if (!this.status.halfOpen) {
+      this.status.halfOpen = true;
+      logger.info("Circuit breaker HALF-OPEN", { label: this.label });
+    }
+    return false;
+  }
+
+  private async callUnsafe<T>(fn: () => Promise<T>): Promise<CircuitResult<T>> {
+    const now = Date.now();
+    if (this.shouldReject(now)) return { allowed: false };
+
+    try {
+      const result = await fn();
+      this.reset();
+      return { allowed: true, result };
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error(String(err));
+      this.status.failures++;
+      this.status.lastFailure = now;
+      this.status.halfOpen = false;
+      logger.error("Circuit breaker failure", {
+        label: this.label,
+        failures: this.status.failures,
+        error: error.message,
+      });
+      return { allowed: false, error };
+    }
+  }
+}
+
