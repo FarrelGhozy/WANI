@@ -1,25 +1,15 @@
 import { isBudgetExceeded } from "@/src/guardrails/budget"
 import { ActivityLogModel } from "@/src/models/activity-log"
-import { STEP_REPLIES, type PipelineStep } from "../types"
+import { STEP_REPLIES, type ClearedInput, type Step } from "../types"
+import { ok, fail } from "../either"
 
-/**
- * Step 8 — Check if daily LLM budget has been exceeded.
- */
-export const budgetStep: PipelineStep = {
+export const budgetStep: Step<ClearedInput, ClearedInput> = {
   name: "budget_check",
-  async run(ctx) {
+  async run(input, _ctx) {
     if (await isBudgetExceeded()) {
-      await ActivityLogModel.log(ctx.ownerId, "budget_exceeded", "Daily LLM budget exceeded", ctx.conversationId!)
-      return {
-        kind: "break",
-        result: {
-          reply: STEP_REPLIES.BUDGET,
-          intent: "budget_exceeded",
-          blocked: true,
-          qrisImageUrl: null,
-        },
-      }
+      await ActivityLogModel.log(input.ownerId, "budget_exceeded", "Daily LLM budget exceeded", input.conversationId)
+      return fail({ type: "short_circuit", reply: STEP_REPLIES.BUDGET, intent: "budget_exceeded" })
     }
-    return { kind: "continue" }
+    return ok(input)
   },
 }
