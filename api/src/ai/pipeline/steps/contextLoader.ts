@@ -19,11 +19,7 @@ export const contextLoaderStep: Step<ClearedInput, EnrichedInput> = {
       return fail({ type: "short_circuit", reply: "Maaf, bot sedang tidak aktif. CS manusia akan segera membantu Anda.", intent: "inactive" })
     }
 
-    ctx.aiConfig = aiConfig ?? undefined
-    ctx.products = products
-
-    // --- build store info ---
-    ctx.storeInfo = {
+    const storeInfo = {
       businessName: store?.businessName ?? "",
       phone: store?.phone ?? "",
       address: store?.address ?? null,
@@ -44,10 +40,21 @@ export const contextLoaderStep: Step<ClearedInput, EnrichedInput> = {
       returnPolicy: store?.returnPolicy ?? null,
     }
 
-    ctx.trace
-      .set("store_name", ctx.storeInfo.businessName)
-      .set("product_count", products.length)
+    trace.set("store_name", storeInfo.businessName).set("product_count", products.length)
 
-    return { kind: "continue" }
+    return ok({
+      ownerId: input.ownerId,
+      phone: input.phone,
+      name: input.name,
+      waMsgId: input.waMsgId,
+      text: input.text,
+      normalized: input.normalized,
+      customerId: input.customerId,
+      customerPhone: input.customerPhone,
+      conversationId: input.conversationId,
+      storeInfo,
+      products,
+      aiConfig: (aiConfig ?? {}) as Record<string, unknown>,
+    })
   },
 }
