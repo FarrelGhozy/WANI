@@ -110,3 +110,19 @@ class CircuitBreakerRegistry {
   }
 }
 
+export const breakerRegistry = new CircuitBreakerRegistry();
+
+export async function withCircuit<T>(
+  fn: () => Promise<T>,
+  label = "llm",
+): Promise<CircuitResult<T>> {
+  return breakerRegistry.get(label).call(fn);
+}
+
+export function getCircuitState(label = "llm"): CircuitState {
+  return breakerRegistry.get(label).state;
+}
+
+export function resetCircuit(label?: string): void {
+  breakerRegistry.reset(label);
+}
