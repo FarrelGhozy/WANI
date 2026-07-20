@@ -26,7 +26,7 @@ export async function handleIntent(output: LLMOutput, ctx: ActionCtx): Promise<A
     }
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err)
-    logger.error({ err: msg, intent: output.intent }, "handleIntent failed")
+    logger.error("handleIntent failed", { err: msg, intent: output.intent })
     await ActivityLogModel.log(ctx.ownerId, "action_failed", `Intent handler error: ${msg}`, ctx.conversationId)
     return { reply: "Maaf, sistem sedang sibuk. Coba sebentar lagi." }
   }
