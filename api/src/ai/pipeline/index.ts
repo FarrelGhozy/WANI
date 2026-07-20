@@ -1,6 +1,6 @@
 import { TraceContext } from "@/src/debug/tracer"
 import type { PipelineInput, PipelineResult } from "@/src/types/ai"
-import { runSteps } from "./coordinator"
+import { PipelineBuilder } from "./builder"
 import { normalizeStep } from "./steps/normalize"
 import { ensureCustomerStep } from "./steps/ensureCustomer"
 import { dedupStep } from "./steps/dedup"
@@ -17,30 +17,25 @@ import { intentExecutorStep } from "./steps/intentExecutor"
 import { outputGuardrailsStep } from "./steps/outputGuardrails"
 import { usageRecorderStep } from "./steps/usageRecorder"
 import { outboundPersisterStep } from "./steps/outboundPersister"
-import type { PipelineContext } from "./types"
 
-/**
- * Ordered step pipeline. Steps 1–8 can short-circuit (break),
- * steps 9–16 always run to completion.
- */
-const steps = [
-  normalizeStep,        // 1
-  ensureCustomerStep,   // 2
-  dedupStep,            // 3
-  persistInboundStep,   // 4
-  rateLimitStep,        // 5
-  piiScanStep,          // 6
-  firewallStep,         // 7
-  budgetStep,           // 8
-  contextLoaderStep,    // 9
-  messageBuilderStep,   // 10
-  llmCallStep,          // 11
-  outputParserStep,     // 12
-  intentExecutorStep,   // 13
-  outputGuardrailsStep, // 14
-  usageRecorderStep,    // 15
-  outboundPersisterStep,// 16
-]
+const pipeline = PipelineBuilder.start<PipelineInput>()
+  .pipe(normalizeStep)
+  .pipe(ensureCustomerStep)
+  .pipe(dedupStep)
+  .pipe(persistInboundStep)
+  .pipe(rateLimitStep)
+  .pipe(piiScanStep)
+  .pipe(firewallStep)
+  .pipe(budgetStep)
+  .pipe(contextLoaderStep)
+  .pipe(messageBuilderStep)
+  .pipe(llmCallStep)
+  .pipe(outputParserStep)
+  .pipe(intentExecutorStep)
+  .pipe(outputGuardrailsStep)
+  .pipe(usageRecorderStep)
+  .pipe(outboundPersisterStep)
+  .build()
 
 /**
  * Entry point — process an inbound WhatsApp text through the
