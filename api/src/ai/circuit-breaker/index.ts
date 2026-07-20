@@ -3,6 +3,7 @@ import { State, type CircuitResult, type CircuitState } from "@/src/types/ai";
 
 export { State, type CircuitResult, type CircuitState };
 
+// internal interface
 interface BreakerStatus {
   failures: number;
   lastFailure: number;
