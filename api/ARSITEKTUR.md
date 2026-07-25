@@ -87,7 +87,7 @@ api/
 │   │   ├── website.ts            # GET /, PUT /, POST /generate, GET /download, POST /publish
 │   │   ├── upload.ts             # POST /
 │   │   ├── monitoring.ts         # GET /health, GET /metrics
-│   │   ├── outgoing.ts           # GET / (list outgoing wa-bot), PATCH /:id/delivered
+│   │   ├── outgoing.ts           # GET / (list outgoing), PATCH /:id/delivered
 │   │   └── debug.ts              # Dev-only: GET /traces, GET /traces/:id, DELETE /traces, GET /status, POST /circuit/reset
 │   │
 │   ├── controllers/              # 16 controllers
@@ -135,7 +135,7 @@ api/
 │   │   ├── errors.ts             # AppError hierarchy (BadRequest, Unauthorized, Forbidden, NotFound, InternalServer)
 │   │   ├── response.ts           # sendResponse — unified JSON format
 │   │   ├── auth.ts               # hashPassword, comparePassword helpers
-│   │   └── wa-bot-db.ts          # WA Bot DB config utility
+│   │   └── wa-bot-db.ts          # WA Bot DB config utility (deprecated)
 │   │
 │   ├── types/
 │   │   ├── express.d.ts          # Augmented Request type (validatedQuery, validatedParams, user)
@@ -271,14 +271,14 @@ api/
 │                    Prisma ORM + PostgreSQL                        │
 │                                                                  │
 │  @prisma/adapter-pg — pool pg with max:1, timeout:5s            │
-│  16 tables across 13 files, 2 databases: wani_api + wa_bot      │
+│  16 tables across 13 files, 1 database: wani_api                │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
 ### Alur End-to-End (contoh: POST /api/chat)
 
 ```
-wa-bot ──POST /api/chat──▶  requireAuth  ──▶  validate(chatRequestSchema)
+WAHA ──POST /api/chat──▶  requireAuth  ──▶  validate(chatRequestSchema)
                                   │
                                   ▼
                           postChat controller
@@ -299,7 +299,7 @@ wa-bot ──POST /api/chat──▶  requireAuth  ──▶  validate(chatReque
                           sendResponse(res, 200, "ok", { reply, intent })
                                   │
                                   ▼
-                          wa-bot receives reply
+                          WAHA receives reply
 ```
 
 ---
@@ -331,7 +331,7 @@ Dua mekanisme auth:
 | -------- | --------------------------------- | ---- | -------------------------- | -------------------------------------------------- |
 | `GET`    | `/api/qr`                         | —    | `getQr`                    | QR code string                                     |
 | `GET`    | `/api/qr/status`                  | —    | `getStatus`                | Connection status + phone                          |
-| `POST`   | `/api/qr`                         | 🔒   | `upsertQr`                 | Push QR / update status (from wa-bot)              |
+| `POST`   | `/api/qr`                         | 🔒   | `upsertQr`                 | Push QR / update status                            |
 | `DELETE` | `/api/qr`                         | 🔒   | `clearQr`                  | Clear QR on successful connect                     |
 | `POST`   | `/api/chat`                       | 🔒   | `postChat`                 | Process WA message → AI reply                      |
 | `GET`    | `/api/store`                      | —    | `getStore`                 | Store profile + `hasPaymentMethods`                |
@@ -384,7 +384,7 @@ Dua mekanisme auth:
 | `POST`   | `/api/debug/circuit/reset`        | —    | `postResetCircuit`         | Dev: reset circuit breaker                         |
 | `GET`    | `/api/health`                     | —    | `getHealth`                | Health check                                       |
 | `GET`    | `/api/metrics`                    | —    | `getMetricsHandler`        | Prometheus metrics                                 |
-| `GET`    | `/api/outgoing`                   | 🔒   | `listOutgoing`             | List outgoing messages (wa-bot)                    |
+| `GET`    | `/api/outgoing`                   | 🔒   | `listOutgoing`             | List outgoing messages                             |
 | `PATCH`  | `/api/outgoing/:id/delivered`     | 🔒   | `markDelivered`            | Mark message delivered                             |
 | `GET`    | `/s/:slug`                        | —    | Express static             | Serve generated static site                        |
 
@@ -771,7 +771,7 @@ Store (single-row)
 
 ### Database Config
 
-- **Two databases** on same PG server: `wani_api` (API) + `wa_bot` (bot)
+- **Database**: `wani_api` (API)
 - **Prisma adapter**: `@prisma/adapter-pg` with `PrismaPg`
 - **Connection pool**: `max: 1`, `connectionTimeoutMillis: 5000`, `idleTimeoutMillis: 300000`
 - **Monetary values**: `Decimal(12, 2)` via `@db.Decimal(12, 2)`
@@ -785,7 +785,7 @@ Store (single-row)
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                           WhatsApp Bot (wa-bot/)                         │
+│                         WAHA (WhatsApp HTTP API)                         │
 │                                                                          │
 │  receives incoming message                                               │
 │       │                                                                  │

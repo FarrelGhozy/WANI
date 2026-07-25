@@ -15,10 +15,3 @@ services:
     build:
       context: .
       dockerfile: dashboard/Dockerfile
-
-  wa-bot:
-    build:
-      context: .
-      dockerfile: wa-bot/Dockerfile
-    environment:
-      NODE_ENV: development

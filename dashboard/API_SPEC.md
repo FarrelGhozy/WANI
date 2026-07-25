@@ -112,7 +112,7 @@ Ambil status koneksi + nomor telepon.
 
 ### POST /api/qr 🔒
 
-Push QR / update status (dari wa-bot).
+Push QR / update status.
 
 ```typescript
 // Body
@@ -1128,7 +1128,7 @@ Reset circuit breaker ke closed state.
 | `POST`   | `/api/upload`                     | 🔒 JWT | ✅ Existing | Upload file                    |
 | `GET`    | `/api/health`                     | —      | ✅ Existing | Health check                   |
 | `GET`    | `/api/metrics`                    | —      | ✅ Existing | Prometheus metrics             |
-| `GET`    | `/api/outgoing`                   | 🔒     | ✅ Existing | List outgoing wa-bot messages  |
+| `GET`    | `/api/outgoing`                   | 🔒     | ✅ Existing | List outgoing messages         |
 | `PATCH`  | `/api/outgoing/:id/delivered`     | 🔒     | ✅ Existing | Mark message delivered         |
 | `GET`    | `/s/:slug`                        | —      | ✅ Existing | Serve generated static site    |
 

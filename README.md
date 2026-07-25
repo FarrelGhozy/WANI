@@ -12,7 +12,6 @@ WANI (WhatsApp Niaga) adalah platform omnichannel berbasis AI yang dirancang unt
 ![Express](https://img.shields.io/badge/Express_5-000?logo=express&logoColor=fff)
 ![Prisma](https://img.shields.io/badge/Prisma_7-2D3748?logo=prisma&logoColor=fff)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL_17-4169E1?logo=postgresql&logoColor=fff)
-![Baileys](https://img.shields.io/badge/Baileys_7-25D366?logo=whatsapp&logoColor=fff)
 ![Astro](https://img.shields.io/badge/Astro_7-BC52EE?logo=astro&logoColor=fff)
 ![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=fff)
 ![OpenCode Zen](https://img.shields.io/badge/OpenCode_Zen-000?logo=lightning&logoColor=fff)
@@ -26,21 +25,13 @@ Platform omnichannel UMKM dengan AI chatbot WhatsApp, dashboard manajemen, dan w
 │  Dashboard   │ ◄─────────────────► │  API Server  │
 │  React 19    │    /api/* → :3001   │  Express 5   │
 │  Vite 8      │                     │  port 3001   │
-└──────────────┘                     └──────┬───────┘
-                                             │ Bearer / JWT
-                                             │ POST /api/chat
-                                             │ POST/DELETE /api/qr
-                                     ┌──────▼───────┐
-                                     │   WA Bot     │
-                                     │  Baileys 7   │
-                                     │  Prisma 7    │
-                                     └──────────────┘
+└──────────────┘                     └──────────────┘
 ```
 
 ## Prerequisites
 
 - **Bun 1.3+**
-- **PostgreSQL 17** — dua database: `wani_api` (api) + `wa_bot` (wa-bot)
+- **PostgreSQL 17** — database: `wani_api`
 - **OpenCode Zen API key** (gratis) — untuk AI pipeline
 
 ---
@@ -59,12 +50,9 @@ docker compose up --build
 | ---------- | ------ | --------------------- |
 | Dashboard  | `5173` | http://localhost:5173 |
 | API        | `3001` | http://localhost:3001 |
-| WA Bot     | —      | WhatsApp Web client   |
 | PostgreSQL | `5432` | internal              |
 
-Database `wani_api` + `wa_bot` dibuat otomatis via `init-dbs.sh`.
-
-> **Catatan:** wa-bot akan otomatis connect ke API setelah API siap. QR code muncul di terminal wa-bot dan dashboard.
+Database `wani_api` dibuat otomatis via `init-dbs.sh`.
 
 ### Docker Environment Variables
 
@@ -89,7 +77,6 @@ Semua konfigurasi lewat `.env` (root project). Lihat [`.env.example`](.env.examp
 cd api && bun install
 cd ../dashboard && bun install
 cd ../web-gen && bun install
-cd ../wa-bot && bun install
 ```
 
 ### 2. Setup environment variables
@@ -98,7 +85,6 @@ Setiap subproject punya `.env.example` — copy ke `.env` masing-masing:
 
 ```bash
 cp api/.env.example api/.env
-cp wa-bot/.env.example wa-bot/.env
 ```
 
 **`api/.env`** — isi minimal:
@@ -110,26 +96,16 @@ cp wa-bot/.env.example wa-bot/.env
 | `JWT_SECRET`        | `jwt-rahasia456` | Secret JWT           |
 | `LLM_API_KEY`       | `sk-xxx`         | API key OpenCode Zen |
 
-**`wa-bot/.env`**:
-
-| Variable            | Contoh                  | Keterangan                |
-| ------------------- | ----------------------- | ------------------------- |
-| `DATABASE_PASSWORD` | `postgres`              | Sama dengan API           |
-| `API_TOKEN`         | `rahasia123`            | **Harus sama** dengan API |
-| `API_URL`           | `http://localhost:3001` | URL API server            |
-
 ### 3. Buat database
 
 ```bash
 createdb -U postgres wani_api
-createdb -U postgres wa_bot
 ```
 
 ### 4. Jalankan migrasi Prisma
 
 ```bash
 cd api   && bun run prisma:migrate
-cd ../wa-bot && bun run prisma:migrate
 ```
 
 ### 5. Start services (urutan penting)
@@ -139,11 +115,7 @@ cd ../wa-bot && bun run prisma:migrate
 cd api && bun run src/index.ts
 # → http://localhost:3001
 
-# Terminal 2 — WhatsApp bot (tunggu API nyala)
-cd wa-bot && bun run src/index.ts
-# → QR code di terminal, scan dengan WhatsApp
-
-# Terminal 3 — Dashboard
+# Terminal 2 — Dashboard
 cd dashboard && bun run dev
 # → http://localhost:5173
 ```
@@ -157,7 +129,6 @@ WANI/
 ├── api/            Express 5 + Prisma 7 — REST server + AI pipeline + guardrails
 ├── dashboard/      React 19 + Vite 8 — frontend UI
 ├── web-gen/        Bun + Astro 7 — static site generator UMKM
-├── wa-bot/         Baileys 7 + Prisma 7 — WhatsApp bot
 ├── docker-compose.yml
 ├── .env.example
 └── init-dbs.sh
@@ -188,15 +159,6 @@ React 19 + Vite 8 (Rolldown) + TypeScript 6. React Compiler via Babel plugin.
 | Website   | Konfigurasi + generate website UMKM                            |
 
 Semua hooks panggil real API (`fetchApi()` via Vite proxy `/api/*` → `localhost:3001`).
-
-### WA Bot (`wa-bot/`)
-
-Baileys 7 WhatsApp Web client dengan PostgreSQL persistent auth.
-
-- QR code → POST ke API + print terminal
-- Auto-reconnect (kecuali explicit logout)
-- Forward pesan ke `POST /api/chat` → kirim balasan AI
-- Deteksi URL QRIS di reply → kirim sebagai image message
 
 ### Web-Gen (`web-gen/`)
 
@@ -270,7 +232,7 @@ Semua response format:
 | `POST`   | `/api/debug/circuit/reset`        | —            | Reset circuit breaker (dev)           |
 | `GET`    | `/api/health`                     | —            | Health check                          |
 | `GET`    | `/api/metrics`                    | —            | Prometheus metrics                    |
-| `GET`    | `/api/outgoing`                   | 🔒 API_TOKEN | List outgoing messages (wa-bot)       |
+| `GET`    | `/api/outgoing`                   | 🔒 API_TOKEN | List outgoing messages                |
 | `PATCH`  | `/api/outgoing/:id/delivered`     | 🔒 API_TOKEN | Mark message delivered                |
 
 > 🔒 API_TOKEN = `requireAuth` (Bearer API_TOKEN), 🔒 JWT = `requireJwt` (JWT dari login)
@@ -294,13 +256,6 @@ Store (single-row)
   │    └── Conversation ──→ Message
   User · ActivityLog · UsageCounter
 ```
-
-### wa_bot — 2 tabel
-
-| Tabel       | Fungsi                                                 |
-| ----------- | ------------------------------------------------------ |
-| `Creds`     | AuthenticationCreds serialized JSON (persistent login) |
-| `SignalKey` | Signal protocol keys Baileys                           |
 
 ### Enums
 
@@ -329,16 +284,16 @@ Detail lengkap: [`api/ARSITEKTUR.md`](api/ARSITEKTUR.md)
 
 ## Commands Reference
 
-| Action          | API                       | Dashboard       | WA Bot                    | Web-Gen                  |
-| --------------- | ------------------------- | --------------- | ------------------------- | ------------------------ |
-| Install         | `bun install`             | `bun install`   | `bun install`             | `bun install`            |
-| Run dev         | `bun run src/index.ts`    | `bun run dev`   | `bun run src/index.ts`    | —                        |
-| Build           | —                         | `bun run build` | —                         | `bun run build:template` |
-| Type check      | `bun run tsc --noEmit`    | `bun run build` | —                         | `bun run tsc --noEmit`   |
-| Prisma generate | `bun run prisma:generate` | —               | `bun run prisma:generate` | —                        |
-| Prisma migrate  | `bun run prisma:migrate`  | —               | `bun run prisma:migrate`  | —                        |
-| Prisma deploy   | `bun run prisma:deploy`   | —               | `bun run prisma:deploy`   | —                        |
-| Test            | `bun test`                | `bun test`      | —                         | —                        |
+| Action          | API                       | Dashboard       | Web-Gen                  |
+| --------------- | ------------------------- | --------------- | ------------------------ |
+| Install         | `bun install`             | `bun install`   | `bun install`            |
+| Run dev         | `bun run src/index.ts`    | `bun run dev`   | —                        |
+| Build           | —                         | `bun run build` | `bun run build:template` |
+| Type check      | `bun run tsc --noEmit`    | `bun run build` | `bun run tsc --noEmit`   |
+| Prisma generate | `bun run prisma:generate` | —               | —                        |
+| Prisma migrate  | `bun run prisma:migrate`  | —               | —                        |
+| Prisma deploy   | `bun run prisma:deploy`   | —               | —                        |
+| Test            | `bun test`                | `bun test`      | —                        |
 
 ## Live Demo
 

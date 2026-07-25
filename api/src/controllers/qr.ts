@@ -3,7 +3,6 @@ import type { z } from "zod";
 import { WaSessionModel } from "@/src/models/wa-session";
 import { sendResponse } from "@/src/utils/response";
 import { upsertQrSchema, pairingSchema } from "@/src/schemas/wa-session";
-import { clearBotCreds } from "@/src/utils/wa-bot-db";
 
 type UpsertQrBody = z.infer<typeof upsertQrSchema>;
 type PairingBody = z.infer<typeof pairingSchema>;
@@ -48,7 +47,6 @@ export async function clearQr(_req: Request, res: Response): Promise<void> {
 }
 
 export async function resetQr(_req: Request, res: Response): Promise<void> {
-  await clearBotCreds();
   await WaSessionModel.upsert({
     qr: null,
     status: "disconnected",
@@ -56,7 +54,7 @@ export async function resetQr(_req: Request, res: Response): Promise<void> {
     pairingCode: null,
     pairingPhone: null,
   });
-  sendResponse(res, 200, "reset berhasil — bot akan scan QR baru");
+  sendResponse(res, 200, "reset berhasil");
 }
 
 export async function refreshPairing(
