@@ -109,6 +109,60 @@ services:
         max-size: "10m"
         max-file: "3"
 
+  # ── WAHA (WhatsApp HTTP API) ────────────────────────────────
+  waha:
+    image: devlikeapro/waha:latest
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      api:
+        condition: service_started
+    expose:
+      - "3000"
+    environment:
+      # Engine
+      WHATSAPP_DEFAULT_ENGINE: GOWS
+      GODEBUG: netdns=go
+
+      # API Key
+      WAHA_API_KEY: ${WAHA_API_KEY}
+      WAHA_API_KEY_EXCLUDE_PATH: health,ping
+
+      # Sessions — PostgreSQL
+      WHATSAPP_SESSIONS_POSTGRESQL_URL: postgres://${DATABASE_USER}:${POSTGRES_PASSWORD}@db:5432/postgres?sslmode=disable
+
+      # Media — PostgreSQL
+      WAHA_MEDIA_STORAGE: POSTGRESQL
+      WAHA_MEDIA_POSTGRESQL_URL: postgres://${DATABASE_USER}:${POSTGRES_PASSWORD}@db:5432/postgres?sslmode=disable
+
+      # GOWS history sync limits
+      WAHA_GOWS_DEVICE_REQUIRE_FULL_SYNC: "false"
+      WAHA_GOWS_DEVICE_HISTORY_SYNC_FULL_SYNC_DAYS_LIMIT: 365
+      WAHA_GOWS_DEVICE_HISTORY_SYNC_RECENT_SYNC_DAYS_LIMIT: 30
+      WAHA_GOWS_DEVICE_HISTORY_SYNC_INITIAL_SYNC_MAX_MESSAGES_PER_CHAT: 100
+
+      # Production hardening
+      WAHA_DASHBOARD_ENABLED: "false"
+      WHATSAPP_SWAGGER_ENABLED: "false"
+      WAHA_PRINT_QR: "false"
+      WAHA_LOG_LEVEL: info
+      WAHA_LOG_FORMAT: JSON
+      WAHA_AUTO_START_DELAY_SECONDS: "5"
+      TZ: Asia/Jakarta
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 6
+      start_period: 30s
+    networks: [wani]
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
   # ── Automated daily backup service ──────────────────────────
   backup:
     image: postgres:17-alpine

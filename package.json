@@ -1,10 +1,12 @@
 {
   "name": "wani",
-  "private": true,
+  "private": false,
   "scripts": {
-    "dev": "bun run dev:api & bun run dev:dash & wait",
+    "dev": "bun run dev:waha & bun run dev:api & bun run dev:dash & wait",
     "dev:api": "cd api && bun --watch run src/index.ts",
     "dev:dash": "cd dashboard && bun run dev",
+    "dev:waha": "docker compose -f docker-compose.yml -f docker-compose.dev.yml -f docker-compose.local.yml up -d waha",
+    "dev:waha:logs": "docker compose -f docker-compose.yml -f docker-compose.dev.yml -f docker-compose.local.yml logs -f waha",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },

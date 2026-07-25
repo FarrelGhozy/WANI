@@ -15,3 +15,17 @@ services:
     build:
       context: .
       dockerfile: dashboard/Dockerfile
+
+  waha:
+    ports:
+      - "3000:3000"
+    environment:
+      WAHA_DASHBOARD_ENABLED: "true"
+      WAHA_DASHBOARD_USERNAME: ${WAHA_DASHBOARD_USERNAME:-admin}
+      WAHA_DASHBOARD_PASSWORD: ${WAHA_DASHBOARD_PASSWORD}
+      WHATSAPP_SWAGGER_ENABLED: "true"
+      WHATSAPP_SWAGGER_USERNAME: ${WAHA_DASHBOARD_USERNAME:-admin}
+      WHATSAPP_SWAGGER_PASSWORD: ${WAHA_DASHBOARD_PASSWORD}
+      WAHA_PRINT_QR: "true"
+      WAHA_LOG_LEVEL: debug
+      WAHA_LOG_FORMAT: PRETTY
