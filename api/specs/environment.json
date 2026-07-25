@@ -1,20 +1,31 @@
 {
-  "name": "WANI Local",
-  "values": [
+  "name": "WANI",
+  "variables": [
     {
-      "key": "base_url",
-      "value": "http://localhost:3001",
-      "enabled": true
+      "name": "baseUrl",
+      "value": "http://localhost:3001/api",
+      "type": "text",
+      "enabled": true,
+      "secret": false
     },
     {
-      "key": "api_token",
+      "name": "apiToken",
       "value": "",
-      "enabled": true
+      "type": "text",
+      "enabled": true,
+      "secret": true
     },
     {
-      "key": "jwt_token",
+      "name": "jwtSecret",
       "value": "",
-      "enabled": true
+      "type": "text",
+      "enabled": true,
+      "secret": true
     }
-  ]
+  ],
+  "info": {
+    "type": "bruno-environment",
+    "exportedAt": "2026-07-25T05:25:43.127Z",
+    "exportedUsing": "Bruno/v3.5.1"
+  }
 }
