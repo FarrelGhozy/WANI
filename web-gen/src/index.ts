@@ -1,5 +1,5 @@
-export { generate } from "./generator.ts"
-export { createZipStream, createZipFile } from "./zip.ts"
+export { generate } from "./generator.ts";
+export { createZipStream, createZipFile } from "./zip.ts";
 export type {
   StoreData,
   ProductData,
@@ -8,4 +8,4 @@ export type {
   GenerateParams,
   GenerateResult,
   ZipParams,
-} from "./types.ts"
+} from "./types.ts";

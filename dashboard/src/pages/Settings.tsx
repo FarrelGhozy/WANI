@@ -1,105 +1,128 @@
-import { useState, useCallback } from 'react'
-import { useSearchParams } from 'react-router'
-import { useStoreContext } from '@/contexts/StoreContext.tsx'
-import { useWaStatusContext } from '@/contexts/WaStatusContext.tsx'
-import { useToast } from '@/hooks/useToast.ts'
-import { fetchApi } from '@/lib/api.ts'
-import StoreTab from '@/components/StoreTab.tsx'
-import AiTab from '@/components/AiTab.tsx'
-import WaSessionTab from '@/components/WaSessionTab.tsx'
-import { Skeleton, SkeletonCard } from '@/components/ui/Skeleton.tsx'
-import type { AiConfig } from '@/hooks/useSettings.ts'
+import { useState, useCallback } from "react";
+import { useSearchParams } from "react-router";
+import { useStoreContext } from "@/contexts/StoreContext.tsx";
+import { useWaStatusContext } from "@/contexts/WaStatusContext.tsx";
+import { useToast } from "@/hooks/useToast.ts";
+import { fetchApi } from "@/lib/api.ts";
+import StoreTab from "@/components/StoreTab.tsx";
+import AiTab from "@/components/AiTab.tsx";
+import WaSessionTab from "@/components/WaSessionTab.tsx";
+import { Skeleton, SkeletonCard } from "@/components/ui/Skeleton.tsx";
+import type { AiConfig } from "@/hooks/useSettings.ts";
 
 const tabs = [
-  { id: 'store', label: 'Toko' },
-  { id: 'ai', label: 'AI Agent' },
-  { id: 'wa', label: 'WA Session' },
-] as const
+  { id: "store", label: "Toko" },
+  { id: "ai", label: "AI Agent" },
+  { id: "wa", label: "WA Session" },
+] as const;
 
 export default function Settings() {
-  const [searchParams] = useSearchParams()
-  const tabFromUrl = searchParams.get('tab')
-  const [activeTab, setActiveTab] = useState(tabFromUrl && tabs.some(t => t.id === tabFromUrl) ? tabFromUrl : 'store')
+  const [searchParams] = useSearchParams();
+  const tabFromUrl = searchParams.get("tab");
+  const [activeTab, setActiveTab] = useState(
+    tabFromUrl && tabs.some((t) => t.id === tabFromUrl) ? tabFromUrl : "store"
+  );
 
   function handleTabChange(tab: string) {
-    setActiveTab(tab)
+    setActiveTab(tab);
   }
-  const { store, aiConfig, error, updateAiConfig, loading, reload } = useStoreContext()
-  const { qr: liveQr, connection: liveConn, phone: livePhone, connectedAt: liveConnectedAt, pairingCode: livePairingCode, pairingPhone: livePairingPhone } = useWaStatusContext()
-  const { toast, apiError } = useToast()
+  const { store, aiConfig, error, updateAiConfig, loading, reload } =
+    useStoreContext();
+  const {
+    qr: liveQr,
+    connection: liveConn,
+    phone: livePhone,
+    connectedAt: liveConnectedAt,
+    pairingCode: livePairingCode,
+    pairingPhone: livePairingPhone,
+  } = useWaStatusContext();
+  const { toast, apiError } = useToast();
 
-  const [override, setOverride] = useState<{ connection: string; qr: string; phone: string } | null>(null)
+  const [override, setOverride] = useState<{
+    connection: string;
+    qr: string;
+    phone: string;
+  } | null>(null);
 
-  const qr = override?.qr ?? liveQr
-  const connection = override?.connection ?? liveConn
-  const phone = override?.phone ?? livePhone
-  const connectedAt = liveConnectedAt
-  const pairingCode = livePairingCode
-  const pairingPhone = livePairingPhone
+  const qr = override?.qr ?? liveQr;
+  const connection = override?.connection ?? liveConn;
+  const phone = override?.phone ?? livePhone;
+  const connectedAt = liveConnectedAt;
+  const pairingCode = livePairingCode;
+  const pairingPhone = livePairingPhone;
 
   const handleDisconnect = useCallback(() => {
-    setOverride({ connection: 'disconnected', qr: '', phone: '' })
-  }, [])
+    setOverride({ connection: "disconnected", qr: "", phone: "" });
+  }, []);
 
   const handleConnect = useCallback(() => {
-    setOverride(null)
-  }, [])
+    setOverride(null);
+  }, []);
 
-  const [resetting, setResetting] = useState(false)
-  const [requestingPairing, setRequestingPairing] = useState(false)
-  const [refreshingPairing, setRefreshingPairing] = useState(false)
+  const [resetting, setResetting] = useState(false);
+  const [requestingPairing, setRequestingPairing] = useState(false);
+  const [refreshingPairing, setRefreshingPairing] = useState(false);
 
-  const handleAiUpdate = useCallback(async (patch: Partial<AiConfig>) => {
-    try {
-      await updateAiConfig(patch)
-      toast('Konfigurasi AI berhasil disimpan', 'success')
-    } catch (e) {
-      apiError(e, 'Gagal menyimpan konfigurasi AI')
-    }
-  }, [updateAiConfig, toast, apiError])
+  const handleAiUpdate = useCallback(
+    async (patch: Partial<AiConfig>) => {
+      try {
+        await updateAiConfig(patch);
+        toast("Konfigurasi AI berhasil disimpan", "success");
+      } catch (e) {
+        apiError(e, "Gagal menyimpan konfigurasi AI");
+      }
+    },
+    [updateAiConfig, toast, apiError]
+  );
 
   const handleReset = useCallback(async () => {
-    if (resetting) return
-    setResetting(true)
+    if (resetting) return;
+    setResetting(true);
     try {
-      await fetchApi('/qr/reset', { method: 'POST' })
-      setOverride(null)
-      toast('Koneksi WhatsApp direset. Scan QR baru untuk menghubungkan.', 'info')
+      await fetchApi("/qr/reset", { method: "POST" });
+      setOverride(null);
+      toast(
+        "Koneksi WhatsApp direset. Scan QR baru untuk menghubungkan.",
+        "info"
+      );
     } catch (e) {
-      apiError(e, 'Gagal mereset koneksi')
+      apiError(e, "Gagal mereset koneksi");
     } finally {
-      setResetting(false)
+      setResetting(false);
     }
-  }, [resetting, toast, apiError])
+  }, [resetting, toast, apiError]);
 
-  const handleRequestPairing = useCallback(async (phone: string) => {
-    setRequestingPairing(true)
-    try {
-      await fetchApi('/qr/pairing', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone }),
-      })
-      toast('Meminta kode pairing ke bot...', 'info')
-    } catch (e) {
-      apiError(e, 'Gagal meminta kode pairing')
-      throw e
-    } finally {
-      setRequestingPairing(false)
-    }
-  }, [toast, apiError])
+  const handleRequestPairing = useCallback(
+    async (phone: string) => {
+      setRequestingPairing(true);
+      try {
+        await fetchApi("/qr/pairing", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ phone }),
+        });
+        toast("Meminta kode pairing ke bot...", "info");
+      } catch (e) {
+        apiError(e, "Gagal meminta kode pairing");
+        throw e;
+      } finally {
+        setRequestingPairing(false);
+      }
+    },
+    [toast, apiError]
+  );
 
   const handleRefreshPairing = useCallback(async () => {
-    setRefreshingPairing(true)
+    setRefreshingPairing(true);
     try {
-      await fetchApi('/qr/refresh-pairing', { method: 'POST' })
-      toast('Kode pairing baru diminta', 'info')
+      await fetchApi("/qr/refresh-pairing", { method: "POST" });
+      toast("Kode pairing baru diminta", "info");
     } catch (e) {
-      apiError(e, 'Gagal memperbarui kode pairing')
+      apiError(e, "Gagal memperbarui kode pairing");
     } finally {
-      setRefreshingPairing(false)
+      setRefreshingPairing(false);
     }
-  }, [toast, apiError])
+  }, [toast, apiError]);
 
   if (loading) {
     return (
@@ -112,14 +135,14 @@ export default function Settings() {
         </div>
         <SkeletonCard height="h-80" />
       </div>
-    )
+    );
   }
 
   if (!store || !aiConfig) {
     return (
       <div className="flex flex-col items-center justify-center gap-4 py-20 text-center">
         <p className="text-sm text-stone-500">
-          {error || 'Gagal memuat pengaturan.'}
+          {error || "Gagal memuat pengaturan."}
         </p>
         <button
           onClick={reload}
@@ -128,12 +151,14 @@ export default function Settings() {
           Coba lagi
         </button>
       </div>
-    )
+    );
   }
 
   return (
     <div className="space-y-5 md:space-y-6">
-      <h1 className="text-xl font-semibold tracking-tight text-stone-900 md:text-2xl">Pengaturan</h1>
+      <h1 className="text-xl font-semibold tracking-tight text-stone-900 md:text-2xl">
+        Pengaturan
+      </h1>
 
       <div className="flex overflow-x-auto border-b border-stone-200">
         {tabs.map((tab) => (
@@ -142,8 +167,8 @@ export default function Settings() {
             onClick={() => handleTabChange(tab.id)}
             className={`px-3 py-2.5 text-sm font-medium transition-all sm:px-5 sm:py-3 ${
               activeTab === tab.id
-                ? 'border-b-2 border-teal-600 text-teal-700'
-                : 'text-stone-500 hover:text-stone-700'
+                ? "border-b-2 border-teal-600 text-teal-700"
+                : "text-stone-500 hover:text-stone-700"
             }`}
           >
             {tab.label}
@@ -151,9 +176,11 @@ export default function Settings() {
         ))}
       </div>
 
-      {activeTab === 'store' && <StoreTab />}
-      {activeTab === 'ai' && <AiTab key={aiConfig.id} config={aiConfig} onUpdate={handleAiUpdate} />}
-      {activeTab === 'wa' && (
+      {activeTab === "store" && <StoreTab />}
+      {activeTab === "ai" && (
+        <AiTab key={aiConfig.id} config={aiConfig} onUpdate={handleAiUpdate} />
+      )}
+      {activeTab === "wa" && (
         <WaSessionTab
           qr={qr}
           connection={connection}
@@ -172,5 +199,5 @@ export default function Settings() {
         />
       )}
     </div>
-  )
+  );
 }

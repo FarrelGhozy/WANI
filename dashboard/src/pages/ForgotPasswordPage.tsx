@@ -1,41 +1,41 @@
-import { useState } from 'react'
-import { Link } from 'react-router'
-import { MailIcon } from '@/components/Icons.tsx'
-import Button from '@/components/ui/Button.tsx'
-import Input from '@/components/ui/Input.tsx'
-import { fetchApi } from '@/lib/api.ts'
+import { useState } from "react";
+import { Link } from "react-router";
+import { MailIcon } from "@/components/Icons.tsx";
+import Button from "@/components/ui/Button.tsx";
+import Input from "@/components/ui/Input.tsx";
+import { fetchApi } from "@/lib/api.ts";
 
 export default function ForgotPasswordPage() {
-  const [email, setEmail] = useState('')
-  const [submitted, setSubmitted] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [fieldError, setFieldError] = useState<string | undefined>()
+  const [email, setEmail] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [fieldError, setFieldError] = useState<string | undefined>();
 
   async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    setFieldError(undefined)
+    e.preventDefault();
+    setFieldError(undefined);
     if (!email) {
-      setFieldError('Email wajib diisi')
-      return
+      setFieldError("Email wajib diisi");
+      return;
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setFieldError('Format email tidak valid')
-      return
+      setFieldError("Format email tidak valid");
+      return;
     }
-    setLoading(true)
-    setError(null)
+    setLoading(true);
+    setError(null);
     try {
-      await fetchApi('/auth/forgot-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      await fetchApi("/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
-      })
-      setSubmitted(true)
+      });
+      setSubmitted(true);
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Gagal mengirim email')
+      setError(e instanceof Error ? e.message : "Gagal mengirim email");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
@@ -43,13 +43,24 @@ export default function ForgotPasswordPage() {
     return (
       <div className="space-y-5 text-center">
         <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-teal-100">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="text-teal-600">
-            <path d="M22 2L11 13" /><path d="M22 2L15 22l-4-9-9-4z" />
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            className="text-teal-600"
+          >
+            <path d="M22 2L11 13" />
+            <path d="M22 2L15 22l-4-9-9-4z" />
           </svg>
         </div>
         <h2 className="text-lg font-semibold text-stone-900">Cek Email Anda</h2>
         <p className="text-sm text-stone-500">
-          Jika akun dengan email <span className="font-medium text-stone-700">{email}</span> terdaftar,
+          Jika akun dengan email{" "}
+          <span className="font-medium text-stone-700">{email}</span> terdaftar,
           kami akan mengirimkan tautan reset password.
         </p>
         <Link
@@ -59,7 +70,7 @@ export default function ForgotPasswordPage() {
           Kembali ke Login
         </Link>
       </div>
-    )
+    );
   }
 
   return (
@@ -81,7 +92,10 @@ export default function ForgotPasswordPage() {
         label="Email"
         type="email"
         value={email}
-        onChange={(e) => { setEmail(e.target.value); setFieldError(undefined) }}
+        onChange={(e) => {
+          setEmail(e.target.value);
+          setFieldError(undefined);
+        }}
         placeholder="email@contoh.com"
         prefix={<MailIcon />}
         error={fieldError}
@@ -93,10 +107,13 @@ export default function ForgotPasswordPage() {
       </Button>
 
       <p className="text-center text-sm text-stone-500">
-        <Link to="/app/login" className="font-medium text-teal-600 hover:text-teal-700">
+        <Link
+          to="/app/login"
+          className="font-medium text-teal-600 hover:text-teal-700"
+        >
           Kembali ke Login
         </Link>
       </p>
     </form>
-  )
+  );
 }

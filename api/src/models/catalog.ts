@@ -1,43 +1,45 @@
-import { BaseModel } from "@/src/models/base"
-import { BadRequestError } from "@/src/utils/errors"
-import type { Product, Category } from "@db/client"
+import { BaseModel } from "@/src/models/base";
+import { BadRequestError } from "@/src/utils/errors";
+import type { Product, Category } from "@db/client";
 
 export type ProductResponse = {
-  id: string
-  categoryId: string | null
-  category: { id: string; name: string } | null
-  name: string
-  description: string | null
-  price: number
-  stock: number
-  isAvailable: boolean
-  imageUrl: string | null
-  createdAt: string
-  updatedAt: string
-}
+  id: string;
+  categoryId: string | null;
+  category: { id: string; name: string } | null;
+  name: string;
+  description: string | null;
+  price: number;
+  stock: number;
+  isAvailable: boolean;
+  imageUrl: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
 
 export type ProductListResult = {
-  items: ProductResponse[]
-  total: number
-  page: number
-  limit: number
-  totalPages: number
-}
+  items: ProductResponse[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+};
 
 export type CategoryResponse = {
-  id: string
-  name: string
-  description: string | null
-  productCount: number
-}
+  id: string;
+  name: string;
+  description: string | null;
+  productCount: number;
+};
 
 function toProductResponse(
-  row: Product & { category?: Category | null },
+  row: Product & { category?: Category | null }
 ): ProductResponse {
   return {
     id: row.id,
     categoryId: row.categoryId ?? null,
-    category: row.category ? { id: row.category.id, name: row.category.name } : null,
+    category: row.category
+      ? { id: row.category.id, name: row.category.name }
+      : null,
     name: row.name,
     description: row.description ?? null,
     price: Number(row.price),
@@ -46,44 +48,49 @@ function toProductResponse(
     imageUrl: row.imageUrl ?? null,
     createdAt: row.createdAt.toISOString(),
     updatedAt: row.updatedAt.toISOString(),
-  }
+  };
 }
 
 function toCategoryResponse(
-  row: Category & { _count?: { products: number } },
+  row: Category & { _count?: { products: number } }
 ): CategoryResponse {
   return {
     id: row.id,
     name: row.name,
     description: row.description ?? null,
     productCount: row._count?.products ?? 0,
-  }
+  };
 }
 
 export class ProductModel extends BaseModel {
   protected static override get delegate() {
-    return this.db.product
+    return this.db.product;
   }
 
-  static async listAvailable(ownerId: string): Promise<ReturnType<typeof toProductResponse>[]> {
+  static async listAvailable(
+    ownerId: string
+  ): Promise<ReturnType<typeof toProductResponse>[]> {
     const rows = await this.delegate.findMany({
       where: { ownerId, isAvailable: true },
       include: { category: true },
       orderBy: { name: "asc" },
-    })
-    return rows.map(toProductResponse)
+    });
+    return rows.map(toProductResponse);
   }
 
-  static async findByNames(ownerId: string, names: string[]): Promise<Map<string, Product & { category?: Category | null }>> {
+  static async findByNames(
+    ownerId: string,
+    names: string[]
+  ): Promise<Map<string, Product & { category?: Category | null }>> {
     const rows = await this.delegate.findMany({
       where: { ownerId, name: { in: names, mode: "insensitive" } },
       include: { category: true },
-    })
-    const map = new Map<string, Product & { category?: Category | null }>()
+    });
+    const map = new Map<string, Product & { category?: Category | null }>();
     for (const row of rows) {
-      map.set(row.name.toLowerCase(), row)
+      map.set(row.name.toLowerCase(), row);
     }
-    return map
+    return map;
   }
 
   static async listAll(ownerId: string): Promise<ProductResponse[]> {
@@ -91,30 +98,34 @@ export class ProductModel extends BaseModel {
       where: { ownerId },
       include: { category: true },
       orderBy: { name: "asc" },
-    })
-    return rows.map(toProductResponse)
+    });
+    return rows.map(toProductResponse);
   }
 
-  static async list(ownerId: string, params: {
-    page: number | string
-    limit: number | string
-    search?: string
-    categoryId?: string
-    isAvailable?: boolean | string
-    sort: string
-    order: string
-  }): Promise<ProductListResult> {
-    const { page, limit, skip } = this.paginate(params.page, params.limit)
-    const where: Record<string, unknown> = { ownerId }
+  static async list(
+    ownerId: string,
+    params: {
+      page: number | string;
+      limit: number | string;
+      search?: string;
+      categoryId?: string;
+      isAvailable?: boolean | string;
+      sort: string;
+      order: string;
+    }
+  ): Promise<ProductListResult> {
+    const { page, limit, skip } = this.paginate(params.page, params.limit);
+    const where: Record<string, unknown> = { ownerId };
 
     if (params.search) {
-      where.name = { contains: params.search, mode: "insensitive" }
+      where.name = { contains: params.search, mode: "insensitive" };
     }
     if (params.categoryId) {
-      where.categoryId = params.categoryId
+      where.categoryId = params.categoryId;
     }
     if (params.isAvailable !== undefined) {
-      where.isAvailable = params.isAvailable === "true" || params.isAvailable === true
+      where.isAvailable =
+        params.isAvailable === "true" || params.isAvailable === true;
     }
 
     const [rows, total] = await Promise.all([
@@ -126,28 +137,33 @@ export class ProductModel extends BaseModel {
         orderBy: { [params.sort]: params.order },
       }),
       this.delegate.count({ where }),
-    ])
+    ]);
 
-    return this.listResult(rows.map(toProductResponse), total, page, limit)
+    return this.listResult(rows.map(toProductResponse), total, page, limit);
   }
 
-  static async getByIdWithCategory(id: string): Promise<ProductResponse | null> {
+  static async getByIdWithCategory(
+    id: string
+  ): Promise<ProductResponse | null> {
     const row = await this.delegate.findUnique({
       where: { id },
       include: { category: true },
-    })
-    return row ? toProductResponse(row) : null
+    });
+    return row ? toProductResponse(row) : null;
   }
 
-  static async createProduct(ownerId: string, data: {
-    name: string
-    categoryId?: string | null
-    description?: string | null
-    price: number
-    stock?: number
-    isAvailable?: boolean
-    imageUrl?: string | null
-  }): Promise<ProductResponse> {
+  static async createProduct(
+    ownerId: string,
+    data: {
+      name: string;
+      categoryId?: string | null;
+      description?: string | null;
+      price: number;
+      stock?: number;
+      isAvailable?: boolean;
+      imageUrl?: string | null;
+    }
+  ): Promise<ProductResponse> {
     const row = await this.delegate.create({
       data: {
         ownerId,
@@ -160,21 +176,21 @@ export class ProductModel extends BaseModel {
         imageUrl: data.imageUrl ?? null,
       },
       include: { category: true },
-    })
-    return toProductResponse(row)
+    });
+    return toProductResponse(row);
   }
 
   static async updateProduct(
     id: string,
     data: {
-      name?: string
-      categoryId?: string | null
-      description?: string | null
-      price?: number
-      stock?: number
-      isAvailable?: boolean
-      imageUrl?: string | null
-    },
+      name?: string;
+      categoryId?: string | null;
+      description?: string | null;
+      price?: number;
+      stock?: number;
+      isAvailable?: boolean;
+      imageUrl?: string | null;
+    }
   ): Promise<ProductResponse> {
     const row = await this.delegate.update({
       where: { id },
@@ -183,24 +199,26 @@ export class ProductModel extends BaseModel {
         categoryId: data.categoryId === undefined ? undefined : data.categoryId,
       },
       include: { category: true },
-    })
-    return toProductResponse(row)
+    });
+    return toProductResponse(row);
   }
 
   static async deleteProduct(id: string): Promise<void> {
-    const orderCount = await this.db.orderItem.count({ where: { productId: id } })
+    const orderCount = await this.db.orderItem.count({
+      where: { productId: id },
+    });
     if (orderCount > 0) {
       throw new BadRequestError(
-        `Produk tidak bisa dihapus karena sudah digunakan di ${orderCount} pesanan. Nonaktifkan produk jika tidak ingin ditampilkan.`,
-      )
+        `Produk tidak bisa dihapus karena sudah digunakan di ${orderCount} pesanan. Nonaktifkan produk jika tidak ingin ditampilkan.`
+      );
     }
-    await this.delegate.delete({ where: { id } })
+    await this.delegate.delete({ where: { id } });
   }
 }
 
 export class CategoryModel extends BaseModel {
   protected static override get delegate() {
-    return this.db.category
+    return this.db.category;
   }
 
   static async listAll(ownerId: string): Promise<CategoryResponse[]> {
@@ -208,22 +226,25 @@ export class CategoryModel extends BaseModel {
       where: { ownerId },
       include: { _count: { select: { products: true } } },
       orderBy: { name: "asc" },
-    })
-    return rows.map(toCategoryResponse)
+    });
+    return rows.map(toCategoryResponse);
   }
 
   static async getByIdWithCount(id: string): Promise<CategoryResponse | null> {
     const row = await this.delegate.findUnique({
       where: { id },
       include: { _count: { select: { products: true } } },
-    })
-    return row ? toCategoryResponse(row) : null
+    });
+    return row ? toCategoryResponse(row) : null;
   }
 
-  static async createCategory(ownerId: string, data: {
-    name: string
-    description?: string | null
-  }): Promise<CategoryResponse> {
+  static async createCategory(
+    ownerId: string,
+    data: {
+      name: string;
+      description?: string | null;
+    }
+  ): Promise<CategoryResponse> {
     const row = await this.delegate.create({
       data: {
         ownerId,
@@ -231,29 +252,31 @@ export class CategoryModel extends BaseModel {
         description: data.description ?? null,
       },
       include: { _count: { select: { products: true } } },
-    })
-    return toCategoryResponse(row)
+    });
+    return toCategoryResponse(row);
   }
 
   static async updateCategory(
     id: string,
-    data: { name?: string; description?: string | null },
+    data: { name?: string; description?: string | null }
   ): Promise<CategoryResponse> {
     const row = await this.delegate.update({
       where: { id },
       data,
       include: { _count: { select: { products: true } } },
-    })
-    return toCategoryResponse(row)
+    });
+    return toCategoryResponse(row);
   }
 
   static async deleteCategory(id: string): Promise<void> {
-    const productCount = await this.db.product.count({ where: { categoryId: id } })
+    const productCount = await this.db.product.count({
+      where: { categoryId: id },
+    });
     if (productCount > 0) {
       throw new BadRequestError(
-        `Kategori tidak bisa dihapus karena masih memiliki ${productCount} produk. Pindahkan atau hapus produk terlebih dahulu.`,
-      )
+        `Kategori tidak bisa dihapus karena masih memiliki ${productCount} produk. Pindahkan atau hapus produk terlebih dahulu.`
+      );
     }
-    await this.delegate.delete({ where: { id } })
+    await this.delegate.delete({ where: { id } });
   }
 }

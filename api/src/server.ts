@@ -1,22 +1,22 @@
-import path from "node:path"
-import cors from "cors"
-import express from "express"
-import { rateLimit } from "express-rate-limit"
-import helmet from "helmet"
-import morgan from "morgan"
-import { metricsMiddleware } from "@/src/config/metrics"
-import { morganStream } from "@/src/config/logger"
-import { errorHandler } from "@/src/middleware/error"
-import { optionalJwt } from "@/src/middleware/jwt"
-import routes from "@/src/routes"
-import { sendResponse } from "@/src/utils/response"
+import path from "node:path";
+import cors from "cors";
+import express from "express";
+import { rateLimit } from "express-rate-limit";
+import helmet from "helmet";
+import morgan from "morgan";
+import { metricsMiddleware } from "@/src/config/metrics";
+import { morganStream } from "@/src/config/logger";
+import { errorHandler } from "@/src/middleware/error";
+import { optionalJwt } from "@/src/middleware/jwt";
+import routes from "@/src/routes";
+import { sendResponse } from "@/src/utils/response";
 
-export const app = express()
+export const app = express();
 
-app.disable("x-powered-by")
-app.set("etag", false)
+app.disable("x-powered-by");
+app.set("etag", false);
 
-app.use(metricsMiddleware)
+app.use(metricsMiddleware);
 
 app.use(
   helmet({
@@ -30,7 +30,12 @@ app.use(
       directives: {
         defaultSrc: ["'self'"],
         scriptSrc: ["'self'", "'unsafe-inline'"],
-        styleSrc: ["'self'", "'unsafe-inline'", "fonts.googleapis.com", "fonts.gstatic.com"],
+        styleSrc: [
+          "'self'",
+          "'unsafe-inline'",
+          "fonts.googleapis.com",
+          "fonts.gstatic.com",
+        ],
         fontSrc: ["'self'", "fonts.gstatic.com", "fonts.googleapis.com"],
         imgSrc: ["'self'", "data:", "blob:"],
         connectSrc: ["'self'"],
@@ -38,8 +43,8 @@ app.use(
       },
     },
   })
-)
-app.use(cors())
+);
+app.use(cors());
 
 const globalRateLimit = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
@@ -47,8 +52,8 @@ const globalRateLimit = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   skip: (req) => req.path === "/api/monitoring/health",
-})
-app.use(globalRateLimit)
+});
+app.use(globalRateLimit);
 
 // Stricter rate limit for auth endpoints (brute force protection)
 const authRateLimit = rateLimit({
@@ -58,9 +63,9 @@ const authRateLimit = rateLimit({
   legacyHeaders: false,
   skipSuccessfulRequests: true,
   message: "Too many auth attempts, please try again later",
-})
-app.use("/api/auth/login", authRateLimit)
-app.use("/api/auth/register", authRateLimit)
+});
+app.use("/api/auth/login", authRateLimit);
+app.use("/api/auth/register", authRateLimit);
 
 // Stricter rate limit for forgot password (prevents email enumeration abuse)
 const forgotPasswordRateLimit = rateLimit({
@@ -69,26 +74,28 @@ const forgotPasswordRateLimit = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   message: "Too many password reset requests, please try again later",
-})
-app.use("/api/auth/forgot-password", forgotPasswordRateLimit)
+});
+app.use("/api/auth/forgot-password", forgotPasswordRateLimit);
 
-app.use(morgan(":method :url :status :response-time ms", { stream: morganStream }))
-app.use(express.json())
-app.use("/api", optionalJwt, routes)
+app.use(
+  morgan(":method :url :status :response-time ms", { stream: morganStream })
+);
+app.use(express.json());
+app.use("/api", optionalJwt, routes);
 
-const generatedDir = path.resolve(import.meta.dir, "..", "generated-sites")
+const generatedDir = path.resolve(import.meta.dir, "..", "generated-sites");
 
 app.use("/s/preview", (_req, res) => {
-  res.redirect("/s/latest/")
-})
+  res.redirect("/s/latest/");
+});
 
-app.use("/s", express.static(generatedDir))
+app.use("/s", express.static(generatedDir));
 
-const uploadsDir = path.resolve(process.cwd(), "uploads")
-app.use("/uploads", express.static(uploadsDir))
+const uploadsDir = path.resolve(process.cwd(), "uploads");
+app.use("/uploads", express.static(uploadsDir));
 
 app.use((_req, res) => {
-  sendResponse(res, 404, "not found")
-})
+  sendResponse(res, 404, "not found");
+});
 
-app.use(errorHandler)
+app.use(errorHandler);

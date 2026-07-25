@@ -50,6 +50,7 @@
 ### Authentication
 
 Untuk endpoint yang butuh auth:
+
 ```
 Authorization: Bearer {API_TOKEN}
 ```
@@ -379,6 +380,7 @@ Daftar kategori.
 Database: `Order` + `OrderItem` + `Payment`.
 
 Enums:
+
 - `OrderStatus`: `PENDING | CONFIRMED | PROCESSING | COMPLETED | CANCELLED`
 - `PaymentMethod`: `CASH | TRANSFER | QRIS`
 - `PaymentStatus`: `PENDING | PAID | FAILED | REFUNDED`
@@ -1041,14 +1043,14 @@ Reset circuit breaker ke closed state.
 
 ## 15. Error Codes
 
-| Status | Class | Penyebab |
-|--------|-------|----------|
-| 400 | `BadRequestError` | Body tidak valid (Zod validation), parameter salah |
-| 401 | `UnauthorizedError` | Token tidak ada atau tidak cocok |
-| 403 | `ForbiddenError` | Tidak punya akses |
-| 404 | `NotFoundError` | Resource tidak ditemukan |
-| 409 | `ConflictError` | Duplicate entry (category name, customer phone) |
-| 500 | `InternalServerError` | Error server |
+| Status | Class                 | Penyebab                                           |
+| ------ | --------------------- | -------------------------------------------------- |
+| 400    | `BadRequestError`     | Body tidak valid (Zod validation), parameter salah |
+| 401    | `UnauthorizedError`   | Token tidak ada atau tidak cocok                   |
+| 403    | `ForbiddenError`      | Tidak punya akses                                  |
+| 404    | `NotFoundError`       | Resource tidak ditemukan                           |
+| 409    | `ConflictError`       | Duplicate entry (category name, customer phone)    |
+| 500    | `InternalServerError` | Error server                                       |
 
 ### Contoh Error Response
 
@@ -1067,68 +1069,68 @@ Reset circuit breaker ke closed state.
 
 ## Ringkasan Endpoint
 
-| Method | Path | Auth | Status | Keterangan |
-|--------|------|------|--------|------------|
-| `GET` | `/api/qr` | — | ✅ Existing | |
-| `GET` | `/api/qr/status` | — | ✅ Existing | |
-| `POST` | `/api/qr` | 🔒 | ✅ Existing | |
-| `DELETE` | `/api/qr` | 🔒 | ✅ Existing | |
-| `POST` | `/api/chat` | 🔒 | ✅ Existing | 18-step AI pipeline |
-| `GET` | `/api/store` | — | ✅ Existing | Settings tab: Store |
-| `PUT` | `/api/store` | 🔒 | ✅ Existing | Settings tab: Store |
-| `GET` | `/api/ai-config` | 🔒 JWT | ✅ Existing | Settings tab: AI Agent |
-| `PUT` | `/api/ai-config` | 🔒 JWT | ✅ Existing | Settings tab: AI Agent |
-| `GET` | `/api/debug/traces` | — | ✅ Existing | |
-| `GET` | `/api/debug/traces/:id` | — | ✅ Existing | |
-| `DELETE` | `/api/debug/traces` | — | ✅ Existing | |
-| `GET` | `/api/debug/status` | — | ✅ Existing | |
-| `POST` | `/api/debug/circuit/reset` | — | ✅ Existing | |
-| `GET` | `/api/dashboard/stats` | — | ✅ Existing | |
-| `GET` | `/api/products` | — | ✅ Existing | |
-| `GET` | `/api/products/:id` | — | ✅ Existing | |
-| `POST` | `/api/products` | 🔒 | ✅ Existing | |
-| `PUT` | `/api/products/:id` | 🔒 | ✅ Existing | |
-| `DELETE` | `/api/products/:id` | 🔒 | ✅ Existing | |
-| `GET` | `/api/products/categories` | — | ✅ Existing | |
-| `POST` | `/api/products/categories` | 🔒 | ✅ Existing | |
-| `PUT` | `/api/products/categories/:id` | 🔒 | ✅ Existing | |
-| `DELETE` | `/api/products/categories/:id` | 🔒 | ✅ Existing | |
-| `GET` | `/api/orders` | — | ✅ Existing | Paginated, filterable |
-| `GET` | `/api/orders/:id` | — | ✅ Existing | Detail + items + payment |
-| `PUT` | `/api/orders/:id/status` | 🔒 | ✅ Existing | Status transition validation |
-| `PUT` | `/api/orders/:id/notes` | 🔒 | ✅ Existing | |
-| `PUT` | `/api/orders/:id/payment` | 🔒 | ✅ Existing | Create / update |
-| `GET` | `/api/customers` | — | ✅ Existing | Paginated, searchable |
-| `GET` | `/api/customers/:id` | — | ✅ Existing | Detail + orders + conversation |
-| `PUT` | `/api/customers/:id` | 🔒 | ✅ Existing | |
-| `GET` | `/api/conversations/:id` | — | ✅ Existing | Messages list |
-| `PUT` | `/api/conversations/:id/status` | 🔒 | ✅ Existing | |
-| `POST` | `/api/conversations/:id/messages` | 🔒 | ✅ Existing | Send HUMAN |
-| `GET` | `/api/logs` | — | ✅ Existing | Activity log |
-| `GET` | `/api/usage` | — | ✅ Existing | LLM counters |
-| `GET` | `/api/website` | — | ✅ Existing | Get config |
-| `PUT` | `/api/website` | 🔒 JWT | ✅ Existing | Update config |
-| `POST` | `/api/website/generate` | 🔒 JWT | ✅ Existing | Web-Gen integration |
-| `GET` | `/api/website/download` | 🔒 JWT | ✅ Existing | Download ZIP |
-| `POST` | `/api/website/publish` | 🔒 JWT | ✅ Existing | Mark published |
-| `GET` | `/api/website/generations` | 🔒 JWT | ✅ Existing | List generation history |
-| `DELETE` | `/api/website/generations/:id` | 🔒 JWT | ✅ Existing | Delete generation record |
-| `POST` | `/api/auth/register` | — | ✅ Existing | |
-| `POST` | `/api/auth/login` | — | ✅ Existing | |
-| `GET` | `/api/auth/me` | 🔒 JWT | ✅ Existing | Auto-verify token |
-| `POST` | `/api/auth/logout` | — | ✅ Existing | |
-| `POST` | `/api/auth/forgot-password` | — | ✅ Existing | |
-| `POST` | `/api/auth/reset-password` | — | ✅ Existing | |
-| `GET` | `/api/store/payment-methods` | — | ✅ Existing | List payment methods |
-| `POST` | `/api/store/payment-methods` | 🔒 JWT | ✅ Existing | Add payment method |
-| `PUT` | `/api/store/payment-methods/:id` | 🔒 JWT | ✅ Existing | Update payment method |
-| `DELETE` | `/api/store/payment-methods/:id` | 🔒 JWT | ✅ Existing | Delete payment method |
-| `POST` | `/api/upload` | 🔒 JWT | ✅ Existing | Upload file |
-| `GET` | `/api/health` | — | ✅ Existing | Health check |
-| `GET` | `/api/metrics` | — | ✅ Existing | Prometheus metrics |
-| `GET` | `/api/outgoing` | 🔒 | ✅ Existing | List outgoing wa-bot messages |
-| `PATCH` | `/api/outgoing/:id/delivered` | 🔒 | ✅ Existing | Mark message delivered |
-| `GET` | `/s/:slug` | — | ✅ Existing | Serve generated static site |
+| Method   | Path                              | Auth   | Status      | Keterangan                     |
+| -------- | --------------------------------- | ------ | ----------- | ------------------------------ |
+| `GET`    | `/api/qr`                         | —      | ✅ Existing |                                |
+| `GET`    | `/api/qr/status`                  | —      | ✅ Existing |                                |
+| `POST`   | `/api/qr`                         | 🔒     | ✅ Existing |                                |
+| `DELETE` | `/api/qr`                         | 🔒     | ✅ Existing |                                |
+| `POST`   | `/api/chat`                       | 🔒     | ✅ Existing | 18-step AI pipeline            |
+| `GET`    | `/api/store`                      | —      | ✅ Existing | Settings tab: Store            |
+| `PUT`    | `/api/store`                      | 🔒     | ✅ Existing | Settings tab: Store            |
+| `GET`    | `/api/ai-config`                  | 🔒 JWT | ✅ Existing | Settings tab: AI Agent         |
+| `PUT`    | `/api/ai-config`                  | 🔒 JWT | ✅ Existing | Settings tab: AI Agent         |
+| `GET`    | `/api/debug/traces`               | —      | ✅ Existing |                                |
+| `GET`    | `/api/debug/traces/:id`           | —      | ✅ Existing |                                |
+| `DELETE` | `/api/debug/traces`               | —      | ✅ Existing |                                |
+| `GET`    | `/api/debug/status`               | —      | ✅ Existing |                                |
+| `POST`   | `/api/debug/circuit/reset`        | —      | ✅ Existing |                                |
+| `GET`    | `/api/dashboard/stats`            | —      | ✅ Existing |                                |
+| `GET`    | `/api/products`                   | —      | ✅ Existing |                                |
+| `GET`    | `/api/products/:id`               | —      | ✅ Existing |                                |
+| `POST`   | `/api/products`                   | 🔒     | ✅ Existing |                                |
+| `PUT`    | `/api/products/:id`               | 🔒     | ✅ Existing |                                |
+| `DELETE` | `/api/products/:id`               | 🔒     | ✅ Existing |                                |
+| `GET`    | `/api/products/categories`        | —      | ✅ Existing |                                |
+| `POST`   | `/api/products/categories`        | 🔒     | ✅ Existing |                                |
+| `PUT`    | `/api/products/categories/:id`    | 🔒     | ✅ Existing |                                |
+| `DELETE` | `/api/products/categories/:id`    | 🔒     | ✅ Existing |                                |
+| `GET`    | `/api/orders`                     | —      | ✅ Existing | Paginated, filterable          |
+| `GET`    | `/api/orders/:id`                 | —      | ✅ Existing | Detail + items + payment       |
+| `PUT`    | `/api/orders/:id/status`          | 🔒     | ✅ Existing | Status transition validation   |
+| `PUT`    | `/api/orders/:id/notes`           | 🔒     | ✅ Existing |                                |
+| `PUT`    | `/api/orders/:id/payment`         | 🔒     | ✅ Existing | Create / update                |
+| `GET`    | `/api/customers`                  | —      | ✅ Existing | Paginated, searchable          |
+| `GET`    | `/api/customers/:id`              | —      | ✅ Existing | Detail + orders + conversation |
+| `PUT`    | `/api/customers/:id`              | 🔒     | ✅ Existing |                                |
+| `GET`    | `/api/conversations/:id`          | —      | ✅ Existing | Messages list                  |
+| `PUT`    | `/api/conversations/:id/status`   | 🔒     | ✅ Existing |                                |
+| `POST`   | `/api/conversations/:id/messages` | 🔒     | ✅ Existing | Send HUMAN                     |
+| `GET`    | `/api/logs`                       | —      | ✅ Existing | Activity log                   |
+| `GET`    | `/api/usage`                      | —      | ✅ Existing | LLM counters                   |
+| `GET`    | `/api/website`                    | —      | ✅ Existing | Get config                     |
+| `PUT`    | `/api/website`                    | 🔒 JWT | ✅ Existing | Update config                  |
+| `POST`   | `/api/website/generate`           | 🔒 JWT | ✅ Existing | Web-Gen integration            |
+| `GET`    | `/api/website/download`           | 🔒 JWT | ✅ Existing | Download ZIP                   |
+| `POST`   | `/api/website/publish`            | 🔒 JWT | ✅ Existing | Mark published                 |
+| `GET`    | `/api/website/generations`        | 🔒 JWT | ✅ Existing | List generation history        |
+| `DELETE` | `/api/website/generations/:id`    | 🔒 JWT | ✅ Existing | Delete generation record       |
+| `POST`   | `/api/auth/register`              | —      | ✅ Existing |                                |
+| `POST`   | `/api/auth/login`                 | —      | ✅ Existing |                                |
+| `GET`    | `/api/auth/me`                    | 🔒 JWT | ✅ Existing | Auto-verify token              |
+| `POST`   | `/api/auth/logout`                | —      | ✅ Existing |                                |
+| `POST`   | `/api/auth/forgot-password`       | —      | ✅ Existing |                                |
+| `POST`   | `/api/auth/reset-password`        | —      | ✅ Existing |                                |
+| `GET`    | `/api/store/payment-methods`      | —      | ✅ Existing | List payment methods           |
+| `POST`   | `/api/store/payment-methods`      | 🔒 JWT | ✅ Existing | Add payment method             |
+| `PUT`    | `/api/store/payment-methods/:id`  | 🔒 JWT | ✅ Existing | Update payment method          |
+| `DELETE` | `/api/store/payment-methods/:id`  | 🔒 JWT | ✅ Existing | Delete payment method          |
+| `POST`   | `/api/upload`                     | 🔒 JWT | ✅ Existing | Upload file                    |
+| `GET`    | `/api/health`                     | —      | ✅ Existing | Health check                   |
+| `GET`    | `/api/metrics`                    | —      | ✅ Existing | Prometheus metrics             |
+| `GET`    | `/api/outgoing`                   | 🔒     | ✅ Existing | List outgoing wa-bot messages  |
+| `PATCH`  | `/api/outgoing/:id/delivered`     | 🔒     | ✅ Existing | Mark message delivered         |
+| `GET`    | `/s/:slug`                        | —      | ✅ Existing | Serve generated static site    |
 
 ---
 

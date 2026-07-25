@@ -6,18 +6,18 @@
 
 ## Stack
 
-| Layer | Teknologi | Versi |
-|-------|-----------|-------|
-| **Runtime** | Bun | 1.3.x |
-| **Framework** | Express | 5.x |
-| **ORM** | Prisma | 7.x |
-| **DB Driver** | `@prisma/adapter-pg` (PostgreSQL) | 7.x |
-| **Validation** | Zod | 4.x |
-| **Logging** | Winston + Morgan | 3.x |
-| **AI Provider** | OpenCode Zen | REST API |
-| **Auth** | JWT (`jsonwebtoken`) | 9.x |
-| **File Upload** | Multer | 2.x |
-| **Testing** | Bun built-in (`bun:test`) | — |
+| Layer           | Teknologi                         | Versi    |
+| --------------- | --------------------------------- | -------- |
+| **Runtime**     | Bun                               | 1.3.x    |
+| **Framework**   | Express                           | 5.x      |
+| **ORM**         | Prisma                            | 7.x      |
+| **DB Driver**   | `@prisma/adapter-pg` (PostgreSQL) | 7.x      |
+| **Validation**  | Zod                               | 4.x      |
+| **Logging**     | Winston + Morgan                  | 3.x      |
+| **AI Provider** | OpenCode Zen                      | REST API |
+| **Auth**        | JWT (`jsonwebtoken`)              | 9.x      |
+| **File Upload** | Multer                            | 2.x      |
+| **Testing**     | Bun built-in (`bun:test`)         | —        |
 
 ### Prinsip Stack
 
@@ -320,73 +320,73 @@ wa-bot ──POST /api/chat──▶  requireAuth  ──▶  validate(chatReque
 
 Dua mekanisme auth:
 
-| Auth | Middleware | Header | Used By |
-|------|-----------|--------|---------|
-| **API_TOKEN** | `requireAuth` | `Authorization: Bearer {API_TOKEN}` | Bot endpoints (qr, chat) |
-| **JWT** | `requireJwt` | `Authorization: Bearer {jwt_token}` | Admin endpoints (products, orders, settings, dll) |
+| Auth          | Middleware    | Header                              | Used By                                           |
+| ------------- | ------------- | ----------------------------------- | ------------------------------------------------- |
+| **API_TOKEN** | `requireAuth` | `Authorization: Bearer {API_TOKEN}` | Bot endpoints (qr, chat)                          |
+| **JWT**       | `requireJwt`  | `Authorization: Bearer {jwt_token}` | Admin endpoints (products, orders, settings, dll) |
 
 ### Endpoints
 
-| Method | Path | Auth | Controller | Description |
-|--------|------|------|------------|-------------|
-| `GET` | `/api/qr` | — | `getQr` | QR code string |
-| `GET` | `/api/qr/status` | — | `getStatus` | Connection status + phone |
-| `POST` | `/api/qr` | 🔒 | `upsertQr` | Push QR / update status (from wa-bot) |
-| `DELETE` | `/api/qr` | 🔒 | `clearQr` | Clear QR on successful connect |
-| `POST` | `/api/chat` | 🔒 | `postChat` | Process WA message → AI reply |
-| `GET` | `/api/store` | — | `getStore` | Store profile + `hasPaymentMethods` |
-| `PUT` | `/api/store` | JWT | `upsertStore` | Update store profile |
-| `GET` | `/api/ai-config` | JWT | `getAiConfig` | AI config (model, prompt, etc.) |
-| `PUT` | `/api/ai-config` | JWT | `upsertAiConfig` | Update AI config |
-| `GET` | `/api/products` | — | `listProducts` | Product list (paginated, searchable, filterable) |
-| `GET` | `/api/products/:id` | — | `getProduct` | Product detail with category |
-| `POST` | `/api/products` | JWT | `createProduct` | Create product |
-| `PUT` | `/api/products/:id` | JWT | `updateProduct` | Update product |
-| `DELETE` | `/api/products/:id` | JWT | `deleteProduct` | Delete product |
-| `GET` | `/api/products/categories` | — | `listCategories` | Category list with product count |
-| `POST` | `/api/products/categories` | JWT | `createCategory` | Create category |
-| `PUT` | `/api/products/categories/:id` | JWT | `updateCategory` | Update category |
-| `DELETE` | `/api/products/categories/:id` | JWT | `deleteCategory` | Delete category |
-| `GET` | `/api/orders` | — | `listOrders` | Order list (paginated, filter by status/date) |
-| `GET` | `/api/orders/:id` | — | `getOrder` | Order detail + items + payment + customer |
-| `PUT` | `/api/orders/:id/status` | JWT | `updateOrderStatus` | Update status (with transition validation) |
-| `PUT` | `/api/orders/:id/notes` | JWT | `updateOrderNotes` | Update notes |
-| `PUT` | `/api/orders/:id/payment` | JWT | `updateOrderPayment` | Create or update payment (auto-CONFIRMED on PAID) |
-| `GET` | `/api/customers` | — | `listCustomers` | Customer list (paginated, search name/phone) |
-| `GET` | `/api/customers/:id` | — | `getCustomer` | Customer detail + orders + conversation + messages |
-| `PUT` | `/api/customers/:id` | JWT | `updateCustomer` | Update name/notes |
-| `GET` | `/api/conversations/:id` | — | `getConversation` | Conversation messages |
-| `PUT` | `/api/conversations/:id/status` | JWT | `updateConversationStatus` | Update conversation status |
-| `POST` | `/api/conversations/:id/messages` | JWT | `sendMessage` | Send HUMAN message |
-| `GET` | `/api/dashboard/stats` | — | `getStats` | Aggregated dashboard stats + WA status |
-| `GET` | `/api/logs` | — | `listLogs` | Activity log (paginated, filterable) |
-| `GET` | `/api/usage` | — | `getUsage` | LLM usage counters (today) |
-| `POST` | `/api/auth/register` | — | `register` | Register new account |
-| `POST` | `/api/auth/login` | — | `login` | Login (JWT token) |
-| `GET` | `/api/auth/me` | JWT | `me` | Current user (token auto-verify) |
-| `POST` | `/api/auth/logout` | — | `logout` | Logout |
-| `POST` | `/api/auth/forgot-password` | — | `forgotPassword` | Generate reset token |
-| `POST` | `/api/auth/reset-password` | — | `resetPassword` | Reset password with token |
-| `GET` | `/api/store/payment-methods` | — | `listPaymentMethods` | List payment methods |
-| `POST` | `/api/store/payment-methods` | JWT | `createPaymentMethod` | Add payment method |
-| `PUT` | `/api/store/payment-methods/:id` | JWT | `updatePaymentMethod` | Edit payment method |
-| `DELETE` | `/api/store/payment-methods/:id` | JWT | `deletePaymentMethod` | Delete payment method |
-| `POST` | `/api/upload` | JWT | `uploadFile` | Upload file (QRIS image) |
-| `GET` | `/api/website` | — | `getWebsiteConfig` | Get website config |
-| `PUT` | `/api/website` | JWT | `updateWebsiteConfig` | Update website config |
-| `POST` | `/api/website/generate` | JWT | `generateWebsite` | Generate static site via web-gen |
-| `GET` | `/api/website/download` | JWT | `downloadWebsite` | Download ZIP hasil generate |
-| `POST` | `/api/website/publish` | JWT | `publishWebsite` | Mark as published |
-| `GET` | `/api/debug/traces` | — | `getRecentTraces` | Dev: recent pipeline traces |
-| `GET` | `/api/debug/traces/:id` | — | `getTraceDetail` | Dev: trace detail |
-| `DELETE` | `/api/debug/traces` | — | `deleteTraces` | Dev: clear trace buffer |
-| `GET` | `/api/debug/status` | — | `getStatus` | Dev: uptime + memory usage |
-| `POST` | `/api/debug/circuit/reset` | — | `postResetCircuit` | Dev: reset circuit breaker |
-| `GET` | `/api/health` | — | `getHealth` | Health check |
-| `GET` | `/api/metrics` | — | `getMetricsHandler` | Prometheus metrics |
-| `GET` | `/api/outgoing` | 🔒 | `listOutgoing` | List outgoing messages (wa-bot) |
-| `PATCH` | `/api/outgoing/:id/delivered` | 🔒 | `markDelivered` | Mark message delivered |
-| `GET` | `/s/:slug` | — | Express static | Serve generated static site |
+| Method   | Path                              | Auth | Controller                 | Description                                        |
+| -------- | --------------------------------- | ---- | -------------------------- | -------------------------------------------------- |
+| `GET`    | `/api/qr`                         | —    | `getQr`                    | QR code string                                     |
+| `GET`    | `/api/qr/status`                  | —    | `getStatus`                | Connection status + phone                          |
+| `POST`   | `/api/qr`                         | 🔒   | `upsertQr`                 | Push QR / update status (from wa-bot)              |
+| `DELETE` | `/api/qr`                         | 🔒   | `clearQr`                  | Clear QR on successful connect                     |
+| `POST`   | `/api/chat`                       | 🔒   | `postChat`                 | Process WA message → AI reply                      |
+| `GET`    | `/api/store`                      | —    | `getStore`                 | Store profile + `hasPaymentMethods`                |
+| `PUT`    | `/api/store`                      | JWT  | `upsertStore`              | Update store profile                               |
+| `GET`    | `/api/ai-config`                  | JWT  | `getAiConfig`              | AI config (model, prompt, etc.)                    |
+| `PUT`    | `/api/ai-config`                  | JWT  | `upsertAiConfig`           | Update AI config                                   |
+| `GET`    | `/api/products`                   | —    | `listProducts`             | Product list (paginated, searchable, filterable)   |
+| `GET`    | `/api/products/:id`               | —    | `getProduct`               | Product detail with category                       |
+| `POST`   | `/api/products`                   | JWT  | `createProduct`            | Create product                                     |
+| `PUT`    | `/api/products/:id`               | JWT  | `updateProduct`            | Update product                                     |
+| `DELETE` | `/api/products/:id`               | JWT  | `deleteProduct`            | Delete product                                     |
+| `GET`    | `/api/products/categories`        | —    | `listCategories`           | Category list with product count                   |
+| `POST`   | `/api/products/categories`        | JWT  | `createCategory`           | Create category                                    |
+| `PUT`    | `/api/products/categories/:id`    | JWT  | `updateCategory`           | Update category                                    |
+| `DELETE` | `/api/products/categories/:id`    | JWT  | `deleteCategory`           | Delete category                                    |
+| `GET`    | `/api/orders`                     | —    | `listOrders`               | Order list (paginated, filter by status/date)      |
+| `GET`    | `/api/orders/:id`                 | —    | `getOrder`                 | Order detail + items + payment + customer          |
+| `PUT`    | `/api/orders/:id/status`          | JWT  | `updateOrderStatus`        | Update status (with transition validation)         |
+| `PUT`    | `/api/orders/:id/notes`           | JWT  | `updateOrderNotes`         | Update notes                                       |
+| `PUT`    | `/api/orders/:id/payment`         | JWT  | `updateOrderPayment`       | Create or update payment (auto-CONFIRMED on PAID)  |
+| `GET`    | `/api/customers`                  | —    | `listCustomers`            | Customer list (paginated, search name/phone)       |
+| `GET`    | `/api/customers/:id`              | —    | `getCustomer`              | Customer detail + orders + conversation + messages |
+| `PUT`    | `/api/customers/:id`              | JWT  | `updateCustomer`           | Update name/notes                                  |
+| `GET`    | `/api/conversations/:id`          | —    | `getConversation`          | Conversation messages                              |
+| `PUT`    | `/api/conversations/:id/status`   | JWT  | `updateConversationStatus` | Update conversation status                         |
+| `POST`   | `/api/conversations/:id/messages` | JWT  | `sendMessage`              | Send HUMAN message                                 |
+| `GET`    | `/api/dashboard/stats`            | —    | `getStats`                 | Aggregated dashboard stats + WA status             |
+| `GET`    | `/api/logs`                       | —    | `listLogs`                 | Activity log (paginated, filterable)               |
+| `GET`    | `/api/usage`                      | —    | `getUsage`                 | LLM usage counters (today)                         |
+| `POST`   | `/api/auth/register`              | —    | `register`                 | Register new account                               |
+| `POST`   | `/api/auth/login`                 | —    | `login`                    | Login (JWT token)                                  |
+| `GET`    | `/api/auth/me`                    | JWT  | `me`                       | Current user (token auto-verify)                   |
+| `POST`   | `/api/auth/logout`                | —    | `logout`                   | Logout                                             |
+| `POST`   | `/api/auth/forgot-password`       | —    | `forgotPassword`           | Generate reset token                               |
+| `POST`   | `/api/auth/reset-password`        | —    | `resetPassword`            | Reset password with token                          |
+| `GET`    | `/api/store/payment-methods`      | —    | `listPaymentMethods`       | List payment methods                               |
+| `POST`   | `/api/store/payment-methods`      | JWT  | `createPaymentMethod`      | Add payment method                                 |
+| `PUT`    | `/api/store/payment-methods/:id`  | JWT  | `updatePaymentMethod`      | Edit payment method                                |
+| `DELETE` | `/api/store/payment-methods/:id`  | JWT  | `deletePaymentMethod`      | Delete payment method                              |
+| `POST`   | `/api/upload`                     | JWT  | `uploadFile`               | Upload file (QRIS image)                           |
+| `GET`    | `/api/website`                    | —    | `getWebsiteConfig`         | Get website config                                 |
+| `PUT`    | `/api/website`                    | JWT  | `updateWebsiteConfig`      | Update website config                              |
+| `POST`   | `/api/website/generate`           | JWT  | `generateWebsite`          | Generate static site via web-gen                   |
+| `GET`    | `/api/website/download`           | JWT  | `downloadWebsite`          | Download ZIP hasil generate                        |
+| `POST`   | `/api/website/publish`            | JWT  | `publishWebsite`           | Mark as published                                  |
+| `GET`    | `/api/debug/traces`               | —    | `getRecentTraces`          | Dev: recent pipeline traces                        |
+| `GET`    | `/api/debug/traces/:id`           | —    | `getTraceDetail`           | Dev: trace detail                                  |
+| `DELETE` | `/api/debug/traces`               | —    | `deleteTraces`             | Dev: clear trace buffer                            |
+| `GET`    | `/api/debug/status`               | —    | `getStatus`                | Dev: uptime + memory usage                         |
+| `POST`   | `/api/debug/circuit/reset`        | —    | `postResetCircuit`         | Dev: reset circuit breaker                         |
+| `GET`    | `/api/health`                     | —    | `getHealth`                | Health check                                       |
+| `GET`    | `/api/metrics`                    | —    | `getMetricsHandler`        | Prometheus metrics                                 |
+| `GET`    | `/api/outgoing`                   | 🔒   | `listOutgoing`             | List outgoing messages (wa-bot)                    |
+| `PATCH`  | `/api/outgoing/:id/delivered`     | 🔒   | `markDelivered`            | Mark message delivered                             |
+| `GET`    | `/s/:slug`                        | —    | Express static             | Serve generated static site                        |
 
 > 🔒 = `requireAuth` (Bearer API_TOKEN), JWT = `requireJwt` (JWT dari login)
 
@@ -400,14 +400,14 @@ Lihat `dashboard/API_SPEC.md` untuk kontrak lengkap request/response tiap endpoi
 
 ```typescript
 abstract class BaseModel<T> {
-  protected static get db()        // PrismaClient singleton
-  protected static get delegate()  // abstract → Prisma delegate
+  protected static get db(); // PrismaClient singleton
+  protected static get delegate(); // abstract → Prisma delegate
 
-  static async getAll<T>()          // delegate.findMany()
-  static async getById<T>(id)      // delegate.findUnique()
-  static async create<T>(data)     // delegate.create()
-  static async update<T>(id, data) // delegate.update()
-  static async delete(id)          // delegate.delete()
+  static async getAll<T>(); // delegate.findMany()
+  static async getById<T>(id); // delegate.findUnique()
+  static async create<T>(data); // delegate.create()
+  static async update<T>(id, data); // delegate.update()
+  static async delete(id); // delegate.delete()
 }
 ```
 
@@ -426,29 +426,29 @@ class WaSessionModel extends BaseModel<WaSession> {
 
 Tiga model menggunakan id `"default"` dengan `@default("default")` di Prisma:
 
-| Model | Table | Key Methods |
-|-------|-------|-------------|
-| `WaSessionModel` | `wa_sessions` | `find()`, `upsert(data)`, `clearQr()` |
-| `StoreModel` | `store` | `find()`, `upsert(data)` |
-| `AiConfigModel` | `ai_configs` | `find()` (normalize Decimal→Number), `upsert(data)` |
-| `WebSiteModel` | `web_sites` | `getConfig()`, `upsertConfig(config)`, `markPublished()` |
+| Model            | Table         | Key Methods                                              |
+| ---------------- | ------------- | -------------------------------------------------------- |
+| `WaSessionModel` | `wa_sessions` | `find()`, `upsert(data)`, `clearQr()`                    |
+| `StoreModel`     | `store`       | `find()`, `upsert(data)`                                 |
+| `AiConfigModel`  | `ai_configs`  | `find()` (normalize Decimal→Number), `upsert(data)`      |
+| `WebSiteModel`   | `web_sites`   | `getConfig()`, `upsertConfig(config)`, `markPublished()` |
 
 Semua operasi adalah upsert — tidak ada create terpisah. Ini memastikan single-row invariant.
 
 ### Custom Models (relasional)
 
-| Model | Custom Methods |
-|-------|----------------|
-| `ProductModel` | `listAvailable()`, `findByNames(names)`, `listAll()` |
-| `CategoryModel` | Standard CRUD via BaseModel |
-| `CustomerModel` | `upsertByPhone(phone, name?)`, `incrementOrders(id)` |
-| `ConversationModel` | `findOrCreateActive(customerId)`, `touch(id)`, `setStatus(id, status)` |
-| `MessageModel` | `recentByConversation(convId, limit)`, `existsByWaMsgId(waMsgId)`, `append(data)` |
-| `OrderModel` | `createFromItems(customerId, items, notes?)` — pakai `$transaction`, `getStats()`, `getStatusCounts()` |
-| `ActivityLogModel` | `log(type, description, referenceId?, metadata?)` |
-| `StorePaymentMethodModel` | CRUD + `hasAny()` — cek apakah ada metode aktif |
-| `UserModel` | `findByEmail(email)`, `create(data)` — untuk auth |
-| `DashboardModel` | `getStats()` — aggregated query multi-tabel |
+| Model                     | Custom Methods                                                                                         |
+| ------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `ProductModel`            | `listAvailable()`, `findByNames(names)`, `listAll()`                                                   |
+| `CategoryModel`           | Standard CRUD via BaseModel                                                                            |
+| `CustomerModel`           | `upsertByPhone(phone, name?)`, `incrementOrders(id)`                                                   |
+| `ConversationModel`       | `findOrCreateActive(customerId)`, `touch(id)`, `setStatus(id, status)`                                 |
+| `MessageModel`            | `recentByConversation(convId, limit)`, `existsByWaMsgId(waMsgId)`, `append(data)`                      |
+| `OrderModel`              | `createFromItems(customerId, items, notes?)` — pakai `$transaction`, `getStats()`, `getStatusCounts()` |
+| `ActivityLogModel`        | `log(type, description, referenceId?, metadata?)`                                                      |
+| `StorePaymentMethodModel` | CRUD + `hasAny()` — cek apakah ada metode aktif                                                        |
+| `UserModel`               | `findByEmail(email)`, `create(data)` — untuk auth                                                      |
+| `DashboardModel`          | `getStats()` — aggregated query multi-tabel                                                            |
 
 ---
 
@@ -524,7 +524,12 @@ Semua subclass punya sensible defaults — bisa `throw new UnauthorizedError()` 
 ### sendResponse
 
 ```typescript
-function sendResponse(res: Response, statusCode: number, message: string, data?: unknown): void
+function sendResponse(
+  res: Response,
+  statusCode: number,
+  message: string,
+  data?: unknown
+): void;
 // statusCode >= 400 → status: "failure", else → status: "success"
 ```
 
@@ -586,12 +591,12 @@ Setiap langkah di-trace oleh `TraceContext` dan disimpan ke ring buffer (500 tra
 withCircuit<T>(fn, label = "llm"): Promise<CircuitResult<T>>
 ```
 
-| State | Threshold | Behavior |
-|-------|-----------|----------|
-| **Closed** | — | Normal operation |
-| **Open** | 3 consecutive failures | Rejects immediately for 60s |
-| **Half-Open** | After 60s cooldown | Allows 1 probe request |
-| **Reset** | On success | Resets failure count to 0 |
+| State         | Threshold              | Behavior                    |
+| ------------- | ---------------------- | --------------------------- |
+| **Closed**    | —                      | Normal operation            |
+| **Open**      | 3 consecutive failures | Rejects immediately for 60s |
+| **Half-Open** | After 60s cooldown     | Allows 1 probe request      |
+| **Reset**     | On success             | Resets failure count to 0   |
 
 ### LLM Engine (engine.ts)
 
@@ -609,14 +614,14 @@ complete(messages, options)
 
 ### Intent Handlers (actions.ts)
 
-| Intent | Action |
-|--------|--------|
-| `order` | Lookup products → `OrderModel.createFromItems()` → increment customer orders → log activity → generate reply with payment info |
-| `inquiry` | Return LLM's reply text |
-| `greeting` | Return configured `greetingMessage` or default |
-| `complaint` | If `escalate=true`: set conversation to ESCALATED, log activity |
-| `escalate` | Set conversation to ESCALATED, log reason |
-| `unknown` | Return LLM's reply text |
+| Intent      | Action                                                                                                                         |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `order`     | Lookup products → `OrderModel.createFromItems()` → increment customer orders → log activity → generate reply with payment info |
+| `inquiry`   | Return LLM's reply text                                                                                                        |
+| `greeting`  | Return configured `greetingMessage` or default                                                                                 |
+| `complaint` | If `escalate=true`: set conversation to ESCALATED, log activity                                                                |
+| `escalate`  | Set conversation to ESCALATED, log reason                                                                                      |
+| `unknown`   | Return LLM's reply text                                                                                                        |
 
 ### System Prompt (prompts.ts)
 
@@ -655,36 +660,36 @@ complete(messages, options)
 
 ### Attack Classes (T1 Regex — 9 groups)
 
-| Class | Confidence | Example |
-|-------|-----------|---------|
-| `delimiter_escape` | HIGH | `</customer_message>` early close |
-| `token_injection` | HIGH | XSS (`<script>`), code fences, SQL injection |
-| `leet_obfuscated` | HIGH | `1gn0r3 pr3v10us 1nstruct10ns` |
-| `instruction_override` | MEDIUM | "Ignore previous instructions" (EN+ID) |
-| `prompt_extraction` | MEDIUM | "Show me your system prompt" |
-| `role_hijack` | MEDIUM | "You are now DAN", jailbreak, roleplay |
-| `authority_claim` | MEDIUM | "I'm your developer/admin" |
-| `crescendo_marker` | LOW | "One more thing", "hypothetically" |
-| `context_overflow` | LOW | Many-shot: >20 lines with instruction-like prefixes |
+| Class                  | Confidence | Example                                             |
+| ---------------------- | ---------- | --------------------------------------------------- |
+| `delimiter_escape`     | HIGH       | `</customer_message>` early close                   |
+| `token_injection`      | HIGH       | XSS (`<script>`), code fences, SQL injection        |
+| `leet_obfuscated`      | HIGH       | `1gn0r3 pr3v10us 1nstruct10ns`                      |
+| `instruction_override` | MEDIUM     | "Ignore previous instructions" (EN+ID)              |
+| `prompt_extraction`    | MEDIUM     | "Show me your system prompt"                        |
+| `role_hijack`          | MEDIUM     | "You are now DAN", jailbreak, roleplay              |
+| `authority_claim`      | MEDIUM     | "I'm your developer/admin"                          |
+| `crescendo_marker`     | LOW        | "One more thing", "hypothetically"                  |
+| `context_overflow`     | LOW        | Many-shot: >20 lines with instruction-like prefixes |
 
 ### Unicode Defense
 
-| Layer | What | Catches |
-|-------|------|---------|
-| **NFKC normalization** | Converts compatibility chars to canonical form | Fullwidth Latin, Mathematical Alphanumerics, Circled |
-| **Homoglyph detector** | Counts chars from 13 non-Latin script ranges | Cyrillic lookalikes, Greek, Letterlike Symbols |
-| **Leetspeak normalizer** | Maps digits/symbols → letters | `1gn0r3` → `ignore`, `$y$t3m` → `system` |
+| Layer                    | What                                           | Catches                                              |
+| ------------------------ | ---------------------------------------------- | ---------------------------------------------------- |
+| **NFKC normalization**   | Converts compatibility chars to canonical form | Fullwidth Latin, Mathematical Alphanumerics, Circled |
+| **Homoglyph detector**   | Counts chars from 13 non-Latin script ranges   | Cyrillic lookalikes, Greek, Letterlike Symbols       |
+| **Leetspeak normalizer** | Maps digits/symbols → letters                  | `1gn0r3` → `ignore`, `$y$t3m` → `system`             |
 
 ### Additional Defenses
 
-| Layer | Mechanism | Scope |
-|-------|-----------|-------|
-| **PII Scanner** | Regex patterns (phone, email, NIK, API key, address) | Input + output |
-| **PII Redaction** | Replace with `[PHONE]`, `[EMAIL]`, etc. | Output only |
-| **Rate Limiter** | Dual in-memory sliding window (8/30s + 60/1h), periodic stale cleanup | Per-customer |
-| **Budget Tracker** | Daily call/token limit via UsageCounter table, cached todayKey | Global |
-| **Output Scan** | Canary leak, delimiter leak, system prompt recon, exfiltration | Output only |
-| **Grounding Check** | LLM-as-judge verifies factual accuracy | Inquiry/order intents |
+| Layer               | Mechanism                                                             | Scope                 |
+| ------------------- | --------------------------------------------------------------------- | --------------------- |
+| **PII Scanner**     | Regex patterns (phone, email, NIK, API key, address)                  | Input + output        |
+| **PII Redaction**   | Replace with `[PHONE]`, `[EMAIL]`, etc.                               | Output only           |
+| **Rate Limiter**    | Dual in-memory sliding window (8/30s + 60/1h), periodic stale cleanup | Per-customer          |
+| **Budget Tracker**  | Daily call/token limit via UsageCounter table, cached todayKey        | Global                |
+| **Output Scan**     | Canary leak, delimiter leak, system prompt recon, exfiltration        | Output only           |
+| **Grounding Check** | LLM-as-judge verifies factual accuracy                                | Inquiry/order intents |
 
 ### Fail-Safe Defaults
 
@@ -692,12 +697,18 @@ Semua guardrail checks default ke **non-blocking** pada error:
 
 ```typescript
 // Contoh: classifier gagal → SAFE
-try { result = await classifyInput(text) }
-catch { result = "SAFE" }
+try {
+  result = await classifyInput(text);
+} catch {
+  result = "SAFE";
+}
 
 // Contoh: budget check error → not exceeded
-try { exceeded = await isBudgetExceeded() }
-catch { exceeded = false }
+try {
+  exceeded = await isBudgetExceeded();
+} catch {
+  exceeded = false;
+}
 ```
 
 ---
@@ -729,34 +740,34 @@ Store (single-row)
 
 ### Model Detail
 
-| Model | Table | Key Columns | Relations |
-|-------|-------|-------------|-----------|
-| `Store` | `store` | `id="default"`, `businessName`, `phone`, `logoUrl?`, `address?`, `businessHours?`, `paymentMethods?`, `shippingInfo?`, `returnPolicy?`, `isActive` | — |
-| `AiConfig` | `ai_configs` | `id="default"`, `isActive`, `systemPrompt` (Text), `model`, `greetingMessage?`, `knowledgeBase?` (Text), `maxTokens`, `temperature` (Decimal(3,2)) | — |
-| `WaSession` | `wa_sessions` | `id="default"`, `status`, `phone?`, `qr?` | — |
-| `WebSite` | `web_sites` | `id="default"`, `config` (Json), `published` (Boolean) | — |
-| `StorePaymentMethod` | `store_payment_methods` | `id` (uuid), `storeId="default"`, `type` (String), `label`, `accountName?`, `accountNumber?`, `bankName?`, `providerName?`, `phoneNumber?`, `qrImageUrl?`, `instructions?`, `isActive`, `sortOrder` | — |
-| `Category` | `categories` | `id` (uuid), `name` (unique), `description?` | → Product[] |
-| `Product` | `products` | `id` (uuid), `name`, `price` (Decimal(12,2)), `stock`, `isAvailable`, `imageUrl?`, `description?` | → Category, → OrderItem[] |
-| `Customer` | `customers` | `id` (uuid), `phone` (unique), `name`, `notes?`, `totalOrders` | → Order[], → Conversation[] |
-| `Conversation` | `conversations` | `id` (uuid), `status` (ConversationStatus), `lastMessageAt?` | → Customer, → Message[] |
-| `Message` | `messages` | `id` (uuid), `role` (MessageRole), `content` (Text), `msgType`, `waMsgId?` (unique), `metadata?` (Json) | → Conversation |
-| `Order` | `orders` | `id` (uuid), `status` (OrderStatus), `totalAmount` (Decimal(12,2)), `source`, `notes?` | → Customer, → OrderItem[], → Payment? |
-| `OrderItem` | `order_items` | `id` (uuid), `qty`, `unitPrice` (Decimal(12,2)), `subtotal` (Decimal(12,2)) | → Order, → Product |
-| `Payment` | `payments` | `id` (uuid), `method?` (PaymentMethod), `amount` (Decimal(12,2)), `status` (PaymentStatus), `paidAt?` | → Order (unique) |
-| `User` | `users` | `id` (uuid), `name`, `email` (unique), `password` (hashed), `role`, `resetPasswordToken?`, `resetPasswordExpires?` | — |
-| `ActivityLog` | `activity_logs` | `id` (uuid), `type`, `referenceId?`, `description` (Text), `metadata?` (Json), `createdAt` | — |
-| `UsageCounter` | `usage_counters` | `id` (YYYY-MM-DD), `llmCalls`, `tokensIn`, `tokensOut` | — |
+| Model                | Table                   | Key Columns                                                                                                                                                                                         | Relations                             |
+| -------------------- | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
+| `Store`              | `store`                 | `id="default"`, `businessName`, `phone`, `logoUrl?`, `address?`, `businessHours?`, `paymentMethods?`, `shippingInfo?`, `returnPolicy?`, `isActive`                                                  | —                                     |
+| `AiConfig`           | `ai_configs`            | `id="default"`, `isActive`, `systemPrompt` (Text), `model`, `greetingMessage?`, `knowledgeBase?` (Text), `maxTokens`, `temperature` (Decimal(3,2))                                                  | —                                     |
+| `WaSession`          | `wa_sessions`           | `id="default"`, `status`, `phone?`, `qr?`                                                                                                                                                           | —                                     |
+| `WebSite`            | `web_sites`             | `id="default"`, `config` (Json), `published` (Boolean)                                                                                                                                              | —                                     |
+| `StorePaymentMethod` | `store_payment_methods` | `id` (uuid), `storeId="default"`, `type` (String), `label`, `accountName?`, `accountNumber?`, `bankName?`, `providerName?`, `phoneNumber?`, `qrImageUrl?`, `instructions?`, `isActive`, `sortOrder` | —                                     |
+| `Category`           | `categories`            | `id` (uuid), `name` (unique), `description?`                                                                                                                                                        | → Product[]                           |
+| `Product`            | `products`              | `id` (uuid), `name`, `price` (Decimal(12,2)), `stock`, `isAvailable`, `imageUrl?`, `description?`                                                                                                   | → Category, → OrderItem[]             |
+| `Customer`           | `customers`             | `id` (uuid), `phone` (unique), `name`, `notes?`, `totalOrders`                                                                                                                                      | → Order[], → Conversation[]           |
+| `Conversation`       | `conversations`         | `id` (uuid), `status` (ConversationStatus), `lastMessageAt?`                                                                                                                                        | → Customer, → Message[]               |
+| `Message`            | `messages`              | `id` (uuid), `role` (MessageRole), `content` (Text), `msgType`, `waMsgId?` (unique), `metadata?` (Json)                                                                                             | → Conversation                        |
+| `Order`              | `orders`                | `id` (uuid), `status` (OrderStatus), `totalAmount` (Decimal(12,2)), `source`, `notes?`                                                                                                              | → Customer, → OrderItem[], → Payment? |
+| `OrderItem`          | `order_items`           | `id` (uuid), `qty`, `unitPrice` (Decimal(12,2)), `subtotal` (Decimal(12,2))                                                                                                                         | → Order, → Product                    |
+| `Payment`            | `payments`              | `id` (uuid), `method?` (PaymentMethod), `amount` (Decimal(12,2)), `status` (PaymentStatus), `paidAt?`                                                                                               | → Order (unique)                      |
+| `User`               | `users`                 | `id` (uuid), `name`, `email` (unique), `password` (hashed), `role`, `resetPasswordToken?`, `resetPasswordExpires?`                                                                                  | —                                     |
+| `ActivityLog`        | `activity_logs`         | `id` (uuid), `type`, `referenceId?`, `description` (Text), `metadata?` (Json), `createdAt`                                                                                                          | —                                     |
+| `UsageCounter`       | `usage_counters`        | `id` (YYYY-MM-DD), `llmCalls`, `tokensIn`, `tokensOut`                                                                                                                                              | —                                     |
 
 ### Enums
 
-| Enum | Values |
-|------|--------|
-| `OrderStatus` | PENDING, CONFIRMED, PROCESSING, COMPLETED, CANCELLED |
-| `PaymentMethod` | CASH, TRANSFER, QRIS, E_WALLET |
-| `PaymentStatus` | PENDING, PAID, FAILED, REFUNDED |
-| `MessageRole` | CUSTOMER, BOT, HUMAN |
-| `ConversationStatus` | ACTIVE, RESOLVED, ARCHIVED, ESCALATED |
+| Enum                 | Values                                               |
+| -------------------- | ---------------------------------------------------- |
+| `OrderStatus`        | PENDING, CONFIRMED, PROCESSING, COMPLETED, CANCELLED |
+| `PaymentMethod`      | CASH, TRANSFER, QRIS, E_WALLET                       |
+| `PaymentStatus`      | PENDING, PAID, FAILED, REFUNDED                      |
+| `MessageRole`        | CUSTOMER, BOT, HUMAN                                 |
+| `ConversationStatus` | ACTIVE, RESOLVED, ARCHIVED, ESCALATED                |
 
 ### Database Config
 
@@ -872,13 +883,13 @@ Setiap eksekusi `processMessage()` menghasilkan trace dengan:
 
 ### Debug Endpoints (development only — `NODE_ENV !== "production"`)
 
-| Endpoint | Deskripsi |
-|----------|-----------|
+| Endpoint                        | Deskripsi                    |
+| ------------------------------- | ---------------------------- |
 | `GET /api/debug/traces?limit=N` | Recent N traces (default 20) |
-| `GET /api/debug/traces/:id` | Single trace detail |
-| `DELETE /api/debug/traces` | Clear ring buffer |
-| `GET /api/debug/status` | Uptime + memory usage |
-| `POST /api/debug/circuit/reset` | Reset circuit breaker |
+| `GET /api/debug/traces/:id`     | Single trace detail          |
+| `DELETE /api/debug/traces`      | Clear ring buffer            |
+| `GET /api/debug/status`         | Uptime + memory usage        |
+| `POST /api/debug/circuit/reset` | Reset circuit breaker        |
 
 ---
 
@@ -896,11 +907,11 @@ API tsconfig (`api/tsconfig.json`):
 }
 ```
 
-| Alias | Resolves ke | Contoh |
-|-------|-------------|--------|
-| `@/*` | `./*` (project root) | `@/src/models/store` |
-| `@db/*` | `./generated/prisma/*` | `@db/client` |
-| `@web-gen/*` | `../web-gen/src/*` | `@web-gen/index.ts` |
+| Alias        | Resolves ke            | Contoh               |
+| ------------ | ---------------------- | -------------------- |
+| `@/*`        | `./*` (project root)   | `@/src/models/store` |
+| `@db/*`      | `./generated/prisma/*` | `@db/client`         |
+| `@web-gen/*` | `../web-gen/src/*`     | `@web-gen/index.ts`  |
 
 ---
 
@@ -932,19 +943,19 @@ bun test                     # Run all tests (bun:test)
 
 ## Roadmap
 
-| Phase | Status | Deliverable |
-|-------|--------|-------------|
-| **P1** | ✅ Selesai | Express 5 setup + middleware chain + error handling |
-| **P2** | ✅ Selesai | BaseModel + single-row models (WaSession, Store, AiConfig) |
-| **P3** | ✅ Selesai | Relational models (Product, Customer, Conversation, Message, Order, ActivityLog) |
-| **P4** | ✅ Selesai | AI pipeline 18-step + guardrails 3-tier + circuit breaker |
-| **P5** | ✅ Selesai | Unit + firewall + golden reply tests |
-| **P6** | ✅ Selesai | Products CRUD endpoints |
-| **P7** | ✅ Selesai | Orders endpoints |
-| **P8** | ✅ Selesai | Customers + Chats endpoints |
-| **P9** | ✅ Selesai | Dashboard stats endpoint |
-| **P10** | ✅ Selesai | Auth endpoints (register, login, me, logout, forgot/reset password) |
-| **P11** | ✅ Selesai | Activity log + Usage endpoints |
-| **P12** | ✅ Selesai | Dashboard integrasi — semua hooks pakai real API |
-| **P13** | ✅ Selesai | Website endpoints + web-gen integration |
-| **P14** | ✅ Selesai | StorePaymentMethod + upload + manual payment flow |
+| Phase   | Status     | Deliverable                                                                      |
+| ------- | ---------- | -------------------------------------------------------------------------------- |
+| **P1**  | ✅ Selesai | Express 5 setup + middleware chain + error handling                              |
+| **P2**  | ✅ Selesai | BaseModel + single-row models (WaSession, Store, AiConfig)                       |
+| **P3**  | ✅ Selesai | Relational models (Product, Customer, Conversation, Message, Order, ActivityLog) |
+| **P4**  | ✅ Selesai | AI pipeline 18-step + guardrails 3-tier + circuit breaker                        |
+| **P5**  | ✅ Selesai | Unit + firewall + golden reply tests                                             |
+| **P6**  | ✅ Selesai | Products CRUD endpoints                                                          |
+| **P7**  | ✅ Selesai | Orders endpoints                                                                 |
+| **P8**  | ✅ Selesai | Customers + Chats endpoints                                                      |
+| **P9**  | ✅ Selesai | Dashboard stats endpoint                                                         |
+| **P10** | ✅ Selesai | Auth endpoints (register, login, me, logout, forgot/reset password)              |
+| **P11** | ✅ Selesai | Activity log + Usage endpoints                                                   |
+| **P12** | ✅ Selesai | Dashboard integrasi — semua hooks pakai real API                                 |
+| **P13** | ✅ Selesai | Website endpoints + web-gen integration                                          |
+| **P14** | ✅ Selesai | StorePaymentMethod + upload + manual payment flow                                |

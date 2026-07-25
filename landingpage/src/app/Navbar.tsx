@@ -69,7 +69,9 @@ export default function Navbar() {
           <Link
             to="/app/login"
             className={`text-sm font-medium transition-colors ${
-              scrolled ? "text-stone-600 hover:text-teal-600" : "text-white/80 hover:text-white"
+              scrolled
+                ? "text-stone-600 hover:text-teal-600"
+                : "text-white/80 hover:text-white"
             }`}
           >
             Masuk

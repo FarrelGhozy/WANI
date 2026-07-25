@@ -1,5 +1,4 @@
 services:
-
   db:
     image: postgres:17-alpine
     environment:
@@ -71,7 +70,13 @@ services:
     restart: unless-stopped
     networks: [wani]
     healthcheck:
-      test: ["CMD", "bun", "-e", "fetch('http://localhost:3001/api/health').then(r => process.exit(r.ok?0:1)).catch(() => process.exit(1))"]
+      test:
+        [
+          "CMD",
+          "bun",
+          "-e",
+          "fetch('http://localhost:3001/api/health').then(r => process.exit(r.ok?0:1)).catch(() => process.exit(1))",
+        ]
       interval: 10s
       timeout: 5s
       retries: 6
@@ -153,7 +158,8 @@ services:
     volumes:
       - backups:/backups
       - ./scripts/backup-db.sh:/backup.sh:ro
-    entrypoint: ["/bin/sh", "-c", "while true; do /backup.sh; sleep 86400; done"]
+    entrypoint:
+      ["/bin/sh", "-c", "while true; do /backup.sh; sleep 86400; done"]
     restart: unless-stopped
     networks: [wani]
     logging:

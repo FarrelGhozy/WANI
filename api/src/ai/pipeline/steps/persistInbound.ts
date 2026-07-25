@@ -1,5 +1,5 @@
-import { MessageModel } from "@/src/models/message"
-import type { PipelineStep } from "../types"
+import { MessageModel } from "@/src/models/message";
+import type { PipelineStep } from "../types";
 
 /**
  * Step 4 — Persist the inbound customer message.
@@ -13,7 +13,7 @@ export const persistInboundStep: PipelineStep = {
       role: "CUSTOMER",
       content: ctx.normalized!,
       waMsgId: ctx.input.waMsgId,
-    })
-    return { kind: "continue" }
+    });
+    return { kind: "continue" };
   },
-}
+};

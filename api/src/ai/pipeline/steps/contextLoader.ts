@@ -1,8 +1,8 @@
-import { StoreModel } from "@/src/models/store"
-import { ProductModel } from "@/src/models/catalog"
-import { AiConfigModel } from "@/src/models/ai-config"
-import { StorePaymentMethodModel } from "@/src/models/store-payment"
-import type { PipelineStep } from "../types"
+import { StoreModel } from "@/src/models/store";
+import { ProductModel } from "@/src/models/catalog";
+import { AiConfigModel } from "@/src/models/ai-config";
+import { StorePaymentMethodModel } from "@/src/models/store-payment";
+import type { PipelineStep } from "../types";
 
 /**
  * Step 9 — Load context: store info, products, AI config, payment methods.
@@ -16,23 +16,24 @@ export const contextLoaderStep: PipelineStep = {
       ProductModel.listAvailable(ctx.ownerId),
       AiConfigModel.findByOwner(ctx.ownerId),
       StorePaymentMethodModel.listActive(ctx.ownerId),
-    ])
+    ]);
 
-    const isActive = aiConfig?.isActive ?? true
+    const isActive = aiConfig?.isActive ?? true;
     if (!isActive) {
       return {
         kind: "break",
         result: {
-          reply: "Maaf, bot sedang tidak aktif. CS manusia akan segera membantu Anda.",
+          reply:
+            "Maaf, bot sedang tidak aktif. CS manusia akan segera membantu Anda.",
           intent: "inactive",
           blocked: true,
           qrisImageUrl: null,
         },
-      }
+      };
     }
 
-    ctx.aiConfig = aiConfig ?? undefined
-    ctx.products = products
+    ctx.aiConfig = aiConfig ?? undefined;
+    ctx.products = products;
 
     // --- build store info ---
     ctx.storeInfo = {
@@ -54,12 +55,12 @@ export const contextLoaderStep: PipelineStep = {
       })),
       shippingInfo: store?.shippingInfo ?? null,
       returnPolicy: store?.returnPolicy ?? null,
-    }
+    };
 
     ctx.trace
       .set("store_name", ctx.storeInfo.businessName)
-      .set("product_count", products.length)
+      .set("product_count", products.length);
 
-    return { kind: "continue" }
+    return { kind: "continue" };
   },
-}
+};

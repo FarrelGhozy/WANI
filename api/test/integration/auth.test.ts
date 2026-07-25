@@ -1,17 +1,26 @@
-import { expect, test, describe, beforeEach, mock, afterEach } from "bun:test"
+import { expect, test, describe, beforeEach, mock, afterEach } from "bun:test";
 
-const mockUserFindUnique = mock((_args: any) => Promise.resolve(null))
-const mockUserFindFirst = mock((_args: any) => Promise.resolve(null))
-const mockUserCreate = mock((_args: any) => Promise.resolve({ id: "u1", name: "Budi", email: "test@test.com", role: "admin" }))
-const mockUserUpdate = mock((_args: any) => Promise.resolve({}))
-const mockStoreUpsert = mock((_args: any) => Promise.resolve({}))
+const mockUserFindUnique = mock((_args: any) => Promise.resolve(null));
+const mockUserFindFirst = mock((_args: any) => Promise.resolve(null));
+const mockUserCreate = mock((_args: any) =>
+  Promise.resolve({
+    id: "u1",
+    name: "Budi",
+    email: "test@test.com",
+    role: "admin",
+  })
+);
+const mockUserUpdate = mock((_args: any) => Promise.resolve({}));
+const mockStoreUpsert = mock((_args: any) => Promise.resolve({}));
 
-const mockSendEmail = mock((_to: string, _subject: string, _html: string) => Promise.resolve())
+const mockSendEmail = mock((_to: string, _subject: string, _html: string) =>
+  Promise.resolve()
+);
 
 mock.module("@/src/services/email", () => ({
   sendEmail: mockSendEmail,
   isEmailConfigured: () => true,
-}))
+}));
 
 mock.module("@/src/config/db", () => ({
   prisma: {
@@ -26,14 +35,21 @@ mock.module("@/src/config/db", () => ({
     },
     $transaction: mock((fn: any) => fn({ user: {} })),
   } as any,
-}))
+}));
 
 // Set JWT secret before importing auth controller
-process.env.JWT_SECRET = "test-jwt-secret"
+process.env.JWT_SECRET = "test-jwt-secret";
 
-import { register, login, me, logout, verifyEmail, resendVerification } from "@/src/controllers/auth"
-import * as emailService from "@/src/services/email"
-import type { Request, Response } from "express"
+import {
+  register,
+  login,
+  me,
+  logout,
+  verifyEmail,
+  resendVerification,
+} from "@/src/controllers/auth";
+import * as emailService from "@/src/services/email";
+import type { Request, Response } from "express";
 
 function mockReq(overrides: Partial<Request> = {}): Request {
   return {
@@ -43,320 +59,373 @@ function mockReq(overrides: Partial<Request> = {}): Request {
     headers: {},
     user: undefined,
     ...overrides,
-  } as Request
+  } as Request;
 }
 
 function mockRes() {
-  let statusCode = 200
-  let body: unknown
+  let statusCode = 200;
+  let body: unknown;
   return {
     status: (code: number) => {
-      statusCode = code
-      return { json: (data: unknown) => { body = data } }
+      statusCode = code;
+      return {
+        json: (data: unknown) => {
+          body = data;
+        },
+      };
     },
     getStatus: () => statusCode,
     getBody: () => body as any,
-  }
+  };
 }
 
 describe("POST /api/auth/register", () => {
   beforeEach(() => {
-    mockUserFindUnique.mockReset()
-    mockUserCreate.mockReset()
-    mockStoreUpsert.mockReset()
-    mockUserUpdate.mockReset()
-    mockSendEmail.mockReset()
-  })
+    mockUserFindUnique.mockReset();
+    mockUserCreate.mockReset();
+    mockStoreUpsert.mockReset();
+    mockUserUpdate.mockReset();
+    mockSendEmail.mockReset();
+  });
 
   test("registers a new user and sends verification email", async () => {
-    mockUserFindUnique.mockResolvedValueOnce(null)
+    mockUserFindUnique.mockResolvedValueOnce(null);
     mockUserCreate.mockResolvedValueOnce({
-      id: "u1", name: "Budi", email: "budi@test.com", role: "admin",
-    })
+      id: "u1",
+      name: "Budi",
+      email: "budi@test.com",
+      role: "admin",
+    });
 
     const req = mockReq({
       body: { name: "Budi", email: "budi@test.com", password: "rahasia123" },
       headers: { origin: "http://localhost:5173" },
-    })
-    const res = mockRes()
+    });
+    const res = mockRes();
 
-    await register(req as any, res as any)
+    await register(req as any, res as any);
 
-    expect(res.getStatus()).toBe(201)
-    const body = res.getBody()
-    expect(body.status).toBe("success")
+    expect(res.getStatus()).toBe(201);
+    const body = res.getBody();
+    expect(body.status).toBe("success");
     // No token returned — user must verify email first
-    expect(body.data).toBeNull()
-    expect(mockStoreUpsert).toHaveBeenCalled()
+    expect(body.data).toBeNull();
+    expect(mockStoreUpsert).toHaveBeenCalled();
     // Verification email sent
-    expect(mockSendEmail).toHaveBeenCalled()
-    const emailArgs = mockSendEmail.mock.calls[0]
-    expect(emailArgs[0]).toBe("budi@test.com")
-    expect(emailArgs[1]).toContain("Verifikasi Email")
+    expect(mockSendEmail).toHaveBeenCalled();
+    const emailArgs = mockSendEmail.mock.calls[0];
+    expect(emailArgs[0]).toBe("budi@test.com");
+    expect(emailArgs[1]).toContain("Verifikasi Email");
     // Verification token saved
-    expect(mockUserUpdate).toHaveBeenCalled()
-    const updateData = mockUserUpdate.mock.calls[0][0].data
-    expect(updateData.emailVerificationToken).toBeTruthy()
-    expect(updateData.emailVerificationExpires).toBeTruthy()
-  })
+    expect(mockUserUpdate).toHaveBeenCalled();
+    const updateData = mockUserUpdate.mock.calls[0][0].data;
+    expect(updateData.emailVerificationToken).toBeTruthy();
+    expect(updateData.emailVerificationExpires).toBeTruthy();
+  });
 
   test("rejects duplicate email", async () => {
     mockUserFindUnique.mockResolvedValueOnce({
-      id: "existing", name: "Old", email: "budi@test.com", password: "hash", role: "admin",
-    })
+      id: "existing",
+      name: "Old",
+      email: "budi@test.com",
+      password: "hash",
+      role: "admin",
+    });
 
     const req = mockReq({
       body: { name: "Budi", email: "budi@test.com", password: "rahasia123" },
-    })
-    const res = mockRes()
+    });
+    const res = mockRes();
 
     try {
-      await register(req as any, res as any)
-      expect.unreachable("should have thrown")
+      await register(req as any, res as any);
+      expect.unreachable("should have thrown");
     } catch (e: any) {
-      expect(e.statusCode).toBe(400)
-      expect(e.message).toBe("email already registered")
+      expect(e.statusCode).toBe(400);
+      expect(e.message).toBe("email already registered");
     }
-  })
-})
+  });
+});
 
 describe("POST /api/auth/login", () => {
   beforeEach(() => {
-    mockUserFindUnique.mockReset()
-  })
+    mockUserFindUnique.mockReset();
+  });
 
   test("logs in with verified email", async () => {
-    const hashed = await Bun.password.hash("rahasia123", { algorithm: "bcrypt", cost: 5 })
+    const hashed = await Bun.password.hash("rahasia123", {
+      algorithm: "bcrypt",
+      cost: 5,
+    });
     mockUserFindUnique.mockResolvedValueOnce({
-      id: "u1", name: "Budi", email: "budi@test.com", password: hashed, role: "admin", emailVerified: true,
-    })
+      id: "u1",
+      name: "Budi",
+      email: "budi@test.com",
+      password: hashed,
+      role: "admin",
+      emailVerified: true,
+    });
 
     const req = mockReq({
       body: { email: "budi@test.com", password: "rahasia123" },
-    })
-    const res = mockRes()
+    });
+    const res = mockRes();
 
-    await login(req as any, res as any)
+    await login(req as any, res as any);
 
-    expect(res.getStatus()).toBe(200)
-    const body = res.getBody()
-    expect(body.status).toBe("success")
-    expect(body.data.token).toBeTruthy()
-    expect(body.data.user.email).toBe("budi@test.com")
-    expect(body.data.user.password).toBeUndefined()
-  })
+    expect(res.getStatus()).toBe(200);
+    const body = res.getBody();
+    expect(body.status).toBe("success");
+    expect(body.data.token).toBeTruthy();
+    expect(body.data.user.email).toBe("budi@test.com");
+    expect(body.data.user.password).toBeUndefined();
+  });
 
   test("rejects login for unverified email", async () => {
-    const hashed = await Bun.password.hash("rahasia123", { algorithm: "bcrypt", cost: 5 })
+    const hashed = await Bun.password.hash("rahasia123", {
+      algorithm: "bcrypt",
+      cost: 5,
+    });
     mockUserFindUnique.mockResolvedValueOnce({
-      id: "u1", name: "Budi", email: "budi@test.com", password: hashed, role: "admin", emailVerified: false,
-    })
+      id: "u1",
+      name: "Budi",
+      email: "budi@test.com",
+      password: hashed,
+      role: "admin",
+      emailVerified: false,
+    });
 
     const req = mockReq({
       body: { email: "budi@test.com", password: "rahasia123" },
-    })
-    const res = mockRes()
+    });
+    const res = mockRes();
 
     try {
-      await login(req as any, res as any)
-      expect.unreachable("should have thrown")
+      await login(req as any, res as any);
+      expect.unreachable("should have thrown");
     } catch (e: any) {
-      expect(e.statusCode).toBe(403)
-      expect(e.message).toContain("not verified")
+      expect(e.statusCode).toBe(403);
+      expect(e.message).toContain("not verified");
     }
-  })
+  });
 
   test("rejects wrong password", async () => {
-    const hashed = await Bun.password.hash("correct", { algorithm: "bcrypt", cost: 5 })
+    const hashed = await Bun.password.hash("correct", {
+      algorithm: "bcrypt",
+      cost: 5,
+    });
     mockUserFindUnique.mockResolvedValueOnce({
-      id: "u1", name: "Budi", email: "budi@test.com", password: hashed, role: "admin", emailVerified: true,
-    })
+      id: "u1",
+      name: "Budi",
+      email: "budi@test.com",
+      password: hashed,
+      role: "admin",
+      emailVerified: true,
+    });
 
     const req = mockReq({
       body: { email: "budi@test.com", password: "wrongpassword" },
-    })
-    const res = mockRes()
+    });
+    const res = mockRes();
 
     try {
-      await login(req as any, res as any)
-      expect.unreachable("should have thrown")
+      await login(req as any, res as any);
+      expect.unreachable("should have thrown");
     } catch (e: any) {
-      expect(e.statusCode).toBe(401)
+      expect(e.statusCode).toBe(401);
     }
-  })
+  });
 
   test("rejects non-existent email", async () => {
-    mockUserFindUnique.mockResolvedValueOnce(null)
+    mockUserFindUnique.mockResolvedValueOnce(null);
 
     const req = mockReq({
       body: { email: "unknown@test.com", password: "anything" },
-    })
-    const res = mockRes()
+    });
+    const res = mockRes();
 
     try {
-      await login(req as any, res as any)
-      expect.unreachable("should have thrown")
+      await login(req as any, res as any);
+      expect.unreachable("should have thrown");
     } catch (e: any) {
-      expect(e.statusCode).toBe(401)
-      expect(e.message).toBe("invalid email or password")
+      expect(e.statusCode).toBe(401);
+      expect(e.message).toBe("invalid email or password");
     }
-  })
-})
+  });
+});
 
 describe("GET /api/auth/me", () => {
   beforeEach(() => {
-    mockUserFindUnique.mockReset()
-  })
+    mockUserFindUnique.mockReset();
+  });
 
   test("returns user for valid JWT user", async () => {
     mockUserFindUnique.mockImplementation((args: any) => {
       if (args?.where?.id === "u1") {
-        return Promise.resolve({ id: "u1", name: "Budi", email: "budi@test.com", role: "admin" })
+        return Promise.resolve({
+          id: "u1",
+          name: "Budi",
+          email: "budi@test.com",
+          role: "admin",
+        });
       }
-      return Promise.resolve(null)
-    })
+      return Promise.resolve(null);
+    });
 
-    const req = mockReq({ user: { id: "u1", email: "budi@test.com", role: "admin" } })
-    const res = mockRes()
+    const req = mockReq({
+      user: { id: "u1", email: "budi@test.com", role: "admin" },
+    });
+    const res = mockRes();
 
-    await me(req as any, res as any)
+    await me(req as any, res as any);
 
-    expect(res.getStatus()).toBe(200)
-    const body = res.getBody()
-    expect(body.data.email).toBe("budi@test.com")
-  })
+    expect(res.getStatus()).toBe(200);
+    const body = res.getBody();
+    expect(body.data.email).toBe("budi@test.com");
+  });
 
   test("returns 401 when user not found in DB", async () => {
-    mockUserFindUnique.mockResolvedValueOnce(null)
+    mockUserFindUnique.mockResolvedValueOnce(null);
 
-    const req = mockReq({ user: { id: "gone", email: "gone@test.com", role: "admin" } })
-    const res = mockRes()
+    const req = mockReq({
+      user: { id: "gone", email: "gone@test.com", role: "admin" },
+    });
+    const res = mockRes();
 
     try {
-      await me(req as any, res as any)
-      expect.unreachable("should have thrown")
+      await me(req as any, res as any);
+      expect.unreachable("should have thrown");
     } catch (e: any) {
-      expect(e.statusCode).toBe(401)
-      expect(e.message).toBe("user not found")
+      expect(e.statusCode).toBe(401);
+      expect(e.message).toBe("user not found");
     }
-  })
-})
+  });
+});
 
 describe("POST /api/auth/logout", () => {
   test("returns success (stateless JWT)", async () => {
-    const req = mockReq()
-    const res = mockRes()
+    const req = mockReq();
+    const res = mockRes();
 
-    await logout(req as any, res as any)
+    await logout(req as any, res as any);
 
-    expect(res.getStatus()).toBe(200)
-    expect(res.getBody().status).toBe("success")
-  })
-})
+    expect(res.getStatus()).toBe(200);
+    expect(res.getBody().status).toBe("success");
+  });
+});
 
 describe("GET /api/auth/verify-email", () => {
   beforeEach(() => {
-    mockUserFindFirst.mockReset()
-    mockUserUpdate.mockReset()
-  })
+    mockUserFindFirst.mockReset();
+    mockUserUpdate.mockReset();
+  });
 
   test("verifies email with valid token", async () => {
     mockUserFindFirst.mockResolvedValueOnce({
-      id: "u1", name: "Budi", email: "budi@test.com",
-      emailVerified: false, emailVerificationToken: "valid-token",
+      id: "u1",
+      name: "Budi",
+      email: "budi@test.com",
+      emailVerified: false,
+      emailVerificationToken: "valid-token",
       emailVerificationExpires: new Date(Date.now() + 3600000),
-    })
+    });
 
-    const req = mockReq({ query: { token: "valid-token" } })
-    const res = mockRes()
+    const req = mockReq({ query: { token: "valid-token" } });
+    const res = mockRes();
 
-    await verifyEmail(req as any, res as any)
+    await verifyEmail(req as any, res as any);
 
-    expect(res.getStatus()).toBe(200)
-    const updateCall = mockUserUpdate.mock.calls[0][0]
-    expect(updateCall.where.id).toBe("u1")
-    expect(updateCall.data.emailVerified).toBe(true)
-    expect(updateCall.data.emailVerificationToken).toBeNull()
-    expect(updateCall.data.emailVerificationExpires).toBeNull()
-  })
+    expect(res.getStatus()).toBe(200);
+    const updateCall = mockUserUpdate.mock.calls[0][0];
+    expect(updateCall.where.id).toBe("u1");
+    expect(updateCall.data.emailVerified).toBe(true);
+    expect(updateCall.data.emailVerificationToken).toBeNull();
+    expect(updateCall.data.emailVerificationExpires).toBeNull();
+  });
 
   test("rejects expired token", async () => {
-    mockUserFindFirst.mockResolvedValueOnce(null)
+    mockUserFindFirst.mockResolvedValueOnce(null);
 
-    const req = mockReq({ query: { token: "expired-token" } })
-    const res = mockRes()
+    const req = mockReq({ query: { token: "expired-token" } });
+    const res = mockRes();
 
     try {
-      await verifyEmail(req as any, res as any)
-      expect.unreachable("should have thrown")
+      await verifyEmail(req as any, res as any);
+      expect.unreachable("should have thrown");
     } catch (e: any) {
-      expect(e.statusCode).toBe(400)
-      expect(e.message).toContain("invalid or expired")
+      expect(e.statusCode).toBe(400);
+      expect(e.message).toContain("invalid or expired");
     }
-  })
+  });
 
   test("rejects missing token", async () => {
-    const req = mockReq({ query: {} })
-    const res = mockRes()
+    const req = mockReq({ query: {} });
+    const res = mockRes();
 
     try {
-      await verifyEmail(req as any, res as any)
-      expect.unreachable("should have thrown")
+      await verifyEmail(req as any, res as any);
+      expect.unreachable("should have thrown");
     } catch (e: any) {
-      expect(e.statusCode).toBe(400)
-      expect(e.message).toContain("token is required")
+      expect(e.statusCode).toBe(400);
+      expect(e.message).toContain("token is required");
     }
-  })
-})
+  });
+});
 
 describe("POST /api/auth/resend-verification", () => {
   beforeEach(() => {
-    mockUserFindUnique.mockReset()
-    mockUserUpdate.mockReset()
-    mockSendEmail.mockReset()
-  })
+    mockUserFindUnique.mockReset();
+    mockUserUpdate.mockReset();
+    mockSendEmail.mockReset();
+  });
 
   test("resends verification email for unverified user", async () => {
     mockUserFindUnique.mockResolvedValueOnce({
-      id: "u1", name: "Budi", email: "budi@test.com", emailVerified: false,
-    })
+      id: "u1",
+      name: "Budi",
+      email: "budi@test.com",
+      emailVerified: false,
+    });
 
     const req = mockReq({
       body: { email: "budi@test.com" },
       headers: { origin: "http://localhost:5173" },
-    })
-    const res = mockRes()
+    });
+    const res = mockRes();
 
-    await resendVerification(req as any, res as any)
+    await resendVerification(req as any, res as any);
 
-    expect(res.getStatus()).toBe(200)
-    expect(mockSendEmail).toHaveBeenCalled()
-    expect(mockUserUpdate).toHaveBeenCalled()
-  })
+    expect(res.getStatus()).toBe(200);
+    expect(mockSendEmail).toHaveBeenCalled();
+    expect(mockUserUpdate).toHaveBeenCalled();
+  });
 
   test("always returns 200 to prevent enumeration", async () => {
-    mockUserFindUnique.mockResolvedValueOnce(null)
+    mockUserFindUnique.mockResolvedValueOnce(null);
 
-    const req = mockReq({ body: { email: "unknown@test.com" } })
-    const res = mockRes()
+    const req = mockReq({ body: { email: "unknown@test.com" } });
+    const res = mockRes();
 
-    await resendVerification(req as any, res as any)
+    await resendVerification(req as any, res as any);
 
-    expect(res.getStatus()).toBe(200)
-    expect(mockSendEmail).not.toHaveBeenCalled()
-  })
+    expect(res.getStatus()).toBe(200);
+    expect(mockSendEmail).not.toHaveBeenCalled();
+  });
 
   test("does not resend for already verified user", async () => {
     mockUserFindUnique.mockResolvedValueOnce({
-      id: "u1", name: "Budi", email: "budi@test.com", emailVerified: true,
-    })
+      id: "u1",
+      name: "Budi",
+      email: "budi@test.com",
+      emailVerified: true,
+    });
 
-    const req = mockReq({ body: { email: "budi@test.com" } })
-    const res = mockRes()
+    const req = mockReq({ body: { email: "budi@test.com" } });
+    const res = mockRes();
 
-    await resendVerification(req as any, res as any)
+    await resendVerification(req as any, res as any);
 
-    expect(res.getStatus()).toBe(200)
-    expect(mockSendEmail).not.toHaveBeenCalled()
-  })
-})
+    expect(res.getStatus()).toBe(200);
+    expect(mockSendEmail).not.toHaveBeenCalled();
+  });
+});

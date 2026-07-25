@@ -1,8 +1,15 @@
-import { useCallback, type ReactNode } from 'react'
-import Button from '@/components/ui/Button.tsx'
-import { GridIcon, BagIcon, ClipboardIcon, PeopleIcon, GlobeIcon, CogIcon } from '@/components/Icons.tsx'
-import { useTourContext } from '@/contexts/TourContext.tsx'
-import { tourSteps, type TourIconName } from '@/config/tourSteps.ts'
+import { useCallback, type ReactNode } from "react";
+import Button from "@/components/ui/Button.tsx";
+import {
+  GridIcon,
+  BagIcon,
+  ClipboardIcon,
+  PeopleIcon,
+  GlobeIcon,
+  CogIcon,
+} from "@/components/Icons.tsx";
+import { useTourContext } from "@/contexts/TourContext.tsx";
+import { tourSteps, type TourIconName } from "@/config/tourSteps.ts";
 
 const iconMap: Record<TourIconName, ReactNode> = {
   welcome: <GridIcon />,
@@ -12,21 +19,22 @@ const iconMap: Record<TourIconName, ReactNode> = {
   customers: <PeopleIcon />,
   website: <GlobeIcon />,
   settings: <CogIcon />,
-}
+};
 
 export default function TourOverlay() {
-  const { isActive, currentStep, totalSteps, next, prev, skip, complete } = useTourContext()
-  const step = tourSteps[currentStep]
+  const { isActive, currentStep, totalSteps, next, prev, skip, complete } =
+    useTourContext();
+  const step = tourSteps[currentStep];
 
   const handleNext = useCallback(() => {
     if (currentStep === totalSteps - 1) {
-      complete()
-      return
+      complete();
+      return;
     }
-    next()
-  }, [currentStep, totalSteps, next, complete])
+    next();
+  }, [currentStep, totalSteps, next, complete]);
 
-  if (!isActive || !step) return null
+  if (!isActive || !step) return null;
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm">
@@ -36,7 +44,9 @@ export default function TourOverlay() {
             {iconMap[step.icon]}
           </div>
           <h2 className="text-lg font-semibold text-stone-900">{step.title}</h2>
-          <p className="mt-2 text-sm leading-relaxed text-stone-500">{step.description}</p>
+          <p className="mt-2 text-sm leading-relaxed text-stone-500">
+            {step.description}
+          </p>
         </div>
 
         <div className="mt-6 flex items-center justify-center gap-1.5">
@@ -44,7 +54,7 @@ export default function TourOverlay() {
             <span
               key={i}
               className={`h-1.5 rounded-full transition-all duration-300 ${
-                i === currentStep ? 'w-6 bg-teal-600' : 'w-1.5 bg-stone-300'
+                i === currentStep ? "w-6 bg-teal-600" : "w-1.5 bg-stone-300"
               }`}
             />
           ))}
@@ -61,11 +71,11 @@ export default function TourOverlay() {
               </Button>
             )}
             <Button size="sm" onClick={handleNext} className="min-w-[80px]">
-              {currentStep === totalSteps - 1 ? 'Selesai' : 'Selanjutnya'}
+              {currentStep === totalSteps - 1 ? "Selesai" : "Selanjutnya"}
             </Button>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }

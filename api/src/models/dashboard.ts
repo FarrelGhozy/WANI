@@ -1,18 +1,20 @@
-import { prisma } from "@/src/config/db"
-import { WaSessionModel } from "@/src/models/wa-session"
+import { prisma } from "@/src/config/db";
+import { WaSessionModel } from "@/src/models/wa-session";
 
 export type DashboardStats = {
-  ordersToday: number
-  ordersPending: number
-  productsActive: number
-  customersTotal: number
-  conversationsActive: number
-  qr: { qr: string | null; status: string; phone: string | null }
-}
+  ordersToday: number;
+  ordersPending: number;
+  productsActive: number;
+  customersTotal: number;
+  conversationsActive: number;
+  qr: { qr: string | null; status: string; phone: string | null };
+};
 
-export async function getDashboardStats(ownerId: string): Promise<DashboardStats> {
-  const todayStart = new Date()
-  todayStart.setHours(0, 0, 0, 0)
+export async function getDashboardStats(
+  ownerId: string
+): Promise<DashboardStats> {
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
 
   const [
     ordersToday,
@@ -28,7 +30,7 @@ export async function getDashboardStats(ownerId: string): Promise<DashboardStats
     prisma.customer.count({ where: { ownerId } }),
     prisma.conversation.count({ where: { ownerId, status: "ACTIVE" } }),
     WaSessionModel.find(),
-  ])
+  ]);
 
   return {
     ordersToday,
@@ -41,5 +43,5 @@ export async function getDashboardStats(ownerId: string): Promise<DashboardStats
       status: waSession?.status ?? "disconnected",
       phone: waSession?.phone ?? null,
     },
-  }
+  };
 }

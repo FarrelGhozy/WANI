@@ -2,10 +2,10 @@
 // Single source of truth — imported by both guardrails/input.ts (quick
 // heuristic check) and guardrails/firewall/injection.ts (full T1 scan).
 
-import { MSG_CLOSE } from "@/src/ai/prompts"
+import { MSG_CLOSE } from "@/src/ai/prompts";
 
 export function escapeRe(s: string): string {
-  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 // DELIMITER ESCAPE — attempts to close message fences early
@@ -13,7 +13,7 @@ export const DELIMITER_PATTERNS: readonly RegExp[] = [
   new RegExp(`${escapeRe(MSG_CLOSE)}\\s*\\S`, "i"),
   /<\/?(?:customer_message|system|assistant|user)>/i,
   /<\s*\|[^|]*\|>/,
-]
+];
 
 // INSTRUCTION HIERARCHY OVERRIDE — "ignore all previous instructions"
 export const OVERRIDE_PATTERNS: readonly RegExp[] = [
@@ -24,7 +24,7 @@ export const OVERRIDE_PATTERNS: readonly RegExp[] = [
   /(?:sekarang|mulai\s+(?:sekarang|saat\s+ini))\s+(?:kamu|lo|anda)\s+(?:akan|harus|boleh)/i,
   /(?: instruksi|perintah|aturan?)\s+(?:sebelumnya|diatas)\s+(?:diabaikan|diganti|dihapus|tidak\s+berlaku)/i,
   /(?:previous|above|prior)\s+(?:instructions?|prompts?|rules?)\s+(?:are|were|have\s+been)\s+(?:overridden|cancelled|replaced|ignored)/i,
-]
+];
 
 // SYSTEM PROMPT EXTRACTION — attempts to reveal hidden instructions
 export const EXTRACTION_PATTERNS: readonly RegExp[] = [
@@ -39,7 +39,7 @@ export const EXTRACTION_PATTERNS: readonly RegExp[] = [
   /continue\s+(?:reading|writing)\s+(?:the\s+)?(?:above|previous)\s+(?:text|message|prompt)/i,
   /what\s+(?:are|where)\s+(?:your|the)\s+(?:core|initial|original|base)\s+(?:instructions?|rules?|guidelines?)/i,
   /(?:how\s+(?:are|do)|what's)\s+your\s+(?:system\s+)?prompt/i,
-]
+];
 
 // ROLE / PERSONA HIJACKING — "you are now a..."
 export const ROLE_HIJACK_PATTERNS: readonly RegExp[] = [
@@ -55,7 +55,7 @@ export const ROLE_HIJACK_PATTERNS: readonly RegExp[] = [
   /roleplay\s+(?:as|a\s+)?/i,
   /(?:new|another|different)\s+(?:identity|persona|role|character)/i,
   /(?:ganti|ubah|rubah)\s+(?:peran|identitas|karakter|persona)/i,
-]
+];
 
 // AUTHORITY CLAIMS — "I'm your developer"
 export const AUTHORITY_PATTERNS: readonly RegExp[] = [
@@ -63,7 +63,7 @@ export const AUTHORITY_PATTERNS: readonly RegExp[] = [
   /(?:this\s+is\s+)?(?:a\s+)?(?:test|debug|maintenance|update|security\s+check|system\s+audit)/i,
   /(?:saya|aku)\s+(?:adalah|sebagai)\s+(?:developer|pembuat|admin|programmer)/i,
   /(?:testing|audit|maintenance|update)\s+(?:mode|session|protocol)/i,
-]
+];
 
 // TOKEN / COMMAND INJECTION — XSS, shell, SQL
 export const TOKEN_INJECTION_PATTERNS: readonly RegExp[] = [
@@ -73,7 +73,7 @@ export const TOKEN_INJECTION_PATTERNS: readonly RegExp[] = [
   /```\s*(?:bash|sh|zsh|powershell|cmd|python|ruby|php)/i,
   /(?:curl|wget|nc|netcat)\s+/i,
   /(?:DROP|DELETE|INSERT|UPDATE)\s+(?:TABLE|FROM|INTO)/i,
-]
+];
 
 // CRESCENDO / MULTI-TURN DRIFT MARKERS
 export const CRESCENDO_PATTERNS: readonly RegExp[] = [
@@ -84,7 +84,7 @@ export const CRESCENDO_PATTERNS: readonly RegExp[] = [
   /(?:for\s+(?:science|research|educational|academic)\s+(?:purposes|reasons))/i,
   /(?:in\s+(?:a\s+)?(?:parallel|alternate|different|fictional|hypothetical)\s+(?:universe|reality|scenario|world))/i,
   /(?:CTF|capture\s+the\s+flag|cve-\d)/i,
-]
+];
 
 // LIGHTWEIGHT SUBSET — quick heuristic check (used by input.ts)
 // Keeps the most common patterns with low false-positive rate
@@ -104,11 +104,11 @@ export const QUICK_INJECTION_PATTERNS: readonly RegExp[] = [
   /\bDAN\s+mode\b/i,
   /<\|[^|]*\|>/,
   /\[\s*(?:system|assistant|user)\s*\]/i,
-]
+];
 
 // Combined leet-check patterns (override + extraction + role hijack)
 export const LEET_PATTERNS: readonly RegExp[] = [
   ...OVERRIDE_PATTERNS,
   ...EXTRACTION_PATTERNS,
   ...ROLE_HIJACK_PATTERNS,
-]
+];

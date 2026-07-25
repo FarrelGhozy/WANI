@@ -60,7 +60,7 @@ export const STEPS = [
 export const TESTIMONIALS = [
   {
     name: "Sari Dewi",
-    role: "Owner Toko Baju \"Bunga Sari\"",
+    role: 'Owner Toko Baju "Bunga Sari"',
     location: "Bandung",
     quote:
       "Sebelum pakai WANI, saya harus balas WA sendiri dari pagi sampai malem. Sekarang bot yang handle, saya bisa fokus ke produksi. Omzet naik 40% dalam 2 bulan!",
@@ -78,7 +78,7 @@ export const TESTIMONIALS = [
   },
   {
     name: "Rina Kusuma",
-    role: "Reseller Skincare \"Glow by Rina\"",
+    role: 'Reseller Skincare "Glow by Rina"',
     location: "Jakarta",
     quote:
       "Bot-nya pinter banget. Bisa jawab soal kandungan produk, cara pakai, sampai proses COD. Pelanggan saya kira ada CS beneran yang standby 24 jam.",
@@ -88,13 +88,13 @@ export const TESTIMONIALS = [
 ];
 
 export interface Plan {
-  name: string
-  monthlyPrice: number | null
-  yearlyPrice: number | null
-  desc: string
-  features: string[]
-  cta: string
-  highlight: boolean
+  name: string;
+  monthlyPrice: number | null;
+  yearlyPrice: number | null;
+  desc: string;
+  features: string[];
+  cta: string;
+  highlight: boolean;
 }
 
 export const PLANS: Plan[] = [
@@ -150,8 +150,8 @@ export const PLANS: Plan[] = [
 ];
 
 export interface ChatMessage {
-  from: "user" | "bot"
-  text: string
+  from: "user" | "bot";
+  text: string;
 }
 
 export const CHAT_MESSAGES: ChatMessage[] = [

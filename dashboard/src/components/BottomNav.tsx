@@ -1,14 +1,21 @@
-import { NavLink } from 'react-router'
-import { GridIcon, BagIcon, ClipboardIcon, PeopleIcon, GlobeIcon, CogIcon } from '@/components/Icons.tsx'
+import { NavLink } from "react-router";
+import {
+  GridIcon,
+  BagIcon,
+  ClipboardIcon,
+  PeopleIcon,
+  GlobeIcon,
+  CogIcon,
+} from "@/components/Icons.tsx";
 
 const navItems = [
-  { to: '/app', icon: GridIcon, label: 'Dashboard' },
-  { to: '/app/products', icon: BagIcon, label: 'Produk' },
-  { to: '/app/orders', icon: ClipboardIcon, label: 'Pesanan' },
-  { to: '/app/customers', icon: PeopleIcon, label: 'Pelanggan' },
-  { to: '/app/website', icon: GlobeIcon, label: 'Website' },
-  { to: '/app/settings', icon: CogIcon, label: 'Setting' },
-]
+  { to: "/app", icon: GridIcon, label: "Dashboard" },
+  { to: "/app/products", icon: BagIcon, label: "Produk" },
+  { to: "/app/orders", icon: ClipboardIcon, label: "Pesanan" },
+  { to: "/app/customers", icon: PeopleIcon, label: "Pelanggan" },
+  { to: "/app/website", icon: GlobeIcon, label: "Website" },
+  { to: "/app/settings", icon: CogIcon, label: "Setting" },
+];
 
 export default function BottomNav() {
   return (
@@ -18,17 +25,17 @@ export default function BottomNav() {
           <NavLink
             key={item.to}
             to={item.to}
-            end={item.to === '/app'}
+            end={item.to === "/app"}
             className="flex flex-col items-center gap-0.5 px-3 py-2"
           >
             {({ isActive }) => (
               <>
-                <span className={isActive ? 'text-teal-600' : 'text-stone-400'}>
+                <span className={isActive ? "text-teal-600" : "text-stone-400"}>
                   <item.icon />
                 </span>
                 <span
                   className={`text-[10px] font-medium ${
-                    isActive ? 'text-teal-700' : 'text-stone-400'
+                    isActive ? "text-teal-700" : "text-stone-400"
                   }`}
                 >
                   {item.label}
@@ -39,5 +46,5 @@ export default function BottomNav() {
         ))}
       </div>
     </nav>
-  )
+  );
 }

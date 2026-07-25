@@ -1,113 +1,122 @@
-import type { Request, Response } from "express"
-import type { z } from "zod"
-import { ProductModel, CategoryModel } from "@/src/models/catalog"
-import { sendResponse } from "@/src/utils/response"
-import { NotFoundError } from "@/src/utils/errors"
-import { getValidatedQuery } from "@/src/middleware/validate"
-import { getOwnerId, getOwnerIdOrFirst } from "@/src/middleware/owner"
-import { createProductSchema, updateProductSchema, productQuerySchema, createCategorySchema, updateCategorySchema } from "@/src/schemas/product"
+import type { Request, Response } from "express";
+import type { z } from "zod";
+import { ProductModel, CategoryModel } from "@/src/models/catalog";
+import { sendResponse } from "@/src/utils/response";
+import { NotFoundError } from "@/src/utils/errors";
+import { getValidatedQuery } from "@/src/middleware/validate";
+import { getOwnerId, getOwnerIdOrFirst } from "@/src/middleware/owner";
+import {
+  createProductSchema,
+  updateProductSchema,
+  productQuerySchema,
+  createCategorySchema,
+  updateCategorySchema,
+} from "@/src/schemas/product";
 
-type CreateProductBody = z.infer<typeof createProductSchema>
-type UpdateProductBody = z.infer<typeof updateProductSchema>
-type ProductQuery = z.infer<typeof productQuerySchema>
-type CreateCategoryBody = z.infer<typeof createCategorySchema>
-type UpdateCategoryBody = z.infer<typeof updateCategorySchema>
+type CreateProductBody = z.infer<typeof createProductSchema>;
+type UpdateProductBody = z.infer<typeof updateProductSchema>;
+type ProductQuery = z.infer<typeof productQuerySchema>;
+type CreateCategoryBody = z.infer<typeof createCategorySchema>;
+type UpdateCategoryBody = z.infer<typeof updateCategorySchema>;
 
 export async function listProducts(
   req: Request<Record<string, string>, any, any, ProductQuery>,
-  res: Response,
+  res: Response
 ): Promise<void> {
-  const ownerId = await getOwnerIdOrFirst(req)
-  const result = await ProductModel.list(ownerId, getValidatedQuery<ProductQuery>(req))
-  sendResponse(res, 200, "products retrieved", result)
+  const ownerId = await getOwnerIdOrFirst(req);
+  const result = await ProductModel.list(
+    ownerId,
+    getValidatedQuery<ProductQuery>(req)
+  );
+  sendResponse(res, 200, "products retrieved", result);
 }
 
 export async function getProduct(
   req: Request<{ id: string }>,
-  res: Response,
+  res: Response
 ): Promise<void> {
-  const product = await ProductModel.getByIdWithCategory(req.params.id)
+  const product = await ProductModel.getByIdWithCategory(req.params.id);
   if (!product) {
-    throw new NotFoundError("product not found")
+    throw new NotFoundError("product not found");
   }
-  sendResponse(res, 200, "product retrieved", product)
+  sendResponse(res, 200, "product retrieved", product);
 }
 
 export async function createProduct(
   req: Request<Record<string, string>, any, CreateProductBody>,
-  res: Response,
+  res: Response
 ): Promise<void> {
-  const ownerId = getOwnerId(req)
-  const product = await ProductModel.createProduct(ownerId, req.body)
-  sendResponse(res, 201, "product created", product)
+  const ownerId = getOwnerId(req);
+  const product = await ProductModel.createProduct(ownerId, req.body);
+  sendResponse(res, 201, "product created", product);
 }
 
 export async function updateProduct(
   req: Request<{ id: string }, any, UpdateProductBody>,
-  res: Response,
+  res: Response
 ): Promise<void> {
-  const ownerId = getOwnerId(req)
-  const existing = await ProductModel.getByIdWithCategory(req.params.id)
+  const ownerId = getOwnerId(req);
+  const existing = await ProductModel.getByIdWithCategory(req.params.id);
   if (!existing) {
-    throw new NotFoundError("product not found")
+    throw new NotFoundError("product not found");
   }
-  const product = await ProductModel.updateProduct(req.params.id, req.body)
-  sendResponse(res, 200, "product updated", product)
+  const product = await ProductModel.updateProduct(req.params.id, req.body);
+  sendResponse(res, 200, "product updated", product);
 }
 
 export async function deleteProduct(
   req: Request<{ id: string }>,
-  res: Response,
+  res: Response
 ): Promise<void> {
-  getOwnerId(req)
-  const existing = await ProductModel.getByIdWithCategory(req.params.id)
+  getOwnerId(req);
+  const existing = await ProductModel.getByIdWithCategory(req.params.id);
   if (!existing) {
-    throw new NotFoundError("product not found")
+    throw new NotFoundError("product not found");
   }
-  await ProductModel.deleteProduct(req.params.id)
-  sendResponse(res, 200, "product deleted")
+  await ProductModel.deleteProduct(req.params.id);
+  sendResponse(res, 200, "product deleted");
 }
 
 export async function listCategories(
   req: Request,
-  res: Response,
+  res: Response
 ): Promise<void> {
-  const ownerId = await getOwnerIdOrFirst(req)
-  const items = await CategoryModel.listAll(ownerId)
-  sendResponse(res, 200, "categories retrieved", { items })
+  const ownerId = await getOwnerIdOrFirst(req);
+  const items = await CategoryModel.listAll(ownerId);
+  sendResponse(res, 200, "categories retrieved", { items });
 }
 
 export async function createCategory(
   req: Request<Record<string, string>, any, CreateCategoryBody>,
-  res: Response,
+  res: Response
 ): Promise<void> {
-  const ownerId = getOwnerId(req)
-  const category = await CategoryModel.createCategory(ownerId, req.body)
-  sendResponse(res, 201, "category created", category)
+  const ownerId = getOwnerId(req);
+  const category = await CategoryModel.createCategory(ownerId, req.body);
+  sendResponse(res, 201, "category created", category);
 }
 
 export async function updateCategory(
   req: Request<{ id: string }, any, UpdateCategoryBody>,
-  res: Response,
+  res: Response
 ): Promise<void> {
-  getOwnerId(req)
-  const existing = await CategoryModel.getByIdWithCount(req.params.id)
+  getOwnerId(req);
+  const existing = await CategoryModel.getByIdWithCount(req.params.id);
   if (!existing) {
-    throw new NotFoundError("category not found")
+    throw new NotFoundError("category not found");
   }
-  const category = await CategoryModel.updateCategory(req.params.id, req.body)
-  sendResponse(res, 200, "category updated", category)
+  const category = await CategoryModel.updateCategory(req.params.id, req.body);
+  sendResponse(res, 200, "category updated", category);
 }
 
 export async function deleteCategory(
   req: Request<{ id: string }>,
-  res: Response,
+  res: Response
 ): Promise<void> {
-  getOwnerId(req)
-  const existing = await CategoryModel.getByIdWithCount(req.params.id)
+  getOwnerId(req);
+  const existing = await CategoryModel.getByIdWithCount(req.params.id);
   if (!existing) {
-    throw new NotFoundError("category not found")
+    throw new NotFoundError("category not found");
   }
-  await CategoryModel.deleteCategory(req.params.id)
-  sendResponse(res, 200, "category deleted")
+  await CategoryModel.deleteCategory(req.params.id);
+  sendResponse(res, 200, "category deleted");
 }

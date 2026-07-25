@@ -1,37 +1,40 @@
-import { Component, type ReactNode } from 'react'
-import { AlertCircleIcon, RefreshIcon } from '@/components/Icons.tsx'
+import { Component, type ReactNode } from "react";
+import { AlertCircleIcon, RefreshIcon } from "@/components/Icons.tsx";
 
 interface ErrorBoundaryProps {
-  children: ReactNode
-  fallback?: ReactNode
+  children: ReactNode;
+  fallback?: ReactNode;
 }
 
 interface ErrorBoundaryState {
-  hasError: boolean
-  error: Error | null
+  hasError: boolean;
+  error: Error | null;
 }
 
-export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+export class ErrorBoundary extends Component<
+  ErrorBoundaryProps,
+  ErrorBoundaryState
+> {
   constructor(props: ErrorBoundaryProps) {
-    super(props)
-    this.state = { hasError: false, error: null }
+    super(props);
+    this.state = { hasError: false, error: null };
   }
 
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
-    return { hasError: true, error }
+    return { hasError: true, error };
   }
 
   componentDidCatch(error: Error, info: { componentStack: string }) {
-    console.error('[ErrorBoundary]', error.message, info.componentStack)
+    console.error("[ErrorBoundary]", error.message, info.componentStack);
   }
 
   handleRetry = () => {
-    this.setState({ hasError: false, error: null })
-  }
+    this.setState({ hasError: false, error: null });
+  };
 
   render() {
     if (this.state.hasError) {
-      if (this.props.fallback) return this.props.fallback
+      if (this.props.fallback) return this.props.fallback;
 
       return (
         <div className="flex min-h-[400px] items-center justify-center p-6">
@@ -43,7 +46,8 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
               Terjadi Kesalahan
             </h2>
             <p className="mt-2 text-sm text-stone-600">
-              {this.state.error?.message || 'Terjadi kesalahan yang tidak diketahui'}
+              {this.state.error?.message ||
+                "Terjadi kesalahan yang tidak diketahui"}
             </p>
             <button
               onClick={this.handleRetry}
@@ -54,9 +58,9 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
             </button>
           </div>
         </div>
-      )
+      );
     }
 
-    return this.props.children
+    return this.props.children;
   }
 }

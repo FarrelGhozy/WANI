@@ -1,102 +1,122 @@
-import { useMemo, useState, useEffect } from 'react'
-import { useNavigate } from 'react-router'
-import { useWaStatusContext } from '@/contexts/WaStatusContext.tsx'
-import { useStoreContext } from '@/contexts/StoreContext.tsx'
-import { useOrders } from '@/hooks/useOrders.ts'
-import { useProductsContext } from '@/contexts/ProductsContext.tsx'
-import { useCustomers } from '@/hooks/useCustomers.ts'
-import { fetchApi } from '@/lib/api.ts'
-import StatusCard from '@/components/StatusCard.tsx'
-import Card from '@/components/ui/Card.tsx'
-import Button from '@/components/ui/Button.tsx'
-import { Skeleton, SkeletonCard } from '@/components/ui/Skeleton.tsx'
-import Badge from '@/components/ui/Badge.tsx'
-import QRCode from '@/components/QRCode.tsx'
-import { SignalIcon, BagIcon, ClipboardIcon, PeopleIcon } from '@/components/Icons.tsx'
-import { formatPrice } from '@/utils/format.ts'
+import { useMemo, useState, useEffect } from "react";
+import { useNavigate } from "react-router";
+import { useWaStatusContext } from "@/contexts/WaStatusContext.tsx";
+import { useStoreContext } from "@/contexts/StoreContext.tsx";
+import { useOrders } from "@/hooks/useOrders.ts";
+import { useProductsContext } from "@/contexts/ProductsContext.tsx";
+import { useCustomers } from "@/hooks/useCustomers.ts";
+import { fetchApi } from "@/lib/api.ts";
+import StatusCard from "@/components/StatusCard.tsx";
+import Card from "@/components/ui/Card.tsx";
+import Button from "@/components/ui/Button.tsx";
+import { Skeleton, SkeletonCard } from "@/components/ui/Skeleton.tsx";
+import Badge from "@/components/ui/Badge.tsx";
+import QRCode from "@/components/QRCode.tsx";
+import {
+  SignalIcon,
+  BagIcon,
+  ClipboardIcon,
+  PeopleIcon,
+} from "@/components/Icons.tsx";
+import { formatPrice } from "@/utils/format.ts";
 
-const statusBadgeVariant: Record<string, 'amber' | 'teal' | 'green' | 'gray' | 'red'> = {
-  PENDING: 'amber',
-  CONFIRMED: 'teal',
-  PROCESSING: 'green',
-  COMPLETED: 'gray',
-  CANCELLED: 'red',
-}
+const statusBadgeVariant: Record<
+  string,
+  "amber" | "teal" | "green" | "gray" | "red"
+> = {
+  PENDING: "amber",
+  CONFIRMED: "teal",
+  PROCESSING: "green",
+  COMPLETED: "gray",
+  CANCELLED: "red",
+};
 
 const statusLabel: Record<string, string> = {
-  PENDING: 'Tertunda',
-  CONFIRMED: 'Dikonfirmasi',
-  PROCESSING: 'Diproses',
-  COMPLETED: 'Selesai',
-  CANCELLED: 'Dibatalkan',
-}
+  PENDING: "Tertunda",
+  CONFIRMED: "Dikonfirmasi",
+  PROCESSING: "Diproses",
+  COMPLETED: "Selesai",
+  CANCELLED: "Dibatalkan",
+};
 
-function mapAccent(status: string): 'teal' | 'amber' | 'red' {
+function mapAccent(status: string): "teal" | "amber" | "red" {
   switch (status) {
-    case 'connected': return 'teal'
-    case 'connecting': return 'amber'
-    default: return 'red'
+    case "connected":
+      return "teal";
+    case "connecting":
+      return "amber";
+    default:
+      return "red";
   }
 }
 
 function connectionLabel(status: string): string {
   switch (status) {
-    case 'connected': return 'Terhubung'
-    case 'connecting': return 'Menghubungkan\u2026'
-    default: return 'Terputus'
+    case "connected":
+      return "Terhubung";
+    case "connecting":
+      return "Menghubungkan\u2026";
+    default:
+      return "Terputus";
   }
 }
 
 export default function Dashboard() {
-  const navigate = useNavigate()
-  const { qr, connection, phone } = useWaStatusContext()
-  const { store, loading: storeLoading } = useStoreContext()
-  const { allOrders, loading: ordersLoading } = useOrders()
-  const { products, loading: prodLoading } = useProductsContext()
-  const { allCustomers, loading: custLoading } = useCustomers()
-  const [needsPaymentMethod, setNeedsPaymentMethod] = useState(false)
+  const navigate = useNavigate();
+  const { qr, connection, phone } = useWaStatusContext();
+  const { store, loading: storeLoading } = useStoreContext();
+  const { allOrders, loading: ordersLoading } = useOrders();
+  const { products, loading: prodLoading } = useProductsContext();
+  const { allCustomers, loading: custLoading } = useCustomers();
+  const [needsPaymentMethod, setNeedsPaymentMethod] = useState(false);
 
   useEffect(() => {
-    let cancelled = false
-    ;(async () => {
+    let cancelled = false;
+    (async () => {
       try {
-        const res = await fetchApi<{ hasPaymentMethods: boolean }>('/store')
-        if (!cancelled) setNeedsPaymentMethod(!res.data?.hasPaymentMethods)
+        const res = await fetchApi<{ hasPaymentMethods: boolean }>("/store");
+        if (!cancelled) setNeedsPaymentMethod(!res.data?.hasPaymentMethods);
       } catch {
         // silent
       }
-    })()
-    return () => { cancelled = true }
-  }, [])
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
-  const coreLoading = ordersLoading || prodLoading || custLoading
+  const coreLoading = ordersLoading || prodLoading || custLoading;
 
   const totalRevenue = useMemo(
-    () => allOrders
-      .filter((o) => o.status === 'COMPLETED')
-      .reduce((sum, o) => sum + o.totalAmount, 0),
-    [allOrders],
-  )
+    () =>
+      allOrders
+        .filter((o) => o.status === "COMPLETED")
+        .reduce((sum, o) => sum + o.totalAmount, 0),
+    [allOrders]
+  );
 
   const pendingProcessOrders = useMemo(
-    () => allOrders.filter((o) => o.status === 'PENDING' || o.status === 'CONFIRMED'),
-    [allOrders],
-  )
+    () =>
+      allOrders.filter(
+        (o) => o.status === "PENDING" || o.status === "CONFIRMED"
+      ),
+    [allOrders]
+  );
 
   const activeProducts = useMemo(
     () => products.filter((p) => p.isAvailable),
-    [products],
-  )
+    [products]
+  );
 
   const lowStockProducts = useMemo(
     () => products.filter((p) => p.stock === 0 || !p.isAvailable),
-    [products],
-  )
+    [products]
+  );
 
   const unreadCustomerCount = useMemo(
     () => allCustomers.filter((c) => c.unreadCount > 0).length,
-    [allCustomers],
-  )
+    [allCustomers]
+  );
 
   if (coreLoading || storeLoading) {
     return (
@@ -104,39 +124,67 @@ export default function Dashboard() {
         <Skeleton variant="text" className="h-6 w-48" />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} variant="rectangular" className="h-28 rounded-xl" />
+            <Skeleton
+              key={i}
+              variant="rectangular"
+              className="h-28 rounded-xl"
+            />
           ))}
         </div>
         <SkeletonCard height="h-64" />
       </div>
-    )
+    );
   }
 
   if (!store) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
         <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-teal-100 text-teal-600">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          <svg
+            width="40"
+            height="40"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+          >
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+            <polyline points="9 22 9 12 15 12 15 22" />
+          </svg>
         </div>
-        <h2 className="text-xl font-semibold text-stone-900">Selamat Datang di WANI!</h2>
+        <h2 className="text-xl font-semibold text-stone-900">
+          Selamat Datang di WANI!
+        </h2>
         <p className="mt-2 text-sm text-stone-500 max-w-md">
-          Anda belum memiliki toko. Mulai dengan mengatur profil toko, produk, dan metode pembayaran.
+          Anda belum memiliki toko. Mulai dengan mengatur profil toko, produk,
+          dan metode pembayaran.
         </p>
         <div className="mt-6 flex gap-3">
-          <Button onClick={() => navigate('/settings?tab=store')}>Atur Toko</Button>
-          <Button variant="secondary" onClick={() => navigate('/settings?tab=payment')}>Metode Pembayaran</Button>
+          <Button onClick={() => navigate("/settings?tab=store")}>
+            Atur Toko
+          </Button>
+          <Button
+            variant="secondary"
+            onClick={() => navigate("/settings?tab=payment")}
+          >
+            Metode Pembayaran
+          </Button>
         </div>
       </div>
-    )
+    );
   }
 
   return (
     <div className="space-y-6">
-
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-stone-900">Dashboard</h1>
-        <p className="mt-1 text-sm text-stone-500">Ringkasan bisnis dan status penting</p>
+        <h1 className="text-2xl font-semibold tracking-tight text-stone-900">
+          Dashboard
+        </h1>
+        <p className="mt-1 text-sm text-stone-500">
+          Ringkasan bisnis dan status penting
+        </p>
       </div>
 
       {/* Payment Method Warning */}
@@ -144,17 +192,28 @@ export default function Dashboard() {
         <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
           <div className="flex items-start gap-3">
             <div className="mt-0.5 shrink-0 text-amber-500">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              >
                 <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-                <line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" />
+                <line x1="12" y1="9" x2="12" y2="13" />
+                <line x1="12" y1="17" x2="12.01" y2="17" />
               </svg>
             </div>
             <div className="flex-1">
-              <p className="text-sm font-medium text-amber-900">Belum ada metode pembayaran</p>
+              <p className="text-sm font-medium text-amber-900">
+                Belum ada metode pembayaran
+              </p>
               <p className="mt-0.5 text-xs text-amber-700">
-                Pelanggan belum bisa melihat informasi pembayaran.{' '}
+                Pelanggan belum bisa melihat informasi pembayaran.{" "}
                 <button
-                   onClick={() => navigate('/app/settings?tab=payment')}
+                  onClick={() => navigate("/app/settings?tab=payment")}
                   className="font-medium underline underline-offset-2 transition-colors hover:text-amber-900"
                 >
                   Atur metode pembayaran
@@ -177,14 +236,18 @@ export default function Dashboard() {
         <StatusCard
           label="Perlu Diproses"
           value={String(pendingProcessOrders.length)}
-          accent={pendingProcessOrders.length > 0 ? 'amber' : 'teal'}
+          accent={pendingProcessOrders.length > 0 ? "amber" : "teal"}
           icon={<ClipboardIcon />}
-          subText={pendingProcessOrders.length > 0 ? 'Menunggu konfirmasi' : 'Semua sudah diproses'}
+          subText={
+            pendingProcessOrders.length > 0
+              ? "Menunggu konfirmasi"
+              : "Semua sudah diproses"
+          }
         />
         <StatusCard
           label="Produk Aktif"
           value={`${activeProducts.length}/${products.length}`}
-          accent={activeProducts.length > 0 ? 'teal' : 'red'}
+          accent={activeProducts.length > 0 ? "teal" : "red"}
           icon={<BagIcon />}
           subText={`${lowStockProducts.length} perlu perhatian`}
         />
@@ -193,17 +256,23 @@ export default function Dashboard() {
           value={String(allCustomers.length)}
           accent="teal"
           icon={<PeopleIcon />}
-          subText={unreadCustomerCount > 0 ? `${unreadCustomerCount} pesan belum dibaca` : 'Tidak ada pesan baru'}
+          subText={
+            unreadCustomerCount > 0
+              ? `${unreadCustomerCount} pesan belum dibaca`
+              : "Tidak ada pesan baru"
+          }
         />
       </div>
 
       {/* Pending Orders List */}
       <Card>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-sm font-semibold text-stone-900">Pesanan Perlu Diproses</h2>
+          <h2 className="text-sm font-semibold text-stone-900">
+            Pesanan Perlu Diproses
+          </h2>
           {pendingProcessOrders.length > 0 && (
             <button
-                   onClick={() => navigate('/app/orders')}
+              onClick={() => navigate("/app/orders")}
               className="text-xs font-medium text-teal-600 transition-colors hover:text-teal-700"
             >
               Lihat Semua &rarr;
@@ -213,25 +282,37 @@ export default function Dashboard() {
         {pendingProcessOrders.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-10 text-center">
             <div className="mb-3 rounded-full bg-emerald-50 p-3 text-emerald-500">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              >
                 <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
                 <path d="M22 4L12 14.01l-3-3" />
               </svg>
             </div>
-            <p className="text-sm font-medium text-stone-900">Semua pesanan sudah diproses</p>
-            <p className="mt-1 text-xs text-stone-500">Tidak ada pesanan yang menunggu konfirmasi</p>
+            <p className="text-sm font-medium text-stone-900">
+              Semua pesanan sudah diproses
+            </p>
+            <p className="mt-1 text-xs text-stone-500">
+              Tidak ada pesanan yang menunggu konfirmasi
+            </p>
           </div>
         ) : (
           <div className="divide-y divide-stone-100">
             {pendingProcessOrders.slice(0, 5).map((order) => (
               <div
                 key={order.id}
-                       onClick={() => navigate(`/app/orders/${order.id}`)}
+                onClick={() => navigate(`/app/orders/${order.id}`)}
                 className="flex cursor-pointer items-center justify-between gap-3 px-1 py-3 transition-colors hover:bg-stone-50 -mx-1 rounded-lg"
               >
                 <div className="flex items-center gap-3 min-w-0">
                   <span className="shrink-0 font-mono text-xs font-medium text-teal-600">
-                    #{order.id.split('-')[1].toUpperCase().padStart(3, '0')}
+                    #{order.id.split("-")[1].toUpperCase().padStart(3, "0")}
                   </span>
                   <span className="truncate text-sm font-medium text-stone-900">
                     {order.customerName}
@@ -244,7 +325,16 @@ export default function Dashboard() {
                   <Badge variant={statusBadgeVariant[order.status]} dot>
                     {statusLabel[order.status]}
                   </Badge>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="text-stone-300">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    className="text-stone-300"
+                  >
                     <path d="M9 18l6-6-6-6" />
                   </svg>
                 </div>
@@ -256,20 +346,25 @@ export default function Dashboard() {
 
       {/* Bottom Row: WhatsApp + Stock Alert */}
       <div className="grid gap-6 lg:grid-cols-2">
-
         {/* WhatsApp Connection */}
         <Card>
           <div className="flex items-start gap-4">
-            <div className={`rounded-lg p-2.5 ${
-              connection === 'connected' ? 'bg-emerald-50 text-emerald-600' :
-              connection === 'connecting' ? 'bg-amber-50 text-amber-600' :
-              'bg-red-50 text-red-600'
-            }`}>
+            <div
+              className={`rounded-lg p-2.5 ${
+                connection === "connected"
+                  ? "bg-emerald-50 text-emerald-600"
+                  : connection === "connecting"
+                    ? "bg-amber-50 text-amber-600"
+                    : "bg-red-50 text-red-600"
+              }`}
+            >
               <SignalIcon />
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between gap-2">
-                <h3 className="text-sm font-semibold text-stone-900">WhatsApp</h3>
+                <h3 className="text-sm font-semibold text-stone-900">
+                  WhatsApp
+                </h3>
                 <Badge variant={mapAccent(connection)} dot>
                   {connectionLabel(connection)}
                 </Badge>
@@ -277,7 +372,7 @@ export default function Dashboard() {
               {phone && (
                 <p className="mt-0.5 text-xs text-stone-500">{phone}</p>
               )}
-              {connection === 'disconnected' || connection === 'connecting' ? (
+              {connection === "disconnected" || connection === "connecting" ? (
                 <div className="mt-4 flex flex-col items-center gap-3 sm:flex-row">
                   <QRCode value={qr} />
                   <p className="text-xs text-stone-400 sm:text-left text-center">
@@ -300,28 +395,46 @@ export default function Dashboard() {
               <BagIcon />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="text-sm font-semibold text-stone-900">Perhatian Stok</h3>
+              <h3 className="text-sm font-semibold text-stone-900">
+                Perhatian Stok
+              </h3>
               {lowStockProducts.length === 0 ? (
                 <div className="mt-3 flex flex-col items-center justify-center py-6 text-center">
                   <div className="mb-2 rounded-full bg-emerald-50 p-2 text-emerald-500">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                    >
                       <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
                       <path d="M22 4L12 14.01l-3-3" />
                     </svg>
                   </div>
-                  <p className="text-sm font-medium text-stone-900">Semua stok aman</p>
+                  <p className="text-sm font-medium text-stone-900">
+                    Semua stok aman
+                  </p>
                 </div>
               ) : (
                 <div className="mt-3 divide-y divide-stone-100">
                   {lowStockProducts.map((product) => (
                     <div
                       key={product.id}
-                       onClick={() => navigate(`/app/products/${product.id}`)}
+                      onClick={() => navigate(`/app/products/${product.id}`)}
                       className="flex cursor-pointer items-center justify-between py-2 transition-colors hover:text-teal-600"
                     >
-                      <span className="text-sm text-stone-700">{product.name}</span>
-                      <span className={`text-xs font-medium ${product.stock === 0 ? 'text-red-500' : 'text-stone-400'}`}>
-                        {product.isAvailable ? `Stok: ${product.stock}` : 'Tidak aktif'}
+                      <span className="text-sm text-stone-700">
+                        {product.name}
+                      </span>
+                      <span
+                        className={`text-xs font-medium ${product.stock === 0 ? "text-red-500" : "text-stone-400"}`}
+                      >
+                        {product.isAvailable
+                          ? `Stok: ${product.stock}`
+                          : "Tidak aktif"}
                       </span>
                     </div>
                   ))}
@@ -330,9 +443,7 @@ export default function Dashboard() {
             </div>
           </div>
         </Card>
-
       </div>
-
     </div>
-  )
+  );
 }

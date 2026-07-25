@@ -13,7 +13,14 @@ export default function PhoneMockup() {
     gsap.fromTo(
       phoneRef.current,
       { opacity: 0, y: 60, scale: 0.92 },
-      { opacity: 1, y: 0, scale: 1, duration: 1, delay: 0.5, ease: "power3.out" }
+      {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        duration: 1,
+        delay: 0.5,
+        ease: "power3.out",
+      }
     );
   }, []);
 
@@ -30,7 +37,11 @@ export default function PhoneMockup() {
   }, [visible]);
 
   return (
-    <div ref={phoneRef} className="relative mx-auto w-[300px] select-none" style={{ opacity: 0 }}>
+    <div
+      ref={phoneRef}
+      className="relative mx-auto w-[300px] select-none"
+      style={{ opacity: 0 }}
+    >
       <div className="absolute -inset-6 rounded-[3rem] bg-teal-400/20 blur-2xl" />
       <div className="relative rounded-[2.5rem] border-[6px] border-stone-800 bg-stone-800 shadow-2xl shadow-teal-900/60">
         <div className="overflow-hidden rounded-[2rem] bg-[#ece5dd]">
@@ -39,12 +50,17 @@ export default function PhoneMockup() {
               WA
             </div>
             <div>
-              <p className="text-sm font-semibold text-white">Toko Bunga Sari</p>
+              <p className="text-sm font-semibold text-white">
+                Toko Bunga Sari
+              </p>
               <p className="text-[11px] text-teal-200">Bot aktif • online</p>
             </div>
           </div>
 
-          <div ref={chatRef} className="flex h-[440px] flex-col gap-2 overflow-y-auto px-3 py-3">
+          <div
+            ref={chatRef}
+            className="flex h-[440px] flex-col gap-2 overflow-y-auto px-3 py-3"
+          >
             {CHAT_MESSAGES.slice(0, visible).map((msg, i) => (
               <div
                 key={i}

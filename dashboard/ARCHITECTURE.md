@@ -6,19 +6,19 @@
 
 ## Stack
 
-| Layer | Teknologi | Versi |
-|-------|-----------|-------|
-| **Runtime** | Bun | 1.3.x |
-| **UI** | React | 19.2.7 |
-| **Bundler** | Vite (Rolldown) | 8.0.16 |
-| **TypeScript** | TypeScript | 6.0.3 |
-| **CSS** | Tailwind CSS | 4.3.1 |
-| **Routing** | React Router | 8.0.1 |
-| **QR** | qrcode.react | 4.2.0 |
-| **Lint** | ESLint | 10.5.0 |
-| **TS Lint** | typescript-eslint | 8.61.1 |
-| **Compiler** | React Compiler (Babel) | 1.0.0 |
-| **CSS Framework** | Tailwind CSS (Vite plugin) | 4.3.1 |
+| Layer             | Teknologi                  | Versi  |
+| ----------------- | -------------------------- | ------ |
+| **Runtime**       | Bun                        | 1.3.x  |
+| **UI**            | React                      | 19.2.7 |
+| **Bundler**       | Vite (Rolldown)            | 8.0.16 |
+| **TypeScript**    | TypeScript                 | 6.0.3  |
+| **CSS**           | Tailwind CSS               | 4.3.1  |
+| **Routing**       | React Router               | 8.0.1  |
+| **QR**            | qrcode.react               | 4.2.0  |
+| **Lint**          | ESLint                     | 10.5.0 |
+| **TS Lint**       | typescript-eslint          | 8.61.1 |
+| **Compiler**      | React Compiler (Babel)     | 1.0.0  |
+| **CSS Framework** | Tailwind CSS (Vite plugin) | 4.3.1  |
 
 ### Prinsip Stack
 
@@ -34,17 +34,17 @@
 
 Dashboard dirancang dengan arah visual **modern, hangat, dan trustworthy** — cocok untuk UMKM Indonesia. Bukan korporat dingin, bukan pula terlalu playful.
 
-| Aspek | Pilihan |
-|-------|---------|
-| **Tone** | Profesional hangat, approachable |
-| **Karakter** | Bersih, lapang, ngga sumpek |
+| Aspek                   | Pilihan                                      |
+| ----------------------- | -------------------------------------------- |
+| **Tone**                | Profesional hangat, approachable             |
+| **Karakter**            | Bersih, lapang, ngga sumpek                  |
 | **Siapa lawan bicara?** | Pemilik UMKM yang ingin monitor bisnis cepat |
 
 ### Color Palette
 
 ```css
 /* Primary — teal, tenang, dipercaya */
---color-teal-50:  #ecfdf5;
+--color-teal-50: #ecfdf5;
 --color-teal-100: #d1fae5;
 --color-teal-200: #a7f3d0;
 --color-teal-300: #6ee7b7;
@@ -56,7 +56,7 @@ Dashboard dirancang dengan arah visual **modern, hangat, dan trustworthy** — c
 --color-teal-900: #064e3b;
 
 /* Accent — amber hangat, energetic */
---color-amber-50:  #fffbeb;
+--color-amber-50: #fffbeb;
 --color-amber-100: #fef3c7;
 --color-amber-200: #fde68a;
 --color-amber-300: #fcd34d;
@@ -68,14 +68,15 @@ Dashboard dirancang dengan arah visual **modern, hangat, dan trustworthy** — c
 --color-amber-900: #78350f;
 
 /* Surface — warm neutral */
---color-surface:    #fafaf9;   /* background utama */
---color-surface-50: #f5f5f4;   /* card bg alternatif */
---color-border:     #e7e5e4;   /* border halus */
---color-text:       #1c1917;   /* text utama (stone-900) */
---color-text-muted: #78716c;   /* text sekunder (stone-500) */
+--color-surface: #fafaf9; /* background utama */
+--color-surface-50: #f5f5f4; /* card bg alternatif */
+--color-border: #e7e5e4; /* border halus */
+--color-text: #1c1917; /* text utama (stone-900) */
+--color-text-muted: #78716c; /* text sekunder (stone-500) */
 ```
 
 **Prinsip warna:**
+
 - Teal sebagai identitas utama (sidebar, button, status connected)
 - Amber hanya sebagai aksen selektif (badge, highlight, icon)
 - Surface warm neutral, bukan putih murni (#fafaf9 bukan #ffffff)
@@ -83,12 +84,12 @@ Dashboard dirancang dengan arah visual **modern, hangat, dan trustworthy** — c
 
 ### Typography
 
-| Konteks | Font | Fallback |
-|---------|------|----------|
-| **Body** | system-ui, -apple-system, sans-serif | System stack |
-| **Headline** | system-ui, -apple-system, sans-serif | Bold weight |
-| **Angka/Data** | system-ui tabular-nums | Monospace spacing |
-| **Kode** | ui-monospace, monospace | — |
+| Konteks        | Font                                 | Fallback          |
+| -------------- | ------------------------------------ | ----------------- |
+| **Body**       | system-ui, -apple-system, sans-serif | System stack      |
+| **Headline**   | system-ui, -apple-system, sans-serif | Bold weight       |
+| **Angka/Data** | system-ui tabular-nums               | Monospace spacing |
+| **Kode**       | ui-monospace, monospace              | —                 |
 
 > Tidak pakai font custom (Google Fonts dll) — biar loading cepet. System font stack sudah cukup kalau dipadukan dengan spacing dan weight yang intentional.
 
@@ -98,11 +99,11 @@ Menggunakan skala Tailwind default, tapi dipilih secara intentional:
 
 ```css
 /* Rhythm vertikal antar section */
---section-gap: 2rem;       /* space-y-8 */
---card-padding: 1.5rem;    /* p-6 */
---card-gap: 1rem;          /* gap-4 */
---sidebar-width: 16rem;    /* w-64 */
---content-max-width: 80rem;/* max-w-7xl */
+--section-gap: 2rem; /* space-y-8 */
+--card-padding: 1.5rem; /* p-6 */
+--card-gap: 1rem; /* gap-4 */
+--sidebar-width: 16rem; /* w-64 */
+--content-max-width: 80rem; /* max-w-7xl */
 ```
 
 ### Surface & Shadow
@@ -110,18 +111,18 @@ Menggunakan skala Tailwind default, tapi dipilih secara intentional:
 ```css
 /* Card */
 --card-bg: white;
---card-border: 1px solid #e7e5e4;  /* subtle border */
---card-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
---card-radius: 0.75rem;             /* rounded-xl */
+--card-border: 1px solid #e7e5e4; /* subtle border */
+--card-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
+--card-radius: 0.75rem; /* rounded-xl */
 
 /* Sidebar */
---sidebar-bg: #055f4e;             /* teal-800 */
---sidebar-text: #ecfdf5;           /* teal-50 */
---sidebar-hover: rgba(255,255,255,0.08);
+--sidebar-bg: #055f4e; /* teal-800 */
+--sidebar-text: #ecfdf5; /* teal-50 */
+--sidebar-hover: rgba(255, 255, 255, 0.08);
 
 /* Interactive */
---button-primary: #059669;         /* teal-600 */
---button-primary-hover: #047857;   /* teal-700 */
+--button-primary: #059669; /* teal-600 */
+--button-primary-hover: #047857; /* teal-700 */
 --button-danger: #ef4444;
 ```
 
@@ -153,6 +154,7 @@ Menggunakan skala Tailwind default, tapi dipilih secara intentional:
 ```
 
 **Prinsip layout:**
+
 - Sidebar gelap (teal-800) — bikin kontras bersih dengan konten
 - Content area lapang — whitespace adalah fitur, bukan bug
 - Tiap section punya breathing room (min 2rem antar section)
@@ -358,35 +360,41 @@ const router = createBrowserRouter([
   {
     element: <AuthLayout />,
     children: [
-      { path: '/login',           element: <LoginPage /> },
-      { path: '/signup',          element: <SignUpPage /> },
-      { path: '/forgot-password', element: <ForgotPasswordPage /> },
-      { path: '/verify-email',    element: <VerifyEmailPage /> },
-      { path: '/reset-password',  element: <ResetPasswordPage /> },
+      { path: "/login", element: <LoginPage /> },
+      { path: "/signup", element: <SignUpPage /> },
+      { path: "/forgot-password", element: <ForgotPasswordPage /> },
+      { path: "/verify-email", element: <VerifyEmailPage /> },
+      { path: "/reset-password", element: <ResetPasswordPage /> },
     ],
   },
   // Protected routes — Layout (with sidebar + topbar)
   {
-    element: <ProtectedRoute><WaStatusProvider><Layout /></WaStatusProvider></ProtectedRoute>,
+    element: (
+      <ProtectedRoute>
+        <WaStatusProvider>
+          <Layout />
+        </WaStatusProvider>
+      </ProtectedRoute>
+    ),
     children: [
-      { index: true,           element: <Dashboard /> },
-      { path: 'products',     element: <Products /> },
-      { path: 'products/new',  element: <ProductForm /> },
-      { path: 'products/:id',  element: <ProductForm /> },
-      { path: 'orders',       element: <Orders /> },
-      { path: 'orders/:id',   element: <OrderDetail /> },
-      { path: 'customers',    element: <Customers /> },
-      { path: 'customers/:id',element: <Customers /> },
-      { path: 'website',      element: <Website /> },
-      { path: 'settings',     element: <Settings /> },
+      { index: true, element: <Dashboard /> },
+      { path: "products", element: <Products /> },
+      { path: "products/new", element: <ProductForm /> },
+      { path: "products/:id", element: <ProductForm /> },
+      { path: "orders", element: <Orders /> },
+      { path: "orders/:id", element: <OrderDetail /> },
+      { path: "customers", element: <Customers /> },
+      { path: "customers/:id", element: <Customers /> },
+      { path: "website", element: <Website /> },
+      { path: "settings", element: <Settings /> },
     ],
   },
   // 404 catch-all
   {
-    path: '*',
+    path: "*",
     element: <NotFoundPage />,
   },
-])
+]);
 ```
 
 ---
@@ -445,9 +453,9 @@ const router = createBrowserRouter([
 
 ### Polling Strategy
 
-| Page | Endpoint | Interval | Notes |
-|------|----------|----------|-------|
-| Dashboard | `/api/qr` + `/api/qr/status` | 5 detik | QR & status real-time |
+| Page      | Endpoint                     | Interval | Notes                 |
+| --------- | ---------------------------- | -------- | --------------------- |
+| Dashboard | `/api/qr` + `/api/qr/status` | 5 detik  | QR & status real-time |
 
 Hanya WA status yang di-polling (5 detik). Semua data bisnis (products, orders, customers, settings) di-fetch dari real API via `fetchApi()`.
 
@@ -569,16 +577,17 @@ Klik customer → load percakapan.
 
 Settings adalah halaman tab tunggal dengan 4 bagian:
 
-| Tab | Isi |
-|-----|-----|
-| **Store** | Business name, phone, logo/photo, address, business hours, shipping info, return policy |
-| **AI Agent** | System prompt, model, greeting message, knowledge base, temperature, max tokens, active toggle |
+| Tab            | Isi                                                                                                                                                                       |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Store**      | Business name, phone, logo/photo, address, business hours, shipping info, return policy                                                                                   |
+| **AI Agent**   | System prompt, model, greeting message, knowledge base, temperature, max tokens, active toggle                                                                            |
 | **WA Session** | QR login flow, status koneksi (dot + label), nomor telepon, session detail (platform, connected since, last active), disconnect/connect button, info card tentang session |
-| **Pembayaran** | List metode pembayaran (QRIS/Bank Transfer/E-Wallet/COD), tambah/edit/hapus, upload QRIS, toggle aktif/nonaktif |
+| **Pembayaran** | List metode pembayaran (QRIS/Bank Transfer/E-Wallet/COD), tambah/edit/hapus, upload QRIS, toggle aktif/nonaktif                                                           |
 
 Desain tab horizontal di bagian atas, konten di bawah. Satu form per tab.
 
 **Data Flow WA Session:**
+
 - Settings menggunakan `useWaStatus` (sama dengan Dashboard) sebagai sumber data — polling `GET /api/qr` + `GET /api/qr/status`
 - Local state `override` di Settings.tsx untuk demo disconnect/connect flow: klik Disconnect → override ke `disconnected` (show QR placeholder); klik Connect → reset override, tampilkan data live dari `useWaStatus`
 - `WaSessionTab` menerima `{ qr, connection, phone }` sebagai props individual (bukan `WaSession` object)
@@ -643,17 +652,17 @@ createBrowserRouter([
 
 ### Komponen & Halaman
 
-| File | Role |
-|------|------|
-| `hooks/useAuth.ts` | Hook auth dengan `MOCK = false`: `{ user, isAuthenticated, login(), register(), logout(), loading, error }` |
-| `components/AuthLayout.tsx` | Layout publik: full-screen centered, card putih shadow-lg dengan logo WANI + `<Outlet />` |
-| `components/ProtectedRoute.tsx` | Gate: cek `isAuthenticated` → render children atau redirect ke `/login` |
-| `pages/LoginPage.tsx` | Form email + password, validasi client-side, show/hide toggle, error alert, loading state. Link ke signup + forgot password |
-| `pages/SignUpPage.tsx` | Form nama + email + password + confirm, validasi match + min 8 char |
-| `pages/ForgotPasswordPage.tsx` | Form email → success state ("cek email Anda") → back to login |
-| `pages/ResetPasswordPage.tsx` | Form token + new password → success → redirect login |
-| `pages/VerifyEmailPage.tsx` | Email verification confirmation page |
-| `pages/NotFoundPage.tsx` | 404 page with link back to home/login |
+| File                            | Role                                                                                                                        |
+| ------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `hooks/useAuth.ts`              | Hook auth dengan `MOCK = false`: `{ user, isAuthenticated, login(), register(), logout(), loading, error }`                 |
+| `components/AuthLayout.tsx`     | Layout publik: full-screen centered, card putih shadow-lg dengan logo WANI + `<Outlet />`                                   |
+| `components/ProtectedRoute.tsx` | Gate: cek `isAuthenticated` → render children atau redirect ke `/login`                                                     |
+| `pages/LoginPage.tsx`           | Form email + password, validasi client-side, show/hide toggle, error alert, loading state. Link ke signup + forgot password |
+| `pages/SignUpPage.tsx`          | Form nama + email + password + confirm, validasi match + min 8 char                                                         |
+| `pages/ForgotPasswordPage.tsx`  | Form email → success state ("cek email Anda") → back to login                                                               |
+| `pages/ResetPasswordPage.tsx`   | Form token + new password → success → redirect login                                                                        |
+| `pages/VerifyEmailPage.tsx`     | Email verification confirmation page                                                                                        |
+| `pages/NotFoundPage.tsx`        | 404 page with link back to home/login                                                                                       |
 
 ### Data Flow Auth
 
@@ -688,15 +697,15 @@ Token & user disimpan di localStorage (`wani_auth_token`, `wani_auth_user`). Hoo
 
 ### UI States
 
-| State | Tampilan |
-|-------|----------|
-| **Initial (no token)** | Redirect ke `/login` via ProtectedRoute |
-| **Loading (login/register)** | Button spinner + disabled |
-| **Validation error** | Field error message merah di bawah input |
-| **Auth error** | Alert box merah di atas form |
-| **Success login** | Navigasi ke `/` (Dashboard) |
-| **Forgot password success** | Halaman "Cek Email Anda" dengan ikon centang |
-| **Logout** | Clear localStorage + redirect `/login` |
+| State                        | Tampilan                                     |
+| ---------------------------- | -------------------------------------------- |
+| **Initial (no token)**       | Redirect ke `/login` via ProtectedRoute      |
+| **Loading (login/register)** | Button spinner + disabled                    |
+| **Validation error**         | Field error message merah di bawah input     |
+| **Auth error**               | Alert box merah di atas form                 |
+| **Success login**            | Navigasi ke `/` (Dashboard)                  |
+| **Forgot password success**  | Halaman "Cek Email Anda" dengan ikon centang |
+| **Logout**                   | Clear localStorage + redirect `/login`       |
 
 ---
 
@@ -727,14 +736,14 @@ bun run preview
 
 ## Roadmap
 
-| Phase | Target | Deliverable |
-|-------|--------|-------------|
-| **P1** | ✅ Selesai | Stack update + Layout shell + Dashboard page |
-| **P2** | ✅ Selesai | Products CRUD (list, card, form, categories, sort) |
-| **P3** | ✅ Selesai | Orders management (list, detail, status update, sort) |
-| **P4** | ✅ Selesai | Customers + Inline Chat (dual panel, mobile back) |
-| **P5** | ✅ Selesai | Settings (Store + AI + WA Session + Pembayaran tabs) |
-| **P6** | ✅ Selesai | Integrasi API — semua hooks pakai real API |
-| **P7** | ✅ Selesai | Auth pages (Login + Sign Up + Forgot Password) + JWT |
-| **P8** | ✅ Selesai | Halaman Website config + generate |
+| Phase  | Target     | Deliverable                                                  |
+| ------ | ---------- | ------------------------------------------------------------ |
+| **P1** | ✅ Selesai | Stack update + Layout shell + Dashboard page                 |
+| **P2** | ✅ Selesai | Products CRUD (list, card, form, categories, sort)           |
+| **P3** | ✅ Selesai | Orders management (list, detail, status update, sort)        |
+| **P4** | ✅ Selesai | Customers + Inline Chat (dual panel, mobile back)            |
+| **P5** | ✅ Selesai | Settings (Store + AI + WA Session + Pembayaran tabs)         |
+| **P6** | ✅ Selesai | Integrasi API — semua hooks pakai real API                   |
+| **P7** | ✅ Selesai | Auth pages (Login + Sign Up + Forgot Password) + JWT         |
+| **P8** | ✅ Selesai | Halaman Website config + generate                            |
 | **P9** | ✅ Selesai | Manual payment flow + warning banner + konfirmasi pembayaran |

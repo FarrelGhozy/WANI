@@ -1,5 +1,5 @@
-import type { PipelineContext, PipelineStep } from "./types"
-import type { PipelineResult } from "@/src/types/ai"
+import type { PipelineContext, PipelineStep } from "./types";
+import type { PipelineResult } from "@/src/types/ai";
 
 /**
  * Execute an ordered array of pipeline steps, passing a shared context
@@ -11,17 +11,17 @@ import type { PipelineResult } from "@/src/types/ai"
  */
 export async function runSteps(
   steps: PipelineStep[],
-  ctx: PipelineContext,
+  ctx: PipelineContext
 ): Promise<PipelineResult> {
   for (const step of steps) {
-    ctx.trace.begin(step.name)
-    const outcome = await step.run(ctx)
+    ctx.trace.begin(step.name);
+    const outcome = await step.run(ctx);
     if (outcome.kind === "break") {
-      return outcome.result
+      return outcome.result;
     }
   }
 
-  return buildResult(ctx)
+  return buildResult(ctx);
 }
 
 function buildResult(ctx: PipelineContext): PipelineResult {
@@ -30,5 +30,5 @@ function buildResult(ctx: PipelineContext): PipelineResult {
     intent: ctx.llmIntent ?? "unknown",
     blocked: false,
     qrisImageUrl: ctx.actionQrisUrl ?? null,
-  }
+  };
 }

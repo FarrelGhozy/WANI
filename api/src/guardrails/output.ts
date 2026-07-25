@@ -1,17 +1,20 @@
-import { env } from "@/src/config/env"
-import { PROMPT_CANARY, MSG_OPEN } from "@/src/ai/prompts"
+import { env } from "@/src/config/env";
+import { PROMPT_CANARY, MSG_OPEN } from "@/src/ai/prompts";
 
 /** Clean an outbound reply: strip code fences, trim, cap length. */
 export function sanitizeReply(text: string): string {
-  let t = text.trim()
+  let t = text.trim();
   // Remove code fence markers (```lang or ```) anywhere in the string.
-  t = t.replace(/```[a-zA-Z0-9]*/g, "").replace(/```/g, "").trim()
+  t = t
+    .replace(/```[a-zA-Z0-9]*/g, "")
+    .replace(/```/g, "")
+    .trim();
 
-  const max = env.guardrails.maxReplyChars
+  const max = env.guardrails.maxReplyChars;
   if (t.length > max) {
-    t = t.slice(0, max - 1).trimEnd() + "…"
+    t = t.slice(0, max - 1).trimEnd() + "…";
   }
-  return t
+  return t;
 }
 
 /**
@@ -19,12 +22,11 @@ export function sanitizeReply(text: string): string {
  * raw delimiter/marker text that should never reach a customer.
  */
 export function hasLeak(text: string): boolean {
-  if (text.includes(PROMPT_CANARY)) return true
-  const lower = text.toLowerCase()
+  if (text.includes(PROMPT_CANARY)) return true;
+  const lower = text.toLowerCase();
   return (
     lower.includes(MSG_OPEN.toLowerCase()) ||
     lower.includes("## aturan keamanan") ||
     lower.includes("## aturan output")
-  )
+  );
 }
-

@@ -1,230 +1,385 @@
-<!DOCTYPE html>
+<!doctype html>
 <html class="light" lang="id">
-<head>
-  <meta charset="utf-8"/>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <title>Produk — {{store.businessName}}</title>
-  {{#favicon.has}}<link rel="icon" href="{{favicon.url}}" />{{/favicon.has}}{{^favicon.has}}<link rel="icon" href="{{favicon.svg}}" />{{/favicon.has}}
-  <!-- Google Fonts: Bodoni Moda for headlines, Plus Jakarta Sans for body -->
-  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&amp;family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&amp;display=swap" rel="stylesheet"/>
-  <!-- Material Symbols Outlined -->
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-  <link href="./assets/style.css" rel="stylesheet" />
-  <style>:root{ {{color.vars}} --color-secondary: {{color.secondary}}; }
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(184,134,11,0.3); border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(184,134,11,0.5); }
-  </style>
-  <style>
-    .material-symbols-outlined {
-      font-family: 'Material Symbols Outlined' !important; font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-    }
-    .renaissance-border {
-      border: 1px solid rgba(184,134,11,0.2);
-      box-shadow: 0 2px 20px rgba(184,134,11,0.06);
-    }
-    .scrolly-reveal {
-      opacity: 0;
-      transform: translateY(30px);
-      transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-    }
-    .scrolly-reveal.revealed {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    .stagger-delay-1 { transition-delay: 0.1s; }
-    .stagger-delay-2 { transition-delay: 0.2s; }
-    .stagger-delay-3 { transition-delay: 0.3s; }
-    .stagger-delay-4 { transition-delay: 0.4s; }
-  </style>
-</head>
-<body class="bg-background text-on-background font-body-md">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Produk — {{store.businessName}}</title>
+    {{#favicon.has}}
+    <link rel="icon" href="{{favicon.url}}" />
+    {{/favicon.has}}{{^favicon.has}}
+    <link rel="icon" href="{{favicon.svg}}" />
+    {{/favicon.has}}
+    <!-- Google Fonts: Bodoni Moda for headlines, Plus Jakarta Sans for body -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&amp;family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&amp;display=swap"
+      rel="stylesheet"
+    />
+    <!-- Material Symbols Outlined -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link href="./assets/style.css" rel="stylesheet" />
+    <style>
+      :root{ {{color.vars}} --color-secondary: {{color.secondary}}; }
+          ::-webkit-scrollbar { width: 6px; }
+          ::-webkit-scrollbar-track { background: transparent; }
+          ::-webkit-scrollbar-thumb { background: rgba(184,134,11,0.3); border-radius: 3px; }
+          ::-webkit-scrollbar-thumb:hover { background: rgba(184,134,11,0.5); }
+    </style>
+    <style>
+      .material-symbols-outlined {
+        font-family: "Material Symbols Outlined" !important;
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
+      }
+      .renaissance-border {
+        border: 1px solid rgba(184, 134, 11, 0.2);
+        box-shadow: 0 2px 20px rgba(184, 134, 11, 0.06);
+      }
+      .scrolly-reveal {
+        opacity: 0;
+        transform: translateY(30px);
+        transition:
+          opacity 0.8s ease-out,
+          transform 0.8s ease-out;
+      }
+      .scrolly-reveal.revealed {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .stagger-delay-1 {
+        transition-delay: 0.1s;
+      }
+      .stagger-delay-2 {
+        transition-delay: 0.2s;
+      }
+      .stagger-delay-3 {
+        transition-delay: 0.3s;
+      }
+      .stagger-delay-4 {
+        transition-delay: 0.4s;
+      }
+    </style>
+  </head>
+  <body class="bg-background text-on-background font-body-md">
+    {{>navbar}}
 
-{{>navbar}}
+    <main class="pt-20">
+      <!-- ============================================================ -->
+      <!-- PAGE HEADER — Editorial Header -->
+      <!-- ============================================================ -->
+      <section class="relative py-20 md:py-28 overflow-hidden">
+        <div
+          class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(184,134,11,0.04),transparent_60%),radial-gradient(ellipse_at_bottom_left,rgba(128,0,32,0.02),transparent_60%)]"
+        ></div>
+        <div
+          class="absolute top-10 left-10 w-12 h-12 border-l-2 border-t-2 border-[rgba(184,134,11,0.1)] hidden md:block"
+        ></div>
+        <div
+          class="absolute bottom-10 right-10 w-12 h-12 border-r-2 border-b-2 border-[rgba(184,134,11,0.1)] hidden md:block"
+        ></div>
 
-<main class="pt-20">
-  <!-- ============================================================ -->
-  <!-- PAGE HEADER — Editorial Header -->
-  <!-- ============================================================ -->
-  <section class="relative py-20 md:py-28 overflow-hidden">
-    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(184,134,11,0.04),transparent_60%),radial-gradient(ellipse_at_bottom_left,rgba(128,0,32,0.02),transparent_60%)]"></div>
-    <div class="absolute top-10 left-10 w-12 h-12 border-l-2 border-t-2 border-[rgba(184,134,11,0.1)] hidden md:block"></div>
-    <div class="absolute bottom-10 right-10 w-12 h-12 border-r-2 border-b-2 border-[rgba(184,134,11,0.1)] hidden md:block"></div>
+        <div
+          class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop text-center relative z-10"
+        >
+          <div class="flex items-center justify-center gap-3 mb-6">
+            <span
+              class="w-8 h-px bg-gradient-to-r from-transparent via-primary to-transparent"
+            ></span>
+            <span
+              class="font-label-sm text-label-sm uppercase tracking-[0.2em] text-primary"
+              >Koleksi</span
+            >
+            <span
+              class="w-8 h-px bg-gradient-to-r from-transparent via-primary to-transparent"
+            ></span>
+          </div>
+          <h1
+            class="font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mb-4 text-shadow-gold"
+          >
+            Produk Kami
+          </h1>
+          <p
+            class="font-body-lg text-body-lg text-on-surface-variant max-w-xl mx-auto leading-relaxed"
+          >
+            Temukan koleksi produk pilihan yang telah dikurasi khusus untuk
+            Anda. Setiap produk mencerminkan dedikasi terhadap kualitas dan
+            keindahan.
+          </p>
+          <div
+            class="w-16 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent mx-auto mt-8"
+          ></div>
+        </div>
+      </section>
 
-    <div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop text-center relative z-10">
-      <div class="flex items-center justify-center gap-3 mb-6">
-        <span class="w-8 h-px bg-gradient-to-r from-transparent via-primary to-transparent"></span>
-        <span class="font-label-sm text-label-sm uppercase tracking-[0.2em] text-primary">Koleksi</span>
-        <span class="w-8 h-px bg-gradient-to-r from-transparent via-primary to-transparent"></span>
-      </div>
-      <h1 class="font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mb-4 text-shadow-gold">Produk Kami</h1>
-      <p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl mx-auto leading-relaxed">
-        Temukan koleksi produk pilihan yang telah dikurasi khusus untuk Anda. Setiap produk mencerminkan dedikasi terhadap kualitas dan keindahan.
-      </p>
-      <div class="w-16 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent mx-auto mt-8"></div>
-    </div>
-  </section>
+      <!-- ============================================================ -->
+      <!-- PRODUCT SEARCH -->
+      <!-- ============================================================ -->
+      <section class="pb-8 bg-background">
+        <div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop">
+          <div class="max-w-md mx-auto relative">
+            <svg
+              class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-on-surface-variant pointer-events-none"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+            <input
+              type="text"
+              id="productSearch"
+              placeholder="Cari produk..."
+              class="w-full pl-12 pr-4 py-3 bg-surface border border-outline-variant rounded-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
+              autocomplete="off"
+            />
+          </div>
+        </div>
+      </section>
 
-  <!-- ============================================================ -->
-  <!-- PRODUCT SEARCH -->
-  <!-- ============================================================ -->
-  <section class="pb-8 bg-background">
-    <div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop">
-      <div class="max-w-md mx-auto relative">
-        <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-on-surface-variant pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-        <input type="text" id="productSearch" placeholder="Cari produk..." class="w-full pl-12 pr-4 py-3 bg-surface border border-outline-variant rounded-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all" autocomplete="off" />
-      </div>
-    </div>
-  </section>
-
-  <!-- ============================================================ -->
-  <!-- PRODUCT GRID -->
-  <!-- ============================================================ -->
-  <section class="pb-24 bg-background">
-    <div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop">
-      <!-- Product Grid -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6">
-        {{#products}}
-        <div class="group cursor-pointer scrolly-reveal">
-          <div class="relative overflow-hidden bg-surface renaissance-border mb-4">
-            <div class="aspect-[3/4] overflow-hidden">
-              {{#.imageUrl}}
-              <img src="{{.imageUrl}}" alt="{{.name}}" class="w-full h-full object-cover transition-all duration-700 group-hover:scale-110" />
-              {{/.imageUrl}}
-              {{^.imageUrl}}
-              <div class="w-full h-full bg-gradient-to-br from-surface-container-high to-surface-container flex items-center justify-center">
-                <div class="text-center">
-                  <span class="material-symbols-outlined text-5xl text-[rgba(184,134,11,0.15)]">image</span>
-                  <p class="font-label-sm text-label-sm text-[rgba(184,134,11,0.2)] mt-2 uppercase tracking-wider">Belum Ada Gambar</p>
+      <!-- ============================================================ -->
+      <!-- PRODUCT GRID -->
+      <!-- ============================================================ -->
+      <section class="pb-24 bg-background">
+        <div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop">
+          <!-- Product Grid -->
+          <div
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6"
+          >
+            {{#products}}
+            <div class="group cursor-pointer scrolly-reveal">
+              <div
+                class="relative overflow-hidden bg-surface renaissance-border mb-4"
+              >
+                <div class="aspect-[3/4] overflow-hidden">
+                  {{#.imageUrl}}
+                  <img
+                    src="{{.imageUrl}}"
+                    alt="{{.name}}"
+                    class="w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
+                  />
+                  {{/.imageUrl}} {{^.imageUrl}}
+                  <div
+                    class="w-full h-full bg-gradient-to-br from-surface-container-high to-surface-container flex items-center justify-center"
+                  >
+                    <div class="text-center">
+                      <span
+                        class="material-symbols-outlined text-5xl text-[rgba(184,134,11,0.15)]"
+                        >image</span
+                      >
+                      <p
+                        class="font-label-sm text-label-sm text-[rgba(184,134,11,0.2)] mt-2 uppercase tracking-wider"
+                      >
+                        Belum Ada Gambar
+                      </p>
+                    </div>
+                  </div>
+                  {{/.imageUrl}}
+                </div>
+                <!-- Stock Badge -->
+                <div class="absolute top-3 left-3">
+                  {{^.isAvailable}}
+                  <span
+                    class="px-3 py-1 text-xs uppercase tracking-wider font-semibold bg-[var(--color-secondary)] text-surface/90 backdrop-blur-sm"
+                    >Habis</span
+                  >
+                  {{/.isAvailable}} {{#.isAvailable}}
+                  <span
+                    class="px-3 py-1 text-xs uppercase tracking-wider font-semibold bg-[rgba(184,134,11,0.85)] text-surface backdrop-blur-sm"
+                    >Tersedia</span
+                  >
+                  {{/.isAvailable}}
                 </div>
               </div>
-              {{/.imageUrl}}
+              <div class="px-1">
+                <h3
+                  class="font-display-md text-display-md text-on-surface group-hover:text-primary transition-colors duration-300"
+                >
+                  {{.name}}
+                </h3>
+                <p
+                  class="font-body-md text-body-md text-on-surface-variant mt-1.5 line-clamp-2"
+                >
+                  {{.description}}
+                </p>
+                <div
+                  class="flex items-center justify-between mt-3 pt-3 border-t border-[rgba(184,134,11,0.08)]"
+                >
+                  <span class="font-display-sm text-display-sm text-primary"
+                    >Rp {{.price}}</span
+                  >
+                  <span
+                    class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider"
+                    >Stok: {{.stock}}</span
+                  >
+                </div>
+              </div>
             </div>
-            <!-- Stock Badge -->
-            <div class="absolute top-3 left-3">
-              {{^.isAvailable}}
-              <span class="px-3 py-1 text-xs uppercase tracking-wider font-semibold bg-[var(--color-secondary)] text-surface/90 backdrop-blur-sm">Habis</span>
-              {{/.isAvailable}}
-              {{#.isAvailable}}
-              <span class="px-3 py-1 text-xs uppercase tracking-wider font-semibold bg-[rgba(184,134,11,0.85)] text-surface backdrop-blur-sm">Tersedia</span>
-              {{/.isAvailable}}
+            {{/products}} {{^products}}
+            <div
+              class="w-full flex flex-col items-center justify-center py-24 text-center"
+            >
+              <div
+                class="w-28 h-28 mx-auto mb-8 rounded-full border-2 border-dashed border-[rgba(184,134,11,0.12)] flex items-center justify-center"
+              >
+                <span
+                  class="material-symbols-outlined text-6xl text-[rgba(184,134,11,0.15)]"
+                  >inventory_2</span
+                >
+              </div>
+              <h3
+                class="font-display-md text-display-md text-on-surface/50 mb-3"
+              >
+                Koleksi Masih Kosong
+              </h3>
+              <p
+                class="font-body-md text-body-md text-on-surface-variant/60 mb-8 max-w-md leading-relaxed"
+              >
+                Kami sedang menyiapkan produk-produk terbaik untuk Anda. Pantau
+                terus atau hubungi kami untuk informasi lebih lanjut.
+              </p>
+              <a
+                href="{{whatsapp.url}}"
+                target="_blank"
+                rel="noopener"
+                class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-primary to-[rgba(184,134,11,0.7)] text-on-primary font-label-sm text-label-sm uppercase tracking-wider rounded-full hover:shadow-primary/25 transition-all duration-300 active:scale-95"
+              >
+                <span class="material-symbols-outlined text-sm">chat</span>
+                Hubungi Kami
+              </a>
             </div>
-          </div>
-          <div class="px-1">
-            <h3 class="font-display-md text-display-md text-on-surface group-hover:text-primary transition-colors duration-300">{{.name}}</h3>
-            <p class="font-body-md text-body-md text-on-surface-variant mt-1.5 line-clamp-2">{{.description}}</p>
-            <div class="flex items-center justify-between mt-3 pt-3 border-t border-[rgba(184,134,11,0.08)]">
-              <span class="font-display-sm text-display-sm text-primary">Rp {{.price}}</span>
-              <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Stok: {{.stock}}</span>
-            </div>
+            {{/products}}
           </div>
         </div>
-        {{/products}}
-        {{^products}}
-        <div class="w-full flex flex-col items-center justify-center py-24 text-center">
-          <div class="w-28 h-28 mx-auto mb-8 rounded-full border-2 border-dashed border-[rgba(184,134,11,0.12)] flex items-center justify-center">
-            <span class="material-symbols-outlined text-6xl text-[rgba(184,134,11,0.15)]">inventory_2</span>
+      </section>
+
+      <!-- ============================================================ -->
+      <!-- BOTTOM CTA -->
+      <!-- ============================================================ -->
+      <section
+        class="py-16 bg-surface-container-low border-t border-[rgba(184,134,11,0.1)]"
+      >
+        <div
+          class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop text-center"
+        >
+          <div class="max-w-2xl mx-auto">
+            <span
+              class="font-label-sm text-label-sm uppercase tracking-[0.2em] text-[rgba(184,134,11,0.4)]"
+              >Butuh Bantuan?</span
+            >
+            <h2
+              class="font-display-md text-display-md text-on-surface mt-3 mb-4"
+            >
+              Kami Siap Membantu Anda
+            </h2>
+            <p class="font-body-md text-body-md text-on-surface-variant mb-8">
+              Tim kami siap memberikan rekomendasi produk yang sesuai dengan
+              kebutuhan Anda.
+            </p>
+            <a
+              href="{{whatsapp.url}}"
+              target="_blank"
+              rel="noopener"
+              class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-primary to-[rgba(184,134,11,0.7)] text-on-primary font-label-sm text-label-sm uppercase tracking-wider rounded-full hover:shadow-primary/25 transition-all duration-300 active:scale-95"
+            >
+              <span class="material-symbols-outlined text-sm">chat</span>
+              Konsultasi Gratis
+            </a>
           </div>
-          <h3 class="font-display-md text-display-md text-on-surface/50 mb-3">Koleksi Masih Kosong</h3>
-          <p class="font-body-md text-body-md text-on-surface-variant/60 mb-8 max-w-md leading-relaxed">
-            Kami sedang menyiapkan produk-produk terbaik untuk Anda. Pantau terus atau hubungi kami untuk informasi lebih lanjut.
-          </p>
-          <a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-primary to-[rgba(184,134,11,0.7)] text-on-primary font-label-sm text-label-sm uppercase tracking-wider rounded-full hover:shadow-primary/25 transition-all duration-300 active:scale-95">
-            <span class="material-symbols-outlined text-sm">chat</span>
-            Hubungi Kami
-          </a>
         </div>
-        {{/products}}
-      </div>
-    </div>
-  </section>
+      </section>
+    </main>
 
-  <!-- ============================================================ -->
-  <!-- BOTTOM CTA -->
-  <!-- ============================================================ -->
-  <section class="py-16 bg-surface-container-low border-t border-[rgba(184,134,11,0.1)]">
-    <div class="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop text-center">
-      <div class="max-w-2xl mx-auto">
-        <span class="font-label-sm text-label-sm uppercase tracking-[0.2em] text-[rgba(184,134,11,0.4)]">Butuh Bantuan?</span>
-        <h2 class="font-display-md text-display-md text-on-surface mt-3 mb-4">Kami Siap Membantu Anda</h2>
-        <p class="font-body-md text-body-md text-on-surface-variant mb-8">Tim kami siap memberikan rekomendasi produk yang sesuai dengan kebutuhan Anda.</p>
-        <a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-primary to-[rgba(184,134,11,0.7)] text-on-primary font-label-sm text-label-sm uppercase tracking-wider rounded-full hover:shadow-primary/25 transition-all duration-300 active:scale-95">
-          <span class="material-symbols-outlined text-sm">chat</span>
-          Konsultasi Gratis
-        </a>
-      </div>
-    </div>
-  </section>
-</main>
+    {{>footer}}
 
-{{>footer}}
+    <!-- Floating WhatsApp Button -->
+    <a
+      href="{{whatsapp.url}}"
+      target="_blank"
+      rel="noopener"
+      class="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gradient-to-br from-[rgba(37,211,102,1)] to-[rgba(37,211,102,0.8)] shadow-lg shadow-[rgba(37,211,102,0.3)] flex items-center justify-center text-white hover:scale-110 active:scale-95 transition-all duration-300 floating-wa"
+    >
+      <span class="material-symbols-outlined text-2xl">chat</span>
+    </a>
 
-<!-- Floating WhatsApp Button -->
-<a href="{{whatsapp.url}}" target="_blank" rel="noopener" class="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gradient-to-br from-[rgba(37,211,102,1)] to-[rgba(37,211,102,0.8)] shadow-lg shadow-[rgba(37,211,102,0.3)] flex items-center justify-center text-white hover:scale-110 active:scale-95 transition-all duration-300 floating-wa">
-  <span class="material-symbols-outlined text-2xl">chat</span>
-</a>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // Scroll reveal
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("revealed");
+              }
+            });
+          },
+          { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
+        );
 
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    // Scroll reveal
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('revealed');
-        }
+        document
+          .querySelectorAll(".scrolly-reveal")
+          .forEach((el) => observer.observe(el));
+        document.querySelectorAll("section").forEach((section) => {
+          if (!section.classList.contains("scrolly-reveal")) {
+            section.classList.add("scrolly-reveal");
+            observer.observe(section);
+          }
+        });
+
+        // Navbar glass
+        const header = document.querySelector("header");
+        window.addEventListener("scroll", () => {
+          if (window.scrollY > 20) {
+            header.classList.add("shadow-[0_4px_30px_rgba(0,0,0,0.12)]");
+          } else {
+            header.classList.remove("shadow-[0_4px_30px_rgba(0,0,0,0.12)]");
+          }
+        });
       });
-    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+    </script>
 
-    document.querySelectorAll('.scrolly-reveal').forEach(el => observer.observe(el));
-    document.querySelectorAll('section').forEach(section => {
-      if (!section.classList.contains('scrolly-reveal')) {
-        section.classList.add('scrolly-reveal');
-        observer.observe(section);
+    <style>
+      .floating-wa {
+        animation: float 3s ease-in-out infinite;
       }
-    });
-
-    // Navbar glass
-    const header = document.querySelector('header');
-    window.addEventListener('scroll', () => {
-      if (window.scrollY > 20) {
-        header.classList.add('shadow-[0_4px_30px_rgba(0,0,0,0.12)]');
-      } else {
-        header.classList.remove('shadow-[0_4px_30px_rgba(0,0,0,0.12)]');
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-6px);
+        }
       }
-    });
-  });
-</script>
+      .text-shadow-gold {
+        text-shadow: 0 2px 20px rgba(184, 134, 11, 0.15);
+      }
+    </style>
 
-<style>
-  .floating-wa {
-    animation: float 3s ease-in-out infinite;
-  }
-  @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-6px); }
-  }
-  .text-shadow-gold {
-    text-shadow: 0 2px 20px rgba(184,134,11,0.15);
-  }
-</style>
-
-  <script>
-    // Client-side product search — filters by product name (case-insensitive)
-    document.addEventListener('DOMContentLoaded', function() {
-      const search = document.getElementById('productSearch')
-      if (!search) return
-      const cards = document.querySelectorAll('.grid > .group')
-      search.addEventListener('input', function() {
-        const q = search.value.toLowerCase().trim()
-        cards.forEach(function(card) {
-          const name = card.querySelector('h3')
-          const text = name ? name.textContent.toLowerCase() : ''
-          card.style.display = text.includes(q) ? '' : 'none'
-        })
-      })
-    })
-  </script>
-
-</body>
+    <script>
+      // Client-side product search — filters by product name (case-insensitive)
+      document.addEventListener("DOMContentLoaded", function () {
+        const search = document.getElementById("productSearch");
+        if (!search) return;
+        const cards = document.querySelectorAll(".grid > .group");
+        search.addEventListener("input", function () {
+          const q = search.value.toLowerCase().trim();
+          cards.forEach(function (card) {
+            const name = card.querySelector("h3");
+            const text = name ? name.textContent.toLowerCase() : "";
+            card.style.display = text.includes(q) ? "" : "none";
+          });
+        });
+      });
+    </script>
+  </body>
 </html>

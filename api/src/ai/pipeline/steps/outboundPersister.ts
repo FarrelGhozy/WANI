@@ -1,6 +1,6 @@
-import { MessageModel } from "@/src/models/message"
-import { ConversationModel } from "@/src/models/conversation"
-import type { PipelineStep } from "../types"
+import { MessageModel } from "@/src/models/message";
+import { ConversationModel } from "@/src/models/conversation";
+import type { PipelineStep } from "../types";
 
 /**
  * Step 16 — Persist the bot reply and touch conversation timestamp.
@@ -13,9 +13,9 @@ export const outboundPersisterStep: PipelineStep = {
       conversationId: ctx.conversationId!,
       role: "BOT",
       content: ctx.finalReply!,
-    })
-    await MessageModel.markDelivered(msg.id)
-    await ConversationModel.touch(ctx.conversationId!)
-    return { kind: "continue" }
+    });
+    await MessageModel.markDelivered(msg.id);
+    await ConversationModel.touch(ctx.conversationId!);
+    return { kind: "continue" };
   },
-}
+};

@@ -1,6 +1,9 @@
 import type { InputHTMLAttributes, ReactNode } from "react";
 
-interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "prefix"> {
+interface InputProps extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  "prefix"
+> {
   label?: string;
   error?: string;
   prefix?: ReactNode;
@@ -11,7 +14,7 @@ interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "prefix
 
 const sizeClasses = {
   md: "h-10",
-  lg: "h-11"
+  lg: "h-11",
 };
 
 export default function Input({
@@ -26,7 +29,11 @@ export default function Input({
 }: InputProps) {
   return (
     <div className="space-y-1.5">
-      {label && <label className="text-xs font-medium uppercase tracking-wider text-stone-500">{label}</label>}
+      {label && (
+        <label className="text-xs font-medium uppercase tracking-wider text-stone-500">
+          {label}
+        </label>
+      )}
       <div className="relative">
         {prefix && (
           <span className="text-sm pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-stone-400">
@@ -38,7 +45,9 @@ export default function Input({
           {...props}
         />
         {rightElement && (
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400">{rightElement}</span>
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400">
+            {rightElement}
+          </span>
         )}
       </div>
       {error && <p className="text-xs text-red-500">{error}</p>}

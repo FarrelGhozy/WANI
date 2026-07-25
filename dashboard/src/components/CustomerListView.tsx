@@ -1,31 +1,35 @@
-import type { Customer, MessageRole } from '@/hooks/useCustomers.ts'
-import { formatDate } from '@/utils/format.ts'
+import type { Customer, MessageRole } from "@/hooks/useCustomers.ts";
+import { formatDate } from "@/utils/format.ts";
 
 interface CustomerListViewProps {
-  customers: Customer[]
-  selectedId: string | null
-  onSelect: (id: string) => void
+  customers: Customer[];
+  selectedId: string | null;
+  onSelect: (id: string) => void;
 }
 
 const roleLabel: Record<MessageRole, string> = {
-  CUSTOMER: 'Customer',
-  BOT: 'Bot',
-  HUMAN: 'Anda',
-}
+  CUSTOMER: "Customer",
+  BOT: "Bot",
+  HUMAN: "Anda",
+};
 
-export default function CustomerListView({ customers, selectedId, onSelect }: CustomerListViewProps) {
-  if (customers.length === 0) return null
+export default function CustomerListView({
+  customers,
+  selectedId,
+  onSelect,
+}: CustomerListViewProps) {
+  if (customers.length === 0) return null;
 
   return (
     <div className="divide-y divide-stone-100 overflow-y-auto">
       {customers.map((customer) => {
-        const isSelected = customer.id === selectedId
+        const isSelected = customer.id === selectedId;
         return (
           <button
             key={customer.id}
             onClick={() => onSelect(customer.id)}
             className={`w-full px-4 py-3.5 text-left transition-colors hover:bg-stone-50 ${
-              isSelected ? 'bg-teal-50/50 ring-1 ring-inset ring-teal-200' : ''
+              isSelected ? "bg-teal-50/50 ring-1 ring-inset ring-teal-200" : ""
             }`}
           >
             <div className="flex items-start justify-between gap-2">
@@ -36,7 +40,9 @@ export default function CustomerListView({ customers, selectedId, onSelect }: Cu
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <p className={`truncate text-sm ${isSelected ? 'font-semibold text-teal-800' : 'font-medium text-stone-900'}`}>
+                    <p
+                      className={`truncate text-sm ${isSelected ? "font-semibold text-teal-800" : "font-medium text-stone-900"}`}
+                    >
                       {customer.name}
                     </p>
                     {customer.unreadCount > 0 && (
@@ -47,7 +53,9 @@ export default function CustomerListView({ customers, selectedId, onSelect }: Cu
                   </div>
                   {customer.lastMessage && (
                     <p className="mt-0.5 truncate text-xs text-stone-500">
-                      <span className="text-stone-400">{roleLabel[customer.lastMessage.role]}: </span>
+                      <span className="text-stone-400">
+                        {roleLabel[customer.lastMessage.role]}:{" "}
+                      </span>
                       {customer.lastMessage.content}
                     </p>
                   )}
@@ -58,17 +66,21 @@ export default function CustomerListView({ customers, selectedId, onSelect }: Cu
               <div className="flex shrink-0 flex-col items-end gap-1">
                 <span className="whitespace-nowrap text-[11px] text-stone-400">
                   {customer.lastMessage
-                    ? formatDate(customer.lastMessage.createdAt, { timeOnly: true })
-                    : ''}
+                    ? formatDate(customer.lastMessage.createdAt, {
+                        timeOnly: true,
+                      })
+                    : ""}
                 </span>
                 {customer.totalOrders > 0 && (
-                  <span className="text-[11px] text-stone-400">{customer.totalOrders} pesanan</span>
+                  <span className="text-[11px] text-stone-400">
+                    {customer.totalOrders} pesanan
+                  </span>
                 )}
               </div>
             </div>
           </button>
-        )
+        );
       })}
     </div>
-  )
+  );
 }

@@ -1,26 +1,28 @@
-import { useEffect } from 'react'
-import { useBlocker } from 'react-router'
+import { useEffect } from "react";
+import { useBlocker } from "react-router";
 
 export function useUnsavedChanges(isDirty: boolean, message?: string) {
-  const blocker = useBlocker(isDirty)
+  const blocker = useBlocker(isDirty);
 
   useEffect(() => {
-    if (!isDirty) return
+    if (!isDirty) return;
     const handler = (e: BeforeUnloadEvent) => {
-      e.preventDefault()
-    }
-    window.addEventListener('beforeunload', handler)
-    return () => window.removeEventListener('beforeunload', handler)
-  }, [isDirty])
+      e.preventDefault();
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [isDirty]);
 
-  if (blocker.state === 'blocked') {
-    const msg = message ?? 'Anda memiliki perubahan yang belum disimpan. Yakin ingin meninggalkan halaman ini?'
+  if (blocker.state === "blocked") {
+    const msg =
+      message ??
+      "Anda memiliki perubahan yang belum disimpan. Yakin ingin meninggalkan halaman ini?";
     if (window.confirm(msg)) {
-      blocker.proceed()
+      blocker.proceed();
     } else {
-      blocker.reset()
+      blocker.reset();
     }
   }
 
-  return blocker
+  return blocker;
 }

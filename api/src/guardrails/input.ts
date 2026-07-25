@@ -1,5 +1,5 @@
-import { env } from "@/src/config/env"
-import { QUICK_INJECTION_PATTERNS } from "@/src/guardrails/injection-patterns"
+import { env } from "@/src/config/env";
+import { QUICK_INJECTION_PATTERNS } from "@/src/guardrails/injection-patterns";
 
 // Code-point ranges for control + zero-width characters that have no place in
 // chat text and are commonly used to smuggle hidden instructions. Newline
@@ -13,26 +13,26 @@ const STRIP_RANGES: ReadonlyArray<readonly [number, number]> = [
   [0x202a, 0x202e], // bidi embedding/override controls
   [0x2060, 0x2060], // word joiner
   [0xfeff, 0xfeff], // zero-width no-break space (BOM)
-]
+];
 
 function stripControlChars(text: string): string {
-  let out = ""
+  let out = "";
   for (const ch of text) {
-    const cp = ch.codePointAt(0) ?? 0
-    const strip = STRIP_RANGES.some(([lo, hi]) => cp >= lo && cp <= hi)
-    if (!strip) out += ch
+    const cp = ch.codePointAt(0) ?? 0;
+    const strip = STRIP_RANGES.some(([lo, hi]) => cp >= lo && cp <= hi);
+    if (!strip) out += ch;
   }
-  return out
+  return out;
 }
 
 /** Normalize untrusted inbound text: strip control chars, NFKC (kills fullwidth/math homoglyphs), trim, cap length. */
 export function normalizeInput(text: string): string {
-  const cleaned = stripControlChars(text).normalize("NFKC").trim()
-  const max = env.guardrails.maxInputChars
-  return cleaned.length > max ? cleaned.slice(0, max) : cleaned
+  const cleaned = stripControlChars(text).normalize("NFKC").trim();
+  const max = env.guardrails.maxInputChars;
+  return cleaned.length > max ? cleaned.slice(0, max) : cleaned;
 }
 
 /** Heuristic prompt-injection / jailbreak check using quick patterns. */
 export function detectInjection(text: string): boolean {
-  return QUICK_INJECTION_PATTERNS.some((re) => re.test(text))
+  return QUICK_INJECTION_PATTERNS.some((re) => re.test(text));
 }

@@ -1,4 +1,4 @@
-import { z } from "zod"
+import { z } from "zod";
 
 export const chatRequestSchema = z.object({
   ownerId: z.string().optional(),
@@ -6,4 +6,4 @@ export const chatRequestSchema = z.object({
   name: z.string().optional(),
   text: z.string().min(1, "Text is required"),
   waMsgId: z.string().optional(),
-})
+});

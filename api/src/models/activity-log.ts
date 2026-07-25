@@ -1,27 +1,27 @@
-import { BaseModel } from "@/src/models/base"
-import { prisma } from "@/src/config/db"
-import type { Prisma } from "@db/client"
+import { BaseModel } from "@/src/models/base";
+import { prisma } from "@/src/config/db";
+import type { Prisma } from "@db/client";
 
 export type LogEntry = {
-  id: string
-  type: string
-  referenceId: string | null
-  description: string
-  metadata: Record<string, unknown> | null
-  createdAt: string
-}
+  id: string;
+  type: string;
+  referenceId: string | null;
+  description: string;
+  metadata: Record<string, unknown> | null;
+  createdAt: string;
+};
 
 export type LogListResult = {
-  items: LogEntry[]
-  total: number
-  page: number
-  limit: number
-  totalPages: number
-}
+  items: LogEntry[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+};
 
 export class ActivityLogModel extends BaseModel {
   protected static override get delegate() {
-    return this.db.activityLog
+    return this.db.activityLog;
   }
 
   static async log(
@@ -29,7 +29,7 @@ export class ActivityLogModel extends BaseModel {
     type: string,
     description: string,
     referenceId?: string | null,
-    metadata?: Record<string, unknown> | null,
+    metadata?: Record<string, unknown> | null
   ): Promise<void> {
     await this.delegate.create({
       data: {
@@ -39,36 +39,44 @@ export class ActivityLogModel extends BaseModel {
         referenceId: referenceId ?? null,
         metadata: metadata as Prisma.InputJsonValue,
       },
-    })
+    });
   }
 
-  static async list(ownerId: string, params: {
-    page: number | string
-    limit: number | string
-    type?: string
-    referenceId?: string
-    dateFrom?: string
-    dateTo?: string
-    sort: string
-    order: "asc" | "desc"
-  }): Promise<LogListResult> {
-    const { page, limit, skip } = this.paginate(params.page, params.limit)
-    const where: Record<string, unknown> = { ownerId }
+  static async list(
+    ownerId: string,
+    params: {
+      page: number | string;
+      limit: number | string;
+      type?: string;
+      referenceId?: string;
+      dateFrom?: string;
+      dateTo?: string;
+      sort: string;
+      order: "asc" | "desc";
+    }
+  ): Promise<LogListResult> {
+    const { page, limit, skip } = this.paginate(params.page, params.limit);
+    const where: Record<string, unknown> = { ownerId };
 
-    if (params.type) where.type = params.type
-    if (params.referenceId) where.referenceId = params.referenceId
+    if (params.type) where.type = params.type;
+    if (params.referenceId) where.referenceId = params.referenceId;
     if (params.dateFrom || params.dateTo) {
-      const createdAt: Record<string, string> = {}
-      if (params.dateFrom) createdAt.gte = params.dateFrom
-      if (params.dateTo) createdAt.lte = params.dateTo
-      where.createdAt = createdAt
+      const createdAt: Record<string, string> = {};
+      if (params.dateFrom) createdAt.gte = params.dateFrom;
+      if (params.dateTo) createdAt.lte = params.dateTo;
+      where.createdAt = createdAt;
     }
 
-    const w = where as Prisma.ActivityLogWhereInput
+    const w = where as Prisma.ActivityLogWhereInput;
     const [rows, total] = await Promise.all([
-      this.delegate.findMany({ where: w, skip, take: limit, orderBy: { createdAt: params.order } }),
+      this.delegate.findMany({
+        where: w,
+        skip,
+        take: limit,
+        orderBy: { createdAt: params.order },
+      }),
       this.delegate.count({ where: w }),
-    ])
+    ]);
 
     return this.listResult(
       rows.map((r: Prisma.ActivityLogModel) => ({
@@ -81,17 +89,23 @@ export class ActivityLogModel extends BaseModel {
       })),
       total,
       page,
-      limit,
-    )
+      limit
+    );
   }
 
-  static async getDailyUsage(): Promise<{ llmCalls: number; tokensIn: number; tokensOut: number }> {
-    const today = new Date().toISOString().slice(0, 10)
-    const counter = await prisma.usageCounter.findUnique({ where: { id: today } })
+  static async getDailyUsage(): Promise<{
+    llmCalls: number;
+    tokensIn: number;
+    tokensOut: number;
+  }> {
+    const today = new Date().toISOString().slice(0, 10);
+    const counter = await prisma.usageCounter.findUnique({
+      where: { id: today },
+    });
     return {
       llmCalls: counter?.llmCalls ?? 0,
       tokensIn: counter?.tokensIn ?? 0,
       tokensOut: counter?.tokensOut ?? 0,
-    }
+    };
   }
 }

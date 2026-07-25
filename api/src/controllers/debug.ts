@@ -1,53 +1,60 @@
-import type { Request, Response } from "express"
-import type { z } from "zod"
-import { sendResponse } from "@/src/utils/response"
-import { NotFoundError } from "@/src/utils/errors"
-import { getValidatedQuery } from "@/src/middleware/validate"
-import { getTraces, getTraceById, clearTraces } from "@/src/debug/tracer"
-import { getCircuitState, resetCircuit } from "@/src/ai/circuit-breaker"
-import { getTracesQuerySchema, getTraceDetailParamsSchema } from "@/src/schemas/debug"
+import type { Request, Response } from "express";
+import type { z } from "zod";
+import { sendResponse } from "@/src/utils/response";
+import { NotFoundError } from "@/src/utils/errors";
+import { getValidatedQuery } from "@/src/middleware/validate";
+import { getTraces, getTraceById, clearTraces } from "@/src/debug/tracer";
+import { getCircuitState, resetCircuit } from "@/src/ai/circuit-breaker";
+import {
+  getTracesQuerySchema,
+  getTraceDetailParamsSchema,
+} from "@/src/schemas/debug";
 
-type GetTracesQuery = z.infer<typeof getTracesQuerySchema>
-type GetTraceDetailParams = z.infer<typeof getTraceDetailParamsSchema>
+type GetTracesQuery = z.infer<typeof getTracesQuerySchema>;
+type GetTraceDetailParams = z.infer<typeof getTraceDetailParamsSchema>;
 
 export function getRecentTraces(
   req: Request<Record<string, string>, unknown, unknown, GetTracesQuery>,
-  res: Response,
+  res: Response
 ): void {
-  const q = getValidatedQuery<GetTracesQuery>(req)
-  const limit = Number(q.limit)
-  const traces = getTraces(limit)
-  sendResponse(res, 200, "ok", { traces })
+  const q = getValidatedQuery<GetTracesQuery>(req);
+  const limit = Number(q.limit);
+  const traces = getTraces(limit);
+  sendResponse(res, 200, "ok", { traces });
 }
 
 export function getTraceDetail(
   req: Request<GetTraceDetailParams>,
-  res: Response,
+  res: Response
 ): void {
-  const { id } = req.params
-  const trace = getTraceById(id)
+  const { id } = req.params;
+  const trace = getTraceById(id);
   if (!trace) {
-    throw new NotFoundError("Trace not found")
+    throw new NotFoundError("Trace not found");
   }
-  sendResponse(res, 200, "ok", { trace })
+  sendResponse(res, 200, "ok", { trace });
 }
 
 export function deleteTraces(_req: Request, res: Response): void {
-  clearTraces()
-  sendResponse(res, 200, "ok")
+  clearTraces();
+  sendResponse(res, 200, "ok");
 }
 
 export function getStatus(_req: Request, res: Response): void {
-  const uptime = process.uptime()
-  const circuit = getCircuitState()
+  const uptime = process.uptime();
+  const circuit = getCircuitState();
   sendResponse(res, 200, "ok", {
-    circuitBreaker: { state: circuit.state, failures: circuit.failures, resetCircuit: "POST /api/debug/circuit/reset" },
+    circuitBreaker: {
+      state: circuit.state,
+      failures: circuit.failures,
+      resetCircuit: "POST /api/debug/circuit/reset",
+    },
     uptime,
     memory: process.memoryUsage(),
-  })
+  });
 }
 
 export function postResetCircuit(_req: Request, res: Response): void {
-  resetCircuit()
-  sendResponse(res, 200, "ok", { message: "Circuit breaker reset" })
+  resetCircuit();
+  sendResponse(res, 200, "ok", { message: "Circuit breaker reset" });
 }

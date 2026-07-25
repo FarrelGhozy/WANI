@@ -1,34 +1,43 @@
-import { Router } from "express"
-import * as customerController from "@/src/controllers/customer"
-import { requireJwt } from "@/src/middleware/jwt"
-import { validate } from "@/src/middleware/validate"
+import { Router } from "express";
+import * as customerController from "@/src/controllers/customer";
+import { requireJwt } from "@/src/middleware/jwt";
+import { validate } from "@/src/middleware/validate";
 import {
   customerQuerySchema,
   updateCustomerSchema,
   updateConversationStatusSchema,
   sendMessageSchema,
-} from "@/src/schemas/customer"
+} from "@/src/schemas/customer";
 
-const router = Router()
+const router = Router();
 
-router.get("/", validate({ query: customerQuerySchema }), customerController.listCustomers)
-router.get("/:id", customerController.getCustomer)
-router.put("/:id", requireJwt, validate({ body: updateCustomerSchema }), customerController.updateCustomer)
+router.get(
+  "/",
+  validate({ query: customerQuerySchema }),
+  customerController.listCustomers
+);
+router.get("/:id", customerController.getCustomer);
+router.put(
+  "/:id",
+  requireJwt,
+  validate({ body: updateCustomerSchema }),
+  customerController.updateCustomer
+);
 
-export default router
+export default router;
 
-export const conversationRouter = Router()
+export const conversationRouter = Router();
 
-conversationRouter.get("/:id", customerController.getConversation)
+conversationRouter.get("/:id", customerController.getConversation);
 conversationRouter.put(
   "/:id/status",
   requireJwt,
   validate({ body: updateConversationStatusSchema }),
-  customerController.updateConversationStatus,
-)
+  customerController.updateConversationStatus
+);
 conversationRouter.post(
   "/:id/messages",
   requireJwt,
   validate({ body: sendMessageSchema }),
-  customerController.sendMessage,
-)
+  customerController.sendMessage
+);

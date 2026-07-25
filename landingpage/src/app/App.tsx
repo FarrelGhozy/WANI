@@ -10,7 +10,10 @@ import Footer from "./Footer.tsx";
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-white text-stone-900" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+    <div
+      className="min-h-screen bg-white text-stone-900"
+      style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+    >
       <Navbar />
       <Hero />
       <TrustBar />

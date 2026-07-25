@@ -1,8 +1,8 @@
-import { Router } from "express"
-import * as logController from "@/src/controllers/log"
+import { Router } from "express";
+import * as logController from "@/src/controllers/log";
 
-const router = Router()
+const router = Router();
 
-router.get("/", logController.getUsage)
+router.get("/", logController.getUsage);
 
-export default router
+export default router;

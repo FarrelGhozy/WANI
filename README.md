@@ -55,12 +55,12 @@ cp .env.example .env
 docker compose up --build
 ```
 
-| Service | Port | Akses |
-|---------|------|-------|
-| Dashboard | `5173` | http://localhost:5173 |
-| API | `3001` | http://localhost:3001 |
-| WA Bot | — | WhatsApp Web client |
-| PostgreSQL | `5432` | internal |
+| Service    | Port   | Akses                 |
+| ---------- | ------ | --------------------- |
+| Dashboard  | `5173` | http://localhost:5173 |
+| API        | `3001` | http://localhost:3001 |
+| WA Bot     | —      | WhatsApp Web client   |
+| PostgreSQL | `5432` | internal              |
 
 Database `wani_api` + `wa_bot` dibuat otomatis via `init-dbs.sh`.
 
@@ -70,14 +70,14 @@ Database `wani_api` + `wa_bot` dibuat otomatis via `init-dbs.sh`.
 
 Semua konfigurasi lewat `.env` (root project). Lihat [`.env.example`](.env.example) untuk daftar lengkap.
 
-| Variable | Wajib | Default | Deskripsi |
-|----------|-------|---------|-----------|
-| `POSTGRES_PASSWORD` | ✅ | — | Password PostgreSQL |
-| `DATABASE_USER` | | `postgres` | User PostgreSQL |
-| `API_TOKEN` | ✅ | — | Shared secret bot↔API auth |
-| `JWT_SECRET` | ✅ | — | Secret untuk JWT auth |
-| `LLM_API_KEY` | ✅ | — | API key OpenCode Zen (dapat gratis di opencode.ai) |
-| `LLM_MODEL` | | `opencode/deepseek-v4-flash-free` | Model utama |
+| Variable            | Wajib | Default                           | Deskripsi                                          |
+| ------------------- | ----- | --------------------------------- | -------------------------------------------------- |
+| `POSTGRES_PASSWORD` | ✅    | —                                 | Password PostgreSQL                                |
+| `DATABASE_USER`     |       | `postgres`                        | User PostgreSQL                                    |
+| `API_TOKEN`         | ✅    | —                                 | Shared secret bot↔API auth                         |
+| `JWT_SECRET`        | ✅    | —                                 | Secret untuk JWT auth                              |
+| `LLM_API_KEY`       | ✅    | —                                 | API key OpenCode Zen (dapat gratis di opencode.ai) |
+| `LLM_MODEL`         |       | `opencode/deepseek-v4-flash-free` | Model utama                                        |
 
 ---
 
@@ -103,20 +103,20 @@ cp wa-bot/.env.example wa-bot/.env
 
 **`api/.env`** — isi minimal:
 
-| Variable | Contoh | Keterangan |
-|----------|--------|------------|
-| `DATABASE_PASSWORD` | `postgres` | Password PostgreSQL |
-| `API_TOKEN` | `rahasia123` | Shared secret |
-| `JWT_SECRET` | `jwt-rahasia456` | Secret JWT |
-| `LLM_API_KEY` | `sk-xxx` | API key OpenCode Zen |
+| Variable            | Contoh           | Keterangan           |
+| ------------------- | ---------------- | -------------------- |
+| `DATABASE_PASSWORD` | `postgres`       | Password PostgreSQL  |
+| `API_TOKEN`         | `rahasia123`     | Shared secret        |
+| `JWT_SECRET`        | `jwt-rahasia456` | Secret JWT           |
+| `LLM_API_KEY`       | `sk-xxx`         | API key OpenCode Zen |
 
 **`wa-bot/.env`**:
 
-| Variable | Contoh | Keterangan |
-|----------|--------|------------|
-| `DATABASE_PASSWORD` | `postgres` | Sama dengan API |
-| `API_TOKEN` | `rahasia123` | **Harus sama** dengan API |
-| `API_URL` | `http://localhost:3001` | URL API server |
+| Variable            | Contoh                  | Keterangan                |
+| ------------------- | ----------------------- | ------------------------- |
+| `DATABASE_PASSWORD` | `postgres`              | Sama dengan API           |
+| `API_TOKEN`         | `rahasia123`            | **Harus sama** dengan API |
+| `API_URL`           | `http://localhost:3001` | URL API server            |
 
 ### 3. Buat database
 
@@ -178,14 +178,14 @@ Express 5 dengan layered architecture: routes → controllers → models → Pri
 
 React 19 + Vite 8 (Rolldown) + TypeScript 6. React Compiler via Babel plugin.
 
-| Halaman | Fitur |
-|---------|-------|
-| Dashboard | Statistik toko + warning banner pembayaran |
-| Products | CRUD produk, filter kategori, list/grid view |
-| Orders | Daftar + detail pesanan, update status + konfirmasi pembayaran |
-| Customers | Daftar + detail pelanggan, chat inline |
-| Settings | Profil toko, AI config, WA session, pembayaran |
-| Website | Konfigurasi + generate website UMKM |
+| Halaman   | Fitur                                                          |
+| --------- | -------------------------------------------------------------- |
+| Dashboard | Statistik toko + warning banner pembayaran                     |
+| Products  | CRUD produk, filter kategori, list/grid view                   |
+| Orders    | Daftar + detail pesanan, update status + konfirmasi pembayaran |
+| Customers | Daftar + detail pelanggan, chat inline                         |
+| Settings  | Profil toko, AI config, WA session, pembayaran                 |
+| Website   | Konfigurasi + generate website UMKM                            |
 
 Semua hooks panggil real API (`fetchApi()` via Vite proxy `/api/*` → `localhost:3001`).
 
@@ -212,66 +212,66 @@ Semua response format:
 { "status": "success"|"failure", "message": "...", "data": null | {} | [] }
 ```
 
-| Method | Path | Auth | Deskripsi |
-|--------|------|------|-----------|
-| `GET` | `/api/qr` | — | QR code string |
-| `GET` | `/api/qr/status` | — | Status koneksi + nomor HP |
-| `POST` | `/api/qr` | 🔒 API_TOKEN | Push QR / update status |
-| `DELETE` | `/api/qr` | 🔒 API_TOKEN | Clear QR (saat connect) |
-| `POST` | `/api/chat` | 🔒 API_TOKEN | Proses pesan WA → AI reply |
-| `GET` | `/api/store` | — | Profil toko + `hasPaymentMethods` |
-| `PUT` | `/api/store` | 🔒 JWT | Update profil toko |
-| `GET` | `/api/ai-config` | 🔒 JWT | Konfigurasi AI |
-| `PUT` | `/api/ai-config` | 🔒 JWT | Update AI config |
-| `GET` | `/api/products` | — | Daftar produk (paginated, searchable) |
-| `GET` | `/api/products/:id` | — | Detail produk |
-| `POST` | `/api/products` | 🔒 JWT | Tambah produk |
-| `PUT` | `/api/products/:id` | 🔒 JWT | Update produk |
-| `DELETE` | `/api/products/:id` | 🔒 JWT | Hapus produk |
-| `GET` | `/api/products/categories` | — | Daftar kategori |
-| `POST` | `/api/products/categories` | 🔒 JWT | Tambah kategori |
-| `PUT` | `/api/products/categories/:id` | 🔒 JWT | Update kategori |
-| `DELETE` | `/api/products/categories/:id` | 🔒 JWT | Hapus kategori |
-| `GET` | `/api/orders` | — | Daftar pesanan |
-| `GET` | `/api/orders/:id` | — | Detail pesanan + items + payment |
-| `PUT` | `/api/orders/:id/status` | 🔒 JWT | Update status |
-| `PUT` | `/api/orders/:id/notes` | 🔒 JWT | Update catatan |
-| `PUT` | `/api/orders/:id/payment` | 🔒 JWT | Buat/update pembayaran |
-| `GET` | `/api/customers` | — | Daftar pelanggan |
-| `GET` | `/api/customers/:id` | — | Detail pelanggan |
-| `PUT` | `/api/customers/:id` | 🔒 JWT | Update pelanggan |
-| `GET` | `/api/conversations/:id` | — | Pesan percakapan |
-| `PUT` | `/api/conversations/:id/status` | 🔒 JWT | Update status percakapan |
-| `POST` | `/api/conversations/:id/messages` | 🔒 JWT | Kirim pesan HUMAN |
-| `GET` | `/api/dashboard/stats` | — | Statistik dashboard |
-| `GET` | `/api/logs` | — | Activity log (paginated) |
-| `GET` | `/api/usage` | — | Counter LLM usage (hari ini) |
-| `POST` | `/api/auth/register` | — | Register |
-| `POST` | `/api/auth/login` | — | Login → JWT |
-| `GET` | `/api/auth/me` | 🔒 JWT | Current user |
-| `POST` | `/api/auth/logout` | — | Logout |
-| `POST` | `/api/auth/forgot-password` | — | Generate reset token |
-| `POST` | `/api/auth/reset-password` | — | Reset password |
-| `GET` | `/api/store/payment-methods` | — | Daftar metode pembayaran |
-| `POST` | `/api/store/payment-methods` | 🔒 JWT | Tambah metode bayar |
-| `PUT` | `/api/store/payment-methods/:id` | 🔒 JWT | Edit metode bayar |
-| `DELETE` | `/api/store/payment-methods/:id` | 🔒 JWT | Hapus metode bayar |
-| `POST` | `/api/upload` | 🔒 JWT | Upload file (QRIS image) |
-| `GET` | `/api/website` | — | Website config |
-| `PUT` | `/api/website` | 🔒 JWT | Update website config |
-| `POST` | `/api/website/generate` | 🔒 JWT | Generate static site |
-| `GET` | `/api/website/download` | 🔒 JWT | Download ZIP |
-| `POST` | `/api/website/publish` | 🔒 JWT | Tandai sebagai published |
-| `GET` | `/s/:slug` | — | Serve generated static site |
-| `GET` | `/api/debug/traces` | — | Pipeline traces (dev) |
-| `GET` | `/api/debug/traces/:id` | — | Trace detail (dev) |
-| `DELETE` | `/api/debug/traces` | — | Clear traces (dev) |
-| `GET` | `/api/debug/status` | — | Server status (dev) |
-| `POST` | `/api/debug/circuit/reset` | — | Reset circuit breaker (dev) |
-| `GET` | `/api/health` | — | Health check |
-| `GET` | `/api/metrics` | — | Prometheus metrics |
-| `GET` | `/api/outgoing` | 🔒 API_TOKEN | List outgoing messages (wa-bot) |
-| `PATCH` | `/api/outgoing/:id/delivered` | 🔒 API_TOKEN | Mark message delivered |
+| Method   | Path                              | Auth         | Deskripsi                             |
+| -------- | --------------------------------- | ------------ | ------------------------------------- |
+| `GET`    | `/api/qr`                         | —            | QR code string                        |
+| `GET`    | `/api/qr/status`                  | —            | Status koneksi + nomor HP             |
+| `POST`   | `/api/qr`                         | 🔒 API_TOKEN | Push QR / update status               |
+| `DELETE` | `/api/qr`                         | 🔒 API_TOKEN | Clear QR (saat connect)               |
+| `POST`   | `/api/chat`                       | 🔒 API_TOKEN | Proses pesan WA → AI reply            |
+| `GET`    | `/api/store`                      | —            | Profil toko + `hasPaymentMethods`     |
+| `PUT`    | `/api/store`                      | 🔒 JWT       | Update profil toko                    |
+| `GET`    | `/api/ai-config`                  | 🔒 JWT       | Konfigurasi AI                        |
+| `PUT`    | `/api/ai-config`                  | 🔒 JWT       | Update AI config                      |
+| `GET`    | `/api/products`                   | —            | Daftar produk (paginated, searchable) |
+| `GET`    | `/api/products/:id`               | —            | Detail produk                         |
+| `POST`   | `/api/products`                   | 🔒 JWT       | Tambah produk                         |
+| `PUT`    | `/api/products/:id`               | 🔒 JWT       | Update produk                         |
+| `DELETE` | `/api/products/:id`               | 🔒 JWT       | Hapus produk                          |
+| `GET`    | `/api/products/categories`        | —            | Daftar kategori                       |
+| `POST`   | `/api/products/categories`        | 🔒 JWT       | Tambah kategori                       |
+| `PUT`    | `/api/products/categories/:id`    | 🔒 JWT       | Update kategori                       |
+| `DELETE` | `/api/products/categories/:id`    | 🔒 JWT       | Hapus kategori                        |
+| `GET`    | `/api/orders`                     | —            | Daftar pesanan                        |
+| `GET`    | `/api/orders/:id`                 | —            | Detail pesanan + items + payment      |
+| `PUT`    | `/api/orders/:id/status`          | 🔒 JWT       | Update status                         |
+| `PUT`    | `/api/orders/:id/notes`           | 🔒 JWT       | Update catatan                        |
+| `PUT`    | `/api/orders/:id/payment`         | 🔒 JWT       | Buat/update pembayaran                |
+| `GET`    | `/api/customers`                  | —            | Daftar pelanggan                      |
+| `GET`    | `/api/customers/:id`              | —            | Detail pelanggan                      |
+| `PUT`    | `/api/customers/:id`              | 🔒 JWT       | Update pelanggan                      |
+| `GET`    | `/api/conversations/:id`          | —            | Pesan percakapan                      |
+| `PUT`    | `/api/conversations/:id/status`   | 🔒 JWT       | Update status percakapan              |
+| `POST`   | `/api/conversations/:id/messages` | 🔒 JWT       | Kirim pesan HUMAN                     |
+| `GET`    | `/api/dashboard/stats`            | —            | Statistik dashboard                   |
+| `GET`    | `/api/logs`                       | —            | Activity log (paginated)              |
+| `GET`    | `/api/usage`                      | —            | Counter LLM usage (hari ini)          |
+| `POST`   | `/api/auth/register`              | —            | Register                              |
+| `POST`   | `/api/auth/login`                 | —            | Login → JWT                           |
+| `GET`    | `/api/auth/me`                    | 🔒 JWT       | Current user                          |
+| `POST`   | `/api/auth/logout`                | —            | Logout                                |
+| `POST`   | `/api/auth/forgot-password`       | —            | Generate reset token                  |
+| `POST`   | `/api/auth/reset-password`        | —            | Reset password                        |
+| `GET`    | `/api/store/payment-methods`      | —            | Daftar metode pembayaran              |
+| `POST`   | `/api/store/payment-methods`      | 🔒 JWT       | Tambah metode bayar                   |
+| `PUT`    | `/api/store/payment-methods/:id`  | 🔒 JWT       | Edit metode bayar                     |
+| `DELETE` | `/api/store/payment-methods/:id`  | 🔒 JWT       | Hapus metode bayar                    |
+| `POST`   | `/api/upload`                     | 🔒 JWT       | Upload file (QRIS image)              |
+| `GET`    | `/api/website`                    | —            | Website config                        |
+| `PUT`    | `/api/website`                    | 🔒 JWT       | Update website config                 |
+| `POST`   | `/api/website/generate`           | 🔒 JWT       | Generate static site                  |
+| `GET`    | `/api/website/download`           | 🔒 JWT       | Download ZIP                          |
+| `POST`   | `/api/website/publish`            | 🔒 JWT       | Tandai sebagai published              |
+| `GET`    | `/s/:slug`                        | —            | Serve generated static site           |
+| `GET`    | `/api/debug/traces`               | —            | Pipeline traces (dev)                 |
+| `GET`    | `/api/debug/traces/:id`           | —            | Trace detail (dev)                    |
+| `DELETE` | `/api/debug/traces`               | —            | Clear traces (dev)                    |
+| `GET`    | `/api/debug/status`               | —            | Server status (dev)                   |
+| `POST`   | `/api/debug/circuit/reset`        | —            | Reset circuit breaker (dev)           |
+| `GET`    | `/api/health`                     | —            | Health check                          |
+| `GET`    | `/api/metrics`                    | —            | Prometheus metrics                    |
+| `GET`    | `/api/outgoing`                   | 🔒 API_TOKEN | List outgoing messages (wa-bot)       |
+| `PATCH`  | `/api/outgoing/:id/delivered`     | 🔒 API_TOKEN | Mark message delivered                |
 
 > 🔒 API_TOKEN = `requireAuth` (Bearer API_TOKEN), 🔒 JWT = `requireJwt` (JWT dari login)
 
@@ -297,20 +297,20 @@ Store (single-row)
 
 ### wa_bot — 2 tabel
 
-| Tabel | Fungsi |
-|-------|--------|
-| `Creds` | AuthenticationCreds serialized JSON (persistent login) |
-| `SignalKey` | Signal protocol keys Baileys |
+| Tabel       | Fungsi                                                 |
+| ----------- | ------------------------------------------------------ |
+| `Creds`     | AuthenticationCreds serialized JSON (persistent login) |
+| `SignalKey` | Signal protocol keys Baileys                           |
 
 ### Enums
 
-| Enum | Values |
-|------|--------|
-| `OrderStatus` | PENDING, CONFIRMED, PROCESSING, COMPLETED, CANCELLED |
-| `PaymentMethod` | CASH, TRANSFER, QRIS, E_WALLET |
-| `PaymentStatus` | PENDING, PAID, FAILED, REFUNDED |
-| `MessageRole` | CUSTOMER, BOT, HUMAN |
-| `ConversationStatus` | ACTIVE, RESOLVED, ARCHIVED, ESCALATED |
+| Enum                 | Values                                               |
+| -------------------- | ---------------------------------------------------- |
+| `OrderStatus`        | PENDING, CONFIRMED, PROCESSING, COMPLETED, CANCELLED |
+| `PaymentMethod`      | CASH, TRANSFER, QRIS, E_WALLET                       |
+| `PaymentStatus`      | PENDING, PAID, FAILED, REFUNDED                      |
+| `MessageRole`        | CUSTOMER, BOT, HUMAN                                 |
+| `ConversationStatus` | ACTIVE, RESOLVED, ARCHIVED, ESCALATED                |
 
 ---
 
@@ -329,16 +329,16 @@ Detail lengkap: [`api/ARSITEKTUR.md`](api/ARSITEKTUR.md)
 
 ## Commands Reference
 
-| Action | API | Dashboard | WA Bot | Web-Gen |
-|--------|-----|-----------|--------|---------|
-| Install | `bun install` | `bun install` | `bun install` | `bun install` |
-| Run dev | `bun run src/index.ts` | `bun run dev` | `bun run src/index.ts` | — |
-| Build | — | `bun run build` | — | `bun run build:template` |
-| Type check | `bun run tsc --noEmit` | `bun run build` | — | `bun run tsc --noEmit` |
-| Prisma generate | `bun run prisma:generate` | — | `bun run prisma:generate` | — |
-| Prisma migrate | `bun run prisma:migrate` | — | `bun run prisma:migrate` | — |
-| Prisma deploy | `bun run prisma:deploy` | — | `bun run prisma:deploy` | — |
-| Test | `bun test` | `bun test` | — | — |
+| Action          | API                       | Dashboard       | WA Bot                    | Web-Gen                  |
+| --------------- | ------------------------- | --------------- | ------------------------- | ------------------------ |
+| Install         | `bun install`             | `bun install`   | `bun install`             | `bun install`            |
+| Run dev         | `bun run src/index.ts`    | `bun run dev`   | `bun run src/index.ts`    | —                        |
+| Build           | —                         | `bun run build` | —                         | `bun run build:template` |
+| Type check      | `bun run tsc --noEmit`    | `bun run build` | —                         | `bun run tsc --noEmit`   |
+| Prisma generate | `bun run prisma:generate` | —               | `bun run prisma:generate` | —                        |
+| Prisma migrate  | `bun run prisma:migrate`  | —               | `bun run prisma:migrate`  | —                        |
+| Prisma deploy   | `bun run prisma:deploy`   | —               | `bun run prisma:deploy`   | —                        |
+| Test            | `bun test`                | `bun test`      | —                         | —                        |
 
 ## Live Demo
 
@@ -352,8 +352,8 @@ Platform berjalan di **https://wani.utc.web.id/* — Dashboard production dengan
 
 ## Tautan
 
-| Tautan | URL |
-|--------|-----|
-| Website Live Demo | [https://wani.utc.web.id/](https://wani.utc.web.id/) |
-| Repository GitHub | [https://github.com/FarrelGhozy/WANI.git](https://github.com/FarrelGhozy/WANI.git) |
-| Proposal Projek | [https://docs.google.com/document/d/1CSzb5ozLBQJIwKp_Wc98Wl4170_KCNQGNEyUAyXO7JI/edit?usp=sharing](https://docs.google.com/document/d/1CSzb5ozLBQJIwKp_Wc98Wl4170_KCNQGNEyUAyXO7JI/edit?usp=sharing) |
+| Tautan            | URL                                                                                                                                                                                                  |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Website Live Demo | [https://wani.utc.web.id/](https://wani.utc.web.id/)                                                                                                                                                 |
+| Repository GitHub | [https://github.com/FarrelGhozy/WANI.git](https://github.com/FarrelGhozy/WANI.git)                                                                                                                   |
+| Proposal Projek   | [https://docs.google.com/document/d/1CSzb5ozLBQJIwKp_Wc98Wl4170_KCNQGNEyUAyXO7JI/edit?usp=sharing](https://docs.google.com/document/d/1CSzb5ozLBQJIwKp_Wc98Wl4170_KCNQGNEyUAyXO7JI/edit?usp=sharing) |

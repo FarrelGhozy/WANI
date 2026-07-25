@@ -6,8 +6,8 @@ import type {
   StoreInfo,
   ProductEntry,
   CompletionResult,
-} from "@/src/types/ai"
-import { TraceContext } from "@/src/debug/tracer"
+} from "@/src/types/ai";
+import { TraceContext } from "@/src/debug/tracer";
 
 /**
  * Mutable context that accumulates state as pipeline steps execute.
@@ -16,29 +16,29 @@ import { TraceContext } from "@/src/debug/tracer"
  */
 export interface PipelineContext {
   // Provided at start
-  input: PipelineInput
-  trace: TraceContext
+  input: PipelineInput;
+  trace: TraceContext;
 
   // Populated by steps (in execution order)
-  ownerId: string
-  normalized?: string
-  customerId?: string
-  customerPhone?: string
-  conversationId?: string
-  piiTypes?: string[]
+  ownerId: string;
+  normalized?: string;
+  customerId?: string;
+  customerPhone?: string;
+  conversationId?: string;
+  piiTypes?: string[];
 
-  storeInfo?: StoreInfo
-  products?: ProductEntry[]
-  aiConfig?: Record<string, any>
+  storeInfo?: StoreInfo;
+  products?: ProductEntry[];
+  aiConfig?: Record<string, any>;
 
-  systemPrompt?: string
-  historyMessages?: ChatMessage[]
-  completion?: CompletionResult
-  llmOutput?: LLMOutput
-  actionReply?: string
-  actionQrisUrl?: string | null
-  finalReply?: string
-  llmIntent?: string
+  systemPrompt?: string;
+  historyMessages?: ChatMessage[];
+  completion?: CompletionResult;
+  llmOutput?: LLMOutput;
+  actionReply?: string;
+  actionQrisUrl?: string | null;
+  finalReply?: string;
+  llmIntent?: string;
 }
 
 /**
@@ -47,19 +47,19 @@ export interface PipelineContext {
  * - `break` → short-circuit the pipeline with a final result
  */
 export type StepOutcome =
-  | { kind: "continue" }
-  | { kind: "break"; result: PipelineResult }
+  { kind: "continue" } | { kind: "break"; result: PipelineResult };
 
 export interface PipelineStep {
   /** Human-readable label for observability. */
-  name: string
-  run: (ctx: PipelineContext) => Promise<StepOutcome>
+  name: string;
+  run: (ctx: PipelineContext) => Promise<StepOutcome>;
 }
 
 export const STEP_REPLIES = {
   FALLBACK: "Maaf, sistem sedang sibuk. Silakan coba lagi sebentar ya.",
   LEAK: "Maaf, terjadi kesalahan teknis. Tim kami akan segera memperbaikinya.",
-  INJECTION: "Maaf, pesan Anda tidak dapat diproses. Silakan kirim ulang dengan bahasa yang sopan.",
+  INJECTION:
+    "Maaf, pesan Anda tidak dapat diproses. Silakan kirim ulang dengan bahasa yang sopan.",
   BUDGET: "Maaf, lagi ramai. CS manusia akan segera membalas pesan Anda.",
   RATE_LIMIT: "Mohon tunggu sebentar, Anda terlalu cepat mengirim pesan.",
-} as const
+} as const;

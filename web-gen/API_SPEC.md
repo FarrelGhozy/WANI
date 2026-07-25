@@ -41,6 +41,7 @@
 ### Authentication
 
 Untuk endpoint yang butuh auth:
+
 ```
 Authorization: Bearer {API_TOKEN}
 ```
@@ -67,23 +68,23 @@ Semua konfigurasi disimpan di field `config` (JSON). Default config shape:
 
 ```typescript
 interface SiteConfig {
-  heroHeadline: string
-  heroSubheadline?: string
-  aboutText: string
-  primaryColor: string         // hex, default "#059669"
-  secondaryColor: string       // hex, default "#f59e0b"
-  phone?: string
-  selectedProductIds: string[]
-  template: string             // default "default"
-  theme: string                // "classic" | "modern" | "vibrant" | "elegant"
-  contactEmail?: string
-  contactMapsUrl?: string
-  socialMedia?: Record<string, string>  // platform → URL
-  heroImageUrl?: string | null
-  aboutImageUrl?: string | null
-  logoUrl?: string | null
-  faviconUrl?: string | null
-  ctaText?: string
+  heroHeadline: string;
+  heroSubheadline?: string;
+  aboutText: string;
+  primaryColor: string; // hex, default "#059669"
+  secondaryColor: string; // hex, default "#f59e0b"
+  phone?: string;
+  selectedProductIds: string[];
+  template: string; // default "default"
+  theme: string; // "classic" | "modern" | "vibrant" | "elegant"
+  contactEmail?: string;
+  contactMapsUrl?: string;
+  socialMedia?: Record<string, string>; // platform → URL
+  heroImageUrl?: string | null;
+  aboutImageUrl?: string | null;
+  logoUrl?: string | null;
+  faviconUrl?: string | null;
+  ctaText?: string;
 }
 ```
 
@@ -228,6 +229,7 @@ Download hasil generate terakhir sebagai file `.zip`.
 ```
 
 **Isi ZIP:**
+
 ```
 website-default.zip
 └── default/
@@ -274,8 +276,8 @@ Express menyajikan folder `generated-sites/` sebagai static files:
 
 ```typescript
 // api/src/server.ts
-const generatedDir = path.resolve(import.meta.dir, "..", "generated-sites")
-app.use("/s", express.static(generatedDir))
+const generatedDir = path.resolve(import.meta.dir, "..", "generated-sites");
+app.use("/s", express.static(generatedDir));
 ```
 
 Hasil generate bisa diakses di browser:
@@ -290,12 +292,12 @@ http://localhost:3001/s/default/kontak/     → kontak/index.html
 
 ## 8. Error Codes
 
-| Status | Class | Penyebab |
-|--------|-------|----------|
-| 400 | `BadRequestError` | Body tidak valid (Zod), slug tidak URL-safe, config kurang |
-| 401 | `UnauthorizedError` | Token tidak ada atau tidak cocok |
-| 404 | `NotFoundError` | Resource tidak ditemukan |
-| 500 | `InternalServerError` | Build gagal, generator error, database error |
+| Status | Class                 | Penyebab                                                   |
+| ------ | --------------------- | ---------------------------------------------------------- |
+| 400    | `BadRequestError`     | Body tidak valid (Zod), slug tidak URL-safe, config kurang |
+| 401    | `UnauthorizedError`   | Token tidak ada atau tidak cocok                           |
+| 404    | `NotFoundError`       | Resource tidak ditemukan                                   |
+| 500    | `InternalServerError` | Build gagal, generator error, database error               |
 
 ### Contoh Error Response
 
@@ -305,7 +307,10 @@ http://localhost:3001/s/default/kontak/     → kontak/index.html
   "message": "Validation failed",
   "data": [
     { "path": "config.selectedProductIds", "message": "Required" },
-    { "path": "config.hero.headline", "message": "String must contain at least 1 character(s)" }
+    {
+      "path": "config.hero.headline",
+      "message": "String must contain at least 1 character(s)"
+    }
   ]
 }
 ```
@@ -314,16 +319,16 @@ http://localhost:3001/s/default/kontak/     → kontak/index.html
 
 ## 9. Ringkasan Endpoint
 
-| Method | Path | Auth | Status | Deskripsi |
-|--------|------|------|--------|-----------|
-| `GET` | `/api/website` | — | ✅ Existing | Ambil config website |
-| `PUT` | `/api/website` | 🔒 JWT | ✅ Existing | Simpan config website |
-| `POST` | `/api/website/generate` | 🔒 JWT | ✅ Existing | Generate static site via web-gen |
-| `GET` | `/api/website/download` | 🔒 JWT | ✅ Existing | Download ZIP hasil generate |
-| `POST` | `/api/website/publish` | 🔒 JWT | ✅ Existing | Tandai sebagai published |
-| `GET` | `/api/website/generations` | 🔒 JWT | ✅ Existing | Riwayat generate |
-| `DELETE` | `/api/website/generations/:id` | 🔒 JWT | ✅ Existing | Hapus riwayat generate |
-| `GET` | `/s/:slug` | — | ✅ Existing | Serve generated static site |
+| Method   | Path                           | Auth   | Status      | Deskripsi                        |
+| -------- | ------------------------------ | ------ | ----------- | -------------------------------- |
+| `GET`    | `/api/website`                 | —      | ✅ Existing | Ambil config website             |
+| `PUT`    | `/api/website`                 | 🔒 JWT | ✅ Existing | Simpan config website            |
+| `POST`   | `/api/website/generate`        | 🔒 JWT | ✅ Existing | Generate static site via web-gen |
+| `GET`    | `/api/website/download`        | 🔒 JWT | ✅ Existing | Download ZIP hasil generate      |
+| `POST`   | `/api/website/publish`         | 🔒 JWT | ✅ Existing | Tandai sebagai published         |
+| `GET`    | `/api/website/generations`     | 🔒 JWT | ✅ Existing | Riwayat generate                 |
+| `DELETE` | `/api/website/generations/:id` | 🔒 JWT | ✅ Existing | Hapus riwayat generate           |
+| `GET`    | `/s/:slug`                     | —      | ✅ Existing | Serve generated static site      |
 
 ---
 

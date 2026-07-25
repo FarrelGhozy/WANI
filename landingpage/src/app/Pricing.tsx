@@ -15,12 +15,24 @@ export default function Pricing() {
   return (
     <section id="harga" className="bg-[#fafaf9] py-24">
       <div className="mx-auto max-w-6xl px-6">
-        <div ref={headingRef} className="mb-12 text-center" style={{ opacity: 0 }}>
-          <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-teal-600">Harga</p>
-          <h2 className="text-3xl font-bold text-stone-900 lg:text-4xl" style={{ fontFamily: "'Instrument Serif', serif" }}>
-            Pilih paket yang <span className="italic text-teal-600">sesuai bisnismu</span>
+        <div
+          ref={headingRef}
+          className="mb-12 text-center"
+          style={{ opacity: 0 }}
+        >
+          <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-teal-600">
+            Harga
+          </p>
+          <h2
+            className="text-3xl font-bold text-stone-900 lg:text-4xl"
+            style={{ fontFamily: "'Instrument Serif', serif" }}
+          >
+            Pilih paket yang{" "}
+            <span className="italic text-teal-600">sesuai bisnismu</span>
           </h2>
-          <p className="mx-auto mt-4 max-w-xl text-stone-500">Mulai gratis 14 hari. Tanpa kartu kredit. Batalkan kapan saja.</p>
+          <p className="mx-auto mt-4 max-w-xl text-stone-500">
+            Mulai gratis 14 hari. Tanpa kartu kredit. Batalkan kapan saja.
+          </p>
 
           <div className="mt-8 inline-flex items-center gap-3 rounded-full border border-stone-200 bg-white p-1 shadow-sm">
             <button
@@ -58,7 +70,10 @@ export default function Pricing() {
                 </div>
               )}
               <div className="mb-6">
-                <h3 className="text-xl font-bold text-stone-900" style={{ fontFamily: "'Instrument Serif', serif" }}>
+                <h3
+                  className="text-xl font-bold text-stone-900"
+                  style={{ fontFamily: "'Instrument Serif', serif" }}
+                >
                   {plan.name}
                 </h3>
                 <p className="mt-1 text-sm text-stone-500">{plan.desc}</p>
@@ -67,13 +82,23 @@ export default function Pricing() {
               <div className="mb-8">
                 {plan.monthlyPrice ? (
                   <>
-                    <p className="text-4xl font-bold text-stone-900" style={{ fontFamily: "'Instrument Serif', serif" }}>
-                      {formatIDR(yearly ? plan.yearlyPrice! : plan.monthlyPrice)}
+                    <p
+                      className="text-4xl font-bold text-stone-900"
+                      style={{ fontFamily: "'Instrument Serif', serif" }}
+                    >
+                      {formatIDR(
+                        yearly ? plan.yearlyPrice! : plan.monthlyPrice
+                      )}
                     </p>
-                    <p className="mt-1 text-sm text-stone-400">/bulan{yearly ? " · tagih tahunan" : ""}</p>
+                    <p className="mt-1 text-sm text-stone-400">
+                      /bulan{yearly ? " · tagih tahunan" : ""}
+                    </p>
                   </>
                 ) : (
-                  <p className="text-3xl font-bold text-stone-900" style={{ fontFamily: "'Instrument Serif', serif" }}>
+                  <p
+                    className="text-3xl font-bold text-stone-900"
+                    style={{ fontFamily: "'Instrument Serif', serif" }}
+                  >
                     Custom
                   </p>
                 )}
@@ -81,7 +106,10 @@ export default function Pricing() {
 
               <ul className="mb-8 flex flex-1 flex-col gap-3">
                 {plan.features.map((f) => (
-                  <li key={f} className="flex items-start gap-3 text-sm text-stone-600">
+                  <li
+                    key={f}
+                    className="flex items-start gap-3 text-sm text-stone-600"
+                  >
                     <div className="mt-0.5 flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full bg-teal-100 text-teal-700">
                       <Check size={10} strokeWidth={3} />
                     </div>

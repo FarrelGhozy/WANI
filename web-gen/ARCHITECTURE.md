@@ -25,12 +25,12 @@
 
 ## Stack
 
-| Layer | Teknologi | Versi |
-|-------|-----------|-------|
-| **Runtime** | Bun | 1.3.x |
-| **Generator** | TypeScript (Bun native) | — |
-| **Template Engine** | Astro | 7.x |
-| **Output** | Static HTML + CSS + JS | — |
+| Layer               | Teknologi               | Versi |
+| ------------------- | ----------------------- | ----- |
+| **Runtime**         | Bun                     | 1.3.x |
+| **Generator**       | TypeScript (Bun native) | —     |
+| **Template Engine** | Astro                   | 7.x   |
+| **Output**          | Static HTML + CSS + JS  | —     |
 
 ### Prinsip
 
@@ -43,14 +43,14 @@
 
 ## Peran & Batasan
 
-| Aspek | Keterangan |
-|-------|-----------|
-| **Tugas** | Generate static HTML dari data yang diberikan |
-| **Bukan tugas** | Menyimpan config, menyajikan API, autentikasi |
-| **Sumber data** | Diterima via parameter function dari API (`import { generate }`) |
-| **Output** | Folder static files di `api/generated-sites/{slug}/` |
-| **Preview** | Sama seperti publish, output ke `api/generated-sites/{slug}/` |
-| **Integrasi** | Dipanggil langsung (`import`) dari `api/` — Bun resolve TypeScript tanpa build |
+| Aspek           | Keterangan                                                                     |
+| --------------- | ------------------------------------------------------------------------------ |
+| **Tugas**       | Generate static HTML dari data yang diberikan                                  |
+| **Bukan tugas** | Menyimpan config, menyajikan API, autentikasi                                  |
+| **Sumber data** | Diterima via parameter function dari API (`import { generate }`)               |
+| **Output**      | Folder static files di `api/generated-sites/{slug}/`                           |
+| **Preview**     | Sama seperti publish, output ke `api/generated-sites/{slug}/`                  |
+| **Integrasi**   | Dipanggil langsung (`import`) dari `api/` — Bun resolve TypeScript tanpa build |
 
 web-gen **tidak punya akses database sendiri**. Semua data dikirim sebagai argument function oleh API.
 
@@ -253,30 +253,31 @@ const stats = JSON.parse(fs.readFileSync("src/data/orders-stats.json", "utf-8"))
 
 ### Halaman Template (3 halaman)
 
-| Halaman | Path | Konten |
-|---------|------|--------|
-| **Home** | `/` → `index.html` | Hero section (headline + subheadline + CTA), About section (deskripsi toko), Featured products grid (max 6 produk) + tombol WA per produk, Contact info ringkas |
-| **Produk** | `/produk` → `produk/index.html` | Full product catalog. Grid card: image, name, price, stock badge, description, tombol "Pesan via WhatsApp" per produk. Category filter via anchor links. |
-| **Kontak** | `/kontak` → `kontak/index.html` | Nama toko, alamat lengkap, nomor telepon (click-to-call + WA link), jam operasional, metode pembayaran yang diterima, link Google Maps |
+| Halaman    | Path                            | Konten                                                                                                                                                          |
+| ---------- | ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Home**   | `/` → `index.html`              | Hero section (headline + subheadline + CTA), About section (deskripsi toko), Featured products grid (max 6 produk) + tombol WA per produk, Contact info ringkas |
+| **Produk** | `/produk` → `produk/index.html` | Full product catalog. Grid card: image, name, price, stock badge, description, tombol "Pesan via WhatsApp" per produk. Category filter via anchor links.        |
+| **Kontak** | `/kontak` → `kontak/index.html` | Nama toko, alamat lengkap, nomor telepon (click-to-call + WA link), jam operasional, metode pembayaran yang diterima, link Google Maps                          |
 
 ### Komponen Template
 
-| Komponen | Peran |
-|----------|-------|
-| `BaseLayout.astro` | HTML shell: <head> (SEO meta, title, theme-color), Tailwind CSS, font, Header + Footer |
-| `Header.astro` | Navbar: logo (nama toko), links ke Home / Produk / Kontak, responsive hamburger mobile |
-| `Footer.astro` | Copyright, social links (jika ada), credit |
-| `HeroSection.astro` | Hero area: headline, subheadline, CTA button |
-| `ProductCard.astro` | Card: image, name, price (format Rp), stock status, description truncated |
-| `AboutSection.astro` | About toko: deskripsi, business hours |
-| `ContactInfo.astro` | Contact details: phone, address, maps link, payment methods |
-| `WaButton.astro` | Tombol "Pesan via WhatsApp" dengan nomor toko + template pesanan |
+| Komponen             | Peran                                                                                  |
+| -------------------- | -------------------------------------------------------------------------------------- |
+| `BaseLayout.astro`   | HTML shell: <head> (SEO meta, title, theme-color), Tailwind CSS, font, Header + Footer |
+| `Header.astro`       | Navbar: logo (nama toko), links ke Home / Produk / Kontak, responsive hamburger mobile |
+| `Footer.astro`       | Copyright, social links (jika ada), credit                                             |
+| `HeroSection.astro`  | Hero area: headline, subheadline, CTA button                                           |
+| `ProductCard.astro`  | Card: image, name, price (format Rp), stock status, description truncated              |
+| `AboutSection.astro` | About toko: deskripsi, business hours                                                  |
+| `ContactInfo.astro`  | Contact details: phone, address, maps link, payment methods                            |
+| `WaButton.astro`     | Tombol "Pesan via WhatsApp" dengan nomor toko + template pesanan                       |
 
 ### Styling Template
 
 Template `default/` menggunakan **Tailwind CSS v4** via `@tailwindcss/vite` plugin di Astro config. Flat HTML templates menggunakan CSS statis di folder `assets/` masing-masing.
 
 Warna diambil dari `site-config.json`:
+
 ```json
 {
   "colors": {
@@ -287,6 +288,7 @@ Warna diambil dari `site-config.json`:
 ```
 
 Inline style di `<head>` untuk CSS variables:
+
 ```astro
 <style>
   :root {
@@ -339,6 +341,7 @@ const waUrl = `https://wa.me/${waNumber}?text=${message}`
 ### Data Produk di Template
 
 `products.json` menyertakan field yang dibutuhkan WA button:
+
 - `nama` — nama produk
 - `harga` — number, diformat Rp di rendering
 - `phone` — nomor WhatsApp toko (disalin dari store)
@@ -359,23 +362,23 @@ File: `src/generator.ts`
 
 ```typescript
 interface GenerateParams {
-  slug: string
-  template: string  // nama folder di src/templates/
-  theme?: string    // nama theme CSS (classic/modern/vibrant/elegant)
-  store: StoreData
-  products: ProductData[]
-  config: SiteConfig
-  stats: OrdersStats
-  outputDir: string  // absolute path
+  slug: string;
+  template: string; // nama folder di src/templates/
+  theme?: string; // nama theme CSS (classic/modern/vibrant/elegant)
+  store: StoreData;
+  products: ProductData[];
+  config: SiteConfig;
+  stats: OrdersStats;
+  outputDir: string; // absolute path
 }
 
 interface GenerateResult {
-  success: boolean
-  outputPath: string | null
-  error?: string
+  success: boolean;
+  outputPath: string | null;
+  error?: string;
 }
 
-export async function generate(params: GenerateParams): Promise<GenerateResult>
+export async function generate(params: GenerateParams): Promise<GenerateResult>;
 ```
 
 ### Steps Detail
@@ -411,20 +414,22 @@ Generator menyediakan fungsi `createZipStream()`/`createZipFile()` yang mengompr
 ### File: `src/zip.ts`
 
 ```typescript
-import archiver from "archiver"
+import archiver from "archiver";
 
-export async function createZipFile(params: ZipParams & { outputPath: string }): Promise<void> {
+export async function createZipFile(
+  params: ZipParams & { outputPath: string }
+): Promise<void> {
   return new Promise((resolve, reject) => {
-    const output = createWriteStream(params.outputPath)
-    const archive = archiver("zip", { zlib: { level: 9 } })
+    const output = createWriteStream(params.outputPath);
+    const archive = archiver("zip", { zlib: { level: 9 } });
 
-    output.on("close", resolve)
-    archive.on("error", reject)
+    output.on("close", resolve);
+    archive.on("error", reject);
 
-    archive.pipe(output)
-    archive.directory(params.sourceDir, params.slug)
-    archive.finalize()
-  })
+    archive.pipe(output);
+    archive.directory(params.sourceDir, params.slug);
+    archive.finalize();
+  });
 }
 ```
 
@@ -472,6 +477,7 @@ Hasil generate bisa di-download sebagai file ZIP (`website-{slug}.zip`). File ZI
 ### Publish
 
 Publish menandai website sebagai `published: true` di database. Hasil generate tetap di `api/generated-sites/{slug}/`. Folder ini siap di-copy ke:
+
 - Vercel (`vercel deploy --prebuilt`)
 - Netlify (drag & drop folder)
 - Nginx / Apache (copy ke document root)
@@ -515,35 +521,35 @@ Halaman `/website` di Dashboard adalah antarmuka user untuk mengelola website to
 
 Form untuk mengatur konten website:
 
-| Field | Type | Default | Keterangan |
-|-------|------|---------|-----------|
-| `heroHeadline` | text | `"Selamat Datang di {store.name}"` | Headline utama hero section |
-| `heroSubheadline` | text | `"Temukan produk terbaik kami"` | Subheadline hero |
-| `aboutText` | textarea | deskripsi dari Store | About section content |
-| `primaryColor` | color | `#059669` | Warna utama (teal-600) |
-| `secondaryColor` | color | `#f59e0b` | Warna sekunder (amber-500) |
-| `phone` | text | dari Store.noWa | Nomor WhatsApp untuk tombol WA |
-| `selectedProductIds` | multi-select | all | Produk yang ditampilkan |
-| `template` | select | `"default"` | Template yang digunakan |
+| Field                | Type         | Default                            | Keterangan                     |
+| -------------------- | ------------ | ---------------------------------- | ------------------------------ |
+| `heroHeadline`       | text         | `"Selamat Datang di {store.name}"` | Headline utama hero section    |
+| `heroSubheadline`    | text         | `"Temukan produk terbaik kami"`    | Subheadline hero               |
+| `aboutText`          | textarea     | deskripsi dari Store               | About section content          |
+| `primaryColor`       | color        | `#059669`                          | Warna utama (teal-600)         |
+| `secondaryColor`     | color        | `#f59e0b`                          | Warna sekunder (amber-500)     |
+| `phone`              | text         | dari Store.noWa                    | Nomor WhatsApp untuk tombol WA |
+| `selectedProductIds` | multi-select | all                                | Produk yang ditampilkan        |
+| `template`           | select       | `"default"`                        | Template yang digunakan        |
 
 ### Quick Actions
 
-| Tombol | Aksi |
-|--------|------|
-| **Generate Now** | Panggil endpoint `POST /api/website/generate` → build website |
-| **Preview Website** | Buka tab baru ke `/s/preview/{slug}/` |
-| **Download ZIP** | Download `POST /api/website/download` → ZIP file |
-| **Publish** | Panggil `POST /api/website/publish` → output ke folder final |
+| Tombol              | Aksi                                                          |
+| ------------------- | ------------------------------------------------------------- |
+| **Generate Now**    | Panggil endpoint `POST /api/website/generate` → build website |
+| **Preview Website** | Buka tab baru ke `/s/preview/{slug}/`                         |
+| **Download ZIP**    | Download `POST /api/website/download` → ZIP file              |
+| **Publish**         | Panggil `POST /api/website/publish` → output ke folder final  |
 
 ### API Endpoints (Dashboard → API)
 
-| Method | Path | Deskripsi |
-|--------|------|-----------|
-| `GET` | `/api/website` | Get current website config |
-| `PUT` | `/api/website` | Update website config |
-| `POST` | `/api/website/generate` | Generate website + preview |
+| Method | Path                    | Deskripsi                           |
+| ------ | ----------------------- | ----------------------------------- |
+| `GET`  | `/api/website`          | Get current website config          |
+| `PUT`  | `/api/website`          | Update website config               |
+| `POST` | `/api/website/generate` | Generate website + preview          |
 | `POST` | `/api/website/download` | Download hasil generate sebagai ZIP |
-| `POST` | `/api/website/publish` | Publish website (copy ke final dir) |
+| `POST` | `/api/website/publish`  | Publish website (copy ke final dir) |
 
 ---
 
@@ -553,17 +559,22 @@ Form untuk mengatur konten website:
 
 ```typescript
 // api/src/controllers/website.ts
-import { generate } from "@web-gen/index.ts"
-import path from "node:path"
+import { generate } from "@web-gen/index.ts";
+import path from "node:path";
 
 export async function generateWebsite(req: Request, res: Response) {
-  const store = await StoreModel.find()
-  const products = await ProductModel.getAll()
-  const { totalOrders } = await OrderModel.getStats()
-  const stats = await OrderModel.getStatusCounts()
+  const store = await StoreModel.find();
+  const products = await ProductModel.getAll();
+  const { totalOrders } = await OrderModel.getStats();
+  const stats = await OrderModel.getStatusCounts();
 
-  const slug = "default"
-  const GENERATED_DIR = path.resolve(import.meta.dir, "..", "..", "generated-sites")
+  const slug = "default";
+  const GENERATED_DIR = path.resolve(
+    import.meta.dir,
+    "..",
+    "..",
+    "generated-sites"
+  );
 
   const result = await generate({
     slug,
@@ -574,13 +585,13 @@ export async function generateWebsite(req: Request, res: Response) {
     config: siteConfig,
     stats: { totalOrders, ...stats },
     outputDir: path.join(GENERATED_DIR, slug),
-  })
+  });
 
   if (result.success) {
-    await WebSiteModel.markPublished()
+    await WebSiteModel.markPublished();
   }
 
-  sendResponse(res, result.success ? 200 : 500, result)
+  sendResponse(res, result.success ? 200 : 500, result);
 }
 ```
 
@@ -590,11 +601,12 @@ Di Express, static middleware sudah terpasang di `api/src/server.ts`:
 
 ```typescript
 // api/src/server.ts
-const generatedDir = path.resolve(import.meta.dir, "..", "generated-sites")
-app.use("/s", express.static(generatedDir))
+const generatedDir = path.resolve(import.meta.dir, "..", "generated-sites");
+app.use("/s", express.static(generatedDir));
 ```
 
 Preview bisa diakses via:
+
 ```
 http://localhost:3001/s/default/               ← generated site
 ```
@@ -632,13 +644,13 @@ bun run tsc --noEmit
 
 Default (bisa diubah user via dashboard):
 
-| Peran | Default | CSS Variable |
-|-------|---------|-------------|
-| **Primary** | Teal-600 `#059669` | `--color-primary` |
-| **Secondary** | Amber-500 `#f59e0b` | `--color-secondary` |
-| **Background** | Stone-50 `#fafaf9` | — |
-| **Text** | Stone-900 `#1c1917` | — |
-| **Text Muted** | Stone-500 `#78716c` | — |
+| Peran          | Default             | CSS Variable        |
+| -------------- | ------------------- | ------------------- |
+| **Primary**    | Teal-600 `#059669`  | `--color-primary`   |
+| **Secondary**  | Amber-500 `#f59e0b` | `--color-secondary` |
+| **Background** | Stone-50 `#fafaf9`  | —                   |
+| **Text**       | Stone-900 `#1c1917` | —                   |
+| **Text Muted** | Stone-500 `#78716c` | —                   |
 
 ### Typography
 
@@ -662,6 +674,7 @@ Default (bisa diubah user via dashboard):
 ### SEO
 
 Setiap halaman punya:
+
 - `<title>` yang relevan (nama toko + halaman)
 - `<meta name="description">`
 - `<meta name="theme-color">` (warna primary)
@@ -672,16 +685,16 @@ Setiap halaman punya:
 
 ## Future Considerations
 
-| Fitur | Keterangan |
-|-------|-----------|
-| **Template tambahan** | Cukup buat folder `src/templates/{nama}/` dengan struktur Astro yang sama |
-| **Custom CSS** | Bisa ditambah field `customCss` di site-config.json, di-inject via `<style>` |
-| **Custom domain** | user configurasi domain, simpan di WebSite table |
-| **Auto deploy** | Integrasi dengan Vercel/Netlify API untuk auto-deploy setelah generate |
-| **Multi-page** | Template bisa punya halaman lebih dari 3 (blog, testimonial, dll) |
-| **Image optimization** | Integrasi dengan Astro Image untuk responsive images |
-| **Markdown content** | Bisa pakai file .md untuk halaman About, Terms, dll |
-| **Share via WhatsApp** | Tombol share produk/link via WA di card produk |
-| **WhatsApp Catalog** | Integrasi dengan WhatsApp Catalog API untuk sync produk |
-| **Order via WA** | Auto-reply dengan format pesanan dari generated product card |
-| **Multi-template WA style** | Setiap template punya variasi gaya tombol WA (floating, inline, card) |
+| Fitur                       | Keterangan                                                                   |
+| --------------------------- | ---------------------------------------------------------------------------- |
+| **Template tambahan**       | Cukup buat folder `src/templates/{nama}/` dengan struktur Astro yang sama    |
+| **Custom CSS**              | Bisa ditambah field `customCss` di site-config.json, di-inject via `<style>` |
+| **Custom domain**           | user configurasi domain, simpan di WebSite table                             |
+| **Auto deploy**             | Integrasi dengan Vercel/Netlify API untuk auto-deploy setelah generate       |
+| **Multi-page**              | Template bisa punya halaman lebih dari 3 (blog, testimonial, dll)            |
+| **Image optimization**      | Integrasi dengan Astro Image untuk responsive images                         |
+| **Markdown content**        | Bisa pakai file .md untuk halaman About, Terms, dll                          |
+| **Share via WhatsApp**      | Tombol share produk/link via WA di card produk                               |
+| **WhatsApp Catalog**        | Integrasi dengan WhatsApp Catalog API untuk sync produk                      |
+| **Order via WA**            | Auto-reply dengan format pesanan dari generated product card                 |
+| **Multi-template WA style** | Setiap template punya variasi gaya tombol WA (floating, inline, card)        |

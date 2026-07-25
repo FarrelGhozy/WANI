@@ -1,30 +1,34 @@
-import { expect, test, describe, beforeEach, mock } from "bun:test"
+import { expect, test, describe, beforeEach, mock } from "bun:test";
 
-const mockOrderFindUnique = mock((_args: any) => Promise.resolve(null))
-const mockOrderUpdate = mock((_args: any) => Promise.resolve({}))
-const mockOrderCreate = mock((_args: any) => Promise.resolve({}))
-const mockOrderFindUniqueOrThrow = mock((_args: any) => Promise.resolve({}))
-const mockOrderItemFindMany = mock((_args: any) => Promise.resolve([]))
-const mockOrderItemCreateMany = mock((_args: any) => Promise.resolve({ count: 1 }))
-const mockProductFindMany = mock((_args: any) => Promise.resolve([]))
-const mockProductUpdate = mock((_args: any) => Promise.resolve({}))
+const mockOrderFindUnique = mock((_args: any) => Promise.resolve(null));
+const mockOrderUpdate = mock((_args: any) => Promise.resolve({}));
+const mockOrderCreate = mock((_args: any) => Promise.resolve({}));
+const mockOrderFindUniqueOrThrow = mock((_args: any) => Promise.resolve({}));
+const mockOrderItemFindMany = mock((_args: any) => Promise.resolve([]));
+const mockOrderItemCreateMany = mock((_args: any) =>
+  Promise.resolve({ count: 1 })
+);
+const mockProductFindMany = mock((_args: any) => Promise.resolve([]));
+const mockProductUpdate = mock((_args: any) => Promise.resolve({}));
 
-const mockTransaction = mock((fn: any) => fn({
-  order: {
-    findUnique: mockOrderFindUnique,
-    update: mockOrderUpdate,
-    create: mockOrderCreate,
-    findUniqueOrThrow: mockOrderFindUniqueOrThrow,
-  },
-  orderItem: {
-    createMany: mockOrderItemCreateMany,
-    findMany: mockOrderItemFindMany,
-  },
-  product: {
-    findMany: mockProductFindMany,
-    update: mockProductUpdate,
-  },
-}))
+const mockTransaction = mock((fn: any) =>
+  fn({
+    order: {
+      findUnique: mockOrderFindUnique,
+      update: mockOrderUpdate,
+      create: mockOrderCreate,
+      findUniqueOrThrow: mockOrderFindUniqueOrThrow,
+    },
+    orderItem: {
+      createMany: mockOrderItemCreateMany,
+      findMany: mockOrderItemFindMany,
+    },
+    product: {
+      findMany: mockProductFindMany,
+      update: mockProductUpdate,
+    },
+  })
+);
 
 mock.module("@/src/config/db", () => ({
   prisma: {
@@ -50,115 +54,154 @@ mock.module("@/src/config/db", () => ({
     },
     $transaction: mockTransaction,
   } as any,
-}))
+}));
 
-import { OrderModel } from "@/src/models/order"
+import { OrderModel } from "@/src/models/order";
 
 const baseOrder = {
-  id: "order-1", status: "PENDING", stockReleased: false,
-  customerId: "c1", customer: { name: "Budi" },
-  totalAmount: 50000, notes: null, source: "whatsapp",
-  items: [{ id: "oi1", productId: "p1", qty: 2, unitPrice: 25000, subtotal: 50000, product: { name: "Test", stock: 10 } }],
+  id: "order-1",
+  status: "PENDING",
+  stockReleased: false,
+  customerId: "c1",
+  customer: { name: "Budi" },
+  totalAmount: 50000,
+  notes: null,
+  source: "whatsapp",
+  items: [
+    {
+      id: "oi1",
+      productId: "p1",
+      qty: 2,
+      unitPrice: 25000,
+      subtotal: 50000,
+      product: { name: "Test", stock: 10 },
+    },
+  ],
   payment: null,
-  createdAt: new Date("2025-01-01"), updatedAt: new Date("2025-01-01"),
-}
+  createdAt: new Date("2025-01-01"),
+  updatedAt: new Date("2025-01-01"),
+};
 
 describe("OrderModel.updateStatus", () => {
   beforeEach(() => {
-    mockOrderFindUnique.mockReset()
-    mockOrderUpdate.mockReset()
-    mockOrderFindUniqueOrThrow.mockReset()
-    mockOrderItemFindMany.mockReset()
-    mockProductFindMany.mockReset()
-    mockProductUpdate.mockReset()
-  })
+    mockOrderFindUnique.mockReset();
+    mockOrderUpdate.mockReset();
+    mockOrderFindUniqueOrThrow.mockReset();
+    mockOrderItemFindMany.mockReset();
+    mockProductFindMany.mockReset();
+    mockProductUpdate.mockReset();
+  });
 
   test("throws NotFoundError for missing order", async () => {
-    mockOrderFindUnique.mockResolvedValueOnce(null)
+    mockOrderFindUnique.mockResolvedValueOnce(null);
 
     try {
-      await OrderModel.updateStatus("nonexistent", "CONFIRMED")
-      expect.unreachable("should have thrown")
+      await OrderModel.updateStatus("nonexistent", "CONFIRMED");
+      expect.unreachable("should have thrown");
     } catch (e: any) {
-      expect(e.statusCode).toBe(404)
+      expect(e.statusCode).toBe(404);
     }
-  })
+  });
 
   test("throws BadRequestError on invalid transition", async () => {
-    mockOrderFindUnique.mockResolvedValueOnce(baseOrder)
+    mockOrderFindUnique.mockResolvedValueOnce(baseOrder);
 
     try {
-      await OrderModel.updateStatus("order-1", "PROCESSING")
-      expect.unreachable("should have thrown")
+      await OrderModel.updateStatus("order-1", "PROCESSING");
+      expect.unreachable("should have thrown");
     } catch (e: any) {
-      expect(e.message).toContain("invalid status transition")
-      expect(e.statusCode).toBe(400)
+      expect(e.message).toContain("invalid status transition");
+      expect(e.statusCode).toBe(400);
     }
-  })
+  });
 
   test("throws on transition from CANCELLED (terminal)", async () => {
-    mockOrderFindUnique.mockResolvedValueOnce({ ...baseOrder, status: "CANCELLED", stockReleased: false })
+    mockOrderFindUnique.mockResolvedValueOnce({
+      ...baseOrder,
+      status: "CANCELLED",
+      stockReleased: false,
+    });
 
     try {
-      await OrderModel.updateStatus("order-1", "CONFIRMED")
-      expect.unreachable("should have thrown")
+      await OrderModel.updateStatus("order-1", "CONFIRMED");
+      expect.unreachable("should have thrown");
     } catch (e: any) {
-      expect(e.message).toContain("invalid status transition")
+      expect(e.message).toContain("invalid status transition");
     }
-  })
+  });
 
   test("throws on transition from COMPLETED (terminal)", async () => {
-    mockOrderFindUnique.mockResolvedValueOnce({ ...baseOrder, status: "COMPLETED", stockReleased: true })
+    mockOrderFindUnique.mockResolvedValueOnce({
+      ...baseOrder,
+      status: "COMPLETED",
+      stockReleased: true,
+    });
 
     try {
-      await OrderModel.updateStatus("order-1", "CANCELLED")
-      expect.unreachable("should have thrown")
+      await OrderModel.updateStatus("order-1", "CANCELLED");
+      expect.unreachable("should have thrown");
     } catch (e: any) {
-      expect(e.message).toContain("invalid status transition")
+      expect(e.message).toContain("invalid status transition");
     }
-  })
+  });
 
   test("valid transition: CONFIRMED → PROCESSING", async () => {
-    mockOrderFindUnique.mockResolvedValueOnce({ ...baseOrder, status: "CONFIRMED", stockReleased: true })
-    mockOrderFindUniqueOrThrow.mockResolvedValueOnce({ ...baseOrder, status: "PROCESSING", stockReleased: true })
+    mockOrderFindUnique.mockResolvedValueOnce({
+      ...baseOrder,
+      status: "CONFIRMED",
+      stockReleased: true,
+    });
+    mockOrderFindUniqueOrThrow.mockResolvedValueOnce({
+      ...baseOrder,
+      status: "PROCESSING",
+      stockReleased: true,
+    });
 
-    const result = await OrderModel.updateStatus("order-1", "PROCESSING")
+    const result = await OrderModel.updateStatus("order-1", "PROCESSING");
 
-    expect(result.status).toBe("PROCESSING")
-  })
+    expect(result.status).toBe("PROCESSING");
+  });
 
   test("valid transition: PROCESSING → COMPLETED", async () => {
-    mockOrderFindUnique.mockResolvedValueOnce({ ...baseOrder, status: "PROCESSING", stockReleased: true })
-    mockOrderFindUniqueOrThrow.mockResolvedValueOnce({ ...baseOrder, status: "COMPLETED", stockReleased: true })
+    mockOrderFindUnique.mockResolvedValueOnce({
+      ...baseOrder,
+      status: "PROCESSING",
+      stockReleased: true,
+    });
+    mockOrderFindUniqueOrThrow.mockResolvedValueOnce({
+      ...baseOrder,
+      status: "COMPLETED",
+      stockReleased: true,
+    });
 
-    const result = await OrderModel.updateStatus("order-1", "COMPLETED")
+    const result = await OrderModel.updateStatus("order-1", "COMPLETED");
 
-    expect(result.status).toBe("COMPLETED")
-  })
-})
+    expect(result.status).toBe("COMPLETED");
+  });
+});
 
 describe("OrderModel.createFromItems", () => {
   beforeEach(() => {
-    mockOrderCreate.mockReset()
-    mockOrderItemCreateMany.mockReset()
-    mockProductFindMany.mockReset()
-  })
+    mockOrderCreate.mockReset();
+    mockOrderItemCreateMany.mockReset();
+    mockProductFindMany.mockReset();
+  });
 
   test("creates order with items in transaction", async () => {
     mockProductFindMany.mockResolvedValueOnce([
       { id: "p1", name: "Nasi Goreng" },
       { id: "p2", name: "Es Teh" },
-    ])
-    mockOrderCreate.mockResolvedValueOnce({ id: "order-new" })
-    mockOrderItemCreateMany.mockResolvedValueOnce({ count: 2 })
+    ]);
+    mockOrderCreate.mockResolvedValueOnce({ id: "order-new" });
+    mockOrderItemCreateMany.mockResolvedValueOnce({ count: 2 });
 
     const result = await OrderModel.createFromItems("owner-1", "c1", [
       { productId: "p1", productName: "Nasi Goreng", unitPrice: 25000, qty: 2 },
       { productId: "p2", productName: "Es Teh", unitPrice: 5000, qty: 1 },
-    ])
+    ]);
 
-    expect(result.order.id).toBe("order-new")
-    expect(mockOrderCreate).toHaveBeenCalled()
-    expect(mockOrderItemCreateMany).toHaveBeenCalled()
-  })
-})
+    expect(result.order.id).toBe("order-new");
+    expect(mockOrderCreate).toHaveBeenCalled();
+    expect(mockOrderItemCreateMany).toHaveBeenCalled();
+  });
+});

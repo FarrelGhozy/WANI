@@ -1,60 +1,89 @@
-import { BaseModel } from "@/src/models/base"
+import { BaseModel } from "@/src/models/base";
 
 export type UserPublic = {
-  id: string
-  name: string
-  email: string
-  role: string
-}
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+};
 
 export class UserModel extends BaseModel {
   protected static override get delegate() {
-    return this.db.user
+    return this.db.user;
   }
 
   static async findByEmail(email: string): Promise<{
-    id: string
-    name: string
-    email: string
-    password: string
-    role: string
-    emailVerified: boolean
+    id: string;
+    name: string;
+    email: string;
+    password: string;
+    role: string;
+    emailVerified: boolean;
   } | null> {
     return this.delegate.findUnique({
       where: { email },
-      select: { id: true, name: true, email: true, password: true, role: true, emailVerified: true },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        password: true,
+        role: true,
+        emailVerified: true,
+      },
     }) as Promise<{
-      id: string
-      name: string
-      email: string
-      password: string
-      role: string
-      emailVerified: boolean
-    } | null>
+      id: string;
+      name: string;
+      email: string;
+      password: string;
+      role: string;
+      emailVerified: boolean;
+    } | null>;
   }
 
-  static async findByResetToken(token: string): Promise<{ id: string; resetPasswordToken: string | null; resetPasswordExpires: Date | null } | null> {
+  static async findByResetToken(token: string): Promise<{
+    id: string;
+    resetPasswordToken: string | null;
+    resetPasswordExpires: Date | null;
+  } | null> {
     return this.delegate.findFirst({
       where: {
         resetPasswordToken: token,
         resetPasswordExpires: { gt: new Date() },
       },
-    }) as Promise<{ id: string; resetPasswordToken: string | null; resetPasswordExpires: Date | null } | null>
+    }) as Promise<{
+      id: string;
+      resetPasswordToken: string | null;
+      resetPasswordExpires: Date | null;
+    } | null>;
   }
 
-  static async findByVerificationToken(token: string): Promise<{ id: string; name: string; email: string; emailVerified: boolean; emailVerificationToken: string | null; emailVerificationExpires: Date | null } | null> {
+  static async findByVerificationToken(token: string): Promise<{
+    id: string;
+    name: string;
+    email: string;
+    emailVerified: boolean;
+    emailVerificationToken: string | null;
+    emailVerificationExpires: Date | null;
+  } | null> {
     return this.delegate.findFirst({
       where: {
         emailVerificationToken: token,
         emailVerificationExpires: { gt: new Date() },
       },
-    }) as Promise<{ id: string; name: string; email: string; emailVerified: boolean; emailVerificationToken: string | null; emailVerificationExpires: Date | null } | null>
+    }) as Promise<{
+      id: string;
+      name: string;
+      email: string;
+      emailVerified: boolean;
+      emailVerificationToken: string | null;
+      emailVerificationExpires: Date | null;
+    } | null>;
   }
 
   static async createUser(data: {
-    name: string
-    email: string
-    password: string
+    name: string;
+    email: string;
+    password: string;
   }): Promise<UserPublic> {
     return this.delegate.create({
       data: {
@@ -63,20 +92,20 @@ export class UserModel extends BaseModel {
         password: data.password,
       },
       select: { id: true, name: true, email: true, role: true },
-    }) as Promise<UserPublic>
+    }) as Promise<UserPublic>;
   }
 
   static toPublic(user: {
-    id: string
-    name: string
-    email: string
-    role: string
+    id: string;
+    name: string;
+    email: string;
+    role: string;
   }): UserPublic {
     return {
       id: user.id,
       name: user.name,
       email: user.email,
       role: user.role,
-    }
+    };
   }
 }
