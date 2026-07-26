@@ -126,7 +126,7 @@ services:
       GODEBUG: netdns=go
 
       # API Key
-      WAHA_API_KEY_PLAIN: ${WAHA_API_KEY}
+      WAHA_API_KEY: ${WAHA_API_KEY}
       WAHA_API_KEY_EXCLUDE_PATH: health,ping
 
       # Sessions — PostgreSQL
