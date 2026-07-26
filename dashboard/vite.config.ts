@@ -5,6 +5,7 @@ import tailwindcss from "@tailwindcss/vite";
 import { fileURLToPath, URL } from "node:url";
 
 export default defineConfig({
+  envDir: "../.env",
   resolve: {
     alias: {
       react: fileURLToPath(new URL("./node_modules/react", import.meta.url)),

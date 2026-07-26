@@ -17,11 +17,11 @@ services:
       WAHA_API_KEY_EXCLUDE_PATH: health,ping
 
       # Sessions — host PostgreSQL
-      WHATSAPP_SESSIONS_POSTGRESQL_URL: postgres://${DATABASE_USER}:${POSTGRES_PASSWORD}@host.docker.internal:5432/postgres?sslmode=disable
+      WHATSAPP_SESSIONS_POSTGRESQL_URL: postgres://${DATABASE_USER}:${DATABASE_PASSWORD}@host.docker.internal:5432/postgres?sslmode=disable
 
       # Media — host PostgreSQL
       WAHA_MEDIA_STORAGE: POSTGRESQL
-      WAHA_MEDIA_POSTGRESQL_URL: postgres://${DATABASE_USER}:${POSTGRES_PASSWORD}@host.docker.internal:5432/postgres?sslmode=disable
+      WAHA_MEDIA_POSTGRESQL_URL: postgres://${DATABASE_USER}:${DATABASE_PASSWORD}@host.docker.internal:5432/postgres?sslmode=disable
 
       # GOWS history sync limits
       WAHA_GOWS_DEVICE_REQUIRE_FULL_SYNC: "false"

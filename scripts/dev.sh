@@ -15,8 +15,14 @@ trap cleanup SIGINT SIGTERM
 echo "Starting WAHA..."
 docker compose -f docker-compose.local.yml up -d waha
 
+# Wait for WAHA to be ready
+sleep 5
+
 echo "Starting API..."
-(cd api && bun --watch run src/index.ts) &
+(cd api && bun --env-file=../.env --watch run src/index.ts) &
+
+# Wait for API to be ready
+sleep 5
 
 echo "Starting Dashboard..."
 (cd dashboard && bun run dev) &
