@@ -21,11 +21,18 @@ Platform omnichannel UMKM dengan AI chatbot WhatsApp, dashboard manajemen, dan w
 > **🌐 Live Demo:** [https://wani.utc.web.id/](https://wani.utc.web.id/)
 
 ```
-┌──────────────┐  HTTP (Vite proxy)  ┌──────────────┐
-│  Dashboard   │ ◄─────────────────► │  API Server  │
-│  React 19    │    /api/* → :3001   │  Express 5   │
-│  Vite 8      │                     │  port 3001   │
-└──────────────┘                     └──────────────┘
+┌──────────────┐  HTTP (Vite proxy)  ┌──────────────┐  HTTP   ┌──────────────┐
+│  Dashboard   │ ◄─────────────────► │  API Server  │ ◄──────►│    WAHA      │
+│  React 19    │    /api/* → :3001   │  Express 5   │         │  WhatsApp    │
+│  Vite 8      │                     │  port 3001   │         │  port 3000   │
+└──────────────┘                     └──┬───────┬───┘         └──────────────┘
+                                        │       │                    │
+                                   Prisma│       │ generated          │ sessions
+                                        │       │ sites              │ & media
+                                   ┌────▼────┐  │                    │
+                                   │PostgreSQL│  └──► web-gen/       │
+                                   │ :5432    │       (Astro)        │
+                                   └─────────┘◄──────────────────────┘
 ```
 
 ## Prerequisites
@@ -42,7 +49,7 @@ Cara termudah: semua service berjalan di container.
 
 ```bash
 cp .env.example .env
-# Edit .env: isi POSTGRES_PASSWORD, JWT_SECRET, LLM_API_KEY
+# Edit .env: isi DATABASE_PASSWORD, JWT_SECRET, LLM_API_KEY
 docker compose up --build
 ```
 
@@ -60,8 +67,10 @@ Semua konfigurasi lewat `.env` (root project). Lihat [`.env.example`](.env.examp
 
 | Variable            | Wajib | Default                           | Deskripsi                                          |
 | ------------------- | ----- | --------------------------------- | -------------------------------------------------- |
-| `POSTGRES_PASSWORD` | ✅    | —                                 | Password PostgreSQL                                |
+| `DATABASE_PASSWORD` | ✅    | —                                 | Password PostgreSQL                                |
+| `DATABASE_NAME`     |       | `wani_api`                        | Nama database API                                  |
 | `DATABASE_USER`     |       | `postgres`                        | User PostgreSQL                                    |
+| `PORT`              |       | `3001`                            | Port API server                                    |
 | `API_TOKEN`         | ✅    | —                                 | Shared secret bot↔API auth                         |
 | `JWT_SECRET`        | ✅    | —                                 | Secret untuk JWT auth                              |
 | `LLM_API_KEY`       | ✅    | —                                 | API key OpenCode Zen (dapat gratis di opencode.ai) |
@@ -81,13 +90,13 @@ cd ../web-gen && bun install
 
 ### 2. Setup environment variables
 
-Setiap subproject punya `.env.example` — copy ke `.env` masing-masing:
+Semua konfigurasi dari root `.env`:
 
 ```bash
-cp api/.env.example api/.env
+cp .env.example .env
 ```
 
-**`api/.env`** — isi minimal:
+**`.env`** — isi minimal:
 
 | Variable            | Contoh           | Keterangan           |
 | ------------------- | ---------------- | -------------------- |
@@ -112,7 +121,7 @@ cd api   && bun run prisma:migrate
 
 ```bash
 # Terminal 1 — API server
-cd api && bun run src/index.ts
+cd api && bun --env-file=../.env --watch run src/index.ts
 # → http://localhost:3001
 
 # Terminal 2 — Dashboard
@@ -232,8 +241,6 @@ Semua response format:
 | `POST`   | `/api/debug/circuit/reset`        | —            | Reset circuit breaker (dev)           |
 | `GET`    | `/api/health`                     | —            | Health check                          |
 | `GET`    | `/api/metrics`                    | —            | Prometheus metrics                    |
-| `GET`    | `/api/outgoing`                   | 🔒 API_TOKEN | List outgoing messages                |
-| `PATCH`  | `/api/outgoing/:id/delivered`     | 🔒 API_TOKEN | Mark message delivered                |
 
 > 🔒 API_TOKEN = `requireAuth` (Bearer API_TOKEN), 🔒 JWT = `requireJwt` (JWT dari login)
 
@@ -284,20 +291,26 @@ Detail lengkap: [`api/ARSITEKTUR.md`](api/ARSITEKTUR.md)
 
 ## Commands Reference
 
-| Action          | API                       | Dashboard       | Web-Gen                  |
-| --------------- | ------------------------- | --------------- | ------------------------ |
-| Install         | `bun install`             | `bun install`   | `bun install`            |
-| Run dev         | `bun run src/index.ts`    | `bun run dev`   | —                        |
-| Build           | —                         | `bun run build` | `bun run build:template` |
-| Type check      | `bun run tsc --noEmit`    | `bun run build` | `bun run tsc --noEmit`   |
-| Prisma generate | `bun run prisma:generate` | —               | —                        |
-| Prisma migrate  | `bun run prisma:migrate`  | —               | —                        |
-| Prisma deploy   | `bun run prisma:deploy`   | —               | —                        |
-| Test            | `bun test`                | `bun test`      | —                        |
+| Action          | API                                               | Dashboard       | Web-Gen                  |
+| --------------- | ------------------------------------------------- | --------------- | ------------------------ |
+| Install         | `bun install`                                     | `bun install`   | `bun install`            |
+| Run dev         | `bun --env-file=../.env --watch run src/index.ts` | `bun run dev`   | —                        |
+| Build           | —                                                 | `bun run build` | `bun run build:template` |
+| Type check      | `bun run tsc --noEmit`                            | `bun run build` | `bun run tsc --noEmit`   |
+| Prisma generate | `bun run prisma:generate`                         | —               | —                        |
+| Prisma migrate  | `bun run prisma:migrate`                          | —               | —                        |
+| Prisma deploy   | `bun run prisma:deploy`                           | —               | —                        |
+| Test            | `bun test`                                        | `bun test`      | —                        |
 
 ## Live Demo
 
 Platform berjalan di **https://wani.utc.web.id/* — Dashboard production dengan real API backend.
+
+## TODO — WAHA Migration
+
+Lihat [`TODO.md`](TODO.md) untuk daftar tugas migrasi dari Baileys ke WAHA,
+mencakup pembuatan WAHA service wrapper, push outgoing, cleanup legacy code,
+dan update frontend dashboard.
 
 ## Architecture Docs
 
