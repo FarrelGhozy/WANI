@@ -1,4 +1,4 @@
-import { BaseModel } from "@/src/models/base";
+import { BaseModel } from "@/models/base";
 import type { Store } from "@db/client";
 
 export class StoreModel extends BaseModel {

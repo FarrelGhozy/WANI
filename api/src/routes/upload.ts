@@ -1,6 +1,6 @@
 import { Router } from "express";
-import * as uploadController from "@/src/controllers/upload";
-import { requireJwt } from "@/src/middleware/jwt";
+import * as uploadController from "@/controllers/upload";
+import { requireJwt } from "@/middleware/jwt";
 
 const router = Router();
 

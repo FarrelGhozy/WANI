@@ -1,4 +1,4 @@
-import { handleIntent } from "@/src/ai/actions";
+import { handleIntent } from "@/ai/actions";
 import type { PipelineStep } from "../types";
 
 /**

@@ -1,5 +1,5 @@
 import type { PipelineContext, PipelineStep } from "./types";
-import type { PipelineResult } from "@/src/types/ai";
+import type { PipelineResult } from "@/types/ai";
 
 /**
  * Execute an ordered array of pipeline steps, passing a shared context

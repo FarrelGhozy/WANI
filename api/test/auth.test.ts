@@ -1,6 +1,6 @@
 import { expect, test, describe } from "bun:test";
 import jwt from "jsonwebtoken";
-import { UserModel } from "@/src/models/user";
+import { UserModel } from "@/models/user";
 
 const JWT_SECRET = "test-jwt-secret";
 

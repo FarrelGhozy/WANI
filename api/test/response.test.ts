@@ -1,5 +1,5 @@
 import { expect, test, describe } from "bun:test";
-import { sendResponse } from "@/src/utils/response";
+import { sendResponse } from "@/utils/response";
 
 function mockRes() {
   let statusCode = 200;

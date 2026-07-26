@@ -1,4 +1,4 @@
-import { normalizeInput } from "@/src/guardrails/input";
+import { normalizeInput } from "@/guardrails/input";
 import type { PipelineStep } from "../types";
 
 /**

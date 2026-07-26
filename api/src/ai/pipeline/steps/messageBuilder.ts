@@ -1,6 +1,6 @@
-import { wrapCustomerMessage, buildSystemPrompt } from "@/src/ai/prompts";
-import { MessageModel } from "@/src/models/message";
-import type { ChatMessage } from "@/src/types/ai";
+import { wrapCustomerMessage, buildSystemPrompt } from "@/ai/prompts";
+import { MessageModel } from "@/models/message";
+import type { ChatMessage } from "@/types/ai";
 import type { PipelineStep } from "../types";
 
 /**

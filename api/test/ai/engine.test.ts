@@ -1,5 +1,5 @@
 import { expect, test, describe } from "bun:test";
-import { LLMError } from "@/src/ai/engine";
+import { LLMError } from "@/ai/engine";
 
 describe("LLMError", () => {
   test("creates retryable error", () => {
@@ -24,7 +24,7 @@ describe("complete()", () => {
     async () => {
       // This test only runs when there's no API key configured
       // When an API key is present, the test is skipped
-      const { complete } = await import("@/src/ai/engine");
+      const { complete } = await import("@/ai/engine");
       try {
         await complete([{ role: "user", content: "hi" }]);
         expect.unreachable("should have thrown");

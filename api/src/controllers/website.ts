@@ -8,22 +8,19 @@ import {
   unlinkSync,
   readlinkSync,
 } from "node:fs";
-import { WebSiteModel } from "@/src/models/website";
-import { StoreModel } from "@/src/models/store";
-import { ProductModel } from "@/src/models/catalog";
+import { WebSiteModel } from "@/models/website";
+import { StoreModel } from "@/models/store";
+import { ProductModel } from "@/models/catalog";
 import type { Product } from "@db/client";
-import { OrderModel } from "@/src/models/order";
-import { sendResponse } from "@/src/utils/response";
+import { OrderModel } from "@/models/order";
+import { sendResponse } from "@/utils/response";
 import {
   BadRequestError,
   InternalServerError,
   NotFoundError,
-} from "@/src/utils/errors";
-import { getOwnerId, getOwnerIdOrFirst } from "@/src/middleware/owner";
-import {
-  updateWebsiteSchema,
-  generateWebsiteSchema,
-} from "@/src/schemas/website";
+} from "@/utils/errors";
+import { getOwnerId, getOwnerIdOrFirst } from "@/middleware/owner";
+import { updateWebsiteSchema, generateWebsiteSchema } from "@/schemas/website";
 // web-gen is lazy-imported inside handlers to avoid loading it during tests
 
 type UpdateWebsiteBody = z.infer<typeof updateWebsiteSchema>;

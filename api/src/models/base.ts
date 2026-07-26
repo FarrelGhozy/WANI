@@ -1,6 +1,6 @@
-import { prisma } from "@/src/config/db";
+import { prisma } from "@/config/db";
 import type { PrismaClient } from "@db/client";
-import { NotFoundError } from "@/src/utils/errors";
+import { NotFoundError } from "@/utils/errors";
 
 interface PrismaDelegate {
   findMany(args?: unknown): Promise<unknown[]>;

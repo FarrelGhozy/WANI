@@ -1,8 +1,8 @@
 import { Router } from "express";
-import * as chatController from "@/src/controllers/chat";
-import { requireAuth } from "@/src/middleware/auth";
-import { validate } from "@/src/middleware/validate";
-import { chatRequestSchema } from "@/src/schemas/chat";
+import * as chatController from "@/controllers/chat";
+import { requireAuth } from "@/middleware/auth";
+import { validate } from "@/middleware/validate";
+import { chatRequestSchema } from "@/schemas/chat";
 
 const router = Router();
 

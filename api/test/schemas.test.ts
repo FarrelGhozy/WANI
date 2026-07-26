@@ -4,30 +4,27 @@ import {
   loginSchema,
   forgotPasswordSchema,
   resetPasswordSchema,
-} from "@/src/schemas/auth";
+} from "@/schemas/auth";
 import {
   createProductSchema,
   updateProductSchema,
   productQuerySchema,
   createCategorySchema,
   updateCategorySchema,
-} from "@/src/schemas/product";
+} from "@/schemas/product";
 import {
   orderQuerySchema,
   updateOrderStatusSchema,
   updateOrderNotesSchema,
   updateOrderPaymentSchema,
-} from "@/src/schemas/order";
+} from "@/schemas/order";
 import {
   customerQuerySchema,
   updateCustomerSchema,
   updateConversationStatusSchema,
   sendMessageSchema,
-} from "@/src/schemas/customer";
-import {
-  updateWebsiteSchema,
-  generateWebsiteSchema,
-} from "@/src/schemas/website";
+} from "@/schemas/customer";
+import { updateWebsiteSchema, generateWebsiteSchema } from "@/schemas/website";
 
 // ── Auth Schemas ─────────────────────────────────────────
 

@@ -17,12 +17,12 @@ const mockSendEmail = mock((_to: string, _subject: string, _html: string) =>
   Promise.resolve()
 );
 
-mock.module("@/src/services/email", () => ({
+mock.module("@/services/email", () => ({
   sendEmail: mockSendEmail,
   isEmailConfigured: () => true,
 }));
 
-mock.module("@/src/config/db", () => ({
+mock.module("@/config/db", () => ({
   prisma: {
     user: {
       findUnique: mockUserFindUnique,
@@ -47,8 +47,8 @@ import {
   logout,
   verifyEmail,
   resendVerification,
-} from "@/src/controllers/auth";
-import * as emailService from "@/src/services/email";
+} from "@/controllers/auth";
+import * as emailService from "@/services/email";
 import type { Request, Response } from "express";
 
 function mockReq(overrides: Partial<Request> = {}): Request {

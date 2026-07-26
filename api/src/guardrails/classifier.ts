@@ -3,10 +3,10 @@
 // Uses OpenRouter with a fast small model to classify input when regex is
 // uncertain. Three-tier verdict: SAFE / SUSPICIOUS / INJECTION.
 
-import { complete } from "@/src/ai/engine";
-import { withCircuit } from "@/src/ai/circuit-breaker";
-import { logger } from "@/src/config/logger";
-import { env } from "@/src/config/env";
+import { complete } from "@/ai/engine";
+import { withCircuit } from "@/ai/circuit-breaker";
+import { logger } from "@/config/logger";
+import { env } from "@/config/env";
 
 export type ClassifierVerdict = "SAFE" | "SUSPICIOUS" | "INJECTION";
 

@@ -1,5 +1,5 @@
-import { env } from "@/src/config/env";
-import { QUICK_INJECTION_PATTERNS } from "@/src/guardrails/injection-patterns";
+import { env } from "@/config/env";
+import { QUICK_INJECTION_PATTERNS } from "@/guardrails/injection-patterns";
 
 // Code-point ranges for control + zero-width characters that have no place in
 // chat text and are commonly used to smuggle hidden instructions. Newline

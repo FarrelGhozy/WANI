@@ -1,5 +1,5 @@
-import { checkRateLimit } from "@/src/guardrails/ratelimit";
-import { MessageModel } from "@/src/models/message";
+import { checkRateLimit } from "@/guardrails/ratelimit";
+import { MessageModel } from "@/models/message";
 import { STEP_REPLIES, type PipelineStep } from "../types";
 
 /**

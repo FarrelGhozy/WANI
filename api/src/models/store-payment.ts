@@ -1,4 +1,4 @@
-import { BaseModel } from "@/src/models/base";
+import { BaseModel } from "@/models/base";
 import type { StorePaymentMethod } from "@db/client";
 
 export class StorePaymentMethodModel extends BaseModel {

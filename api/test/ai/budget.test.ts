@@ -1,5 +1,5 @@
 import { expect, test, describe } from "bun:test";
-import { isBudgetExceeded, recordLlmUsage } from "@/src/guardrails/budget";
+import { isBudgetExceeded, recordLlmUsage } from "@/guardrails/budget";
 
 describe("budget", () => {
   test("isBudgetExceeded returns false when budget is 0 or negative", async () => {

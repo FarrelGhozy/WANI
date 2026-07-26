@@ -1,7 +1,7 @@
 import { Router } from "express";
-import * as logController from "@/src/controllers/log";
-import { validate } from "@/src/middleware/validate";
-import { logQuerySchema } from "@/src/schemas/log";
+import * as logController from "@/controllers/log";
+import { validate } from "@/middleware/validate";
+import { logQuerySchema } from "@/schemas/log";
 
 const router = Router();
 

@@ -44,36 +44,35 @@ const mockIsBudgetExceeded = mock().mockResolvedValue(false);
 const mockAnalyzeTurn = mock(() => ({ reasons: [] as string[] }));
 const mockClassifyVerdict = mock((_reasons: string[]) => "SAFE" as const);
 
-mock.module("@/src/ai/engine", () => ({ complete: mockComplete }));
-mock.module("@/src/ai/circuit-breaker", () => ({
+mock.module("@/ai/engine", () => ({ complete: mockComplete }));
+mock.module("@/ai/circuit-breaker", () => ({
   withCircuit: mockWithCircuit,
   getCircuitState: mock(() => ({ state: "closed", failures: 0 })),
   resetCircuit: mock(() => {}),
 }));
-mock.module("@/src/ai/actions", () => ({ handleIntent: mockHandleIntent }));
-mock.module("@/src/guardrails/input", () => ({
+mock.module("@/ai/actions", () => ({ handleIntent: mockHandleIntent }));
+mock.module("@/guardrails/input", () => ({
   normalizeInput: mockNormalizeInput,
 }));
-mock.module("@/src/guardrails/pii", () => ({ scanPii: mockScanPii }));
-mock.module("@/src/guardrails/ratelimit", () => ({
+mock.module("@/guardrails/pii", () => ({ scanPii: mockScanPii }));
+mock.module("@/guardrails/ratelimit", () => ({
   checkRateLimit: mockCheckRateLimit,
 }));
-mock.module("@/src/guardrails/budget", () => ({
+mock.module("@/guardrails/budget", () => ({
   isBudgetExceeded: mockIsBudgetExceeded,
   recordLlmUsage: mock(() => Promise.resolve()),
 }));
-mock.module("@/src/guardrails/firewall", () => ({
+mock.module("@/guardrails/firewall", () => ({
   analyzeTurn: mockAnalyzeTurn,
   classifyVerdict: mockClassifyVerdict,
 }));
-mock.module("@/src/guardrails/classifier", () => ({
-  classifyInput: mock<
-    typeof import("@/src/guardrails/classifier").classifyInput
-  >(() =>
-    Promise.resolve({ verdict: "SAFE" as const, reasons: [], confidence: 1 })
+mock.module("@/guardrails/classifier", () => ({
+  classifyInput: mock<typeof import("@/guardrails/classifier").classifyInput>(
+    () =>
+      Promise.resolve({ verdict: "SAFE" as const, reasons: [], confidence: 1 })
   ),
-  judgeInput: mock<typeof import("@/src/guardrails/classifier").judgeInput>(
-    () => Promise.resolve({ verdict: "SAFE" as const, reasons: [] })
+  judgeInput: mock<typeof import("@/guardrails/classifier").judgeInput>(() =>
+    Promise.resolve({ verdict: "SAFE" as const, reasons: [] })
   ),
 }));
 
@@ -90,7 +89,7 @@ const mockMsg = {
   createdAt: new Date().toISOString(),
 };
 
-mock.module("@/src/models/message", () => ({
+mock.module("@/models/message", () => ({
   MessageModel: {
     findByWaMsgId: mock(() => Promise.resolve(null)),
     append: mock(() => Promise.resolve(mockMsg)),
@@ -98,7 +97,7 @@ mock.module("@/src/models/message", () => ({
     markDelivered: mock(() => Promise.resolve(undefined)),
   },
 }));
-mock.module("@/src/models/conversation", () => ({
+mock.module("@/models/conversation", () => ({
   ConversationModel: {
     findOrCreateActive: mock(() =>
       Promise.resolve({ id: "conv-1", status: "ACTIVE" })
@@ -107,7 +106,7 @@ mock.module("@/src/models/conversation", () => ({
     setStatus: mock(() => Promise.resolve(undefined)),
   },
 }));
-mock.module("@/src/models/customer", () => ({
+mock.module("@/models/customer", () => ({
   CustomerModel: {
     upsertByOwnerPhone: mock(() =>
       Promise.resolve({
@@ -124,7 +123,7 @@ mock.module("@/src/models/customer", () => ({
     incrementOrders: mock(() => Promise.resolve(undefined)),
   },
 }));
-mock.module("@/src/models/store", () => ({
+mock.module("@/models/store", () => ({
   StoreModel: {
     findByOwner: mock(() =>
       Promise.resolve({
@@ -145,37 +144,37 @@ mock.module("@/src/models/store", () => ({
     upsertByOwner: mock(() => Promise.resolve({ id: "store-1" })),
   },
 }));
-mock.module("@/src/models/catalog", () => ({
+mock.module("@/models/catalog", () => ({
   ProductModel: {
     listAvailable: mock(() => Promise.resolve([])),
     findByNames: mock(() => Promise.resolve(new Map())),
   },
 }));
-mock.module("@/src/models/ai-config", () => ({
+mock.module("@/models/ai-config", () => ({
   AiConfigModel: {
     findByOwner: mock(() => Promise.resolve(null)),
   },
 }));
-mock.module("@/src/models/store-payment", () => ({
+mock.module("@/models/store-payment", () => ({
   StorePaymentMethodModel: {
     listActive: mock(() => Promise.resolve([])),
     hasAny: mock(() => Promise.resolve(false)),
   },
 }));
-mock.module("@/src/models/order", () => ({
+mock.module("@/models/order", () => ({
   OrderModel: {
     createFromItems: mock(() =>
       Promise.resolve({ order: { id: "order-1", totalAmount: 55000 } })
     ),
   },
 }));
-mock.module("@/src/models/activity-log", () => ({
+mock.module("@/models/activity-log", () => ({
   ActivityLogModel: {
     log: mock(() => Promise.resolve(undefined)),
   },
 }));
 
-import { processMessage } from "@/src/ai/pipeline";
+import { processMessage } from "@/ai/pipeline";
 
 describe("AI Pipeline Integration", () => {
   beforeEach(() => {

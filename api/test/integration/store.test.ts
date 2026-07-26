@@ -9,7 +9,7 @@ const mockPmUpdate = mock((_args: any) => Promise.resolve({}));
 const mockPmDelete = mock((_args: any) => Promise.resolve({}));
 const mockPmCount = mock((_args: any) => Promise.resolve(0));
 
-mock.module("@/src/config/db", () => ({
+mock.module("@/config/db", () => ({
   prisma: {
     store: {
       findUnique: mockStoreFindUnique,
@@ -30,13 +30,13 @@ mock.module("@/src/config/db", () => ({
 
 process.env.JWT_SECRET = "test-jwt-secret";
 
-import { getStore, upsertStore } from "@/src/controllers/store";
+import { getStore, upsertStore } from "@/controllers/store";
 import {
   listPaymentMethods,
   createPaymentMethod,
   updatePaymentMethod,
   deletePaymentMethod,
-} from "@/src/controllers/store-payment";
+} from "@/controllers/store-payment";
 import type { Request } from "express";
 
 function mockReq(overrides: Partial<Request> = {}): Request {

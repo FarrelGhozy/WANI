@@ -1,9 +1,9 @@
 import { Router } from "express";
-import * as qrController from "@/src/controllers/qr";
-import { requireAuth } from "@/src/middleware/auth";
-import { requireJwt } from "@/src/middleware/jwt";
-import { validate } from "@/src/middleware/validate";
-import { upsertQrSchema, pairingSchema } from "@/src/schemas/wa-session";
+import * as qrController from "@/controllers/qr";
+import { requireAuth } from "@/middleware/auth";
+import { requireJwt } from "@/middleware/jwt";
+import { validate } from "@/middleware/validate";
+import { upsertQrSchema, pairingSchema } from "@/schemas/wa-session";
 
 const router = Router();
 

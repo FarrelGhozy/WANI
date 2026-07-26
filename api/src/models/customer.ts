@@ -1,5 +1,5 @@
-import { prisma } from "@/src/config/db";
-import { BaseModel } from "@/src/models/base";
+import { prisma } from "@/config/db";
+import { BaseModel } from "@/models/base";
 import type { Customer, Prisma } from "@db/client";
 
 export type CustomerListItem = {

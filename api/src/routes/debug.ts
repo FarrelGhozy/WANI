@@ -1,10 +1,10 @@
 import { Router } from "express";
-import * as debugController from "@/src/controllers/debug";
-import { validate } from "@/src/middleware/validate";
+import * as debugController from "@/controllers/debug";
+import { validate } from "@/middleware/validate";
 import {
   getTracesQuerySchema,
   getTraceDetailParamsSchema,
-} from "@/src/schemas/debug";
+} from "@/schemas/debug";
 
 const router = Router();
 

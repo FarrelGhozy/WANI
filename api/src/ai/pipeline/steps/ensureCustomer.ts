@@ -1,5 +1,5 @@
-import { CustomerModel } from "@/src/models/customer";
-import { ConversationModel } from "@/src/models/conversation";
+import { CustomerModel } from "@/models/customer";
+import { ConversationModel } from "@/models/conversation";
 import type { PipelineStep } from "../types";
 
 /**

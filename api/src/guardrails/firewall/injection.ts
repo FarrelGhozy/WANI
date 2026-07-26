@@ -1,7 +1,7 @@
 // ─── Layer 2: Injection / jailbreak pattern detection ────────────────────
 
-import { normalizeLeet } from "@/src/guardrails/firewall/encoding";
-import type { ScanResult, ScanVerdict } from "@/src/guardrails/firewall/types";
+import { normalizeLeet } from "@/guardrails/firewall/encoding";
+import type { ScanResult, ScanVerdict } from "@/guardrails/firewall/types";
 import {
   DELIMITER_PATTERNS,
   OVERRIDE_PATTERNS,
@@ -11,7 +11,7 @@ import {
   TOKEN_INJECTION_PATTERNS,
   CRESCENDO_PATTERNS,
   LEET_PATTERNS,
-} from "@/src/guardrails/injection-patterns";
+} from "@/guardrails/injection-patterns";
 
 // MANY-SHOT / CONTEXT OVERFLOW
 const MANY_SHOT_RE =

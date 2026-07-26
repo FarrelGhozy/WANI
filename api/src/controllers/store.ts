@@ -1,10 +1,10 @@
 import type { Request, Response } from "express";
 import type { z } from "zod";
-import { StoreModel } from "@/src/models/store";
-import { StorePaymentMethodModel } from "@/src/models/store-payment";
-import { sendResponse } from "@/src/utils/response";
-import { getOwnerId, getOwnerIdOrFirst } from "@/src/middleware/owner";
-import { upsertStoreSchema } from "@/src/schemas/store";
+import { StoreModel } from "@/models/store";
+import { StorePaymentMethodModel } from "@/models/store-payment";
+import { sendResponse } from "@/utils/response";
+import { getOwnerId, getOwnerIdOrFirst } from "@/middleware/owner";
+import { upsertStoreSchema } from "@/schemas/store";
 
 type UpsertStoreBody = z.infer<typeof upsertStoreSchema>;
 

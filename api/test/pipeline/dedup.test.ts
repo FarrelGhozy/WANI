@@ -1,7 +1,7 @@
 import { expect, test, describe, mock } from "bun:test";
-import { dedupStep } from "@/src/ai/pipeline/steps/dedup";
-import { MessageModel } from "@/src/models/message";
-import type { PipelineContext } from "@/src/ai/pipeline/types";
+import { dedupStep } from "@/ai/pipeline/steps/dedup";
+import { MessageModel } from "@/models/message";
+import type { PipelineContext } from "@/ai/pipeline/types";
 
 function makeCtx(overrides: Partial<PipelineContext> = {}): PipelineContext {
   return {
@@ -22,7 +22,7 @@ describe("dedupStep", () => {
   });
 
   test("continues when waMsgId does not exist in DB", async () => {
-    mock.module("@/src/models/message", () => ({
+    mock.module("@/models/message", () => ({
       MessageModel: {
         existsByWaMsgId: async () => false,
       },
@@ -40,7 +40,7 @@ describe("dedupStep", () => {
   });
 
   test("breaks with duplicate intent when waMsgId already exists", async () => {
-    mock.module("@/src/models/message", () => ({
+    mock.module("@/models/message", () => ({
       MessageModel: {
         existsByWaMsgId: async () => true,
       },

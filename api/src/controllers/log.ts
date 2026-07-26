@@ -1,10 +1,10 @@
 import type { Request, Response } from "express";
 import type { z } from "zod";
-import { ActivityLogModel } from "@/src/models/activity-log";
-import { sendResponse } from "@/src/utils/response";
-import { getValidatedQuery } from "@/src/middleware/validate";
-import { getOwnerIdOrFirst } from "@/src/middleware/owner";
-import { logQuerySchema } from "@/src/schemas/log";
+import { ActivityLogModel } from "@/models/activity-log";
+import { sendResponse } from "@/utils/response";
+import { getValidatedQuery } from "@/middleware/validate";
+import { getOwnerIdOrFirst } from "@/middleware/owner";
+import { logQuerySchema } from "@/schemas/log";
 
 type LogQuery = z.infer<typeof logQuerySchema>;
 

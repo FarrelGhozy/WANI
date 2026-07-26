@@ -6,8 +6,8 @@ import type {
   StoreInfo,
   ProductEntry,
   CompletionResult,
-} from "@/src/types/ai";
-import { TraceContext } from "@/src/debug/tracer";
+} from "@/types/ai";
+import { TraceContext } from "@/debug/tracer";
 
 /**
  * Mutable context that accumulates state as pipeline steps execute.

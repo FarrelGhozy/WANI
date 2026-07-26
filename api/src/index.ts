@@ -1,6 +1,6 @@
-import { app } from "@/src/server";
-import { prisma } from "@/src/config/db";
-import { logger } from "@/src/config/logger";
+import { app } from "@/server";
+import { prisma } from "@/config/db";
+import { logger } from "@/config/logger";
 
 const port = process.env.PORT ?? "3001";
 

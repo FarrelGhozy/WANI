@@ -1,8 +1,8 @@
 import type { Request, Response } from "express";
-import { BaseModel } from "@/src/models/base";
-import { env } from "@/src/config/env";
-import { getMetrics } from "@/src/config/metrics";
-import { sendResponse } from "@/src/utils/response";
+import { BaseModel } from "@/models/base";
+import { env } from "@/config/env";
+import { getMetrics } from "@/config/metrics";
+import { sendResponse } from "@/utils/response";
 
 export async function getHealth(_req: Request, res: Response): Promise<void> {
   const checks: Record<string, string> = {};

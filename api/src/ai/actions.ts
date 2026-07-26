@@ -1,12 +1,12 @@
-import type { LLMOutput, ActionCtx, ActionResult } from "@/src/types/ai";
-import { ProductModel } from "@/src/models/catalog";
-import { OrderModel } from "@/src/models/order";
-import { CustomerModel } from "@/src/models/customer";
-import { ConversationModel } from "@/src/models/conversation";
-import { ActivityLogModel } from "@/src/models/activity-log";
-import { StorePaymentMethodModel } from "@/src/models/store-payment";
+import type { LLMOutput, ActionCtx, ActionResult } from "@/types/ai";
+import { ProductModel } from "@/models/catalog";
+import { OrderModel } from "@/models/order";
+import { CustomerModel } from "@/models/customer";
+import { ConversationModel } from "@/models/conversation";
+import { ActivityLogModel } from "@/models/activity-log";
+import { StorePaymentMethodModel } from "@/models/store-payment";
 
-import { logger } from "@/src/config/logger";
+import { logger } from "@/config/logger";
 
 export async function handleIntent(
   output: LLMOutput,

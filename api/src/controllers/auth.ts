@@ -1,23 +1,23 @@
 import type { Request, Response } from "express";
 import type { z } from "zod";
 import jwt from "jsonwebtoken";
-import { UserModel } from "@/src/models/user";
-import { StoreModel } from "@/src/models/store";
-import { sendResponse } from "@/src/utils/response";
-import { hashPassword, verifyPassword } from "@/src/utils/auth";
-import { sendEmail } from "@/src/services/email";
+import { UserModel } from "@/models/user";
+import { StoreModel } from "@/models/store";
+import { sendResponse } from "@/utils/response";
+import { hashPassword, verifyPassword } from "@/utils/auth";
+import { sendEmail } from "@/services/email";
 import {
   BadRequestError,
   ForbiddenError,
   UnauthorizedError,
-} from "@/src/utils/errors";
+} from "@/utils/errors";
 import {
   registerSchema,
   loginSchema,
   forgotPasswordSchema,
   resetPasswordSchema,
   resendVerificationSchema,
-} from "@/src/schemas/auth";
+} from "@/schemas/auth";
 
 type RegisterBody = z.infer<typeof registerSchema>;
 type LoginBody = z.infer<typeof loginSchema>;

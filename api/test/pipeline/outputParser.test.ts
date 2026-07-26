@@ -1,6 +1,6 @@
 import { expect, test, describe } from "bun:test";
-import { outputParserStep } from "@/src/ai/pipeline/steps/outputParser";
-import type { PipelineContext } from "@/src/ai/pipeline/types";
+import { outputParserStep } from "@/ai/pipeline/steps/outputParser";
+import type { PipelineContext } from "@/ai/pipeline/types";
 
 function makeCtx(raw: string): PipelineContext {
   return {

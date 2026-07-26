@@ -10,7 +10,7 @@ describe("EmailService", () => {
   test.skipIf(hasSmtp)(
     "isEmailConfigured returns false when env is empty",
     async () => {
-      const { isEmailConfigured } = await import("@/src/services/email");
+      const { isEmailConfigured } = await import("@/services/email");
       expect(isEmailConfigured()).toBe(false);
     }
   );
@@ -18,7 +18,7 @@ describe("EmailService", () => {
   test.skipIf(hasSmtp)(
     "verifyConnection returns false when SMTP is not configured",
     async () => {
-      const { verifyConnection } = await import("@/src/services/email");
+      const { verifyConnection } = await import("@/services/email");
       const ok = await verifyConnection();
       expect(ok).toBe(false);
     }

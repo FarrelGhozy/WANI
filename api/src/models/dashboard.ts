@@ -1,5 +1,5 @@
-import { prisma } from "@/src/config/db";
-import { WaSessionModel } from "@/src/models/wa-session";
+import { prisma } from "@/config/db";
+import { WaSessionModel } from "@/models/wa-session";
 
 export type DashboardStats = {
   ordersToday: number;

@@ -5,7 +5,7 @@ const mockProductDelete = mock((_args: any) => Promise.resolve());
 const mockProductCount = mock((_args: any) => Promise.resolve(0));
 const mockCategoryDelete = mock((_args: any) => Promise.resolve());
 
-mock.module("@/src/config/db", () => ({
+mock.module("@/config/db", () => ({
   prisma: {
     orderItem: { count: mockOrderItemCount },
     product: {
@@ -26,7 +26,7 @@ mock.module("@/src/config/db", () => ({
   } as any,
 }));
 
-import { ProductModel, CategoryModel } from "@/src/models/catalog";
+import { ProductModel, CategoryModel } from "@/models/catalog";
 
 describe("ProductModel.deleteProduct", () => {
   afterEach(() => {

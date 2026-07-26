@@ -1,15 +1,15 @@
 import { expect, test, describe, beforeEach, afterEach } from "bun:test";
 import type { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { requireAuth } from "@/src/middleware/auth";
-import { validate } from "@/src/middleware/validate";
-import { errorHandler } from "@/src/middleware/error";
+import { requireAuth } from "@/middleware/auth";
+import { validate } from "@/middleware/validate";
+import { errorHandler } from "@/middleware/error";
 import {
   BadRequestError,
   UnauthorizedError,
   NotFoundError,
   AppError,
-} from "@/src/utils/errors";
+} from "@/utils/errors";
 import { z } from "zod";
 
 const ORIGINAL_API_TOKEN = process.env.API_TOKEN;
@@ -67,7 +67,7 @@ const JWT_TEST_SECRET = "wani-dev-secret-change-in-production";
 describe("requireJwt", () => {
   test("passes with valid JWT", async () => {
     process.env.JWT_SECRET = JWT_TEST_SECRET;
-    const { requireJwt } = await import("@/src/middleware/jwt");
+    const { requireJwt } = await import("@/middleware/jwt");
     const token = jwt.sign(
       { id: "u1", email: "a@b.com", role: "admin" },
       JWT_TEST_SECRET
@@ -84,7 +84,7 @@ describe("requireJwt", () => {
 
   test("throws on missing header", async () => {
     process.env.JWT_SECRET = JWT_TEST_SECRET;
-    const { requireJwt } = await import("@/src/middleware/jwt");
+    const { requireJwt } = await import("@/middleware/jwt");
     const req = { headers: {} } as Request;
     expect(() => requireJwt(req, {} as Response, () => {})).toThrow(
       UnauthorizedError
@@ -93,7 +93,7 @@ describe("requireJwt", () => {
 
   test("throws on expired token", async () => {
     process.env.JWT_SECRET = JWT_TEST_SECRET;
-    const { requireJwt } = await import("@/src/middleware/jwt");
+    const { requireJwt } = await import("@/middleware/jwt");
     const token = jwt.sign({ id: "u1" }, JWT_TEST_SECRET, { expiresIn: "0s" });
     const req = { headers: { authorization: `Bearer ${token}` } } as Request;
     expect(() => requireJwt(req, {} as Response, () => {})).toThrow(
@@ -103,7 +103,7 @@ describe("requireJwt", () => {
 
   test("throws on wrong secret", async () => {
     process.env.JWT_SECRET = JWT_TEST_SECRET;
-    const { requireJwt } = await import("@/src/middleware/jwt");
+    const { requireJwt } = await import("@/middleware/jwt");
     const token = jwt.sign({ id: "u1" }, "wrong-secret");
     const req = { headers: { authorization: `Bearer ${token}` } } as Request;
     expect(() => requireJwt(req, {} as Response, () => {})).toThrow(

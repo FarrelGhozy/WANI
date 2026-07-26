@@ -1,5 +1,5 @@
-import { MessageModel } from "@/src/models/message";
-import { ConversationModel } from "@/src/models/conversation";
+import { MessageModel } from "@/models/message";
+import { ConversationModel } from "@/models/conversation";
 import type { PipelineStep } from "../types";
 
 /**

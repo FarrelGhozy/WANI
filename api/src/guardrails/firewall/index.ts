@@ -2,14 +2,11 @@ export type {
   ScanResult,
   ScanVerdict,
   OutputScanResult,
-} from "@/src/guardrails/firewall/types";
+} from "@/guardrails/firewall/types";
 export {
   detectObfuscation,
   normalizeLeet,
-} from "@/src/guardrails/firewall/encoding";
-export {
-  scanInput,
-  classifyVerdict,
-} from "@/src/guardrails/firewall/injection";
-export { analyzeTurn } from "@/src/guardrails/firewall/context";
-export { scanOutput } from "@/src/guardrails/firewall/output";
+} from "@/guardrails/firewall/encoding";
+export { scanInput, classifyVerdict } from "@/guardrails/firewall/injection";
+export { analyzeTurn } from "@/guardrails/firewall/context";
+export { scanOutput } from "@/guardrails/firewall/output";

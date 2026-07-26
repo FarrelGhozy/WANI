@@ -1,5 +1,5 @@
 import { expect, test, describe } from "bun:test";
-import type { LLMOutput } from "@/src/types/ai";
+import type { LLMOutput } from "@/types/ai";
 
 interface TestCase {
   text: string;

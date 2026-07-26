@@ -1,6 +1,6 @@
-import { BaseModel } from "@/src/models/base";
+import { BaseModel } from "@/models/base";
 import type { Prisma, $Enums } from "@db/client";
-import { BadRequestError, NotFoundError } from "@/src/utils/errors";
+import { BadRequestError, NotFoundError } from "@/utils/errors";
 
 export interface CreateItemInput {
   productId: string;

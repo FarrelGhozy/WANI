@@ -1,6 +1,6 @@
 import { expect, test, describe } from "bun:test";
-import { normalizeStep } from "@/src/ai/pipeline/steps/normalize";
-import type { PipelineContext } from "@/src/ai/pipeline/types";
+import { normalizeStep } from "@/ai/pipeline/steps/normalize";
+import type { PipelineContext } from "@/ai/pipeline/types";
 
 function makeCtx(text: string): PipelineContext {
   return {

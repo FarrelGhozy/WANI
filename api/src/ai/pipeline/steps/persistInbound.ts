@@ -1,4 +1,4 @@
-import { MessageModel } from "@/src/models/message";
+import { MessageModel } from "@/models/message";
 import type { PipelineStep } from "../types";
 
 /**

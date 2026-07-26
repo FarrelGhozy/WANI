@@ -1,6 +1,6 @@
 import { expect, test, describe } from "bun:test";
-import { runSteps } from "@/src/ai/pipeline/coordinator";
-import type { PipelineContext, PipelineStep } from "@/src/ai/pipeline/types";
+import { runSteps } from "@/ai/pipeline/coordinator";
+import type { PipelineContext, PipelineStep } from "@/ai/pipeline/types";
 
 function makeCtx(overrides: Partial<PipelineContext> = {}): PipelineContext {
   return {

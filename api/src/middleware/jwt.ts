@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { randomBytes } from "node:crypto";
-import { UnauthorizedError } from "@/src/utils/errors";
+import { UnauthorizedError } from "@/utils/errors";
 
 function getJwtSecret(): string {
   const secret = process.env.JWT_SECRET;

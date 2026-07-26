@@ -14,7 +14,7 @@ const mockCategoryUpdate = mock((_args: any) => Promise.resolve({}));
 const mockCategoryDelete = mock((_args: any) => Promise.resolve({}));
 const mockCategoryCount = mock((_args: any) => Promise.resolve(0));
 
-mock.module("@/src/config/db", () => ({
+mock.module("@/config/db", () => ({
   prisma: {
     product: {
       findMany: mockProductFindMany,
@@ -51,7 +51,7 @@ import {
   listCategories,
   createCategory,
   deleteCategory,
-} from "@/src/controllers/product";
+} from "@/controllers/product";
 import type { Request } from "express";
 
 function mockReq(overrides: Partial<Request> = {}): Request {

@@ -3,7 +3,7 @@ import {
   withCircuit,
   getCircuitState,
   resetCircuit,
-} from "@/src/ai/circuit-breaker";
+} from "@/ai/circuit-breaker";
 
 describe("Circuit Breaker", () => {
   beforeEach(() => {

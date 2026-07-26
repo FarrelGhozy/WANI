@@ -1,15 +1,15 @@
 import { Router } from "express";
-import * as productController from "@/src/controllers/product";
-import { requireAuth } from "@/src/middleware/auth";
-import { requireJwt } from "@/src/middleware/jwt";
-import { validate } from "@/src/middleware/validate";
+import * as productController from "@/controllers/product";
+import { requireAuth } from "@/middleware/auth";
+import { requireJwt } from "@/middleware/jwt";
+import { validate } from "@/middleware/validate";
 import {
   createProductSchema,
   updateProductSchema,
   productQuerySchema,
   createCategorySchema,
   updateCategorySchema,
-} from "@/src/schemas/product";
+} from "@/schemas/product";
 
 const router = Router();
 

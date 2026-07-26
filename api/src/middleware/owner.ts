@@ -1,6 +1,6 @@
 import type { Request } from "express";
-import { prisma } from "@/src/config/db";
-import { UnauthorizedError } from "@/src/utils/errors";
+import { prisma } from "@/config/db";
+import { UnauthorizedError } from "@/utils/errors";
 
 let _firstOwnerId: string | null = null;
 let _pending: Promise<string> | null = null;

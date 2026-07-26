@@ -1,5 +1,5 @@
-import { TraceContext } from "@/src/debug/tracer";
-import type { PipelineInput, PipelineResult } from "@/src/types/ai";
+import { TraceContext } from "@/debug/tracer";
+import type { PipelineInput, PipelineResult } from "@/types/ai";
 import { runSteps } from "./coordinator";
 import { normalizeStep } from "./steps/normalize";
 import { ensureCustomerStep } from "./steps/ensureCustomer";

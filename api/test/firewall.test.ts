@@ -2,18 +2,15 @@ import { expect, test, describe, beforeEach } from "bun:test";
 import {
   detectObfuscation,
   normalizeLeet,
-} from "@/src/guardrails/firewall/encoding";
-import {
-  scanInput,
-  classifyVerdict,
-} from "@/src/guardrails/firewall/injection";
+} from "@/guardrails/firewall/encoding";
+import { scanInput, classifyVerdict } from "@/guardrails/firewall/injection";
 import {
   analyzeTurn,
   resetConversationState,
-} from "@/src/guardrails/firewall/context";
-import { scanOutput } from "@/src/guardrails/firewall/output";
-import { scanPii, hasPii, redactPii } from "@/src/guardrails/pii";
-import { PROMPT_CANARY } from "@/src/ai/prompts";
+} from "@/guardrails/firewall/context";
+import { scanOutput } from "@/guardrails/firewall/output";
+import { scanPii, hasPii, redactPii } from "@/guardrails/pii";
+import { PROMPT_CANARY } from "@/ai/prompts";
 
 // ─── Layer 1: Encoding / obfuscation ────────────────────────────────────
 

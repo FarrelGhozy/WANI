@@ -1,8 +1,8 @@
-import { sanitizeReply } from "@/src/guardrails/output";
-import { scanOutput } from "@/src/guardrails/firewall";
-import { scanPii } from "@/src/guardrails/pii";
-import { checkGrounding } from "@/src/guardrails/classifier";
-import { ActivityLogModel } from "@/src/models/activity-log";
+import { sanitizeReply } from "@/guardrails/output";
+import { scanOutput } from "@/guardrails/firewall";
+import { scanPii } from "@/guardrails/pii";
+import { checkGrounding } from "@/guardrails/classifier";
+import { ActivityLogModel } from "@/models/activity-log";
 import { STEP_REPLIES, type PipelineStep } from "../types";
 
 /**

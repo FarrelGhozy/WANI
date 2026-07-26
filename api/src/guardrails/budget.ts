@@ -1,7 +1,7 @@
-import { prisma } from "@/src/config/db";
-import { env } from "@/src/config/env";
-import { logger } from "@/src/config/logger";
-import type { TokenUsage } from "@/src/types/ai";
+import { prisma } from "@/config/db";
+import { env } from "@/config/env";
+import { logger } from "@/config/logger";
+import type { TokenUsage } from "@/types/ai";
 
 let _todayKey: string | null = null;
 let _todayKeyTs = 0;

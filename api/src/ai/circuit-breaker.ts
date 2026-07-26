@@ -1,5 +1,5 @@
-import type { CircuitResult } from "@/src/types/ai";
-import { logger } from "@/src/config/logger";
+import type { CircuitResult } from "@/types/ai";
+import { logger } from "@/config/logger";
 
 interface State {
   failures: number;

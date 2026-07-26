@@ -1,9 +1,9 @@
 // ─── Layer 3: Conversation context analysis ──────────────────────────────
 
-import { scanInput } from "@/src/guardrails/firewall/injection";
-import { detectObfuscation } from "@/src/guardrails/firewall/encoding";
-import { logger } from "@/src/config/logger";
-import type { ScanResult } from "@/src/guardrails/firewall/types";
+import { scanInput } from "@/guardrails/firewall/injection";
+import { detectObfuscation } from "@/guardrails/firewall/encoding";
+import { logger } from "@/config/logger";
+import type { ScanResult } from "@/guardrails/firewall/types";
 
 interface ConversationState {
   identityChallenges: number;

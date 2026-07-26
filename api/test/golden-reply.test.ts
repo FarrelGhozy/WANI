@@ -1,5 +1,5 @@
 import { expect, test, describe } from "bun:test";
-import { sanitizeReply, hasLeak } from "@/src/guardrails/output";
+import { sanitizeReply, hasLeak } from "@/guardrails/output";
 
 describe("golden reply safety checks", () => {
   test("reply never contains canary", () => {

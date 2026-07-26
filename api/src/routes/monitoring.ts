@@ -1,5 +1,5 @@
 import { Router } from "express";
-import * as monitoringController from "@/src/controllers/monitoring";
+import * as monitoringController from "@/controllers/monitoring";
 
 const router = Router();
 

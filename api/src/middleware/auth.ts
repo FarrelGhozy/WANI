@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import { UnauthorizedError } from "@/src/utils/errors";
+import { UnauthorizedError } from "@/utils/errors";
 
 export function requireAuth(
   req: Request,

@@ -1,11 +1,11 @@
-import { env } from "@/src/config/env";
-import { logger } from "@/src/config/logger";
+import { env } from "@/config/env";
+import { logger } from "@/config/logger";
 import type {
   ChatMessage,
   CompletionOptions,
   CompletionResult,
   TokenUsage,
-} from "@/src/types/ai";
+} from "@/types/ai";
 
 export class LLMError extends Error {
   constructor(

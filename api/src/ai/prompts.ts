@@ -1,8 +1,4 @@
-import type {
-  PaymentMethodEntry,
-  StoreInfo,
-  ProductEntry,
-} from "@/src/types/ai";
+import type { PaymentMethodEntry, StoreInfo, ProductEntry } from "@/types/ai";
 
 // Secret marker embedded in the system prompt. The output guardrail rejects any
 // reply that contains it, which catches prompt-leak / injection attempts.

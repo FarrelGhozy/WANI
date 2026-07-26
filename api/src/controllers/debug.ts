@@ -1,14 +1,14 @@
 import type { Request, Response } from "express";
 import type { z } from "zod";
-import { sendResponse } from "@/src/utils/response";
-import { NotFoundError } from "@/src/utils/errors";
-import { getValidatedQuery } from "@/src/middleware/validate";
-import { getTraces, getTraceById, clearTraces } from "@/src/debug/tracer";
-import { getCircuitState, resetCircuit } from "@/src/ai/circuit-breaker";
+import { sendResponse } from "@/utils/response";
+import { NotFoundError } from "@/utils/errors";
+import { getValidatedQuery } from "@/middleware/validate";
+import { getTraces, getTraceById, clearTraces } from "@/debug/tracer";
+import { getCircuitState, resetCircuit } from "@/ai/circuit-breaker";
 import {
   getTracesQuerySchema,
   getTraceDetailParamsSchema,
-} from "@/src/schemas/debug";
+} from "@/schemas/debug";
 
 type GetTracesQuery = z.infer<typeof getTracesQuerySchema>;
 type GetTraceDetailParams = z.infer<typeof getTraceDetailParamsSchema>;

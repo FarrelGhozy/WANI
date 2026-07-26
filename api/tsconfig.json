@@ -24,7 +24,7 @@
 
     "paths": {
       "@db/*": ["./generated/prisma/*"],
-      "@/*": ["./*"],
+      "@/*": ["./src/*"],
       "@web-gen/*": ["../web-gen/src/*"]
     }
   },

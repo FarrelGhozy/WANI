@@ -2,7 +2,7 @@
 // Single source of truth — imported by both guardrails/input.ts (quick
 // heuristic check) and guardrails/firewall/injection.ts (full T1 scan).
 
-import { MSG_CLOSE } from "@/src/ai/prompts";
+import { MSG_CLOSE } from "@/ai/prompts";
 
 export function escapeRe(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
