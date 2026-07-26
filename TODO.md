@@ -2,7 +2,7 @@
 
 ## Phase 1: Create WAHA Service
 
-- [ ] Add `axios` to `api/package.json` under `dependencies`
+- [x] Add `axios` to `api/package.json` under `dependencies`
 - [ ] Create `api/src/services/waha.ts` — typed wrapper class for WAHA HTTP API
   - Configures axios instance with `WAHA_BASE_URL` (default `http://localhost:3000`), `WAHA_API_KEY` in request interceptor
   - **Session endpoints**: `startSession`, `getSessions`, `getSession`, `stopSession`, `logout`
