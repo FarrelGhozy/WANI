@@ -1,11 +1,59 @@
-# Local development — WAHA connects to host PostgreSQL instead of the db container
-# Usage: docker compose -f docker-compose.yml -f docker-compose.dev.yml -f docker-compose.local.yml up -d waha
-
 services:
   waha:
+    restart: unless-stopped
+    image: devlikeapro/waha:latest
     depends_on: {}
     extra_hosts:
       - host.docker.internal:host-gateway
+    ports:
+      - "3000:3000"
     environment:
+      # Engine
+      WHATSAPP_DEFAULT_ENGINE: GOWS
+      GODEBUG: netdns=go
+
+      # API Key
+      WAHA_API_KEY: ${WAHA_API_KEY}
+      WAHA_API_KEY_EXCLUDE_PATH: health,ping
+
+      # Sessions — host PostgreSQL
       WHATSAPP_SESSIONS_POSTGRESQL_URL: postgres://${DATABASE_USER}:${POSTGRES_PASSWORD}@host.docker.internal:5432/postgres?sslmode=disable
+
+      # Media — host PostgreSQL
+      WAHA_MEDIA_STORAGE: POSTGRESQL
       WAHA_MEDIA_POSTGRESQL_URL: postgres://${DATABASE_USER}:${POSTGRES_PASSWORD}@host.docker.internal:5432/postgres?sslmode=disable
+
+      # GOWS history sync limits
+      WAHA_GOWS_DEVICE_REQUIRE_FULL_SYNC: "false"
+      WAHA_GOWS_DEVICE_HISTORY_SYNC_FULL_SYNC_DAYS_LIMIT: 365
+      WAHA_GOWS_DEVICE_HISTORY_SYNC_RECENT_SYNC_DAYS_LIMIT: 30
+      WAHA_GOWS_DEVICE_HISTORY_SYNC_INITIAL_SYNC_MAX_MESSAGES_PER_CHAT: 100
+
+      # Dev-friendly settings
+      WAHA_DASHBOARD_ENABLED: "true"
+      WAHA_DASHBOARD_USERNAME: ${WAHA_DASHBOARD_USERNAME:-admin}
+      WAHA_DASHBOARD_PASSWORD: ${WAHA_DASHBOARD_PASSWORD}
+      WHATSAPP_SWAGGER_ENABLED: "true"
+      WHATSAPP_SWAGGER_USERNAME: ${WAHA_DASHBOARD_USERNAME:-admin}
+      WHATSAPP_SWAGGER_PASSWORD: ${WAHA_DASHBOARD_PASSWORD}
+      WAHA_PRINT_QR: "true"
+      WAHA_LOG_LEVEL: debug
+      WAHA_LOG_FORMAT: PRETTY
+      WAHA_AUTO_START_DELAY_SECONDS: "5"
+      TZ: Asia/Jakarta
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 6
+      start_period: 30s
+    networks: [wani]
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  wani:
+    driver: bridge

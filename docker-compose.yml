@@ -126,7 +126,7 @@ services:
       GODEBUG: netdns=go
 
       # API Key
-      WAHA_API_KEY: ${WAHA_API_KEY}
+      WAHA_API_KEY_PLAIN: ${WAHA_API_KEY}
       WAHA_API_KEY_EXCLUDE_PATH: health,ping
 
       # Sessions — PostgreSQL
@@ -147,7 +147,7 @@ services:
       WHATSAPP_SWAGGER_ENABLED: "false"
       WAHA_PRINT_QR: "false"
       WAHA_LOG_LEVEL: info
-      WAHA_LOG_FORMAT: JSON
+      WAHA_LOG_FORMAT: PRETTY
       WAHA_AUTO_START_DELAY_SECONDS: "5"
       TZ: Asia/Jakarta
     healthcheck:
@@ -175,7 +175,6 @@ services:
       DATABASE_USER: ${DATABASE_USER}
       DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
       DATABASE_NAME_API: ${DATABASE_NAME_API}
-      DATABASE_NAME_BOT: ${DATABASE_NAME_BOT}
       BACKUP_DIR: /backups
       RETENTION_DAYS: 7
     volumes:
