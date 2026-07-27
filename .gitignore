@@ -23,6 +23,12 @@ Docs/*.out
 # trash ds store
 .DS_Store
 
+# agent guidance — local per developer
+AGENTS.md
+
+# local todo / notes
+todo
+
 # design dna
 DESIGN_DNA.md
 
