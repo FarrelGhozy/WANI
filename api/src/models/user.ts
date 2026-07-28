@@ -1,4 +1,4 @@
-import { BaseModel } from "@/src/models/base"
+import { BaseModel } from "@/models/base"
 
 export type UserPublic = {
   id: string

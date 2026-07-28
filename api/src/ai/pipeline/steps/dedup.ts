@@ -1,4 +1,4 @@
-import { MessageModel } from "@/src/models/message"
+import { MessageModel } from "@/models/message"
 import type { ClearedInput, Step } from "../types"
 import { ok, fail } from "../either"
 

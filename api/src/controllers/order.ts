@@ -1,18 +1,18 @@
 import type { Request, Response } from "express"
 import type { z } from "zod"
-import { OrderModel, type OrderResponse } from "@/src/models/order"
-import { ConversationModel } from "@/src/models/conversation"
-import { MessageModel } from "@/src/models/message"
-import { sendResponse } from "@/src/utils/response"
-import { NotFoundError } from "@/src/utils/errors"
-import { getValidatedQuery } from "@/src/middleware/validate"
-import { getOwnerId, getOwnerIdOrFirst } from "@/src/middleware/owner"
+import { OrderModel, type OrderResponse } from "@/models/order"
+import { ConversationModel } from "@/models/conversation"
+import { MessageModel } from "@/models/message"
+import { sendResponse } from "@/utils/response"
+import { NotFoundError } from "@/utils/errors"
+import { getValidatedQuery } from "@/middleware/validate"
+import { getOwnerId, getOwnerIdOrFirst } from "@/middleware/owner"
 import {
   orderQuerySchema,
   updateOrderStatusSchema,
   updateOrderNotesSchema,
   updateOrderPaymentSchema,
-} from "@/src/schemas/order"
+} from "@/schemas/order"
 import type { $Enums } from "@db/client"
 
 type OrderQuery = z.infer<typeof orderQuerySchema>

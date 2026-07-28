@@ -1,7 +1,7 @@
 import { expect, test, describe } from "bun:test"
-import type { PipelineInput } from "@/src/types/ai"
-import { normalizeStep } from "@/src/ai/pipeline/steps/normalize"
-import { TraceContext } from "@/src/debug/tracer"
+import type { PipelineInput } from "@/types/ai"
+import { normalizeStep } from "@/ai/pipeline/steps/normalize"
+import { TraceContext } from "@/debug/tracer"
 
 function makeInput(text: string): PipelineInput {
   return { ownerId: "test", phone: "62812", text }

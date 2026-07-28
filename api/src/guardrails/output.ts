@@ -1,5 +1,5 @@
-import { env } from "@/src/config/env";
-import { PROMPT_CANARY, MSG_OPEN } from "@/src/ai/prompts";
+import { env } from "@/config/env";
+import { PROMPT_CANARY, MSG_OPEN } from "@/ai/prompts";
 
 /** cleaning an outbound reply: strip code fences, trim, cap length. */
 export function sanitizeReply(text: string): string {

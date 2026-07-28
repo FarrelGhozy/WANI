@@ -1,9 +1,9 @@
 import type { Request, Response } from "express"
 import type { z } from "zod"
-import { processMessage } from "@/src/ai/pipeline"
-import { sendResponse } from "@/src/utils/response"
-import { getOwnerIdOrFirst } from "@/src/middleware/owner"
-import { chatRequestSchema } from "@/src/schemas/chat"
+import { processMessage } from "@/ai/pipeline"
+import { sendResponse } from "@/utils/response"
+import { getOwnerIdOrFirst } from "@/middleware/owner"
+import { chatRequestSchema } from "@/schemas/chat"
 
 type ChatRequestBody = z.infer<typeof chatRequestSchema>
 

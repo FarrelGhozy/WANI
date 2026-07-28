@@ -1,5 +1,5 @@
-import { recordLlmUsage } from "@/src/guardrails/budget"
-import { ActivityLogModel } from "@/src/models/activity-log"
+import { recordLlmUsage } from "@/guardrails/budget"
+import { ActivityLogModel } from "@/models/activity-log"
 import type { GuardedInput, Step } from "../types"
 import { ok } from "../either"
 

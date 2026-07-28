@@ -1,5 +1,5 @@
-import { isBudgetExceeded } from "@/src/guardrails/budget"
-import { ActivityLogModel } from "@/src/models/activity-log"
+import { isBudgetExceeded } from "@/guardrails/budget"
+import { ActivityLogModel } from "@/models/activity-log"
 import { STEP_REPLIES, type ClearedInput, type Step } from "../types"
 import { ok, fail } from "../either"
 

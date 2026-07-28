@@ -1,9 +1,9 @@
 import type { Request, Response } from "express"
 import type { z } from "zod"
-import { AiConfigModel } from "@/src/models/ai-config"
-import { sendResponse } from "@/src/utils/response"
-import { getOwnerId, getOwnerIdOrFirst } from "@/src/middleware/owner"
-import { upsertAiConfigSchema } from "@/src/schemas/ai-config"
+import { AiConfigModel } from "@/models/ai-config"
+import { sendResponse } from "@/utils/response"
+import { getOwnerId, getOwnerIdOrFirst } from "@/middleware/owner"
+import { upsertAiConfigSchema } from "@/schemas/ai-config"
 
 type UpsertAiConfigBody = z.infer<typeof upsertAiConfigSchema>
 

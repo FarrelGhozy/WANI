@@ -1,5 +1,5 @@
-import { CustomerModel } from "@/src/models/customer"
-import { ConversationModel } from "@/src/models/conversation"
+import { CustomerModel } from "@/models/customer"
+import { ConversationModel } from "@/models/conversation"
 import type { NormalizedInput, ClearedInput, Step } from "../types"
 import { ok } from "../either"
 

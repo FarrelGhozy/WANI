@@ -23,7 +23,7 @@
     // Path aliases
     "paths": {
       "@db/*": ["./generated/prisma/*"],
-      "@/*": ["./*"]
+      "@/*": ["./src/*"]
     }
   },
   "include": ["src", "test", "prisma.config.ts"]

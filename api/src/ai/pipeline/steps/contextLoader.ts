@@ -1,7 +1,7 @@
-import { StoreModel } from "@/src/models/store"
-import { ProductModel } from "@/src/models/catalog"
-import { AiConfigModel } from "@/src/models/ai-config"
-import { StorePaymentMethodModel } from "@/src/models/store-payment"
+import { StoreModel } from "@/models/store"
+import { ProductModel } from "@/models/catalog"
+import { AiConfigModel } from "@/models/ai-config"
+import { StorePaymentMethodModel } from "@/models/store-payment"
 import type { ClearedInput, EnrichedInput, Step } from "../types"
 import { ok, fail } from "../either"
 

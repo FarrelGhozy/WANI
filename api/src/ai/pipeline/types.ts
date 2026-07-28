@@ -6,8 +6,8 @@ import type {
   StoreInfo,
   ProductEntry,
   CompletionResult,
-} from "@/src/types/ai"
-import type { TraceContext } from "@/src/debug/tracer"
+} from "@/types/ai"
+import type { TraceContext } from "@/debug/tracer"
 import type { Either } from "./either"
 
 // ── Error ───────────────────────────────────────────────

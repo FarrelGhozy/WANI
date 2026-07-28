@@ -1,4 +1,4 @@
-import { BaseModel } from "@/src/models/base"
+import { BaseModel } from "@/models/base"
 import type { Prisma, WebSite, WebsiteGeneration } from "@db/client"
 
 export class WebSiteModel extends BaseModel {

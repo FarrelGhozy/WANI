@@ -1,7 +1,7 @@
 import type { Request, Response } from "express"
-import { getDashboardStats } from "@/src/models/dashboard"
-import { sendResponse } from "@/src/utils/response"
-import { getOwnerIdOrFirst } from "@/src/middleware/owner"
+import { getDashboardStats } from "@/models/dashboard"
+import { sendResponse } from "@/utils/response"
+import { getOwnerIdOrFirst } from "@/middleware/owner"
 
 export async function getStats(
   req: Request,

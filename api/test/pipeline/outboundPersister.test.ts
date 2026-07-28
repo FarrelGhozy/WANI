@@ -4,22 +4,22 @@ const mockAppend = mock((data: any) => Promise.resolve({ id: "msg-123" }))
 const mockMarkDelivered = mock((_id: string) => Promise.resolve())
 const mockTouch = mock((_id: string) => Promise.resolve())
 
-mock.module("@/src/models/message", () => ({
+mock.module("@/models/message", () => ({
   MessageModel: {
     append: mockAppend,
     markDelivered: mockMarkDelivered,
   },
 }))
 
-mock.module("@/src/models/conversation", () => ({
+mock.module("@/models/conversation", () => ({
   ConversationModel: {
     touch: mockTouch,
   },
 }))
 
-import { outboundPersisterStep } from "@/src/ai/pipeline/steps/outboundPersister"
-import type { GuardedInput } from "@/src/ai/pipeline/types"
-import { TraceContext } from "@/src/debug/tracer"
+import { outboundPersisterStep } from "@/ai/pipeline/steps/outboundPersister"
+import type { GuardedInput } from "@/ai/pipeline/types"
+import { TraceContext } from "@/debug/tracer"
 
 function makeInput(overrides: Partial<GuardedInput> = {}): GuardedInput {
   return {

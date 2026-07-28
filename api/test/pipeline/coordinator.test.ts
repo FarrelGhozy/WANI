@@ -1,8 +1,8 @@
 import { expect, test, describe } from "bun:test"
-import { PipelineBuilder } from "@/src/ai/pipeline/builder"
-import type { Step } from "@/src/ai/pipeline/types"
-import { ok, fail } from "@/src/ai/pipeline/either"
-import { TraceContext } from "@/src/debug/tracer"
+import { PipelineBuilder } from "@/ai/pipeline/builder"
+import type { Step } from "@/ai/pipeline/types"
+import { ok, fail } from "@/ai/pipeline/either"
+import { TraceContext } from "@/debug/tracer"
 
 function trace() { return new TraceContext("test") }
 

@@ -1,5 +1,5 @@
-import { scanPii } from "@/src/guardrails/pii"
-import { ActivityLogModel } from "@/src/models/activity-log"
+import { scanPii } from "@/guardrails/pii"
+import { ActivityLogModel } from "@/models/activity-log"
 import type { ClearedInput, Step } from "../types"
 import { ok } from "../either"
 

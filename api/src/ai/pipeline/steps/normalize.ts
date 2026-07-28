@@ -1,5 +1,5 @@
-import { normalizeInput } from "@/src/guardrails/input"
-import type { PipelineInput } from "@/src/types/ai"
+import { normalizeInput } from "@/guardrails/input"
+import type { PipelineInput } from "@/types/ai"
 import type { Step, NormalizedInput } from "../types"
 import { ok, fail } from "../either"
 

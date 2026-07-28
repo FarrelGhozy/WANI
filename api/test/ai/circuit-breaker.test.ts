@@ -1,5 +1,5 @@
 import { expect, test, describe, beforeEach } from "bun:test"
-import { State, withCircuit, getCircuitState, resetCircuit, breakerRegistry } from "@/src/ai/circuit-breaker"
+import { State, withCircuit, getCircuitState, resetCircuit, breakerRegistry } from "@/ai/circuit-breaker"
 
 describe("Circuit Breaker — per-label registry", () => {
   beforeEach(() => {

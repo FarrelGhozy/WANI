@@ -1,5 +1,5 @@
-import { BaseModel } from "@/src/models/base"
-import type { WaSession, WaSessionData } from "@/src/types/wa-session"
+import { BaseModel } from "@/models/base"
+import type { WaSession, WaSessionData } from "@/types/wa-session"
 
 export class WaSessionModel extends BaseModel {
   protected static override get delegate() {

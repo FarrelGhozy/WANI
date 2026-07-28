@@ -1,8 +1,8 @@
 import { expect, test, describe, mock } from "bun:test"
-import { dedupStep } from "@/src/ai/pipeline/steps/dedup"
-import { MessageModel } from "@/src/models/message"
-import type { ClearedInput } from "@/src/ai/pipeline/types"
-import { TraceContext } from "@/src/debug/tracer"
+import { dedupStep } from "@/ai/pipeline/steps/dedup"
+import { MessageModel } from "@/models/message"
+import type { ClearedInput } from "@/ai/pipeline/types"
+import { TraceContext } from "@/debug/tracer"
 
 function makeInput(overrides: Partial<ClearedInput> = {}): ClearedInput {
   return {
@@ -26,7 +26,7 @@ describe("dedupStep", () => {
   })
 
   test("continues when waMsgId does not exist in DB", async () => {
-    mock.module("@/src/models/message", () => ({
+    mock.module("@/models/message", () => ({
       MessageModel: {
         existsByWaMsgId: async () => false,
       },
@@ -36,7 +36,7 @@ describe("dedupStep", () => {
   })
 
   test("breaks when waMsgId already exists", async () => {
-    mock.module("@/src/models/message", () => ({
+    mock.module("@/models/message", () => ({
       MessageModel: {
         existsByWaMsgId: async () => true,
       },

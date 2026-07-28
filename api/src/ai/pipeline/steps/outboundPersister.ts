@@ -1,6 +1,6 @@
-import { MessageModel } from "@/src/models/message"
-import { ConversationModel } from "@/src/models/conversation"
-import type { PipelineResult } from "@/src/types/ai"
+import { MessageModel } from "@/models/message"
+import { ConversationModel } from "@/models/conversation"
+import type { PipelineResult } from "@/types/ai"
 import type { GuardedInput, Step } from "../types"
 import { ok } from "../either"
 

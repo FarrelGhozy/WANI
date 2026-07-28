@@ -1,6 +1,6 @@
 import type { Request, Response } from "express"
-import { MessageModel } from "@/src/models/message"
-import { sendResponse } from "@/src/utils/response"
+import { MessageModel } from "@/models/message"
+import { sendResponse } from "@/utils/response"
 
 export async function listOutgoing(_req: Request, res: Response): Promise<void> {
   const items = await MessageModel.listOutgoing()

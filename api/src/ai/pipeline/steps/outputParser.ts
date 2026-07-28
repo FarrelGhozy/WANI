@@ -1,5 +1,5 @@
-import { LLMOutputSchema } from "@/src/ai/schemas";
-import type { LLMOutput } from "@/src/types/ai";
+import { LLMOutputSchema } from "@/ai/schemas";
+import type { LLMOutput } from "@/types/ai";
 import type { LlmInput, ParsedInput, Step } from "../types";
 import { ok } from "../either";
 

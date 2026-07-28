@@ -1,5 +1,5 @@
-import { TraceContext } from "@/src/debug/tracer"
-import type { PipelineResult } from "@/src/types/ai"
+import { TraceContext } from "@/debug/tracer"
+import type { PipelineResult } from "@/types/ai"
 import type { Either } from "./either"
 import type { Step, StepError } from "./types"
 import { STEP_REPLIES } from "./types"

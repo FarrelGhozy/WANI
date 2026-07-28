@@ -1,13 +1,13 @@
 import type { Request, Response } from "express"
 import type { z } from "zod"
-import { StorePaymentMethodModel } from "@/src/models/store-payment"
-import { sendResponse } from "@/src/utils/response"
-import { NotFoundError } from "@/src/utils/errors"
-import { getOwnerId, getOwnerIdOrFirst } from "@/src/middleware/owner"
+import { StorePaymentMethodModel } from "@/models/store-payment"
+import { sendResponse } from "@/utils/response"
+import { NotFoundError } from "@/utils/errors"
+import { getOwnerId, getOwnerIdOrFirst } from "@/middleware/owner"
 import {
   createPaymentMethodSchema,
   updatePaymentMethodSchema,
-} from "@/src/schemas/store-payment"
+} from "@/schemas/store-payment"
 
 type CreateBody = z.infer<typeof createPaymentMethodSchema>
 type UpdateBody = z.infer<typeof updatePaymentMethodSchema>

@@ -1,7 +1,7 @@
 import { expect, test, describe } from "bun:test"
-import { outputParserStep } from "@/src/ai/pipeline/steps/outputParser"
-import type { LlmInput } from "@/src/ai/pipeline/types"
-import { TraceContext } from "@/src/debug/tracer"
+import { outputParserStep } from "@/ai/pipeline/steps/outputParser"
+import type { LlmInput } from "@/ai/pipeline/types"
+import { TraceContext } from "@/debug/tracer"
 
 function makeInput(raw: string): LlmInput {
   return {

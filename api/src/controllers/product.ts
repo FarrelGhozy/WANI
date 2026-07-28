@@ -1,11 +1,11 @@
 import type { Request, Response } from "express"
 import type { z } from "zod"
-import { ProductModel, CategoryModel } from "@/src/models/catalog"
-import { sendResponse } from "@/src/utils/response"
-import { NotFoundError } from "@/src/utils/errors"
-import { getValidatedQuery } from "@/src/middleware/validate"
-import { getOwnerId, getOwnerIdOrFirst } from "@/src/middleware/owner"
-import { createProductSchema, updateProductSchema, productQuerySchema, createCategorySchema, updateCategorySchema } from "@/src/schemas/product"
+import { ProductModel, CategoryModel } from "@/models/catalog"
+import { sendResponse } from "@/utils/response"
+import { NotFoundError } from "@/utils/errors"
+import { getValidatedQuery } from "@/middleware/validate"
+import { getOwnerId, getOwnerIdOrFirst } from "@/middleware/owner"
+import { createProductSchema, updateProductSchema, productQuerySchema, createCategorySchema, updateCategorySchema } from "@/schemas/product"
 
 type CreateProductBody = z.infer<typeof createProductSchema>
 type UpdateProductBody = z.infer<typeof updateProductSchema>

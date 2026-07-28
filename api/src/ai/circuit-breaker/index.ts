@@ -1,5 +1,5 @@
-import { logger } from "@/src/config/logger";
-import { State, type CircuitResult, type CircuitState } from "@/src/types/ai";
+import { logger } from "@/config/logger";
+import { State, type CircuitResult, type CircuitState } from "@/types/ai";
 
 export { State, type CircuitResult, type CircuitState };
 

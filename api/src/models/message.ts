@@ -1,4 +1,4 @@
-import { BaseModel } from "@/src/models/base"
+import { BaseModel } from "@/models/base"
 import type { Message, $Enums } from "@db/client"
 
 export interface AppendData {

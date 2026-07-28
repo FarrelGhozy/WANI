@@ -1,8 +1,8 @@
-import { analyzeTurn, classifyVerdict } from "@/src/guardrails/firewall"
-import { classifyInput, judgeInput } from "@/src/guardrails/classifier"
-import { MessageModel } from "@/src/models/message"
-import { ActivityLogModel } from "@/src/models/activity-log"
-import { logger } from "@/src/config/logger"
+import { analyzeTurn, classifyVerdict } from "@/guardrails/firewall"
+import { classifyInput, judgeInput } from "@/guardrails/classifier"
+import { MessageModel } from "@/models/message"
+import { ActivityLogModel } from "@/models/activity-log"
+import { logger } from "@/config/logger"
 import { STEP_REPLIES, type ClearedInput, type Step } from "../types"
 import { ok, fail } from "../either"
 

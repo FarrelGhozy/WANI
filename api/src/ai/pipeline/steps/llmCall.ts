@@ -1,8 +1,8 @@
-import { complete } from "@/src/ai/engine"
-import { withCircuit } from "@/src/ai/circuit-breaker"
-import { wrapCustomerMessage } from "@/src/ai/prompts"
-import { ActivityLogModel } from "@/src/models/activity-log"
-import { env } from "@/src/config/env"
+import { complete } from "@/ai/engine"
+import { withCircuit } from "@/ai/circuit-breaker"
+import { wrapCustomerMessage } from "@/ai/prompts"
+import { ActivityLogModel } from "@/models/activity-log"
+import { env } from "@/config/env"
 import { STEP_REPLIES, type PromptInput, type LlmInput, type Step } from "../types"
 import { ok, fail } from "../either"
 

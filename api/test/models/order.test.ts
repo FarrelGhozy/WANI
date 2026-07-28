@@ -26,7 +26,7 @@ const mockTransaction = mock((fn: any) => fn({
   },
 }))
 
-mock.module("@/src/config/db", () => ({
+mock.module("@/config/db", () => ({
   prisma: {
     order: {
       findUnique: mockOrderFindUnique,
@@ -52,7 +52,7 @@ mock.module("@/src/config/db", () => ({
   } as any,
 }))
 
-import { OrderModel } from "@/src/models/order"
+import { OrderModel } from "@/models/order"
 
 const baseOrder = {
   id: "order-1", status: "PENDING", stockReleased: false,
