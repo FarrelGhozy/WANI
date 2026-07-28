@@ -1,42 +1,60 @@
-import { LLMOutputSchema } from "@/src/ai/schemas"
-import type { LLMOutput } from "@/src/types/ai"
-import type { PipelineStep } from "../types"
+import { LLMOutputSchema } from "@/src/ai/schemas";
+import type { LLMOutput } from "@/src/types/ai";
+import type { LlmInput, ParsedInput, Step } from "../types";
+import { ok } from "../either";
 
-/**
- * Step 12 — Parse raw LLM output (JSON → Zod → regex fallback).
- */
-export const outputParserStep: PipelineStep = {
+export const outputParserStep: Step<LlmInput, ParsedInput> = {
   name: "parse_output",
-  async run(ctx) {
-    const raw = ctx.completion!.content.trim()
-    const llmOutput = await parseLLMResponse(raw)
-    ctx.llmOutput = llmOutput
-    ctx.llmIntent = llmOutput.intent
-    ctx.trace.set("intent", llmOutput.intent)
-    return { kind: "continue" }
+  async run(input, { trace }) {
+    const raw = input.completion.content.trim();
+    const llmOutput = await parseLLMResponse(raw);
+    trace.set("intent", llmOutput.intent);
+
+    return ok({
+      ownerId: input.ownerId,
+      phone: input.phone,
+      name: input.name,
+      waMsgId: input.waMsgId,
+      text: input.text,
+      normalized: input.normalized,
+      customerId: input.customerId,
+      customerPhone: input.customerPhone,
+      conversationId: input.conversationId,
+      storeInfo: input.storeInfo,
+      products: input.products,
+      aiConfig: input.aiConfig,
+      systemPrompt: input.systemPrompt,
+      historyMessages: input.historyMessages,
+      completion: input.completion,
+      llmOutput,
+      llmIntent: llmOutput.intent,
+    });
   },
-}
+};
 
 async function parseLLMResponse(raw: string): Promise<LLMOutput> {
-  // Attempt 1 — parse full text as JSON
   try {
-    const parsed = JSON.parse(raw)
-    const validated = await LLMOutputSchema.safeParseAsync(parsed)
-    if (validated.success) return validated.data as LLMOutput
+    const parsed = JSON.parse(raw);
+    const validated = await LLMOutputSchema.safeParseAsync(parsed);
+    if (validated.success) return validated.data as LLMOutput;
   } catch {
-    // not valid JSON — fall through to attempt 2
+    /* not valid JSON, didn't work bruh, trying next approach*/
   }
 
-  // Attempt 2 — extract JSON object from surrounding text
   try {
-    const jsonMatch = raw.match(/\{[\s\S]*\}/)
+    const jsonMatch = raw.match(/\{[\s\S]*\}/);
     if (jsonMatch) {
-      const retry = await LLMOutputSchema.safeParseAsync(JSON.parse(jsonMatch[0]))
-      if (retry.success) return retry.data as LLMOutput
+      const retry = await LLMOutputSchema.safeParseAsync(
+        JSON.parse(jsonMatch[0]),
+      );
+      if (retry.success) return retry.data as LLMOutput;
     }
   } catch {
-    // still failed — return default
+    /* still failed, lose aura :V */
   }
 
-  return { intent: "unknown", reply: "Maaf, bisa diulang lagi? Saya kurang paham." }
+  return {
+    intent: "unknown",
+    reply: "Maaf, bisa diulang lagi? Saya kurang paham.",
+  };
 }
