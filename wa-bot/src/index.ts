@@ -4,8 +4,8 @@ import pino from "pino";
 import pretty from "pino-pretty";
 import qrcode from "qrcode-terminal";
 import axios from "axios";
-import { prisma } from "@/src/config/db";
-import { usePrismaAuthState } from "@/src/services/whatsapp-auth";
+import { prisma } from "@/config/db";
+import { usePrismaAuthState } from "@/services/whatsapp-auth";
 
 const logger = pino(
   pretty({

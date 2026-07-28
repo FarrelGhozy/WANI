@@ -1,6 +1,6 @@
 import { expect, test, describe, mock } from "bun:test"
 import type { PrismaClient } from "@db/client"
-import { usePrismaAuthState } from "@/src/services/whatsapp-auth"
+import { usePrismaAuthState } from "@/services/whatsapp-auth"
 
 function createMockDb(): PrismaClient {
   const db = {
