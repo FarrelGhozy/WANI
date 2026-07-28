@@ -3,25 +3,26 @@ services:
     restart: unless-stopped
     image: devlikeapro/waha:latest
     depends_on: {}
-    extra_hosts:
-      - host.docker.internal:host-gateway
-    ports:
-      - "3000:3000"
+    network_mode: host
+    # No need to expose ports when using network_mode: host
+    # ports:
+    #   - "3000:3000"
     environment:
       # Engine
       WHATSAPP_DEFAULT_ENGINE: GOWS
       GODEBUG: netdns=go
 
       # API Key
+      # was WAHA_API_KEY_EXCLUDE_PATH (inconsistency within WAHA Security Docs)
+      WHATSAPP_API_KEY_EXCLUDE_PATH: health,ping
       WAHA_API_KEY: ${WAHA_API_KEY}
-      WAHA_API_KEY_EXCLUDE_PATH: health,ping
 
       # Sessions — host PostgreSQL
-      WHATSAPP_SESSIONS_POSTGRESQL_URL: postgres://${DATABASE_USER}:${DATABASE_PASSWORD}@host.docker.internal:5432/postgres?sslmode=disable
+      WHATSAPP_SESSIONS_POSTGRESQL_URL: postgres://${DATABASE_USER}:${DATABASE_PASSWORD}@localhost:5432/postgres?sslmode=disable
 
       # Media — host PostgreSQL
       WAHA_MEDIA_STORAGE: POSTGRESQL
-      WAHA_MEDIA_POSTGRESQL_URL: postgres://${DATABASE_USER}:${DATABASE_PASSWORD}@host.docker.internal:5432/postgres?sslmode=disable
+      WAHA_MEDIA_POSTGRESQL_URL: postgres://${DATABASE_USER}:${DATABASE_PASSWORD}@localhost:5432/postgres?sslmode=disable
 
       # GOWS history sync limits
       WAHA_GOWS_DEVICE_REQUIRE_FULL_SYNC: "false"
@@ -47,13 +48,8 @@ services:
       timeout: 5s
       retries: 6
       start_period: 30s
-    networks: [wani]
     logging:
       driver: json-file
       options:
         max-size: "10m"
         max-file: "3"
-
-networks:
-  wani:
-    driver: bridge
