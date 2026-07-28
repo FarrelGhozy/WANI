@@ -1,24 +1,26 @@
 import { CustomerModel } from "@/src/models/customer"
 import { ConversationModel } from "@/src/models/conversation"
-import type { PipelineStep } from "../types"
+import type { NormalizedInput, ClearedInput, Step } from "../types"
+import { ok } from "../either"
 
-/**
- * Step 2 — Upsert customer by phone and find/create active conversation.
- */
-export const ensureCustomerStep: PipelineStep = {
+export const ensureCustomerStep: Step<NormalizedInput, ClearedInput> = {
   name: "ensure_customer",
-  async run(ctx) {
-    const customer = await CustomerModel.upsertByOwnerPhone(ctx.ownerId, ctx.input.phone, ctx.input.name)
-    const conv = await ConversationModel.findOrCreateActive(ctx.ownerId, customer.id)
+  async run(input, { trace }) {
+    const customer = await CustomerModel.upsertByOwnerPhone(input.ownerId, input.phone, input.name)
+    const conv = await ConversationModel.findOrCreateActive(input.ownerId, customer.id)
 
-    ctx.customerId = customer.id
-    ctx.customerPhone = customer.phone
-    ctx.conversationId = conv.id
+    trace.set("customer_id", customer.id).set("conversation_id", conv.id)
 
-    ctx.trace
-      .set("customer_id", customer.id)
-      .set("conversation_id", conv.id)
-
-    return { kind: "continue" }
+    return ok({
+      ownerId: input.ownerId,
+      phone: input.phone,
+      name: input.name,
+      waMsgId: input.waMsgId,
+      text: input.text,
+      normalized: input.normalized,
+      customerId: customer.id,
+      customerPhone: customer.phone,
+      conversationId: conv.id,
+    })
   },
 }
