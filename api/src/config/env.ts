@@ -39,6 +39,13 @@ export const env = {
     smtpFrom: process.env.SMTP_FROM ?? "WANI <noreply@wani.app>",
   },
 
+  cors: {
+    allowedOrigins: (
+      process.env.ALLOWED_ORIGINS ??
+      "http://localhost:5173,https://wani.app,https://wani.utc.web.id"
+    ).split(","),
+  },
+
   guardrails: {
     maxInputChars: num("MAX_INPUT_CHARS", 4000),
     maxReplyChars: num("MAX_REPLY_CHARS", 1500),

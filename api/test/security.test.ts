@@ -31,6 +31,7 @@ describe("Security headers", () => {
     expect(csp).toContain("frame-ancestors 'none'");
     expect(csp).not.toContain("localhost");
     expect(csp).not.toContain("cdn.tailwindcss.com");
+    expect(csp).not.toContain("unsafe-inline");
   });
 
   test("has x-frame-options", async () => {

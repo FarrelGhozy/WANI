@@ -4,6 +4,7 @@ import express from "express";
 import { rateLimit } from "express-rate-limit";
 import helmet from "helmet";
 import morgan from "morgan";
+import { env } from "@/config/env";
 import { metricsMiddleware } from "@/config/metrics";
 import { morganStream } from "@/config/logger";
 import { errorHandler } from "@/middleware/error";
@@ -29,13 +30,8 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'"],
-        styleSrc: [
-          "'self'",
-          "'unsafe-inline'",
-          "fonts.googleapis.com",
-          "fonts.gstatic.com",
-        ],
+        scriptSrc: ["'self'"],
+        styleSrc: ["'self'", "fonts.googleapis.com", "fonts.gstatic.com"],
         fontSrc: ["'self'", "fonts.gstatic.com", "fonts.googleapis.com"],
         imgSrc: ["'self'", "data:", "blob:"],
         connectSrc: ["'self'"],
@@ -44,7 +40,12 @@ app.use(
     },
   })
 );
-app.use(cors());
+app.use(
+  cors({
+    origin: env.cors.allowedOrigins,
+    credentials: true,
+  })
+);
 
 const globalRateLimit = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
