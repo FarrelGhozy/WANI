@@ -18,18 +18,34 @@ mock.module("@/src/models/conversation", () => ({
 }))
 
 import { outboundPersisterStep } from "@/src/ai/pipeline/steps/outboundPersister"
-import type { PipelineContext } from "@/src/ai/pipeline/types"
+import type { GuardedInput } from "@/src/ai/pipeline/types"
+import { TraceContext } from "@/src/debug/tracer"
 
-function makeCtx(overrides: Partial<PipelineContext> = {}): PipelineContext {
+function makeInput(overrides: Partial<GuardedInput> = {}): GuardedInput {
   return {
     ownerId: "test",
-    input: { ownerId: "test", phone: "628123456789", text: "Halo" },
+    phone: "628123456789",
+    text: "Halo",
+    normalized: "halo",
+    customerId: "cust-1",
+    customerPhone: "628123456789",
     conversationId: "conv-1",
+    storeInfo: { businessName: "Toko", phone: "62812" } as any,
+    products: [],
+    aiConfig: {},
+    systemPrompt: "help",
+    historyMessages: [],
+    completion: { content: "hai", model: "gpt-4", finishReason: "stop", usage: { promptTokens: 10, completionTokens: 20 } },
+    llmOutput: { intent: "greeting", reply: "Halo juga!" } as any,
+    llmIntent: "greeting",
+    actionReply: "Halo juga!",
+    qrisImageUrl: null,
     finalReply: "Halo juga! Ada yang bisa dibantu?",
-    trace: { set: () => null as any, begin: () => null as any } as any,
     ...overrides,
   }
 }
+
+function trace() { return new TraceContext("test") }
 
 describe("outboundPersisterStep", () => {
   afterEach(() => {
@@ -38,15 +54,17 @@ describe("outboundPersisterStep", () => {
     mockTouch.mockClear()
   })
 
-  test("returns continue", async () => {
-    const ctx = makeCtx()
-    const result = await outboundPersisterStep.run(ctx)
-    expect(result.kind).toBe("continue")
+  test("returns ok with PipelineResult", async () => {
+    const result = await outboundPersisterStep.run(makeInput(), { trace: trace() })
+    expect(result.ok).toBe(true)
+    if (result.ok) {
+      expect(result.value.reply).toBe("Halo juga! Ada yang bisa dibantu?")
+      expect(result.value.intent).toBe("greeting")
+    }
   })
 
   test("calls MessageModel.append with role BOT and finalReply", async () => {
-    const ctx = makeCtx()
-    await outboundPersisterStep.run(ctx)
+    await outboundPersisterStep.run(makeInput(), { trace: trace() })
 
     expect(mockAppend).toHaveBeenCalledTimes(1)
     expect(mockAppend).toHaveBeenCalledWith({
@@ -58,8 +76,7 @@ describe("outboundPersisterStep", () => {
   })
 
   test("calls MessageModel.markDelivered with the returned id", async () => {
-    const ctx = makeCtx()
-    await outboundPersisterStep.run(ctx)
+    await outboundPersisterStep.run(makeInput(), { trace: trace() })
 
     expect(mockMarkDelivered).toHaveBeenCalledTimes(1)
     expect(mockMarkDelivered).toHaveBeenCalledWith("msg-123")
@@ -68,15 +85,13 @@ describe("outboundPersisterStep", () => {
   test("calls markDelivered with different id per call", async () => {
     mockAppend.mockImplementationOnce(() => Promise.resolve({ id: "msg-456" }))
 
-    const ctx = makeCtx({ conversationId: "conv-2" })
-    await outboundPersisterStep.run(ctx)
+    await outboundPersisterStep.run(makeInput({ conversationId: "conv-2" }), { trace: trace() })
 
     expect(mockMarkDelivered).toHaveBeenCalledWith("msg-456")
   })
 
   test("calls ConversationModel.touch with conversationId", async () => {
-    const ctx = makeCtx()
-    await outboundPersisterStep.run(ctx)
+    await outboundPersisterStep.run(makeInput(), { trace: trace() })
 
     expect(mockTouch).toHaveBeenCalledTimes(1)
     expect(mockTouch).toHaveBeenCalledWith("conv-1")
@@ -88,7 +103,7 @@ describe("outboundPersisterStep", () => {
     mockMarkDelivered.mockImplementationOnce(async () => { order.push("markDelivered") })
     mockTouch.mockImplementationOnce(async () => { order.push("touch") })
 
-    await outboundPersisterStep.run(makeCtx())
+    await outboundPersisterStep.run(makeInput(), { trace: trace() })
 
     expect(order).toEqual(["append", "markDelivered", "touch"])
   })
