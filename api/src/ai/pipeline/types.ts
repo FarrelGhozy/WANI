@@ -7,54 +7,77 @@ import type {
   ProductEntry,
   CompletionResult,
 } from "@/src/types/ai"
-import { TraceContext } from "@/src/debug/tracer"
+import type { TraceContext } from "@/src/debug/tracer"
+import type { Either } from "./either"
 
-/**
- * Mutable context that accumulates state as pipeline steps execute.
- * Each step reads what it needs, writes what it produces.
- * The coordinator passes this through the step chain.
- */
-export interface PipelineContext {
-  // Provided at start
-  input: PipelineInput
-  trace: TraceContext
+// ── Error ───────────────────────────────────────────────
 
-  // Populated by steps (in execution order)
-  ownerId: string
-  normalized?: string
-  customerId?: string
-  customerPhone?: string
-  conversationId?: string
-  piiTypes?: string[]
+export type StepError =
+  | { type: "short_circuit"; reply: string; intent: string }
+  | { type: "internal"; message: string }
 
-  storeInfo?: StoreInfo
-  products?: ProductEntry[]
-  aiConfig?: Record<string, any>
+// ── Step trait ──────────────────────────────────────────
 
-  systemPrompt?: string
-  historyMessages?: ChatMessage[]
-  completion?: CompletionResult
-  llmOutput?: LLMOutput
-  actionReply?: string
-  actionQrisUrl?: string | null
-  finalReply?: string
-  llmIntent?: string
-}
-
-/**
- * Result of running a single pipeline step.
- * - `continue` → keep executing subsequent steps
- * - `break` → short-circuit the pipeline with a final result
- */
-export type StepOutcome =
-  | { kind: "continue" }
-  | { kind: "break"; result: PipelineResult }
-
-export interface PipelineStep {
-  /** Human-readable label for observability. */
+export interface Step<I, O> {
   name: string
-  run: (ctx: PipelineContext) => Promise<StepOutcome>
+  run(i: I, ctx: { trace: TraceContext }): Promise<Either<StepError, O>>
 }
+
+// ── Pipeline state types (one per stage) ────────────────
+
+/** After step 1 (normalize). */
+export interface NormalizedInput {
+  ownerId: string
+  phone: string
+  name?: string
+  waMsgId?: string
+  text: string
+  normalized: string
+}
+
+/** After steps 2–8 (ensure customer → security clear). */
+export interface ClearedInput extends NormalizedInput {
+  customerId: string
+  customerPhone: string
+  conversationId: string
+}
+
+/** After step 9 (context loader). */
+export interface EnrichedInput extends ClearedInput {
+  storeInfo: StoreInfo
+  products: ProductEntry[]
+  aiConfig: Record<string, unknown>
+}
+
+/** After step 10 (message builder). */
+export interface PromptInput extends EnrichedInput {
+  systemPrompt: string
+  historyMessages: ChatMessage[]
+}
+
+/** After step 11 (LLM call). */
+export interface LlmInput extends PromptInput {
+  completion: CompletionResult
+}
+
+/** After step 12 (output parse). */
+export interface ParsedInput extends LlmInput {
+  llmOutput: LLMOutput
+  llmIntent: string
+}
+
+/** After step 13 (intent executor). */
+export interface ActionInput extends ParsedInput {
+  actionReply: string
+  qrisImageUrl: string | null
+}
+
+/** After step 14 (output guardrails). */
+export interface GuardedInput extends ActionInput {
+  finalReply: string
+}
+
+// ── Error replies ───────────────────────────────────────
 
 export const STEP_REPLIES = {
   FALLBACK: "Maaf, sistem sedang sibuk. Silakan coba lagi sebentar ya.",
