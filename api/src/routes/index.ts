@@ -16,6 +16,7 @@ import uploadRoutes from "@/routes/upload";
 import outgoingRoutes from "@/routes/outgoing";
 import monitoringRoutes from "@/routes/monitoring";
 import debugRoutes from "@/routes/debug";
+import sessionsRoutes from "@/routes/sessions";
 
 const router = Router();
 router.use("/qr", qrRoutes);
@@ -35,6 +36,7 @@ router.use("/auth", authRoutes);
 router.use("/website", websiteRoutes);
 router.use("/upload", uploadRoutes);
 router.use("/outgoing", outgoingRoutes);
+router.use("/sessions", sessionsRoutes);
 router.use("/", monitoringRoutes);
 
 // Dev-only: pipeline traces, circuit breaker status/reset

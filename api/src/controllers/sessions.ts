@@ -4,6 +4,7 @@ import { z } from "zod";
 import WahaService from "@/services/waha";
 import { sendResponse } from "@/utils/response";
 import { createSessionSchema } from "@/schemas/sessions";
+import { randomBytes } from "crypto";
 
 type CreateSessionBody = z.infer<typeof createSessionSchema>;
 
@@ -18,7 +19,8 @@ export const createSession = async (
 ) => {
   const { storeId, storeName } = req.body;
 
-  const session = await WahaService.createSession({
+  const session = await WahaService.createSession(req.user?.id!, {
+    name: `sess-wani-${randomBytes(16).toHex()}`,
     config: {
       metadata: {
         storeId,
