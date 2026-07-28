@@ -9,7 +9,8 @@ import type {
 } from "@/types/waha";
 import { env } from "@/config/env";
 import { logger } from "@/config/logger";
-import { InternalServerError } from "@/utils/errors";
+import { ForbiddenError, InternalServerError } from "@/utils/errors";
+import { UserModel, type UserPublic } from "@/models/user";
 
 class WahaService {
   private readonly apiInstance: AxiosInstance;
@@ -40,7 +41,21 @@ class WahaService {
     });
   }
 
+  // Helper to check if storeId and storeName belong to the current user
+  private async checkStoreIdAndStoreName(
+    userId: string,
+    { storeId, storeName }: { storeId: string; storeName: string }
+  ): Promise<boolean> {
+    const user = await UserModel.getById<UserPublic>(userId);
+
+    // Since id and name are Store ID and Store Name respectively, they should match exactly to storeId and storeName
+    const isValid = user?.id === storeId && user?.name === storeName;
+
+    return isValid;
+  }
+
   async createSession(
+    userId: string,
     options: CreateSessionOptions = {
       name: `sess-wani-${randomBytes(16).toHex()}`,
       config: this.sessionDefaultConfig,
@@ -48,10 +63,29 @@ class WahaService {
   ) {
     const { name, config } = options;
 
+    // Check whether the storeId and storeName is belong to the current user
+    // to prevent session hijacking
+    const { storeId, storeName } = config?.metadata ?? {};
+    if (storeId && storeName) {
+      const isValid = await this.checkStoreIdAndStoreName(userId, {
+        storeId,
+        storeName,
+      });
+      if (!isValid) {
+        throw new ForbiddenError(
+          "Store ID or Store Name do not belong to the current user"
+        );
+      }
+    }
+
     try {
       const session = await this.apiInstance.post<CreateSessionResponse>(
         "/sessions",
-        { ...this.sessionDefaultConfig, ...config } // kalo config nya dikasih, apa yang ada di config bakal nge override yang ada di default config
+        {
+          name,
+          config: { ...this.sessionDefaultConfig, ...config },
+          start: true,
+        } // kalo config nya dikasih, apa yang ada di config bakal nge override yang ada di default config
       );
 
       logger.info(`Creating session ${name}`);
@@ -59,10 +93,7 @@ class WahaService {
       return session.data;
     } catch (err) {
       if (isAxiosError(err)) {
-        throw new InternalServerError(
-          "Failed to create session",
-          err.response?.data
-        );
+        throw new InternalServerError("Failed to create session", err);
       }
 
       throw new InternalServerError(
@@ -79,10 +110,7 @@ class WahaService {
       return sessions.data;
     } catch (err) {
       if (isAxiosError(err)) {
-        throw new InternalServerError(
-          "Failed to get all sessions",
-          err.response?.data
-        );
+        throw new InternalServerError("Failed to get all sessions", err);
       }
 
       throw new InternalServerError(
