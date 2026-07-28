@@ -1,19 +1,17 @@
 import { MessageModel } from "@/src/models/message"
-import type { PipelineStep } from "../types"
+import type { ClearedInput, Step } from "../types"
+import { ok } from "../either"
 
-/**
- * Step 4 — Persist the inbound customer message.
- */
-export const persistInboundStep: PipelineStep = {
+export const persistInboundStep: Step<ClearedInput, ClearedInput> = {
   name: "persist_inbound",
-  async run(ctx) {
+  async run(input, _ctx) {
     await MessageModel.append({
-      ownerId: ctx.ownerId,
-      conversationId: ctx.conversationId!,
+      ownerId: input.ownerId,
+      conversationId: input.conversationId,
       role: "CUSTOMER",
-      content: ctx.normalized!,
-      waMsgId: ctx.input.waMsgId,
+      content: input.normalized,
+      waMsgId: input.waMsgId,
     })
-    return { kind: "continue" }
+    return ok(input)
   },
 }
