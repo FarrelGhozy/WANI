@@ -65,4 +65,9 @@ export const env = {
     groundingEnabled: bool("GROUNDING_CHECK_ENABLED", true),
     groundingModel: process.env.GROUNDING_MODEL ?? "north-mini-code-free",
   },
+
+  waha: {
+    apiUrl: process.env.WAHA_API_URL ?? "http://localhost:3000/api",
+    apiKey: process.env.WAHA_API_KEY ?? "",
+  },
 } as const;
