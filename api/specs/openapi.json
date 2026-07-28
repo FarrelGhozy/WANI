@@ -81,6 +81,10 @@
       "description": "Outgoing message queue (for WhatsApp bridge)"
     },
     {
+      "name": "Sessions",
+      "description": "WAHA WhatsApp session management"
+    },
+    {
       "name": "Monitoring",
       "description": "Health check & Prometheus metrics"
     },
@@ -2732,6 +2736,96 @@
         }
       }
     },
+    "/api/sessions": {
+      "get": {
+        "tags": ["Sessions"],
+        "summary": "List all WAHA sessions",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Session list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/GetSessionResponse"
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Sessions"],
+        "summary": "Create a new WAHA session",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateSessionInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Session created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/SuccessResponse"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "$ref": "#/components/schemas/CreateSessionResponse"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
     "/api/health": {
       "get": {
         "tags": ["Monitoring"],
@@ -4375,6 +4469,159 @@
               }
             }
           }
+        }
+      },
+      "SessionStatus": {
+        "type": "string",
+        "enum": ["STOPPED", "STARTING", "SCAN_QR_CODE", "PASSKEY_REQUIRED", "PASSKEY_CONFIRMATION_REQUIRED", "WORKING", "FAILED"]
+      },
+      "SessionEngine": {
+        "type": "object",
+        "properties": {
+          "engine": {
+            "type": "string",
+            "enum": ["WEBJS", "GOWS", "NOWEB"]
+          }
+        }
+      },
+      "SessionConfig": {
+        "type": "object",
+        "description": "WAHA session configuration",
+        "properties": {
+          "debug": {
+            "type": "boolean"
+          },
+          "noweb": {
+            "type": "object",
+            "properties": {
+              "store": {
+                "type": "object",
+                "properties": {
+                  "enabled": {
+                    "type": "boolean"
+                  },
+                  "fullSync": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          },
+          "webjs": {
+            "type": "object",
+            "properties": {
+              "tagsEventsOn": {
+                "type": "boolean"
+              }
+            }
+          },
+          "client": {
+            "type": "object",
+            "properties": {
+              "deviceName": {
+                "type": "string"
+              },
+              "browserName": {
+                "type": "string",
+                "enum": ["Chrome", "Safari", "Firefox"]
+              }
+            }
+          },
+          "metadata": {
+            "type": "object",
+            "properties": {
+              "storeId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "storeName": {
+                "type": "string"
+              }
+            }
+          },
+          "ignore": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "boolean"
+              },
+              "groups": {
+                "type": "boolean"
+              },
+              "channels": {
+                "type": "boolean"
+              }
+            }
+          }
+        }
+      },
+      "GetSessionResponse": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/SessionStatus"
+          },
+          "config": {
+            "$ref": "#/components/schemas/SessionConfig"
+          },
+          "engine": {
+            "$ref": "#/components/schemas/SessionEngine"
+          },
+          "me": {
+            "type": "object",
+            "nullable": true,
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "pushName": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "CreateSessionResponse": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/SessionStatus"
+          },
+          "config": {
+            "$ref": "#/components/schemas/SessionConfig"
+          },
+          "engine": {
+            "$ref": "#/components/schemas/SessionEngine"
+          },
+          "me": {
+            "type": "null"
+          }
+        }
+      },
+      "CreateSessionInput": {
+        "type": "object",
+        "required": ["storeId", "storeName"],
+        "properties": {
+          "storeId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Store UUID — must belong to the current user"
+          },
+          "storeName": {
+            "type": "string",
+            "minLength": 6,
+            "description": "Store name — must match the current user's store name"
+          }
+        },
+        "example": {
+          "storeId": "3f3e3b7e-9b2a-4f1c-8d6e-7a5b4c3d2e1f",
+          "storeName": "Toko Sembako"
         }
       }
     }
