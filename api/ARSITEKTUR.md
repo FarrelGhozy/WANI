@@ -72,8 +72,9 @@ api/
 │   │
 │   ├── routes/
 │   │   ├── index.ts              # Combines all routers under /api
-│   │   ├── qr.ts                 # GET /, GET /status, POST /, DELETE /
+│   │   ├── qr.ts                 # GET /, GET /status, POST /, DELETE /, POST /reset, POST /pairing, POST /refresh-pairing
 │   │   ├── chat.ts               # POST /
+│   │   ├── sessions.ts           # (planned) 11 endpoints untuk manajemen session multi-tenant
 │   │   ├── store.ts              # GET /, PUT /
 │   │   ├── store-payment.ts      # GET /, POST /, PUT /:id, DELETE /:id
 │   │   ├── ai-config.ts          # GET /, PUT /
@@ -84,7 +85,7 @@ api/
 │   │   ├── log.ts                # GET /
 │   │   ├── usage.ts              # GET /
 │   │   ├── auth.ts               # POST /register, POST /login, GET /me, POST /logout, POST /forgot-password, POST /reset-password
-│   │   ├── website.ts            # GET /, PUT /, POST /generate, GET /download, POST /publish
+│   │   ├── website.ts            # GET /, PUT /, POST /generate, GET /download, POST /publish, GET /generations, DELETE /generations/:id
 │   │   ├── upload.ts             # POST /
 │   │   ├── monitoring.ts         # GET /health, GET /metrics
 │   │   ├── outgoing.ts           # GET / (list outgoing), PATCH /:id/delivered
@@ -129,7 +130,9 @@ api/
 │   │   └── error.ts              # errorHandler — AppError-aware, 500 fallback
 │   │
 │   ├── services/
-│   │   └── email.ts              # EmailService — nodemailer SMTP integration
+│   │   ├── email.ts              # EmailService — nodemailer SMTP integration
+│   │   └── waha.ts               # WAHA HTTP API wrapper (planned) — typed class for session/message/auth endpoints
+│   │   └── waha.ts               # WAHA HTTP API wrapper (planned) — typed class for session/message/auth endpoints
 │   │
 │   ├── utils/
 │   │   ├── errors.ts             # AppError hierarchy (BadRequest, Unauthorized, Forbidden, NotFound, InternalServer)
@@ -333,6 +336,9 @@ Dua mekanisme auth:
 | `GET`    | `/api/qr/status`                  | —    | `getStatus`                | Connection status + phone                          |
 | `POST`   | `/api/qr`                         | 🔒   | `upsertQr`                 | Push QR / update status                            |
 | `DELETE` | `/api/qr`                         | 🔒   | `clearQr`                  | Clear QR on successful connect                     |
+| `POST`   | `/api/qr/reset`                   | JWT  | `resetQr`                  | Full reset session                                 |
+| `POST`   | `/api/qr/pairing`                 | JWT  | `requestPairing`           | Request pairing code via WAHA                      |
+| `POST`   | `/api/qr/refresh-pairing`         | JWT  | `refreshPairing`           | Clear pairing code                                 |
 | `POST`   | `/api/chat`                       | 🔒   | `postChat`                 | Process WA message → AI reply                      |
 | `GET`    | `/api/store`                      | —    | `getStore`                 | Store profile + `hasPaymentMethods`                |
 | `PUT`    | `/api/store`                      | JWT  | `upsertStore`              | Update store profile                               |
@@ -384,9 +390,11 @@ Dua mekanisme auth:
 | `POST`   | `/api/debug/circuit/reset`        | —    | `postResetCircuit`         | Dev: reset circuit breaker                         |
 | `GET`    | `/api/health`                     | —    | `getHealth`                | Health check                                       |
 | `GET`    | `/api/metrics`                    | —    | `getMetricsHandler`        | Prometheus metrics                                 |
-| `GET`    | `/api/outgoing`                   | 🔒   | `listOutgoing`             | List outgoing messages                             |
+| `GET`    | `/api/outgoing`                   | 🔒   | `listOutgoing`             | List outgoing messages (legacy)                    |
 | `PATCH`  | `/api/outgoing/:id/delivered`     | 🔒   | `markDelivered`            | Mark message delivered                             |
 | `GET`    | `/s/:slug`                        | —    | Express static             | Serve generated static site                        |
+
+> **Planned (WAHA Migration):** Session endpoints akan dipindah ke `/api/sessions` — lihat [TODO.md](../TODO.md)
 
 > 🔒 = `requireAuth` (Bearer API_TOKEN), JWT = `requireJwt` (JWT dari login)
 
@@ -959,3 +967,8 @@ bun test                     # Run all tests (bun:test)
 | **P12** | ✅ Selesai | Dashboard integrasi — semua hooks pakai real API                                 |
 | **P13** | ✅ Selesai | Website endpoints + web-gen integration                                          |
 | **P14** | ✅ Selesai | StorePaymentMethod + upload + manual payment flow                                |
+| **P15** | 🔄 Dikerjakan | WAHA Service Wrapper + multi-tenant WaSession schema                            |
+| **P16** | ⏳ Rencana | Session routes/controller consolidation under `/api/sessions`                   |
+| **P17** | ⏳ Rencana | Push outgoing via WAHA (AI pipeline outboundPersister)                          |
+| **P18** | ⏳ Rencana | Cleanup legacy Baileys code + env vars                                          |
+| **P19** | ⏳ Rencana | Frontend update for new sessions API                                            |

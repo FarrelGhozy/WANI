@@ -21,18 +21,18 @@ Platform omnichannel UMKM dengan AI chatbot WhatsApp, dashboard manajemen, dan w
 > **🌐 Live Demo:** [https://wani.utc.web.id/](https://wani.utc.web.id/)
 
 ```
-┌──────────────┐  HTTP (Vite proxy)  ┌──────────────┐  HTTP   ┌──────────────┐
-│  Dashboard   │ ◄─────────────────► │  API Server  │ ◄──────►│    WAHA      │
-│  React 19    │    /api/* → :3001   │  Express 5   │         │  WhatsApp    │
-│  Vite 8      │                     │  port 3001   │         │  port 3000   │
-└──────────────┘                     └──┬───────┬───┘         └──────────────┘
-                                        │       │                    │
-                                   Prisma│       │ generated          │ sessions
-                                        │       │ sites              │ & media
-                                   ┌────▼────┐  │                    │
-                                   │PostgreSQL│  └──► web-gen/       │
-                                   │ :5432    │       (Astro)        │
-                                   └─────────┘◄──────────────────────┘
+┌──────────────┐  HTTP (Vite proxy)  ┌──────────────┐  HTTP   ┌──────────────────┐
+│  Dashboard   │ ◄─────────────────► │  API Server  │ ◄──────►│   WAHA (GOWS)    │
+│  React 19    │    /api/* → :3001   │  Express 5   │   :3000 │  WhatsApp HTTP   │
+│  Vite 8      │                     │  port 3001   │         │  Engine: Go      │
+└──────────────┘                     └──┬───────┬───┘         └──────────────────┘
+                                        │       │                      │
+                                   Prisma│       │ generated            │ sessions
+                                        │       │ sites                │ & media
+                                   ┌────▼────┐  │                      │
+                                   │PostgreSQL│  └──► web-gen/         │
+                                   │ :5432    │       (Astro)          │
+                                   └─────────┘◄────────────────────────┘
 ```
 
 ## Prerequisites
@@ -152,7 +152,8 @@ Express 5 dengan layered architecture: routes → controllers → models → Pri
 - **Guardrails** — PII scanner, rate limit, budget tracker, injection defense (regex + classifier + LLM judge), output grounding
 - **Full CRUD** — Products, Categories, Orders, Customers, Conversations, Store Payment Methods
 - **Auth** — JWT (login/register) + API Token (bot)
-- **~55 endpoints** — lihat [ARSITEKTUR.md](api/ARSITEKTUR.md) untuk daftar lengkap
+- **WAHA Integration** — WhatsApp HTTP API (GOWS engine) via `api/src/services/waha.ts` (wrapper class)
+- **~57 endpoints** (existing) + **~11 endpoints** (planned `/api/sessions`) — lihat [openapi.yml](api/specs/openapi.yml) untuk spek lengkap
 
 ### Dashboard (`dashboard/`)
 
@@ -183,12 +184,17 @@ Semua response format:
 { "status": "success"|"failure", "message": "...", "data": null | {} | [] }
 ```
 
+### Existing Endpoints
+
 | Method   | Path                              | Auth         | Deskripsi                             |
 | -------- | --------------------------------- | ------------ | ------------------------------------- |
 | `GET`    | `/api/qr`                         | —            | QR code string                        |
 | `GET`    | `/api/qr/status`                  | —            | Status koneksi + nomor HP             |
 | `POST`   | `/api/qr`                         | 🔒 API_TOKEN | Push QR / update status               |
 | `DELETE` | `/api/qr`                         | 🔒 API_TOKEN | Clear QR (saat connect)               |
+| `POST`   | `/api/qr/reset`                   | 🔒 JWT       | Full reset session                    |
+| `POST`   | `/api/qr/pairing`                 | 🔒 JWT       | Minta kode pairing                    |
+| `POST`   | `/api/qr/refresh-pairing`         | 🔒 JWT       | Refresh kode pairing                  |
 | `POST`   | `/api/chat`                       | 🔒 API_TOKEN | Proses pesan WA → AI reply            |
 | `GET`    | `/api/store`                      | —            | Profil toko + `hasPaymentMethods`     |
 | `PUT`    | `/api/store`                      | 🔒 JWT       | Update profil toko                    |
@@ -233,7 +239,11 @@ Semua response format:
 | `POST`   | `/api/website/generate`           | 🔒 JWT       | Generate static site                  |
 | `GET`    | `/api/website/download`           | 🔒 JWT       | Download ZIP                          |
 | `POST`   | `/api/website/publish`            | 🔒 JWT       | Tandai sebagai published              |
+| `GET`    | `/api/website/generations`        | 🔒 JWT       | Riwayat generasi                      |
+| `DELETE` | `/api/website/generations/:id`    | 🔒 JWT       | Hapus record generasi                 |
 | `GET`    | `/s/:slug`                        | —            | Serve generated static site           |
+| `GET`    | `/api/outgoing`                   | 🔒 API_TOKEN | Daftar outgoing message (legacy)      |
+| `PATCH`  | `/api/outgoing/:id/delivered`     | 🔒 API_TOKEN | Tandai terkirim (legacy)              |
 | `GET`    | `/api/debug/traces`               | —            | Pipeline traces (dev)                 |
 | `GET`    | `/api/debug/traces/:id`           | —            | Trace detail (dev)                    |
 | `DELETE` | `/api/debug/traces`               | —            | Clear traces (dev)                    |
@@ -242,27 +252,47 @@ Semua response format:
 | `GET`    | `/api/health`                     | —            | Health check                          |
 | `GET`    | `/api/metrics`                    | —            | Prometheus metrics                    |
 
+### Planned Endpoints (WAHA Migration — `/api/sessions`)
+
+| Method   | Path                                       | Auth         | Deskripsi                        |
+| -------- | ------------------------------------------ | ------------ | -------------------------------- |
+| `GET`    | `/api/sessions`                            | 🔒 JWT       | List sesssions                   |
+| `POST`   | `/api/sessions`                            | 🔒 JWT       | Create session baru              |
+| `GET`    | `/api/sessions/:sessionId`                 | —            | Detail session                   |
+| `DELETE` | `/api/sessions/:sessionId`                 | 🔒 JWT       | Stop & delete session            |
+| `GET`    | `/api/sessions/:sessionId/qr`              | —            | QR code                          |
+| `POST`   | `/api/sessions/:sessionId/qr`              | 🔒 API_TOKEN | WAHA webhook — upsert QR/status  |
+| `DELETE` | `/api/sessions/:sessionId/qr`              | 🔒 API_TOKEN | Clear QR                         |
+| `POST`   | `/api/sessions/:sessionId/pairing`         | 🔒 JWT       | Minta pairing code               |
+| `POST`   | `/api/sessions/:sessionId/refresh-pairing` | 🔒 JWT       | Refresh pairing code             |
+| `POST`   | `/api/sessions/:sessionId/reset`           | 🔒 JWT       | Reset session                    |
+| `POST`   | `/api/sessions/:sessionId/messages`        | 🔒 API_TOKEN | WAHA webhook — incoming message  |
+
 > 🔒 API_TOKEN = `requireAuth` (Bearer API_TOKEN), 🔒 JWT = `requireJwt` (JWT dari login)
 
 ---
 
 ## Data Model
 
-### wani_api — 17 tabel
+### wani_api — 17 tabel (multi-tenant via `ownerId`)
 
 ```
-Store (single-row)
-  ├── AiConfig (single-row)
-  ├── WaSession (single-row)
-  ├── WebSite (single-row)
-  ├── StorePaymentMethod (multi-row)
-  ├── WebsiteGeneration (multi-row)
-  ├── Category ──→ Product ──→ OrderItem
-  Customer ──→ Order ─────────────┘
-  │    │         └── Payment
-  │    └── Conversation ──→ Message
-  User · ActivityLog · UsageCounter
+User (standalone, auth)
+  │
+  └── Store (per-user, ownerId)
+        ├── AiConfig (per-user, ownerId)
+        ├── WaSession (multi-row per-user, ownerId)
+        ├── WebSite (per-user, ownerId)
+        ├── StorePaymentMethod (multi-row, ownerId)
+        ├── WebsiteGeneration (multi-row, ownerId)
+        ├── Category ──→ Product ──→ OrderItem
+        Customer ──→ Order ─────────────┘
+        │    │         └── Payment
+        │    └── Conversation ──→ Message
+        ActivityLog · UsageCounter
 ```
+
+> **Catatan:** `WaSession` sedang dalam migrasi dari single-row (`id="default"`) ke multi-row dengan `ownerId` (lihat [TODO.md](TODO.md)).
 
 ### Enums
 
@@ -308,9 +338,20 @@ Platform berjalan di **https://wani.utc.web.id/* — Dashboard production dengan
 
 ## TODO — WAHA Migration
 
-Lihat [`TODO.md`](TODO.md) untuk daftar tugas migrasi dari Baileys ke WAHA,
-mencakup pembuatan WAHA service wrapper, push outgoing, cleanup legacy code,
-dan update frontend dashboard.
+Proyek sedang dalam migrasi dari **Baileys** (WhatsApp library Node.js) ke **WAHA** (WhatsApp HTTP API Docker — engine GOWS/Go).
+
+**Sudah beres:**
+- ✅ WAHA container (`devlikeapro/waha:latest`) di docker-compose.yml
+- ✅ GOWS engine, PostgreSQL session storage, API key auth
+- ✅ `axios` added to dependencies
+
+**Belum dikerjakan (lihat [TODO.md](TODO.md) + [GitHub Issues](#) untuk detail):**
+- [ ] WAHA Service Wrapper (`api/src/services/waha.ts`)
+- [ ] Multi-tenant Prisma schema (`WaSession` with `ownerId`)
+- [ ] Session routes & controller (`/api/sessions`)
+- [ ] Push outgoing via WAHA (AI pipeline)
+- [ ] Cleanup legacy Baileys code
+- [ ] Frontend updates for new sessions API
 
 ## Architecture Docs
 

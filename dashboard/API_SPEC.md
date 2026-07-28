@@ -77,11 +77,16 @@ Semua endpoint `GET /api/*` (list) akan mendukung pagination:
 
 ---
 
-## 2. Endpoint WA Session (Existing)
+## 2. Endpoint WA Session
 
-Database: `WaSession` — single-row (`id: "default"`).
+> **Status:** Migrasi dari Baileys (single-row `/api/qr`) ke WAHA (multi-tenant `/api/sessions`).
+> Lihat [TODO.md](../TODO.md) untuk progress.
 
-### GET /api/qr
+Database: `WaSession` — saat ini single-row (`id: "default"`), **sedang migrasi ke multi-row (`ownerId`)**.
+
+### Existing Endpoints (Akan diganti)
+
+#### GET /api/qr
 
 Ambil QR code string.
 
@@ -138,6 +143,122 @@ Clear QR setelah connect sukses.
 {
   "status": "success",
   "message": "qr cleared"
+}
+```
+
+---
+
+### Planned Endpoints (WAHA Migration — `/api/sessions`)
+
+Endpoint baru yang akan menggantikan `/api/qr/*` setelah WAHA service wrapper selesai.
+
+#### GET /api/sessions 🔒 JWT
+
+List semua session milik owner.
+
+```typescript
+// Response 200
+{
+  "status": "success",
+  "data": [{
+    "id": "sess-wani-abc123",
+    "ownerId": "uuid",
+    "status": "connected" | "disconnected" | "connecting",
+    "phone": "6281234567890" | null,
+    "qr": string | null,
+    "pairingPhone": string | null,
+    "pairingCode": string | null,
+    "updatedAt": "ISO 8601"
+  }]
+}
+```
+
+#### POST /api/sessions 🔒 JWT
+
+Buat session baru.
+
+```typescript
+// Body (optional)
+{ "name": "sess-wani-abc123" }
+
+// Response 201
+{ "status": "success", "data": { ...session } }
+```
+
+#### GET /api/sessions/:sessionId
+
+Detail session (status, phone, QR, pairing).
+
+```typescript
+// Response 200
+{
+  "status": "success",
+  "data": {
+    "id": "sess-wani-abc123",
+    "status": "connected",
+    "phone": "6281234567890",
+    "qr": null,
+    "pairingPhone": null,
+    "pairingCode": null,
+    "updatedAt": "ISO 8601"
+  }
+}
+```
+
+#### DELETE /api/sessions/:sessionId 🔒 JWT
+
+Stop & hapus session.
+
+#### GET /api/sessions/:sessionId/qr
+
+QR code untuk pairing via scan.
+
+```typescript
+// Response 200
+{ "status": "success", "data": { "qr": "base64..." | null } }
+```
+
+#### POST /api/sessions/:sessionId/qr 🔒 API_TOKEN
+
+WAHA webhook — upsert QR / status.
+
+```typescript
+// Body
+{ "qr": string | null, "status": string, "phone": string | null }
+```
+
+#### DELETE /api/sessions/:sessionId/qr 🔒 API_TOKEN
+
+Clear QR setelah connect.
+
+#### POST /api/sessions/:sessionId/pairing 🔒 JWT
+
+Minta pairing code.
+
+```typescript
+// Body
+{ "phone": "6281234567890" }
+```
+
+#### POST /api/sessions/:sessionId/refresh-pairing 🔒 JWT
+
+Refresh kode pairing.
+
+#### POST /api/sessions/:sessionId/reset 🔒 JWT
+
+Reset session.
+
+#### POST /api/sessions/:sessionId/messages 🔒 API_TOKEN
+
+WAHA webhook — incoming message → proses AI pipeline.
+
+```typescript
+// Body
+{
+  "phone": "6281234567890",
+  "name": "Budi",
+  "text": "Saya mau pesan",
+  "waMsgId": "wamid-xxx"
 }
 ```
 
@@ -1128,9 +1249,20 @@ Reset circuit breaker ke closed state.
 | `POST`   | `/api/upload`                     | 🔒 JWT | ✅ Existing | Upload file                    |
 | `GET`    | `/api/health`                     | —      | ✅ Existing | Health check                   |
 | `GET`    | `/api/metrics`                    | —      | ✅ Existing | Prometheus metrics             |
-| `GET`    | `/api/outgoing`                   | 🔒     | ✅ Existing | List outgoing messages         |
-| `PATCH`  | `/api/outgoing/:id/delivered`     | 🔒     | ✅ Existing | Mark message delivered         |
-| `GET`    | `/s/:slug`                        | —      | ✅ Existing | Serve generated static site    |
+| `GET`    | `/api/outgoing`                   | 🔒     | ✅ Existing | List outgoing messages (legacy) |
+| `PATCH`  | `/api/outgoing/:id/delivered`     | 🔒     | ✅ Existing | Mark message delivered          |
+| `GET`    | `/s/:slug`                        | —      | ✅ Existing | Serve generated static site     |
+| `GET`    | `/api/sessions`                   | 🔒 JWT | ⏳ Planned  | List sessions                   |
+| `POST`   | `/api/sessions`                   | 🔒 JWT | ⏳ Planned  | Create session                  |
+| `GET`    | `/api/sessions/:sessionId`        | —      | ⏳ Planned  | Session details                 |
+| `DELETE` | `/api/sessions/:sessionId`        | 🔒 JWT | ⏳ Planned  | Stop & delete session           |
+| `GET`    | `/api/sessions/:sessionId/qr`     | —      | ⏳ Planned  | QR code                         |
+| `POST`   | `/api/sessions/:sessionId/qr`     | 🔒     | ⏳ Planned  | WAHA webhook — upsert QR        |
+| `DELETE` | `/api/sessions/:sessionId/qr`     | 🔒     | ⏳ Planned  | Clear QR                        |
+| `POST`   | `/api/sessions/:sessionId/pairing`| 🔒 JWT | ⏳ Planned  | Pairing code                    |
+| `POST`   | `/api/sessions/:sessionId/refresh-pairing`| 🔒 JWT | ⏳ Planned | Refresh pairing           |
+| `POST`   | `/api/sessions/:sessionId/reset`  | 🔒 JWT | ⏳ Planned  | Reset session                   |
+| `POST`   | `/api/sessions/:sessionId/messages`| 🔒     | ⏳ Planned  | WAHA webhook — incoming msg     |
 
 ---
 
