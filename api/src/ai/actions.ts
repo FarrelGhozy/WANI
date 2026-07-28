@@ -44,6 +44,15 @@ async function handleOrder(
   for (const item of output.items) {
     const product = productMap.get(item.name.toLowerCase())
     if (product) {
+      if (Number(product.stock) === 0) {
+        return { reply: `Maaf, ${product.name} sedang habis.` }
+      }
+      if (item.qty > Number(product.stock)) {
+        return { reply: `Maaf, stok ${product.name} hanya tersedia ${product.stock}.` }
+      }
+      if (item.qty > 100) {
+        return { reply: `Maaf, jumlah pesanan maksimal 100 per item.` }
+      }
       resolved.push({
         productId: product.id,
         productName: product.name,

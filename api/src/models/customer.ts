@@ -53,18 +53,10 @@ export class CustomerModel extends BaseModel {
   }
 
   static async upsertByOwnerPhone(ownerId: string, phone: string, name?: string): Promise<Customer> {
-    const existing = await this.delegate.findUnique({ where: { ownerId_phone: { ownerId, phone } } })
-    if (existing) {
-      if (name && existing.name !== name) {
-        return this.delegate.update({
-          where: { ownerId_phone: { ownerId, phone } },
-          data: { name },
-        })
-      }
-      return existing
-    }
-    return this.delegate.create({
-      data: { ownerId, phone, name: name ?? phone },
+    return this.delegate.upsert({
+      where: { ownerId_phone: { ownerId, phone } },
+      update: name ? { name } : {},
+      create: { ownerId, phone, name: name ?? phone },
     })
   }
 

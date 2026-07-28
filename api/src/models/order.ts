@@ -195,6 +195,10 @@ export class OrderModel extends BaseModel {
         })
 
         for (const item of items) {
+          await tx.$executeRaw`SELECT 1 FROM "Product" WHERE "id" = ${item.productId} FOR UPDATE`
+        }
+
+        for (const item of items) {
           if (item.product.stock < item.qty) {
             throw new BadRequestError(
               `Stok "${item.product.name}" tidak mencukupi (tersedia ${item.product.stock}, diminta ${item.qty})`,
@@ -308,6 +312,10 @@ export class OrderModel extends BaseModel {
             where: { orderId: id },
             include: { product: { select: { name: true, stock: true } } },
           })
+
+          for (const item of items) {
+            await tx.$executeRaw`SELECT 1 FROM "Product" WHERE "id" = ${item.productId} FOR UPDATE`
+          }
 
           for (const item of items) {
             if (item.product.stock < item.qty) {
