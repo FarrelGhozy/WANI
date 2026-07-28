@@ -51,7 +51,7 @@ class WahaService {
     try {
       const session = await this.apiInstance.post<CreateSessionResponse>(
         "/sessions",
-        config
+        { ...this.sessionDefaultConfig, ...config } // kalo config nya dikasih, apa yang ada di config bakal nge override yang ada di default config
       );
 
       logger.info(`Creating session ${name}`);
