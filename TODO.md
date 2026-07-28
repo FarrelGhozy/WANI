@@ -5,13 +5,13 @@ Registrasi → login → liat dashboard kosong, bukan data user lain.
 
 - [x] Add `axios` to `api/package.json` under `dependencies`
 - [ ] Create `api/src/services/waha.ts` — typed wrapper class for WAHA HTTP API
-  - Configures axios instance with `WAHA_BASE_URL` (default `http://localhost:3000`), `WAHA_API_KEY` in request interceptor
-  - **Multi-tenant**: All session-based methods accept `sessionId` as first param (e.g. `sendText(sessionId, to, text)`)
-  - **Session endpoints**: `createSession(name, config?)`, `getSessions`, `getSession(sessionId)`, `stopSession(sessionId)`, `logout(sessionId)`
-  - **Auth endpoints**: `getQr(sessionId)`, `requestPairingCode(sessionId, phone)`
-  - **Message endpoints**: `sendText(sessionId, to, text)`, `sendImage(sessionId, to, image, caption?)`, `sendButtons`, `sendList`, `sendReaction`
-  - **Utility endpoints**: `health`, `getStatus(sessionId)`
-  - Error handling with axios interceptors (logging, error normalization, retry)
+  - [x] Configures axios instance with `WAHA_BASE_URL` (default `http://localhost:3000`), `WAHA_API_KEY` in request interceptor
+  - [ ] **Multi-tenant**: All session-based methods accept `sessionId` as first param (e.g. `sendText(sessionId, to, text)`)
+  - [ ] **Session endpoints**: `createSession(name, config?)`✅, `getSessions`✅, `getSession(sessionId)`, `stopSession(sessionId)`, `logout(sessionId)`
+  - [ ] **Auth endpoints**: `getQr(sessionId)`, `requestPairingCode(sessionId, phone)`
+  - [ ] **Message endpoints**: `sendText(sessionId, to, text)`, `sendImage(sessionId, to, image, caption?)`, `sendButtons`, `sendList`, `sendReaction`
+  - [ ] **Utility endpoints**: `health`, `getStatus(sessionId)`
+  - [ ] Error handling with axios interceptors (logging, error normalization, retry)
 - [ ] Update `WaSession` model/prisma schema — change from single-row `id="default"` to multi-row keyed by WAHA session name (`sess-wani-<hex>`), add `ownerId` FK to store
 - [ ] Write unit tests for `api/src/services/waha.ts`
 
