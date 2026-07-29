@@ -1,11 +1,11 @@
 import { Router } from "express"
-import * as storePaymentController from "@/src/controllers/store-payment"
-import { requireJwt } from "@/src/middleware/jwt"
-import { validate } from "@/src/middleware/validate"
+import * as storePaymentController from "@/controllers/store-payment"
+import { requireJwt } from "@/middleware/jwt"
+import { validate } from "@/middleware/validate"
 import {
   createPaymentMethodSchema,
   updatePaymentMethodSchema,
-} from "@/src/schemas/store-payment"
+} from "@/schemas/store-payment"
 
 const router = Router()
 

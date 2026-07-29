@@ -1,12 +1,12 @@
-import type { LLMOutput, ActionCtx, ActionResult } from "@/src/types/ai"
-import { ProductModel } from "@/src/models/catalog"
-import { OrderModel } from "@/src/models/order"
-import { CustomerModel } from "@/src/models/customer"
-import { ConversationModel } from "@/src/models/conversation"
-import { ActivityLogModel } from "@/src/models/activity-log"
-import { StorePaymentMethodModel } from "@/src/models/store-payment"
+import type { LLMOutput, ActionCtx, ActionResult } from "@/types/ai"
+import { ProductModel } from "@/models/catalog"
+import { OrderModel } from "@/models/order"
+import { CustomerModel } from "@/models/customer"
+import { ConversationModel } from "@/models/conversation"
+import { ActivityLogModel } from "@/models/activity-log"
+import { StorePaymentMethodModel } from "@/models/store-payment"
 
-import { logger } from "@/src/config/logger"
+import { logger } from "@/config/logger"
 
 export async function handleIntent(output: LLMOutput, ctx: ActionCtx): Promise<ActionResult> {
   try {
@@ -26,7 +26,7 @@ export async function handleIntent(output: LLMOutput, ctx: ActionCtx): Promise<A
     }
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err)
-    logger.error({ err: msg, intent: output.intent }, "handleIntent failed")
+    logger.error("handleIntent failed", { err: msg, intent: output.intent })
     await ActivityLogModel.log(ctx.ownerId, "action_failed", `Intent handler error: ${msg}`, ctx.conversationId)
     return { reply: "Maaf, sistem sedang sibuk. Coba sebentar lagi." }
   }
@@ -44,6 +44,15 @@ async function handleOrder(
   for (const item of output.items) {
     const product = productMap.get(item.name.toLowerCase())
     if (product) {
+      if (Number(product.stock) === 0) {
+        return { reply: `Maaf, ${product.name} sedang habis.` }
+      }
+      if (item.qty > Number(product.stock)) {
+        return { reply: `Maaf, stok ${product.name} hanya tersedia ${product.stock}.` }
+      }
+      if (item.qty > 100) {
+        return { reply: `Maaf, jumlah pesanan maksimal 100 per item.` }
+      }
       resolved.push({
         productId: product.id,
         productName: product.name,

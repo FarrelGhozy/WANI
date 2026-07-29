@@ -1,21 +1,38 @@
-import { handleIntent } from "@/src/ai/actions"
-import type { PipelineStep } from "../types"
+import { handleIntent } from "@/ai/actions"
+import type { ParsedInput, ActionInput, Step } from "../types"
+import { ok } from "../either"
 
-/**
- * Step 13 — Execute the intent action on the parsed LLM output.
- */
-export const intentExecutorStep: PipelineStep = {
+export const intentExecutorStep: Step<ParsedInput, ActionInput> = {
   name: "execute_intent",
-  async run(ctx) {
+  async run(input, _ctx) {
     const ctxAction = {
-      ownerId: ctx.ownerId,
-      customerId: ctx.customerId!,
-      conversationId: ctx.conversationId!,
-      greetingMessage: ctx.aiConfig?.greetingMessage ?? null,
+      ownerId: input.ownerId,
+      customerId: input.customerId,
+      conversationId: input.conversationId,
+      greetingMessage: (input.aiConfig as Record<string, any>)?.greetingMessage ?? null,
     }
-    const actionResult = await handleIntent(ctx.llmOutput!, ctxAction)
-    ctx.actionReply = actionResult.reply
-    ctx.actionQrisUrl = actionResult.qrisImageUrl ?? null
-    return { kind: "continue" }
+    const actionResult = await handleIntent(input.llmOutput, ctxAction)
+
+    return ok({
+      ownerId: input.ownerId,
+      phone: input.phone,
+      name: input.name,
+      waMsgId: input.waMsgId,
+      text: input.text,
+      normalized: input.normalized,
+      customerId: input.customerId,
+      customerPhone: input.customerPhone,
+      conversationId: input.conversationId,
+      storeInfo: input.storeInfo,
+      products: input.products,
+      aiConfig: input.aiConfig,
+      systemPrompt: input.systemPrompt,
+      historyMessages: input.historyMessages,
+      completion: input.completion,
+      llmOutput: input.llmOutput,
+      llmIntent: input.llmIntent,
+      actionReply: actionResult.reply,
+      qrisImageUrl: actionResult.qrisImageUrl ?? null,
+    })
   },
 }

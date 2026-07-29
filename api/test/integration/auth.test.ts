@@ -8,12 +8,12 @@ const mockStoreUpsert = mock((_args: any) => Promise.resolve({}))
 
 const mockSendEmail = mock((_to: string, _subject: string, _html: string) => Promise.resolve())
 
-mock.module("@/src/services/email", () => ({
+mock.module("@/services/email", () => ({
   sendEmail: mockSendEmail,
   isEmailConfigured: () => true,
 }))
 
-mock.module("@/src/config/db", () => ({
+mock.module("@/config/db", () => ({
   prisma: {
     user: {
       findUnique: mockUserFindUnique,
@@ -31,8 +31,8 @@ mock.module("@/src/config/db", () => ({
 // Set JWT secret before importing auth controller
 process.env.JWT_SECRET = "test-jwt-secret"
 
-import { register, login, me, logout, verifyEmail, resendVerification } from "@/src/controllers/auth"
-import * as emailService from "@/src/services/email"
+import { register, login, me, logout, verifyEmail, resendVerification } from "@/controllers/auth"
+import * as emailService from "@/services/email"
 import type { Request, Response } from "express"
 
 function mockReq(overrides: Partial<Request> = {}): Request {

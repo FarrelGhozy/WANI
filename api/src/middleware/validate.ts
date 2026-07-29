@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import type { ZodType } from "zod";
-import { BadRequestError, InternalServerError } from "@/src/utils/errors";
+import { BadRequestError, InternalServerError } from "@/utils/errors";
 
 interface ValidationSchemas {
   body?: ZodType;

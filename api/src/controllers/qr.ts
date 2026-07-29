@@ -1,9 +1,9 @@
 import type { Request, Response } from "express"
 import type { z } from "zod"
-import { WaSessionModel } from "@/src/models/wa-session"
-import { sendResponse } from "@/src/utils/response"
-import { upsertQrSchema, pairingSchema } from "@/src/schemas/wa-session"
-import { clearBotCreds } from "@/src/utils/wa-bot-db"
+import { WaSessionModel } from "@/models/wa-session"
+import { sendResponse } from "@/utils/response"
+import { upsertQrSchema, pairingSchema } from "@/schemas/wa-session"
+import { clearBotCreds } from "@/utils/wa-bot-db"
 
 type UpsertQrBody = z.infer<typeof upsertQrSchema>
 type PairingBody = z.infer<typeof pairingSchema>

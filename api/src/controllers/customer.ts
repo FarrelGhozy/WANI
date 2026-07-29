@@ -1,14 +1,14 @@
 import type { Request, Response } from "express"
 import type { z } from "zod"
-import { CustomerModel } from "@/src/models/customer"
-import { ConversationModel } from "@/src/models/conversation"
-import { MessageModel } from "@/src/models/message"
-import { sendResponse } from "@/src/utils/response"
-import { NotFoundError } from "@/src/utils/errors"
-import { getValidatedQuery } from "@/src/middleware/validate"
-import { getOwnerId, getOwnerIdOrFirst } from "@/src/middleware/owner"
-import { customerQuerySchema, updateCustomerSchema } from "@/src/schemas/customer"
-import { updateConversationStatusSchema, sendMessageSchema } from "@/src/schemas/customer"
+import { CustomerModel } from "@/models/customer"
+import { ConversationModel } from "@/models/conversation"
+import { MessageModel } from "@/models/message"
+import { sendResponse } from "@/utils/response"
+import { NotFoundError } from "@/utils/errors"
+import { getValidatedQuery } from "@/middleware/validate"
+import { getOwnerId, getOwnerIdOrFirst } from "@/middleware/owner"
+import { customerQuerySchema, updateCustomerSchema } from "@/schemas/customer"
+import { updateConversationStatusSchema, sendMessageSchema } from "@/schemas/customer"
 
 type CustomerQuery = z.infer<typeof customerQuerySchema>
 type UpdateCustomerBody = z.infer<typeof updateCustomerSchema>

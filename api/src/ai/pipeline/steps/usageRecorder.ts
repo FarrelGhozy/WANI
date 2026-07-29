@@ -1,19 +1,18 @@
-import { recordLlmUsage } from "@/src/guardrails/budget"
-import { ActivityLogModel } from "@/src/models/activity-log"
-import type { PipelineStep } from "../types"
+import { recordLlmUsage } from "@/guardrails/budget"
+import { ActivityLogModel } from "@/models/activity-log"
+import type { GuardedInput, Step } from "../types"
+import { ok } from "../either"
 
-/**
- * Step 15 — Record LLM token usage and log the successful call.
- */
-export const usageRecorderStep: PipelineStep = {
+export const usageRecorderStep: Step<GuardedInput, GuardedInput> = {
   name: "record_usage",
-  async run(ctx) {
-    await recordLlmUsage(ctx.completion!.usage)
-    await ActivityLogModel.log(ctx.ownerId, "llm_call", `LLM call completed (${ctx.llmIntent})`, ctx.conversationId!, {
-      intent: ctx.llmIntent,
-      model: ctx.completion!.model,
-      usage: ctx.completion!.usage,
+  async run(input, _ctx) {
+    await recordLlmUsage(input.completion.usage)
+    await ActivityLogModel.log(input.ownerId, "llm_call", `LLM call completed (${input.llmIntent})`, input.conversationId, {
+      intent: input.llmIntent,
+      model: input.completion.model,
+      usage: input.completion.usage,
     })
-    return { kind: "continue" }
+
+    return ok(input)
   },
 }

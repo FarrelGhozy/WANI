@@ -1,4 +1,4 @@
-import { BaseModel } from "@/src/models/base"
+import { BaseModel } from "@/models/base"
 import type { AiConfig, Prisma } from "@db/client"
 
 export class AiConfigModel extends BaseModel {

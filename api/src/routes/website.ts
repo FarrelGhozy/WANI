@@ -1,8 +1,8 @@
 import { Router } from "express"
-import * as websiteController from "@/src/controllers/website"
-import { requireJwt } from "@/src/middleware/jwt"
-import { validate } from "@/src/middleware/validate"
-import { updateWebsiteSchema, generateWebsiteSchema } from "@/src/schemas/website"
+import * as websiteController from "@/controllers/website"
+import { requireJwt } from "@/middleware/jwt"
+import { validate } from "@/middleware/validate"
+import { updateWebsiteSchema, generateWebsiteSchema } from "@/schemas/website"
 
 const router = Router()
 

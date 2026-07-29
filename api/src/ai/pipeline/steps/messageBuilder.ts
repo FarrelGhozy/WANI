@@ -1,33 +1,45 @@
-import { wrapCustomerMessage, buildSystemPrompt } from "@/src/ai/prompts"
-import { MessageModel } from "@/src/models/message"
-import type { ChatMessage } from "@/src/types/ai"
-import type { PipelineStep } from "../types"
+import { wrapCustomerMessage, buildSystemPrompt } from "@/ai/prompts"
+import { MessageModel } from "@/models/message"
+import type { ChatMessage } from "@/types/ai"
+import type { EnrichedInput, PromptInput, Step } from "../types"
+import { ok } from "../either"
 
-/**
- * Step 10 — Build system prompt and conversation history for the LLM.
- */
-export const messageBuilderStep: PipelineStep = {
+export const messageBuilderStep: Step<EnrichedInput, PromptInput> = {
   name: "build_messages",
-  async run(ctx) {
+  async run(input, { trace }) {
     const systemPrompt = buildSystemPrompt(
-      ctx.storeInfo!,
-      ctx.products!,
-      ctx.aiConfig?.knowledgeBase ?? null,
-      ctx.aiConfig?.systemPrompt ?? null,
+      input.storeInfo,
+      input.products,
+      (input.aiConfig as any)?.knowledgeBase ?? null,
+      (input.aiConfig as any)?.systemPrompt ?? null,
     )
-    ctx.systemPrompt = systemPrompt
 
-    const recentMessages = await MessageModel.recentByConversation(ctx.conversationId!, 20)
+    const recentMessages = await MessageModel.recentByConversation(input.conversationId, 20)
     const historyMessages: ChatMessage[] = recentMessages
-      .filter((m: any) => m.role !== "CUSTOMER" || m.content !== ctx.normalized)
+      .filter((m: any) => m.role !== "CUSTOMER" || m.content !== input.normalized)
       .slice(-10)
       .map((m: any) => ({
         role: m.role === "CUSTOMER" ? "user" : "assistant" as const,
         content: m.role === "CUSTOMER" ? wrapCustomerMessage(m.content) : m.content,
       }))
-    ctx.historyMessages = historyMessages
 
-    ctx.trace.set("history_count", historyMessages.length)
-    return { kind: "continue" }
+    trace.set("history_count", historyMessages.length)
+
+    return ok({
+      ownerId: input.ownerId,
+      phone: input.phone,
+      name: input.name,
+      waMsgId: input.waMsgId,
+      text: input.text,
+      normalized: input.normalized,
+      customerId: input.customerId,
+      customerPhone: input.customerPhone,
+      conversationId: input.conversationId,
+      storeInfo: input.storeInfo,
+      products: input.products,
+      aiConfig: input.aiConfig,
+      systemPrompt,
+      historyMessages,
+    })
   },
 }

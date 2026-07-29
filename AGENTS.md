@@ -23,7 +23,7 @@ Bot pushes QR/status → API stores in WaSession DB → Dashboard polls GET /api
 - **api/src/utils/** — `AppError` subclasses (BadRequest/Unauthorized/Forbidden/NotFound/InternalServer), `sendResponse()`
 - **api/src/config/** — PrismaClient singleton (driver adapter `@prisma/adapter-pg`), Winston logger
 - **api/src/services/email.ts** — Nodemailer SMTP transport for password reset emails
-- **api/src/ai/** — Orchestrated pipeline: `processMessage()` in `pipeline.ts`, intent action handlers in `actions.ts`, circuit breaker, OpenRouter LLM engine with retry+fallback, intent-based output schemas (order/inquiry/greeting/complaint/unknown/escalate), hardened system prompt builder with canary
+- **api/src/ai/** — Typed pipeline: `PipelineBuilder<I,O>` chain of `Step<I,O>` (16 typed steps), `Either<E,T>` railway-oriented error handling, per-label circuit breaker registry, OpenRouter LLM engine with retry+fallback, intent action handlers, hardened system prompt builder with canary
 - **api/src/guardrails/** — Multi-layer defense: PII scanner/redactor, ML classifier (OpenRouter fast model), deep LLM-judge, output grounding check. Plus per-customer sliding-window rate limit, regex injection detection (EN+ID), daily LLM budget tracker, output sanitizer + leak detector. 3-tier injection defense (T1 regex → T2 classifier → T3 judge) with conditional slow path
 - **dashboard/vite.config.ts** — `@vitejs/plugin-react` + `@rolldown/plugin-babel` with `reactCompilerPreset`, Tailwind v4, **proxies `/api` → `http://localhost:3001`**
 - **dashboard/src/index.css** — `@import "tailwindcss"` (Tailwind v4 CSS-first config, no `tailwind.config.*`)
@@ -147,9 +147,9 @@ Database `wani_api` + `wa_bot` dibuat otomatis via `init-dbs.sh`.
 
 - **Use path aliases, not relative paths.** Never use `../../` or `./` to import across package boundaries. Each package defines its own aliases in `tsconfig.json` `paths`:
   - Within-package `./` imports for sibling files in the same directory are acceptable (standard TypeScript pattern).
-  - `api/` → `@/*` (project root), `@db/*` (Prisma client), `@web-gen/*` (web-gen source, under `web-gen/src/`)
+  - `api/` → `@/*` (project root, maps to `./src/*`), `@db/*` (Prisma client), `@web-gen/*` (web-gen source, under `web-gen/src/`)
   - `dashboard/` → `@/*` (project root, under `src/`)
-  - `wa-bot/` → `@/*` (project root), `@db/*` (Prisma client)
+  - `wa-bot/` → `@/*` (project root, maps to `./src/*`), `@db/*` (Prisma client)
   - `web-gen/` → `@/*` (project root)
 
   Vite/Rolldown projects (dashboard) also need `resolve.alias` in `vite.config.ts` to match the tsconfig paths.
@@ -183,7 +183,7 @@ Database `wani_api` + `wa_bot` dibuat otomatis via `init-dbs.sh`.
 
 **Now wired end-to-end.** Bot forwards messages to POST /api/chat → processMessage() → guardrails → LLM → intent handler → reply back to WA.
 
-### Full Pipeline Flow (18 steps)
+### Full Pipeline Flow (16 steps)
 
 ```
 incoming WA msg
@@ -264,12 +264,16 @@ scanInput reasons mapped by confidence:
 |------|------|
 | `ai/engine.ts` | `complete()` — OpenRouter chat completion with retry (2×), exponential backoff, fallback model on failure, 30s AbortController timeout |
 | `ai/engine.ts` | `chat()` — convenience wrapper: system prompt + single user message |
-| `ai/prompts.ts` | `buildSystemPrompt(store, products, ...)` — assembles system prompt with store info, product catalog, security rules, strict JSON-only output requirement, canary token `PROMPT_CANARY` + customer message delimiters `<customer_message>` / `</customer_message>` |
-| `ai/schemas.ts` | Zod discriminated union `LLMOutputSchema` — validates LLM JSON output into 6 intents: `order` / `inquiry` / `greeting` / `complaint` / `unknown` / `escalate` |
-| `ai/types.ts` | `LLMOutput` union type, `ChatMessage`, `CompletionOptions`, `TokenUsage`, `CompletionResult` |
-| `ai/pipeline.ts` | `processMessage()` — 18-step orchestrator: normalize → PII → rate limit → 3-tier firewall → budget → context → LLM → parse → intent → sanitize → output scan → PII redact → grounding → persist |
-| `ai/actions.ts` | `handleIntent()` — intent action handlers: order (creates Order), inquiry, greeting, complaint (may escalate), unknown, escalate (logs to ActivityLog) |
-| `ai/circuit-breaker.ts` | `withCircuit()` — 3 consecutive failures → 60s open → half-open → retry |
+| `ai/prompts.ts` | `buildSystemPrompt(store, products, ...)` — assembles system prompt with store info, product catalog, security rules, strict JSON-only output requirement, canary token `PROMPT_CANARY` + customer message delimiters |
+| `ai/schemas.ts` | Zod discriminated union `LLMOutputSchema` — validates LLM JSON output into 6 intents |
+| `ai/types.ts` | `LLMOutput` union, `ChatMessage`, `CompletionOptions`, `TokenUsage`, `CompletionResult` |
+| `ai/pipeline/index.ts` | `processMessage()` — entry point, builds 16-step chain via `PipelineBuilder` |
+| `ai/pipeline/builder.ts` | `PipelineBuilder<I,O>` — typed `.pipe(step)` chain, `.build()` → run function |
+| `ai/pipeline/either.ts` | `Either<E,T>` — `ok(value)` / `fail(error)` railway-oriented result type |
+| `ai/pipeline/types.ts` | `Step<I,O>` interface, step I/O interfaces, `StepError`, `STEP_REPLIES` |
+| `ai/pipeline/steps/*.ts` | 16 `Step<I,O>` implementations (normalize → ensureCustomer → dedup → persistInbound → rateLimit → piiScan → firewall → budget → contextLoader → messageBuilder → llmCall → outputParser → intentExecutor → outputGuardrails → usageRecorder → outboundPersister) |
+| `ai/circuit-breaker/index.ts` | `CircuitBreaker` class + `CircuitBreakerRegistry` — per-label isolation (3 failures → 60s open → half-open) |
+| `ai/actions.ts` | `handleIntent()` — intent action handlers: order (creates Order), inquiry, greeting, complaint (may escalate), unknown, escalate |
 | `guardrails/input.ts` | `normalizeInput()` strips control/zero-width chars + NFKC normalization, caps at `MAX_INPUT_CHARS`; `detectInjection()` regex-based EN+ID prompt injection heuristics |
 | `guardrails/ratelimit.ts` | Per-customer in-memory sliding window (short + long) — single-process, resets on restart |
 | `guardrails/budget.ts` | `isBudgetExceeded()` / `recordLlmUsage()` — daily LLM call budget via `UsageCounter` table |
@@ -301,7 +305,7 @@ scanInput reasons mapped by confidence:
 ### What's missing
 
 - No embeddings / vector store / RAG (the `knowledgeBase` field is plain text)
-- 152+ unit tests (guardrails + firewall + schemas + auth + middleware + errors + response + intent + golden-reply)
+- 247+ unit tests (guardrails + firewall + schemas + auth + middleware + errors + response + intent + golden-reply + pipeline)
 
 ## Referensi Dokumen
 
@@ -385,7 +389,7 @@ git commit -m "🔥 api: add products CRUD — route, schema, controller, model"
 
 ### Test Status
 
-- `bun run test` → 238 pass, 0 fail, 5 skip (env-based SMTP/API key)
+- `bun run test` → 247 pass, 0 fail, 2 skip (env-based SMTP/API key)
 - `bun run test:e2e` → 6 pass, 0 fail (pipeline integration)
 - Dashboard `vitest run` → 97 pass, 0 fail (7 test files)
 - Dashboard `bun run build` → clean (519 KB JS, 50 KB CSS)

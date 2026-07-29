@@ -1,5 +1,5 @@
-import { BaseModel } from "@/src/models/base"
-import { BadRequestError } from "@/src/utils/errors"
+import { BaseModel } from "@/models/base"
+import { BadRequestError } from "@/utils/errors"
 import type { Product, Category } from "@db/client"
 
 export type ProductResponse = {

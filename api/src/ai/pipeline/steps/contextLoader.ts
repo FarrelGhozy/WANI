@@ -1,41 +1,25 @@
-import { StoreModel } from "@/src/models/store"
-import { ProductModel } from "@/src/models/catalog"
-import { AiConfigModel } from "@/src/models/ai-config"
-import { StorePaymentMethodModel } from "@/src/models/store-payment"
-import type { PipelineStep } from "../types"
+import { StoreModel } from "@/models/store"
+import { ProductModel } from "@/models/catalog"
+import { AiConfigModel } from "@/models/ai-config"
+import { StorePaymentMethodModel } from "@/models/store-payment"
+import type { ClearedInput, EnrichedInput, Step } from "../types"
+import { ok, fail } from "../either"
 
-/**
- * Step 9 — Load context: store info, products, AI config, payment methods.
- * Returns a break result if the bot is inactive.
- */
-export const contextLoaderStep: PipelineStep = {
+export const contextLoaderStep: Step<ClearedInput, EnrichedInput> = {
   name: "load_context",
-  async run(ctx) {
+  async run(input, { trace }) {
     const [store, products, aiConfig, paymentMethods] = await Promise.all([
-      StoreModel.findByOwner(ctx.ownerId),
-      ProductModel.listAvailable(ctx.ownerId),
-      AiConfigModel.findByOwner(ctx.ownerId),
-      StorePaymentMethodModel.listActive(ctx.ownerId),
+      StoreModel.findByOwner(input.ownerId),
+      ProductModel.listAvailable(input.ownerId),
+      AiConfigModel.findByOwner(input.ownerId),
+      StorePaymentMethodModel.listActive(input.ownerId),
     ])
 
-    const isActive = aiConfig?.isActive ?? true
-    if (!isActive) {
-      return {
-        kind: "break",
-        result: {
-          reply: "Maaf, bot sedang tidak aktif. CS manusia akan segera membantu Anda.",
-          intent: "inactive",
-          blocked: true,
-          qrisImageUrl: null,
-        },
-      }
+    if (aiConfig && !aiConfig.isActive) {
+      return fail({ type: "short_circuit", reply: "Maaf, bot sedang tidak aktif. CS manusia akan segera membantu Anda.", intent: "inactive" })
     }
 
-    ctx.aiConfig = aiConfig ?? undefined
-    ctx.products = products
-
-    // --- build store info ---
-    ctx.storeInfo = {
+    const storeInfo = {
       businessName: store?.businessName ?? "",
       phone: store?.phone ?? "",
       address: store?.address ?? null,
@@ -56,10 +40,21 @@ export const contextLoaderStep: PipelineStep = {
       returnPolicy: store?.returnPolicy ?? null,
     }
 
-    ctx.trace
-      .set("store_name", ctx.storeInfo.businessName)
-      .set("product_count", products.length)
+    trace.set("store_name", storeInfo.businessName).set("product_count", products.length)
 
-    return { kind: "continue" }
+    return ok({
+      ownerId: input.ownerId,
+      phone: input.phone,
+      name: input.name,
+      waMsgId: input.waMsgId,
+      text: input.text,
+      normalized: input.normalized,
+      customerId: input.customerId,
+      customerPhone: input.customerPhone,
+      conversationId: input.conversationId,
+      storeInfo,
+      products,
+      aiConfig: (aiConfig ?? {}) as Record<string, unknown>,
+    })
   },
 }

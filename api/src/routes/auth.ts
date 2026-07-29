@@ -1,14 +1,14 @@
 import { Router } from "express"
-import * as authController from "@/src/controllers/auth"
-import { requireJwt } from "@/src/middleware/jwt"
-import { validate } from "@/src/middleware/validate"
+import * as authController from "@/controllers/auth"
+import { requireJwt } from "@/middleware/jwt"
+import { validate } from "@/middleware/validate"
 import {
   registerSchema,
   loginSchema,
   forgotPasswordSchema,
   resetPasswordSchema,
   resendVerificationSchema,
-} from "@/src/schemas/auth"
+} from "@/schemas/auth"
 
 const router = Router()
 

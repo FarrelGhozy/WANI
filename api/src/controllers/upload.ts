@@ -2,8 +2,8 @@ import type { Request, Response } from "express"
 import path from "node:path"
 import fs from "node:fs/promises"
 import multer from "multer"
-import { sendResponse } from "@/src/utils/response"
-import { BadRequestError } from "@/src/utils/errors"
+import { sendResponse } from "@/utils/response"
+import { BadRequestError } from "@/utils/errors"
 
 const UPLOADS_DIR = path.resolve(process.cwd(), "uploads")
 

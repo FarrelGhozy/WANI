@@ -1,13 +1,13 @@
 import { Router } from "express"
-import * as customerController from "@/src/controllers/customer"
-import { requireJwt } from "@/src/middleware/jwt"
-import { validate } from "@/src/middleware/validate"
+import * as customerController from "@/controllers/customer"
+import { requireJwt } from "@/middleware/jwt"
+import { validate } from "@/middleware/validate"
 import {
   customerQuerySchema,
   updateCustomerSchema,
   updateConversationStatusSchema,
   sendMessageSchema,
-} from "@/src/schemas/customer"
+} from "@/schemas/customer"
 
 const router = Router()
 

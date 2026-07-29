@@ -1,8 +1,8 @@
 // ─── Layer 4: Output safety scanning ────────────────────────────────────
 
-import type { OutputScanResult } from "@/src/guardrails/firewall/types"
-import { PROMPT_CANARY, MSG_OPEN, MSG_CLOSE } from "@/src/ai/prompts"
-import { hasPii } from "@/src/guardrails/pii"
+import type { OutputScanResult } from "@/guardrails/firewall/types"
+import { PROMPT_CANARY, MSG_OPEN, MSG_CLOSE } from "@/ai/prompts"
+import { hasPii } from "@/guardrails/pii"
 
 const EXFILTRATION_PATTERNS = [
   /!\[.*?\]\(https?:\/\/.*?\)/, // markdown image with URL

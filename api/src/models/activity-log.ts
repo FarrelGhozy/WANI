@@ -1,5 +1,5 @@
-import { BaseModel } from "@/src/models/base"
-import { prisma } from "@/src/config/db"
+import { BaseModel } from "@/models/base"
+import { prisma } from "@/config/db"
 import type { Prisma } from "@db/client"
 
 export type LogEntry = {

@@ -1,5 +1,5 @@
 import { Router } from "express"
-import * as dashboardController from "@/src/controllers/dashboard"
+import * as dashboardController from "@/controllers/dashboard"
 
 const router = Router()
 

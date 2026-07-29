@@ -1,4 +1,4 @@
-import { BaseModel } from "@/src/models/base"
+import { BaseModel } from "@/models/base"
 import type { Conversation, $Enums } from "@db/client"
 
 export class ConversationModel extends BaseModel {
@@ -12,9 +12,20 @@ export class ConversationModel extends BaseModel {
       orderBy: { createdAt: "desc" },
     })
     if (existing) return existing
-    return this.delegate.create({
-      data: { ownerId, customerId },
-    })
+
+    try {
+      return await this.delegate.create({
+        data: { ownerId, customerId },
+      })
+    } catch (err: unknown) {
+      if (err && typeof err === "object" && "code" in err && (err as { code: string }).code === "P2002") {
+        return this.delegate.findFirstOrThrow({
+          where: { ownerId, customerId, status: "ACTIVE" },
+          orderBy: { createdAt: "desc" },
+        })
+      }
+      throw err
+    }
   }
 
   static async touch(id: string): Promise<void> {

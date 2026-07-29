@@ -1,35 +1,30 @@
 import { expect, test, describe } from "bun:test"
-import { normalizeStep } from "@/src/ai/pipeline/steps/normalize"
-import type { PipelineContext } from "@/src/ai/pipeline/types"
+import type { PipelineInput } from "@/types/ai"
+import { normalizeStep } from "@/ai/pipeline/steps/normalize"
+import { TraceContext } from "@/debug/tracer"
 
-function makeCtx(text: string): PipelineContext {
-  return {
-    ownerId: "test",
-    input: { ownerId: "test", phone: "62812", text },
-    trace: { set: () => null as any, begin: () => null as any } as any,
-  }
+function makeInput(text: string): PipelineInput {
+  return { ownerId: "test", phone: "62812", text }
 }
+
+function trace() { return new TraceContext("test") }
 
 describe("normalizeStep", () => {
   test("returns continue with normalized text for valid input", async () => {
-    const ctx = makeCtx("  Halo  ")
-    const result = await normalizeStep.run(ctx)
-    expect(result.kind).toBe("continue")
-    expect(ctx.normalized).toBe("Halo")
-  })
-
-  test("breaks on empty input", async () => {
-    const ctx = makeCtx("")
-    const result = await normalizeStep.run(ctx)
-    expect((result as any).kind).toBe("break")
-    if (result.kind === "break") {
-      expect(result.result.blocked).toBe(true)
+    const result = await normalizeStep.run(makeInput("  Halo  "), { trace: trace() })
+    expect(result.ok).toBe(true)
+    if (result.ok) {
+      expect(result.value.normalized).toBe("Halo")
     }
   })
 
+  test("breaks on empty input", async () => {
+    const result = await normalizeStep.run(makeInput(""), { trace: trace() })
+    expect(result.ok).toBe(false)
+  })
+
   test("breaks on whitespace-only input", async () => {
-    const ctx = makeCtx("   ")
-    const result = await normalizeStep.run(ctx)
-    expect((result as any).kind).toBe("break")
+    const result = await normalizeStep.run(makeInput("   "), { trace: trace() })
+    expect(result.ok).toBe(false)
   })
 })
