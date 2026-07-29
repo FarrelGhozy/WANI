@@ -6,7 +6,7 @@ import {
   ForbiddenError,
   NotFoundError,
   InternalServerError,
-} from "@/src/utils/errors"
+} from "@/utils/errors"
 
 describe("AppError", () => {
   test("creates with message and status code", () => {

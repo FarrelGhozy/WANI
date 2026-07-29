@@ -4,7 +4,7 @@ const mockUpsert = mock((args: any) =>
   Promise.resolve({ id: "default", qr: null, status: "disconnected", phone: null, updatedAt: new Date() }),
 )
 
-mock.module("@/src/config/db", () => ({
+mock.module("@/config/db", () => ({
   prisma: {
     waSession: {
       upsert: mockUpsert,
@@ -15,7 +15,7 @@ mock.module("@/src/config/db", () => ({
   } as any,
 }))
 
-import { WaSessionModel } from "@/src/models/wa-session"
+import { WaSessionModel } from "@/models/wa-session"
 
 describe("WaSessionModel.upsert", () => {
   afterEach(() => {

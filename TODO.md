@@ -47,7 +47,7 @@ Registrasi → login → liat dashboard kosong, bukan data user lain.
 - [x] 4l. `qr.ts` — WaSession tetap global (no change)
 - [x] 4m. `auth.ts` — no change (User model sendiri)
 - [x] 4n. `dashboard.ts` — `getDashboardStats(ownerId)` scopes all counts
-- [x] 4o. AI pipeline: `PipelineInput.ownerId` → `PipelineContext.ownerId` → `ActionCtx.ownerId` propagated through all steps (contextLoader → products/payment/store/aiConfig by owner, ensureCustomer → upsertByOwnerPhone, actions → order/activityLog scoped, firewall/outputGuardrails → activityLog scoped)
+- [x] 4o. AI pipeline: `PipelineInput.ownerId` → propagated through step I/O types → `ActionCtx.ownerId` (contextLoader → products/payment/store/aiConfig by owner, ensureCustomer → upsertByOwnerPhone, actions → order/activityLog scoped, firewall/outputGuardrails → activityLog scoped)
 - [x] 4p. WA bot: sends `ownerId` from `OWNER_ID` env var in chat requests
 - [x] 4q. All 238 tests pass (0 fail)
 
@@ -87,8 +87,8 @@ Registrasi → login → liat dashboard kosong, bukan data user lain.
 | H1 | `llmCall.ts` — `chat()` → `complete()` with history `[system, ...history, current]` | code review batch |
 | H2 | `routes/website.ts` — added `requireJwt` on `/download` | code review batch |
 | H3 | `controllers/log.ts` — Prisma → `ActivityLogModel.getDailyUsage()` | code review batch |
-| H4 | `circuit-breaker.ts` — added mutex lock (`withLock()`) | `9e48cc8` |
-| H5 | `coordinator.ts` — added `ctx.trace.begin(step.name)` per step | `9e48cc8` |
+| H4 | `circuit-breaker/index.ts` — `CircuitBreakerRegistry` per-label locking | `9e48cc8` |
+| H5 | `pipeline/index.ts` — `PipelineBuilder` with trace integration per step | `9e48cc8` |
 | H6 | `firewall/context.ts` — periodic cleanup every 10 min + `lastAccess` | code review batch |
 | H7 | `actions.ts` — try/catch wrapping `handleIntent()` | code review batch |
 | H8 | 3 context files — `useMemo` wrapper | code review batch |
@@ -127,8 +127,8 @@ Step 10 load 10 history messages ke `ctx.historyMessages`, tapi Step 11 panggil 
 4 tempat bypass Model layer — panggil Prisma langsung.
 
 ### H4 — Circuit breaker race condition
-**File:** `api/src/ai/circuit-breaker.ts:10-47`
-State mutable module-level tanpa locking. Di concurrent request, state machine unpredictable.
+**File:** `api/src/ai/circuit-breaker/index.ts` (previously `circuit-breaker.ts`)
+State mutable module-level tanpa locking. Di concurrent request, state machine unpredictable. Fixed with per-label `CircuitBreakerRegistry`.
 
 ### H5 — TraceContext `set()` no-op di 9 dari 11 step [DATA LOSS]
 Semua step file kecuali firewall + output guardrails. `trace.set()` diam-diam gak nulis karena `currentStep` kosong.

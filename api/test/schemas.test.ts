@@ -1,9 +1,9 @@
 import { expect, test, describe } from "bun:test"
-import { registerSchema, loginSchema, forgotPasswordSchema, resetPasswordSchema } from "@/src/schemas/auth"
-import { createProductSchema, updateProductSchema, productQuerySchema, createCategorySchema, updateCategorySchema } from "@/src/schemas/product"
-import { orderQuerySchema, updateOrderStatusSchema, updateOrderNotesSchema, updateOrderPaymentSchema } from "@/src/schemas/order"
-import { customerQuerySchema, updateCustomerSchema, updateConversationStatusSchema, sendMessageSchema } from "@/src/schemas/customer"
-import { updateWebsiteSchema, generateWebsiteSchema } from "@/src/schemas/website"
+import { registerSchema, loginSchema, forgotPasswordSchema, resetPasswordSchema } from "@/schemas/auth"
+import { createProductSchema, updateProductSchema, productQuerySchema, createCategorySchema, updateCategorySchema } from "@/schemas/product"
+import { orderQuerySchema, updateOrderStatusSchema, updateOrderNotesSchema, updateOrderPaymentSchema } from "@/schemas/order"
+import { customerQuerySchema, updateCustomerSchema, updateConversationStatusSchema, sendMessageSchema } from "@/schemas/customer"
+import { updateWebsiteSchema, generateWebsiteSchema } from "@/schemas/website"
 
 // ── Auth Schemas ─────────────────────────────────────────
 

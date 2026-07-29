@@ -160,16 +160,17 @@ api/
 │   ├── ai/
 │   │   ├── types.ts              # LLMOutput union, ChatMessage, CompletionOptions, CompletionResult, TokenUsage
 │   │   ├── schemas.ts            # Zod discriminated union LLMOutputSchema (6 intents)
-│   │   ├── circuit-breaker.ts    # withCircuit() — 3 failures → 60s open → half-open
-│   │   ├── engine.ts             # complete() — OpenCode Zen call + retry (2×) + 30s timeout
+│   │   ├── engine.ts             # complete() — OpenRouter call + retry (2×) + 30s timeout
 │   │   ├── prompts.ts            # buildSystemPrompt() — canary, delimiters, security rules, output format, payment methods
 │   │   ├── actions.ts            # handleIntent() — order, inquiry, greeting, complaint, unknown, escalate
-│   │   ├── pipeline.ts           # processMessage() — 18-step orchestrator entry point
-│   │   └── pipeline/             # Pipeline step implementations
-│   │       ├── index.ts          # Barrel exports
-│   │       ├── coordinator.ts    # Step coordinator + trace integration
-│   │       ├── types.ts          # Pipeline context types
-│   │       └── steps/            # Individual step files (18 steps)
+│   │   ├── circuit-breaker/      # Per-label circuit breaker registry
+│   │   │   └── index.ts          # CircuitBreaker class + CircuitBreakerRegistry
+│   │   └── pipeline/             # Typed Step<I,O> chain via PipelineBuilder
+│   │       ├── index.ts          # processMessage() — PipelineBuilder entry point
+│   │       ├── builder.ts        # PipelineBuilder<I,O> — start, pipe, build
+│   │       ├── either.ts         # Either<E,T> — ok/fail railway result
+│   │       ├── types.ts          # Step<I,O> interface, step I/O types, StepError
+│   │       └── steps/            # 16 Step<I,O> implementations
 │   │           ├── normalize.ts, ensureCustomer.ts, dedup.ts
 │   │           ├── persistInbound.ts, rateLimit.ts, piiScan.ts
 │   │           ├── firewall.ts, budget.ts, contextLoader.ts
@@ -532,13 +533,15 @@ function sendResponse(res: Response, statusCode: number, message: string, data?:
 
 ## AI Pipeline
 
-### 18-Step Orchestrator
+### Typed Step Chain (16 steps via `PipelineBuilder<I,O>`)
+
+Dirangkai dengan `PipelineBuilder.start(input).pipe(normalize).pipe(ensureCustomer)...build()`, setiap langkah adalah `Step<I,O>` — input/output tervalidasi di compile time, tanpa shared mutable state. Tiap langkah return `Either<StepError, O>` untuk railway-oriented error handling.
 
 ```
 incoming WA msg
   │
   ├─ 1. normalizeInput()         — strip control chars + NFKC + trim + cap
-  ├─ 2. upsert customer + conv   — CustomerModel + ConversationModel
+  ├─ 2. upsert customer + conv   — CustomerModel + ConversationModel (Prisma native upsert)
   ├─ 3. dedup by waMsgId          — skip if already processed
   ├─ 4. persist inbound           — MessageModel.append (role: CUSTOMER)
   ├─ 5. checkRateLimit()          — per-customer sliding window (short 8/30s + long 60/1h)
@@ -552,7 +555,7 @@ incoming WA msg
   │   │   └─ UNCERTAIN ────→ Tier 2
   │   │
   │   ├─ Tier 2 classifier [conditional, ~500-1000ms]
-  │   │   classifyInput() via fast model
+  │   │   classifyInput() via OpenRouter fast model
   │   │   ├─ SAFE       ──── proceed
   │   │   ├─ INJECTION  ──── blocked
   │   │   └─ SUSPICIOUS ────→ Tier 3
@@ -565,9 +568,9 @@ incoming WA msg
   ├─ 8. isBudgetExceeded()       — daily LLM call budget (UsageCounter)
   ├─ 9. load context             — Store + Products + AiConfig + PaymentMethods → build system prompt
   ├─10. build messages           — history (10) + current message (wrapped in delimiters)
-  ├─11. complete()               — OpenCode Zen via circuit breaker (retry 2×, 30s)
+  ├─11. complete()               — OpenRouter via circuit breaker (retry 2×, 30s, fallback model)
   ├─12. parse LLM output         — JSON extraction + LLMOutputSchema validation
-  ├─13. handleIntent()           — execute action per intent (order creates Order, may include payment info)
+  ├─13. handleIntent()           — execute action per intent (stock check + max qty cap 100)
   ├─14. sanitizeReply()          — strip code fences, cap length
   ├─15. scanOutput()             — canary leak, delimiter leak, system prompt, PII, exfiltration
   ├─16. redactPii()              — replace leaked PII with [TYPE] markers
@@ -580,18 +583,43 @@ incoming WA msg
 
 Setiap langkah di-trace oleh `TraceContext` dan disimpan ke ring buffer (500 traces) untuk debugging via `/api/debug/traces`.
 
-### Circuit Breaker
+### PipelineBuilder Pattern
 
 ```typescript
-withCircuit<T>(fn, label = "llm"): Promise<CircuitResult<T>>
+const result = PipelineBuilder
+  .start<PipelineInput>(input)
+  .pipe(normalizeStep)        // Step<PipelineInput, NormalizedInput>
+  .pipe(ensureCustomerStep)   // Step<NormalizedInput, ClearedInput>
+  .pipe(dedupStep)            // Step<ClearedInput, ClearedInput>
+  .pipe(persistInboundStep)   // ... 13 more steps
+  .pipe(outboundPersisterStep)
+  .build()()
 ```
 
-| State | Threshold | Behavior |
-|-------|-----------|----------|
-| **Closed** | — | Normal operation |
-| **Open** | 3 consecutive failures | Rejects immediately for 60s |
-| **Half-Open** | After 60s cooldown | Allows 1 probe request |
-| **Reset** | On success | Resets failure count to 0 |
+- Tiap `.pipe(step)` merantai tipe: `PipelineBuilder<A, B>.pipe(Step<B, C>)` → `PipelineBuilder<A, C>`
+- `Either<StepError, O>` — `ok(value)` lanjut, `fail(error)` short-circuit dengan intent
+- 0 non-null assertions — kompilator jamin field existence
+
+### Circuit Breaker (Per-Label Registry)
+
+```typescript
+// Per-label isolation — llm, classifier, judge, grounding independent
+const registry = CircuitBreakerRegistry.getInstance()
+registry.get("llm").call(fn)
+registry.get("classifier").call(fn)
+
+// Or via helper:
+withCircuit(fn, "llm")   // doesn't affect classifier circuit
+```
+
+| Method | Behavior |
+|--------|----------|
+| `call(fn)` | Execute or reject if open |
+| `getState()` | Current: CLOSED | OPEN | HALF_OPEN |
+| `reset()` | Reset failure count + close |
+
+- 3 consecutive failures → OPEN for 60s → HALF_OPEN → 1 probe → success resets, failure reopens
+- Labels independent: classifier failing doesn't block LLM calls
 
 ### LLM Engine (engine.ts)
 

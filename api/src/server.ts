@@ -4,12 +4,12 @@ import express from "express"
 import { rateLimit } from "express-rate-limit"
 import helmet from "helmet"
 import morgan from "morgan"
-import { metricsMiddleware } from "@/src/config/metrics"
-import { morganStream } from "@/src/config/logger"
-import { errorHandler } from "@/src/middleware/error"
-import { optionalJwt } from "@/src/middleware/jwt"
-import routes from "@/src/routes"
-import { sendResponse } from "@/src/utils/response"
+import { metricsMiddleware } from "@/config/metrics"
+import { morganStream } from "@/config/logger"
+import { errorHandler } from "@/middleware/error"
+import { optionalJwt } from "@/middleware/jwt"
+import routes from "@/routes"
+import { sendResponse } from "@/utils/response"
 
 export const app = express()
 

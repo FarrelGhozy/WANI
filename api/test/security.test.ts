@@ -6,7 +6,7 @@ beforeAll(() => {
   process.env.JWT_SECRET ??= "test-secret"
 })
 
-import { app } from "@/src/server"
+import { app } from "@/server"
 
 describe("Security headers", () => {
   test("disables x-powered-by", async () => {

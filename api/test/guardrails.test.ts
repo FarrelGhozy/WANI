@@ -1,8 +1,8 @@
 import { expect, test, describe, beforeEach } from "bun:test"
-import { normalizeInput, detectInjection } from "@/src/guardrails/input"
-import { sanitizeReply, hasLeak } from "@/src/guardrails/output"
-import { checkRateLimit, resetRateLimits } from "@/src/guardrails/ratelimit"
-import { PROMPT_CANARY } from "@/src/ai/prompts"
+import { normalizeInput, detectInjection } from "@/guardrails/input"
+import { sanitizeReply, hasLeak } from "@/guardrails/output"
+import { checkRateLimit, resetRateLimits } from "@/guardrails/ratelimit"
+import { PROMPT_CANARY } from "@/ai/prompts"
 
 describe("normalizeInput", () => {
   test("strips control characters", () => {
