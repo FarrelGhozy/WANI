@@ -3,13 +3,21 @@ import { z } from "zod";
 
 import WahaService from "@/services/waha";
 import { sendResponse } from "@/utils/response";
-import { createSessionSchema } from "@/schemas/sessions";
+import { createSessionSchema, getSessionsByIdSchema } from "@/schemas/sessions";
 import { randomBytes } from "crypto";
 
 type CreateSessionBody = z.infer<typeof createSessionSchema>;
+type GetSessionByIdParams = z.infer<typeof getSessionsByIdSchema>;
 
-export const getAllSessions = async (req: Request, res: Response) => {
-  const sessions = await WahaService.getAllSessions();
+export const getSessionsByStoreId = async (
+  req: Request<GetSessionByIdParams>,
+  res: Response
+) => {
+  // User ID is to the same as the Store ID
+  const userId = req.user?.id!;
+  const { uuid: storeId } = req.params;
+
+  const sessions = await WahaService.getAllSessionsByStoreId(userId, storeId);
   sendResponse(res, 200, "Sessions retrieved successfully", sessions);
 };
 

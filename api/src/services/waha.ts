@@ -12,6 +12,9 @@ import { logger } from "@/config/logger";
 import { ForbiddenError, InternalServerError } from "@/utils/errors";
 import { UserModel, type UserPublic } from "@/models/user";
 
+/**
+ * Service for interacting with the WAHA API.
+ */
 class WahaService {
   private readonly apiInstance: AxiosInstance;
   private readonly headers = {
@@ -103,18 +106,25 @@ class WahaService {
     }
   }
 
-  async getAllSessions() {
+  async getAllSessionsByStoreId(userId: string, storeId: string) {
+    if (userId !== storeId) {
+      throw new ForbiddenError("Store ID does not belong to the current user");
+    }
+
     try {
       const sessions =
-        await this.apiInstance.get<GetSessionResponse[]>("/sessions");
-      return sessions.data;
+        await this.apiInstance.get<GetSessionResponse[]>(`/sessions`); // Get all sessions first and then filter by storeId
+
+      const filteredSessions = sessions.data.filter(
+        (session) => session.config.metadata?.storeId === storeId
+      );
+      return filteredSessions;
     } catch (err) {
       if (isAxiosError(err)) {
-        throw new InternalServerError("Failed to get all sessions", err);
+        throw new InternalServerError("Failed to get sessions", err);
       }
-
       throw new InternalServerError(
-        "Unexpected error when getting all sessions",
+        "Unexpected error when getting sessions",
         err
       );
     }

@@ -2,11 +2,17 @@ import { Router } from "express";
 import * as SessionsController from "@/controllers/sessions";
 import { requireJwt } from "@/middleware/jwt";
 import { validate } from "@/middleware/validate";
-import { createSessionSchema } from "@/schemas/sessions";
+import { createSessionSchema, getSessionsByIdSchema } from "@/schemas/sessions";
 
 const router = Router();
 
-router.get("/", requireJwt, SessionsController.getAllSessions);
+router.get(
+  "/:uuid",
+  requireJwt,
+  validate({ params: getSessionsByIdSchema }),
+  SessionsController.getSessionsByStoreId
+);
+
 router.post(
   "/",
   requireJwt,

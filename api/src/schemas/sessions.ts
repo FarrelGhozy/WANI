@@ -11,3 +11,10 @@ export const createSessionSchema = z.object({
     })
     .min(6),
 });
+
+export const getSessionsByIdSchema = z.object({
+  uuid: z.uuid({
+    version: "v4",
+    error: "Store ID is Required",
+  }),
+});
