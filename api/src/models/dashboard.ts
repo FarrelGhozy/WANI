@@ -29,7 +29,7 @@ export async function getDashboardStats(
     prisma.product.count({ where: { ownerId, isAvailable: true } }),
     prisma.customer.count({ where: { ownerId } }),
     prisma.conversation.count({ where: { ownerId, status: "ACTIVE" } }),
-    WaSessionModel.find(),
+    WaSessionModel.findByOwner(ownerId),
   ]);
 
   return {
@@ -40,7 +40,7 @@ export async function getDashboardStats(
     conversationsActive,
     qr: {
       qr: waSession?.qr ?? null,
-      status: waSession?.status ?? "disconnected",
+      status: waSession?.status ?? "STOPPED",
       phone: waSession?.phone ?? null,
     },
   };
