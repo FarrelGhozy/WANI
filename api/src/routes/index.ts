@@ -1,5 +1,4 @@
 import { Router } from "express";
-import qrRoutes from "@/routes/qr";
 import chatRoutes from "@/routes/chat";
 import storeRoutes from "@/routes/store";
 import storePaymentRoutes from "@/routes/store-payment";
@@ -19,7 +18,6 @@ import debugRoutes from "@/routes/debug";
 import sessionsRoutes from "@/routes/sessions";
 
 const router = Router();
-router.use("/qr", qrRoutes);
 router.use("/chat", chatRoutes);
 router.use("/store", storeRoutes);
 router.use("/store/payment-methods", storePaymentRoutes);
