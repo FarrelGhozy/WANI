@@ -19,6 +19,7 @@ Docs/*.lot
 Docs/*.log
 Docs/*.out
 .claude
+.opencode
 
 # trash ds store
 .DS_Store
