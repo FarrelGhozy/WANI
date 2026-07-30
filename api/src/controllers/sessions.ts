@@ -5,60 +5,40 @@ import WahaService from "@/services/waha";
 import { sendResponse } from "@/utils/response";
 import {
   createSessionSchema,
-  getSessionsByStoreIdSchema,
-  getSessionsByStoreIdQuerySchema,
-  getSessionByNameQuerySchema,
+  sessionQuerySchema,
+  pairingSchema,
 } from "@/schemas/sessions";
-import { randomBytes } from "crypto";
+import { StoreModel } from "@/models/store";
+import { WaSessionModel } from "@/models/wa-session";
+import { NotFoundError } from "@/utils/errors";
 
 type CreateSessionBody = z.infer<typeof createSessionSchema>;
-type GetSessionByStoreIdParams = z.infer<typeof getSessionsByStoreIdSchema>;
-type GetSessionByStoreIdQuery = z.infer<typeof getSessionsByStoreIdQuerySchema>;
-type GetSessionByNameQuery = z.infer<typeof getSessionByNameQuerySchema>;
+type SessionQuery = z.infer<typeof sessionQuerySchema>;
+type PairingBody = z.infer<typeof pairingSchema>;
 
-export const getSessionsByStoreId = async (
-  req: Request<GetSessionByStoreIdParams, {}, {}, GetSessionByStoreIdQuery>,
+export const getSession = async (
+  req: Request<{}, {}, {}, SessionQuery>,
   res: Response
 ) => {
-  // User ID is to the same as the Store ID
-  const userId = req.user?.id!;
-  const { uuid: storeId } = req.params;
-
+  const ownerId = req.user?.id!;
   const { status } = req.query;
 
-  const sessions = await WahaService.getAllSessionsByStoreId(userId, storeId);
+  const session = await WahaService.getSession(ownerId);
 
-  let filteredSessions = sessions;
+  if (!session) {
+    return sendResponse(res, 200, "No session found for this store", null);
+  }
 
-  if (status)
-    filteredSessions = sessions.filter((session) => session.status === status);
-
-  return sendResponse(
-    res,
-    200,
-    filteredSessions.length > 0
-      ? "Sessions retrieved successfully"
-      : "No sessions found for this store",
-    filteredSessions
-  );
-};
-
-export const getSessionsByName = async (
-  req: Request<{}, {}, {}, GetSessionByNameQuery>,
-  res: Response
-) => {
-  const { name: sessionName } = req.query;
-  const storeId = req.user?.id!;
-
-  const sessions = await WahaService.getSessionsByName(sessionName, storeId);
+  let result = session;
+  if (status && session.status !== status) {
+    result = null as any;
+  }
 
   return sendResponse(
     res,
     200,
-    sessions.length > 0
-      ? "Sessions retrieved successfully"
-      : "No sessions found for this name and store",
-    sessions
+    result ? "Session retrieved successfully" : "No session matches the filter",
+    result
   );
 };
 
@@ -66,17 +46,69 @@ export const createSession = async (
   req: Request<{}, {}, CreateSessionBody>,
   res: Response
 ) => {
-  const { storeId, storeName } = req.body;
+  const ownerId = req.user?.id!;
 
-  const session = await WahaService.createSession(req.user?.id!, {
-    name: `sess-wani-${randomBytes(16).toHex()}`,
-    config: {
-      metadata: {
-        storeId,
-        storeName,
-      },
-    },
-  });
+  const store = await StoreModel.findByOwner(ownerId);
+  if (!store) {
+    throw new NotFoundError("Store not found");
+  }
+
+  const session = await WahaService.getOrCreateSession(ownerId, store.businessName);
 
   sendResponse(res, 201, "Session created successfully", session);
+};
+
+export const syncSession = async (
+  req: Request,
+  res: Response
+) => {
+  const ownerId = req.user?.id!;
+
+  const session = await WahaService.syncSessionWithWaha(ownerId);
+
+  sendResponse(
+    res,
+    200,
+    session ? "Session synced successfully" : "No session found for this store",
+    session
+  );
+};
+
+export const resetSession = async (
+  req: Request,
+  res: Response
+) => {
+  const ownerId = req.user?.id!;
+
+  const session = await WahaService.resetSession(ownerId);
+
+  sendResponse(res, 200, "Session reset successfully", session);
+};
+
+export const requestPairing = async (
+  req: Request<{}, {}, PairingBody>,
+  res: Response
+) => {
+  const ownerId = req.user?.id!;
+  const { phone } = req.body;
+
+  const session = await WahaService.requestPairingCode(ownerId, phone);
+
+  sendResponse(res, 200, "Pairing code requested", session);
+};
+
+export const refreshPairing = async (
+  req: Request,
+  res: Response
+) => {
+  const ownerId = req.user?.id!;
+
+  const session = await WaSessionModel.findByOwner(ownerId);
+  if (!session?.pairingPhone) {
+    return sendResponse(res, 400, "No pairing phone on record. Request pairing first.", null);
+  }
+
+  const updated = await WahaService.requestPairingCode(ownerId, session.pairingPhone);
+
+  sendResponse(res, 200, "Pairing code refreshed", updated);
 };

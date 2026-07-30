@@ -1,25 +1,10 @@
 import { z } from "zod";
 
 export const createSessionSchema = z.object({
-  storeId: z.uuid({
-    version: "v4",
-    error: "Store ID is Required",
-  }),
-  storeName: z
-    .string({
-      error: "Store Name is Required",
-    })
-    .min(6),
+  storeName: z.string({ error: "Store Name is Required" }).min(1),
 });
 
-export const getSessionsByStoreIdSchema = z.object({
-  uuid: z.uuid({
-    version: "v4",
-    error: "Store ID is Required",
-  }),
-});
-
-export const getSessionsByStoreIdQuerySchema = z.object({
+export const sessionQuerySchema = z.object({
   status: z
     .enum([
       "STOPPED",
@@ -33,10 +18,6 @@ export const getSessionsByStoreIdQuerySchema = z.object({
     .optional(),
 });
 
-export const getSessionByNameQuerySchema = z.object({
-  name: z
-    .string({
-      error: "Session Name is Required",
-    })
-    .regex(/^sess-wani-[a-f0-9]{32}/), // example: sess-wani-{16 bytes of hex / 32 characters consisting of hex digits (0-9, a-f)}
+export const pairingSchema = z.object({
+  phone: z.string().regex(/^\d{10,15}$/, "Nomor telepon tidak valid"),
 });
