@@ -1,20 +1,17 @@
 import axios, { isAxiosError, type AxiosInstance } from "axios";
-import { randomBytes } from "crypto";
 
 import type {
-  CreateSessionOptions,
   CreateSessionResponse,
   GetSessionResponse,
   SessionConfig,
 } from "@/types/waha";
+import type { WaSession } from "@/types/wa-session";
 import { env } from "@/config/env";
 import { logger } from "@/config/logger";
-import { ForbiddenError, InternalServerError } from "@/utils/errors";
-import { UserModel, type UserPublic } from "@/models/user";
+import { InternalServerError, NotFoundError } from "@/utils/errors";
+import { StoreModel } from "@/models/store";
+import { WaSessionModel } from "@/models/wa-session";
 
-/**
- * Service for interacting with the WAHA API.
- */
 class WahaService {
   private readonly apiInstance: AxiosInstance;
   private readonly headers = {
@@ -39,116 +36,129 @@ class WahaService {
     this.apiInstance = axios.create({
       baseURL: env.waha.apiUrl,
       headers: this.headers,
-      timeout: 10000, // 10 seconds timeout
+      timeout: 10000,
       timeoutErrorMessage: "Request to WAHA API timed out",
     });
   }
 
-  // Helper to check if storeId and storeName belong to the current user
-  private async checkStoreIdAndStoreName(
-    userId: string,
-    { storeId, storeName }: { storeId: string; storeName: string }
-  ): Promise<boolean> {
-    const user = await UserModel.getById<UserPublic>(userId);
+  async getOrCreateSession(ownerId: string, storeName: string) {
+    const existing = await WaSessionModel.findByOwner(ownerId);
+    if (existing) return existing;
 
-    // Since id and name are Store ID and Store Name respectively, they should match exactly to storeId and storeName
-    const isValid = user?.id === storeId && user?.name === storeName;
+    const waSessionName = `store-${ownerId}`;
 
-    return isValid;
-  }
-
-  async createSession(
-    userId: string,
-    options: CreateSessionOptions = {
-      name: `sess-wani-${randomBytes(16).toHex()}`,
-      config: this.sessionDefaultConfig,
-    }
-  ) {
-    const { name, config } = options;
-
-    // Check whether the storeId and storeName is belong to the current user
-    // to prevent session hijacking
-    const { storeId, storeName } = config?.metadata ?? {};
-    if (storeId && storeName) {
-      const isValid = await this.checkStoreIdAndStoreName(userId, {
-        storeId,
-        storeName,
+    try {
+      const created = await this.apiInstance.post<CreateSessionResponse>("/sessions", {
+        name: waSessionName,
+        config: {
+          ...this.sessionDefaultConfig,
+          metadata: { storeId: ownerId, storeName },
+        },
+        start: true,
       });
-      if (!isValid) {
-        throw new ForbiddenError(
-          "Store ID or Store Name do not belong to the current user"
-        );
-      }
-    }
 
-    try {
-      const session = await this.apiInstance.post<CreateSessionResponse>(
-        "/sessions",
-        {
-          name,
-          config: { ...this.sessionDefaultConfig, ...config },
-          start: true,
-        } // kalo config nya dikasih, apa yang ada di config bakal nge override yang ada di default config
-      );
-
-      logger.info(`Creating session ${name}`);
-
-      return session.data;
+      return WaSessionModel.upsertByOwner(ownerId, {
+        waSessionName,
+        status: created.data.status,
+        lastSeenActiveAt: null,
+        lastSyncedAt: new Date(),
+      });
     } catch (err) {
-      if (isAxiosError(err)) {
-        throw new InternalServerError("Failed to create session", err);
+      if (isAxiosError(err) && err.response?.status === 409) {
+        const existingAfterConflict = await WaSessionModel.findByOwner(ownerId);
+        if (existingAfterConflict) return existingAfterConflict;
       }
-
-      throw new InternalServerError(
-        "Unexpected error when creating session",
-        err
-      );
+      throw new InternalServerError("Failed to create session in WAHA", err);
     }
   }
 
-  async getSessionsByName(name: string, storeId: string) {
+  async syncSessionWithWaha(ownerId: string): Promise<WaSession | null> {
+    const session = await WaSessionModel.findByOwner(ownerId);
+    if (!session) return null;
+
     try {
-      const sessions =
-        await this.apiInstance.get<GetSessionResponse[]>(`/sessions`);
-
-      const filteredSessions = sessions.data.filter(
-        (session) =>
-          session.name === name && session.config.metadata?.storeId === storeId
+      const live = await this.apiInstance.get<GetSessionResponse>(
+        `/sessions/${session.waSessionName}`
       );
-
-      return filteredSessions;
+      return WaSessionModel.upsertByOwner(ownerId, {
+        status: live.data.status,
+        phone: live.data.me?.id ?? session.phone,
+        lastSyncedAt: new Date(),
+      });
     } catch (err) {
-      if (isAxiosError(err)) {
-        throw new InternalServerError("Failed to get session by name", err);
+      if (isAxiosError(err) && err.response?.status === 404) {
+        return WaSessionModel.upsertByOwner(ownerId, {
+          status: "STOPPED",
+          lastSyncedAt: new Date(),
+        });
       }
-      throw new InternalServerError(
-        "Unexpected error when getting session by name",
-        err
-      );
+      throw new InternalServerError("Failed to sync session with WAHA", err);
     }
   }
 
-  async getAllSessionsByStoreId(userId: string, storeId: string) {
-    if (userId !== storeId) {
-      throw new ForbiddenError("Store ID does not belong to the current user");
+  async getSession(ownerId: string): Promise<WaSession | null> {
+    return WaSessionModel.findByOwner(ownerId);
+  }
+
+  async resetSession(ownerId: string): Promise<WaSession> {
+    const session = await WaSessionModel.findByOwner(ownerId);
+    if (!session) {
+      throw new InternalServerError("No session to reset. Create one first.");
+    }
+
+    const store = await StoreModel.findByOwner(ownerId);
+    if (!store) {
+      throw new NotFoundError("Store not found");
     }
 
     try {
-      const sessions =
-        await this.apiInstance.get<GetSessionResponse[]>(`/sessions`); // Get all sessions first and then filter by storeId
-
-      const filteredSessions = sessions.data.filter(
-        (session) => session.config.metadata?.storeId === storeId
-      );
-      return filteredSessions;
+      await this.apiInstance.post(`/sessions/${session.waSessionName}/logout`);
     } catch (err) {
-      if (isAxiosError(err)) {
-        throw new InternalServerError("Failed to get sessions", err);
+      if (!isAxiosError(err) || err.response?.status !== 404) {
+        logger.error("Failed to logout session during reset", { err });
       }
-      throw new InternalServerError(
-        "Unexpected error when getting sessions",
-        err
-      );
+    }
+
+    try {
+      const created = await this.apiInstance.post<CreateSessionResponse>("/sessions", {
+        name: session.waSessionName,
+        config: {
+          ...this.sessionDefaultConfig,
+          metadata: { storeId: ownerId, storeName: store.businessName },
+        },
+        start: true,
+      });
+
+      return WaSessionModel.upsertByOwner(ownerId, {
+        status: created.data.status,
+        qr: null,
+        pairingCode: null,
+        pairingPhone: null,
+        lastSeenActiveAt: null,
+        lastSyncedAt: new Date(),
+      });
+    } catch (err) {
+      throw new InternalServerError("Failed to restart session after reset", err);
+    }
+  }
+
+  async requestPairingCode(ownerId: string, phone: string): Promise<WaSession> {
+    const session = await WaSessionModel.findByOwner(ownerId);
+    if (!session) {
+      throw new InternalServerError("No session. Create one before requesting pairing code.");
+    }
+
+    try {
+      await this.apiInstance.post(`/sessions/${session.waSessionName}/auth/request-code`, {
+        phone,
+      });
+
+      return WaSessionModel.upsertByOwner(ownerId, {
+        pairingPhone: phone,
+        pairingCode: null,
+      });
+    } catch (err) {
+      throw new InternalServerError("Failed to request pairing code from WAHA", err);
     }
   }
 }
