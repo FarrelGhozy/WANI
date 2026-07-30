@@ -106,6 +106,28 @@ class WahaService {
     }
   }
 
+  async getSessionsByName(name: string, storeId: string) {
+    try {
+      const sessions =
+        await this.apiInstance.get<GetSessionResponse[]>(`/sessions`);
+
+      const filteredSessions = sessions.data.filter(
+        (session) =>
+          session.name === name && session.config.metadata?.storeId === storeId
+      );
+
+      return filteredSessions;
+    } catch (err) {
+      if (isAxiosError(err)) {
+        throw new InternalServerError("Failed to get session by name", err);
+      }
+      throw new InternalServerError(
+        "Unexpected error when getting session by name",
+        err
+      );
+    }
+  }
+
   async getAllSessionsByStoreId(userId: string, storeId: string) {
     if (userId !== storeId) {
       throw new ForbiddenError("Store ID does not belong to the current user");
