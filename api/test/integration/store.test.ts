@@ -5,8 +5,9 @@ const mockStoreUpsert = mock((_args: any) => Promise.resolve({}))
 const mockPmFindMany = mock((_args: any) => Promise.resolve([]))
 const mockPmFindUnique = mock((_args: any) => Promise.resolve(null))
 const mockPmCreate = mock((_args: any) => Promise.resolve({}))
-const mockPmUpdate = mock((_args: any) => Promise.resolve({}))
-const mockPmDelete = mock((_args: any) => Promise.resolve({}))
+const mockPmUpdateMany = mock((_args: any) => Promise.resolve({ count: 1 }))
+const mockPmDeleteMany = mock((_args: any) => Promise.resolve({ count: 1 }))
+const mockPmFindUniqueOrThrow = mock((_args: any) => Promise.resolve({}))
 const mockPmCount = mock((_args: any) => Promise.resolve(0))
 
 mock.module("@/config/db", () => ({
