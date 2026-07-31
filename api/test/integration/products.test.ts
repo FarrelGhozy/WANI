@@ -246,6 +246,27 @@ describe("DELETE /api/products/:id", () => {
       expect(e.message).toContain("3 pesanan")
     }
   })
+
+  test("returns 404 when product belongs to another owner", async () => {
+    mockOrderItemCount.mockReset()
+    mockProductDeleteMany.mockReset()
+    mockOrderItemCount.mockResolvedValueOnce(0)
+    mockProductDeleteMany.mockResolvedValueOnce({ count: 0 })
+
+    const req = mockReq({
+      params: { id: "p-other" },
+      user: { id: "u1", email: "admin@test.com", role: "admin" },
+    })
+    const res = mockRes()
+
+    try {
+      await deleteProduct(req as any, res as any)
+      expect.unreachable("should have thrown")
+    } catch (e: any) {
+      expect(e.statusCode).toBe(404)
+      expect(e.message).toContain("product not found")
+    }
+  })
 })
 
 describe("GET /api/products/categories", () => {
