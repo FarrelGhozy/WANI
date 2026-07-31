@@ -28,6 +28,10 @@ export class ConversationModel extends BaseModel {
     }
   }
 
+  static async findByIdOwner(ownerId: string, id: string): Promise<Conversation | null> {
+    return this.delegate.findFirst({ where: { id, ownerId } })
+  }
+
   static async touch(id: string): Promise<void> {
     await this.delegate.update({
       where: { id },
