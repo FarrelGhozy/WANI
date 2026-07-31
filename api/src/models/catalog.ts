@@ -177,12 +177,12 @@ export class ProductModel extends BaseModel {
       imageUrl?: string | null
     },
   ): Promise<ProductResponse> {
-    const row = await this.delegate.update({
+    await this.updateOwned(ownerId, id, {
+      ...data,
+      categoryId: data.categoryId === undefined ? undefined : data.categoryId,
+    }, "product")
+    const row = await this.delegate.findUniqueOrThrow({
       where: { id },
-      data: {
-        ...data,
-        categoryId: data.categoryId === undefined ? undefined : data.categoryId,
-      },
       include: { category: true },
     })
     return toProductResponse(row)
@@ -241,9 +241,9 @@ export class CategoryModel extends BaseModel {
     id: string,
     data: { name?: string; description?: string | null },
   ): Promise<CategoryResponse> {
-    const row = await this.delegate.update({
+    await this.updateOwned(ownerId, id, data, "category")
+    const row = await this.delegate.findUniqueOrThrow({
       where: { id },
-      data,
       include: { _count: { select: { products: true } } },
     })
     return toCategoryResponse(row)
@@ -256,6 +256,6 @@ export class CategoryModel extends BaseModel {
         `Kategori tidak bisa dihapus karena masih memiliki ${productCount} produk. Pindahkan atau hapus produk terlebih dahulu.`,
       )
     }
-    await this.delegate.delete({ where: { id } })
+    await this.deleteOwned(ownerId, id, "category")
   }
 }
