@@ -193,6 +193,10 @@ describe("PUT /api/store/payment-methods/:id", () => {
 
     expect(res.getStatus()).toBe(200)
     expect(res.getBody().data.label).toBe("QRIS Updated")
+    expect(mockPmUpdateMany).toHaveBeenCalledWith({
+      where: { id: "pm1", ownerId: "u1" },
+      data: { label: "QRIS Updated", isActive: false },
+    })
   })
 
   test("returns 404 for non-existent payment method", async () => {
