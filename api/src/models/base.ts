@@ -10,6 +10,8 @@ interface PrismaDelegate {
   create(args: unknown): Promise<unknown>
   update(args: unknown): Promise<unknown>
   delete(args: unknown): Promise<unknown>
+  updateMany(args: unknown): Promise<{ count: number }>
+  deleteMany(args: unknown): Promise<{ count: number }>
   count(args?: unknown): Promise<number>
   upsert(args: unknown): Promise<unknown>
 }
@@ -50,6 +52,25 @@ export abstract class BaseModel {
 
   static async delete(id: string): Promise<void> {
     await this.delegate.delete({ where: { id } })
+  }
+
+  protected static async updateOwned(
+    ownerId: string,
+    id: string,
+    data: Record<string, unknown>,
+    label = "item",
+  ): Promise<void> {
+    const { count } = await this.delegate.updateMany({ where: { id, ownerId }, data })
+    if (count === 0) throw new NotFoundError(`${label} not found`)
+  }
+
+  protected static async deleteOwned(
+    ownerId: string,
+    id: string,
+    label = "item",
+  ): Promise<void> {
+    const { count } = await this.delegate.deleteMany({ where: { id, ownerId } })
+    if (count === 0) throw new NotFoundError(`${label} not found`)
   }
 
   protected static paginate(page: number | string, limit: number | string) {
