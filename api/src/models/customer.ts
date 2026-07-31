@@ -129,9 +129,9 @@ export class CustomerModel extends BaseModel {
     return this.listResult(items, total, page, limit)
   }
 
-  static async getByIdWithDetail(id: string): Promise<CustomerDetail | null> {
-    const customer = await this.delegate.findUnique({
-      where: { id },
+  static async getByIdWithDetail(ownerId: string, id: string): Promise<CustomerDetail | null> {
+    const customer = await this.delegate.findFirst({
+      where: { id, ownerId },
     })
     if (!customer) return null
 
