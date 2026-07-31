@@ -324,5 +324,27 @@ describe("DELETE /api/products/categories/:id", () => {
     await deleteCategory(req as any, res as any)
 
     expect(res.getStatus()).toBe(200)
+    expect(mockCategoryDeleteMany).toHaveBeenCalledWith({ where: { id: "c1", ownerId: "u1" } })
+  })
+
+  test("returns 404 when category belongs to another owner", async () => {
+    mockProductCount.mockReset()
+    mockCategoryDeleteMany.mockReset()
+    mockProductCount.mockResolvedValueOnce(0)
+    mockCategoryDeleteMany.mockResolvedValueOnce({ count: 0 })
+
+    const req = mockReq({
+      params: { id: "c-other" },
+      user: { id: "u1", email: "admin@test.com", role: "admin" },
+    })
+    const res = mockRes()
+
+    try {
+      await deleteCategory(req as any, res as any)
+      expect.unreachable("should have thrown")
+    } catch (e: any) {
+      expect(e.statusCode).toBe(404)
+      expect(e.message).toContain("category not found")
+    }
   })
 })
