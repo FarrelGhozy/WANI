@@ -175,10 +175,10 @@ describe("POST /api/store/payment-methods", () => {
 
 describe("PUT /api/store/payment-methods/:id", () => {
   test("updates a payment method", async () => {
-    mockPmFindUnique.mockReset()
-    mockPmUpdate.mockReset()
-    mockPmFindUnique.mockResolvedValueOnce({ id: "pm1" })
-    mockPmUpdate.mockResolvedValueOnce({
+    mockPmUpdateMany.mockReset()
+    mockPmFindUniqueOrThrow.mockReset()
+    mockPmUpdateMany.mockResolvedValueOnce({ count: 1 })
+    mockPmFindUniqueOrThrow.mockResolvedValueOnce({
       id: "pm1", type: "QRIS", label: "QRIS Updated", isActive: false, sortOrder: 1,
     })
 
