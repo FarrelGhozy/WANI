@@ -210,13 +210,11 @@ describe("PUT /api/products/:id", () => {
 
 describe("DELETE /api/products/:id", () => {
   test("deletes product with no order references", async () => {
-    mockProductFindUnique.mockReset()
     mockOrderItemCount.mockReset()
-    mockProductDelete.mockReset()
+    mockProductDeleteMany.mockReset()
 
-    mockProductFindUnique.mockResolvedValueOnce(makeProduct())
     mockOrderItemCount.mockResolvedValueOnce(0)
-    mockProductDelete.mockResolvedValueOnce(makeProduct())
+    mockProductDeleteMany.mockResolvedValueOnce({ count: 1 })
 
     const req = mockReq({
       params: { id: "p1" },
@@ -227,12 +225,11 @@ describe("DELETE /api/products/:id", () => {
     await deleteProduct(req as any, res as any)
 
     expect(res.getStatus()).toBe(200)
+    expect(mockProductDeleteMany).toHaveBeenCalledWith({ where: { id: "p1", ownerId: "u1" } })
   })
 
   test("rejects delete when product has order references", async () => {
-    mockProductFindUnique.mockReset()
     mockOrderItemCount.mockReset()
-    mockProductFindUnique.mockResolvedValueOnce(makeProduct())
     mockOrderItemCount.mockResolvedValueOnce(3)
 
     const req = mockReq({
