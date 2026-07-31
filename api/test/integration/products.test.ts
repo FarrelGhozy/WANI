@@ -22,18 +22,23 @@ mock.module("@/config/db", () => ({
       findMany: mockProductFindMany,
       findUnique: mockProductFindUnique,
       create: mockProductCreate,
-      update: mockProductUpdate,
-      delete: mockProductDelete,
+      updateMany: mockProductUpdateMany,
+      deleteMany: mockProductDeleteMany,
       count: mockProductCount,
-      findUniqueOrThrow: mock((_args: any) => Promise.resolve({})),
+      findUniqueOrThrow: mockProductFindUniqueOrThrow,
+      update: mock((_args: any) => Promise.resolve({})),
+      delete: mock((_args: any) => Promise.resolve({})),
     },
     category: {
       findMany: mockCategoryFindMany,
       findUnique: mockCategoryFindUnique,
       create: mockCategoryCreate,
-      update: mockCategoryUpdate,
-      delete: mockCategoryDelete,
+      updateMany: mockCategoryUpdateMany,
+      deleteMany: mockCategoryDeleteMany,
       count: mockCategoryCount,
+      findUniqueOrThrow: mockCategoryFindUniqueOrThrow,
+      update: mock((_args: any) => Promise.resolve({})),
+      delete: mock((_args: any) => Promise.resolve({})),
     },
     orderItem: {
       count: mockOrderItemCount,
@@ -160,10 +165,10 @@ describe("POST /api/products", () => {
 
 describe("PUT /api/products/:id", () => {
   test("updates a product", async () => {
-    mockProductFindUnique.mockReset()
-    mockProductUpdate.mockReset()
-    mockProductFindUnique.mockResolvedValueOnce(makeProduct())
-    mockProductUpdate.mockResolvedValueOnce(makeProduct({ name: "Nasi Goreng Spesial", price: 30000 }))
+    mockProductUpdateMany.mockReset()
+    mockProductFindUniqueOrThrow.mockReset()
+    mockProductUpdateMany.mockResolvedValueOnce({ count: 1 })
+    mockProductFindUniqueOrThrow.mockResolvedValueOnce(makeProduct({ name: "Nasi Goreng Spesial", price: 30000 }))
 
     const req = mockReq({
       params: { id: "p1" },
