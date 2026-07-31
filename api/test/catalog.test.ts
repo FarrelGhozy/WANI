@@ -81,7 +81,49 @@ describe("ProductModel.deleteProduct", () => {
 
     await ProductModel.deleteProduct("owner-1", "prod-2")
 
-    expect(mockProductDelete).toHaveBeenCalledWith({ where: { id: "prod-2" } })
+    expect(mockProductDeleteMany).toHaveBeenCalledWith({ where: { id: "prod-2", ownerId: "owner-1" } })
+  })
+
+  test("throws NotFoundError when product belongs to another owner", async () => {
+    mockOrderItemCount.mockImplementationOnce(() => Promise.resolve(0))
+    mockProductDeleteMany.mockImplementationOnce(() => Promise.resolve({ count: 0 }))
+
+    try {
+      await ProductModel.deleteProduct("owner-1", "prod-other")
+      expect.unreachable("should have thrown")
+    } catch (e: any) {
+      expect(e.message).toContain("product not found")
+      expect(e.statusCode).toBe(404)
+    }
+  })
+})
+
+describe("ProductModel.updateProduct", () => {
+  afterEach(() => {
+    mockProductUpdateMany.mockClear()
+    mockProductFindUniqueOrThrow.mockClear()
+  })
+
+  test("updates product owned by the requester", async () => {
+    await ProductModel.updateProduct("owner-1", "prod-1", { price: 20000 })
+
+    expect(mockProductUpdateMany).toHaveBeenCalledWith({
+      where: { id: "prod-1", ownerId: "owner-1" },
+      data: { price: 20000, categoryId: undefined },
+    })
+    expect(mockProductFindUniqueOrThrow).toHaveBeenCalled()
+  })
+
+  test("throws NotFoundError when product belongs to another owner", async () => {
+    mockProductUpdateMany.mockImplementationOnce(() => Promise.resolve({ count: 0 }))
+
+    try {
+      await ProductModel.updateProduct("owner-1", "prod-other", { price: 20000 })
+      expect.unreachable("should have thrown")
+    } catch (e: any) {
+      expect(e.message).toContain("product not found")
+      expect(e.statusCode).toBe(404)
+    }
   })
 })
 
