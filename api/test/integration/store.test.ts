@@ -200,8 +200,8 @@ describe("PUT /api/store/payment-methods/:id", () => {
   })
 
   test("returns 404 for non-existent payment method", async () => {
-    mockPmFindUnique.mockReset()
-    mockPmFindUnique.mockResolvedValueOnce(null)
+    mockPmUpdateMany.mockReset()
+    mockPmUpdateMany.mockResolvedValueOnce({ count: 0 })
 
     const req = mockReq({
       params: { id: "nonexistent" },
@@ -221,10 +221,8 @@ describe("PUT /api/store/payment-methods/:id", () => {
 
 describe("DELETE /api/store/payment-methods/:id", () => {
   test("deletes a payment method", async () => {
-    mockPmFindUnique.mockReset()
-    mockPmDelete.mockReset()
-    mockPmFindUnique.mockResolvedValueOnce({ id: "pm1" })
-    mockPmDelete.mockResolvedValueOnce({})
+    mockPmDeleteMany.mockReset()
+    mockPmDeleteMany.mockResolvedValueOnce({ count: 1 })
 
     const req = mockReq({
       params: { id: "pm1" },
