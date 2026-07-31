@@ -159,6 +159,48 @@ describe("CategoryModel.deleteCategory", () => {
 
     await CategoryModel.deleteCategory("owner-1", "cat-2")
 
-    expect(mockCategoryDelete).toHaveBeenCalledWith({ where: { id: "cat-2" } })
+    expect(mockCategoryDeleteMany).toHaveBeenCalledWith({ where: { id: "cat-2", ownerId: "owner-1" } })
+  })
+
+  test("throws NotFoundError when category belongs to another owner", async () => {
+    mockProductCount.mockImplementationOnce(() => Promise.resolve(0))
+    mockCategoryDeleteMany.mockImplementationOnce(() => Promise.resolve({ count: 0 }))
+
+    try {
+      await CategoryModel.deleteCategory("owner-1", "cat-other")
+      expect.unreachable("should have thrown")
+    } catch (e: any) {
+      expect(e.message).toContain("category not found")
+      expect(e.statusCode).toBe(404)
+    }
+  })
+})
+
+describe("CategoryModel.updateCategory", () => {
+  afterEach(() => {
+    mockCategoryUpdateMany.mockClear()
+    mockCategoryFindUniqueOrThrow.mockClear()
+  })
+
+  test("updates category owned by the requester", async () => {
+    await CategoryModel.updateCategory("owner-1", "cat-1", { name: "Baru" })
+
+    expect(mockCategoryUpdateMany).toHaveBeenCalledWith({
+      where: { id: "cat-1", ownerId: "owner-1" },
+      data: { name: "Baru" },
+    })
+    expect(mockCategoryFindUniqueOrThrow).toHaveBeenCalled()
+  })
+
+  test("throws NotFoundError when category belongs to another owner", async () => {
+    mockCategoryUpdateMany.mockImplementationOnce(() => Promise.resolve({ count: 0 }))
+
+    try {
+      await CategoryModel.updateCategory("owner-1", "cat-other", { name: "Baru" })
+      expect.unreachable("should have thrown")
+    } catch (e: any) {
+      expect(e.message).toContain("category not found")
+      expect(e.statusCode).toBe(404)
+    }
   })
 })
