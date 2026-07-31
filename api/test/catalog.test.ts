@@ -1,9 +1,13 @@
 import { expect, test, describe, mock, afterEach } from "bun:test"
 
 const mockOrderItemCount = mock((_args: any) => Promise.resolve(0))
-const mockProductDelete = mock((_args: any) => Promise.resolve())
+const mockProductDeleteMany = mock((_args: any) => Promise.resolve({ count: 1 }))
+const mockProductUpdateMany = mock((_args: any) => Promise.resolve({ count: 1 }))
+const mockProductFindUniqueOrThrow = mock((_args: any) => Promise.resolve({ id: "p1", name: "Nasi", price: 10000, stock: 5, isAvailable: true, categoryId: null, category: null, description: null, imageUrl: null, createdAt: new Date(), updatedAt: new Date() }))
 const mockProductCount = mock((_args: any) => Promise.resolve(0))
-const mockCategoryDelete = mock((_args: any) => Promise.resolve())
+const mockCategoryDeleteMany = mock((_args: any) => Promise.resolve({ count: 1 }))
+const mockCategoryUpdateMany = mock((_args: any) => Promise.resolve({ count: 1 }))
+const mockCategoryFindUniqueOrThrow = mock((_args: any) => Promise.resolve({ id: "c1", name: "Makanan", description: null, _count: { products: 0 } }))
 
 mock.module("@/config/db", () => ({
   prisma: {
