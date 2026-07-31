@@ -181,6 +181,30 @@ describe("PUT /api/products/:id", () => {
 
     expect(res.getStatus()).toBe(200)
     expect(res.getBody().data.name).toBe("Nasi Goreng Spesial")
+    expect(mockProductUpdateMany).toHaveBeenCalledWith({
+      where: { id: "p1", ownerId: "u1" },
+      data: { name: "Nasi Goreng Spesial", price: 30000, categoryId: undefined },
+    })
+  })
+
+  test("returns 404 when product belongs to another owner", async () => {
+    mockProductUpdateMany.mockReset()
+    mockProductUpdateMany.mockResolvedValueOnce({ count: 0 })
+
+    const req = mockReq({
+      params: { id: "p-other" },
+      body: { name: "Hacked" },
+      user: { id: "u1", email: "admin@test.com", role: "admin" },
+    })
+    const res = mockRes()
+
+    try {
+      await updateProduct(req as any, res as any)
+      expect.unreachable("should have thrown")
+    } catch (e: any) {
+      expect(e.statusCode).toBe(404)
+      expect(e.message).toContain("product not found")
+    }
   })
 })
 
