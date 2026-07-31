@@ -39,47 +39,47 @@ import { ProductModel, CategoryModel } from "@/models/catalog"
 describe("ProductModel.deleteProduct", () => {
   afterEach(() => {
     mockOrderItemCount.mockClear()
-    mockProductDelete.mockClear()
+    mockProductDeleteMany.mockClear()
   })
 
   test("deletes product when no order items reference it", async () => {
-    await ProductModel.deleteProduct("prod-1")
+    await ProductModel.deleteProduct("owner-1", "prod-1")
 
     expect(mockOrderItemCount).toHaveBeenCalledWith({ where: { productId: "prod-1" } })
-    expect(mockProductDelete).toHaveBeenCalledWith({ where: { id: "prod-1" } })
+    expect(mockProductDeleteMany).toHaveBeenCalledWith({ where: { id: "prod-1", ownerId: "owner-1" } })
   })
 
   test("throws BadRequestError when order items exist", async () => {
     mockOrderItemCount.mockImplementationOnce(() => Promise.resolve(3))
 
     try {
-      await ProductModel.deleteProduct("prod-1")
+      await ProductModel.deleteProduct("owner-1", "prod-1")
       expect.unreachable("should have thrown")
     } catch (e: any) {
       expect(e.message).toContain("3 pesanan")
       expect(e.statusCode).toBe(400)
     }
 
-    expect(mockProductDelete).not.toHaveBeenCalled()
+    expect(mockProductDeleteMany).not.toHaveBeenCalled()
   })
 
   test("does not delete when count query fails", async () => {
     mockOrderItemCount.mockImplementationOnce(() => Promise.reject(new Error("DB error")))
 
     try {
-      await ProductModel.deleteProduct("prod-1")
+      await ProductModel.deleteProduct("owner-1", "prod-1")
       expect.unreachable("should have thrown")
     } catch {
       // expected
     }
 
-    expect(mockProductDelete).not.toHaveBeenCalled()
+    expect(mockProductDeleteMany).not.toHaveBeenCalled()
   })
 
   test("deletes product referenced by zero order items", async () => {
     mockOrderItemCount.mockImplementationOnce(() => Promise.resolve(0))
 
-    await ProductModel.deleteProduct("prod-2")
+    await ProductModel.deleteProduct("owner-1", "prod-2")
 
     expect(mockProductDelete).toHaveBeenCalledWith({ where: { id: "prod-2" } })
   })
