@@ -28,7 +28,8 @@ export async function getCustomer(
   req: Request<{ id: string }>,
   res: Response,
 ): Promise<void> {
-  const customer = await CustomerModel.getByIdWithDetail(req.params.id)
+  const ownerId = getOwnerId(req)
+  const customer = await CustomerModel.getByIdWithDetail(ownerId, req.params.id)
   if (!customer) {
     throw new NotFoundError("customer not found")
   }
@@ -49,6 +50,11 @@ export async function getConversation(
   req: Request<{ id: string }>,
   res: Response,
 ): Promise<void> {
+  const ownerId = getOwnerId(req)
+  const conversation = await ConversationModel.findByIdOwner(ownerId, req.params.id)
+  if (!conversation) {
+    throw new NotFoundError("conversation not found")
+  }
   const messages = await MessageModel.recentByConversation(req.params.id, 100)
   if (messages.length === 0) {
     throw new NotFoundError("conversation not found")
