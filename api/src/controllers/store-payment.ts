@@ -2,7 +2,6 @@ import type { Request, Response } from "express"
 import type { z } from "zod"
 import { StorePaymentMethodModel } from "@/models/store-payment"
 import { sendResponse } from "@/utils/response"
-import { NotFoundError } from "@/utils/errors"
 import { getOwnerId, getOwnerIdOrFirst } from "@/middleware/owner"
 import {
   createPaymentMethodSchema,
@@ -60,11 +59,8 @@ export async function updatePaymentMethod(
   req: Request<{ id: string }, any, UpdateBody>,
   res: Response,
 ): Promise<void> {
-  getOwnerId(req)
-  const existing = await StorePaymentMethodModel.getById(req.params.id)
-  if (!existing) throw new NotFoundError("payment method not found")
-
-  const method = await StorePaymentMethodModel.update(req.params.id, req.body)
+  const ownerId = getOwnerId(req)
+  const method = await StorePaymentMethodModel.updateByOwner(ownerId, req.params.id, req.body)
   sendResponse(res, 200, "payment method updated", method)
 }
 
@@ -72,10 +68,7 @@ export async function deletePaymentMethod(
   req: Request<{ id: string }>,
   res: Response,
 ): Promise<void> {
-  getOwnerId(req)
-  const existing = await StorePaymentMethodModel.getById(req.params.id)
-  if (!existing) throw new NotFoundError("payment method not found")
-
-  await StorePaymentMethodModel.delete(req.params.id)
+  const ownerId = getOwnerId(req)
+  await StorePaymentMethodModel.deleteByOwner(ownerId, req.params.id)
   sendResponse(res, 200, "payment method deleted")
 }

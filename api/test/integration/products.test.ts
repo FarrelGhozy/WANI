@@ -3,15 +3,17 @@ import { expect, test, describe, beforeEach, mock } from "bun:test"
 const mockProductFindMany = mock((_args: any) => Promise.resolve([]))
 const mockProductFindUnique = mock((_args: any) => Promise.resolve(null))
 const mockProductCreate = mock((_args: any) => Promise.resolve({}))
-const mockProductUpdate = mock((_args: any) => Promise.resolve({}))
-const mockProductDelete = mock((_args: any) => Promise.resolve({}))
+const mockProductUpdateMany = mock((_args: any) => Promise.resolve({ count: 1 }))
+const mockProductDeleteMany = mock((_args: any) => Promise.resolve({ count: 1 }))
+const mockProductFindUniqueOrThrow = mock((_args: any) => Promise.resolve({}))
 const mockProductCount = mock((_args: any) => Promise.resolve(0))
 const mockOrderItemCount = mock((_args: any) => Promise.resolve(0))
 const mockCategoryFindMany = mock((_args: any) => Promise.resolve([]))
 const mockCategoryFindUnique = mock((_args: any) => Promise.resolve(null))
 const mockCategoryCreate = mock((_args: any) => Promise.resolve({}))
-const mockCategoryUpdate = mock((_args: any) => Promise.resolve({}))
-const mockCategoryDelete = mock((_args: any) => Promise.resolve({}))
+const mockCategoryUpdateMany = mock((_args: any) => Promise.resolve({ count: 1 }))
+const mockCategoryDeleteMany = mock((_args: any) => Promise.resolve({ count: 1 }))
+const mockCategoryFindUniqueOrThrow = mock((_args: any) => Promise.resolve({}))
 const mockCategoryCount = mock((_args: any) => Promise.resolve(0))
 
 mock.module("@/config/db", () => ({
@@ -20,18 +22,23 @@ mock.module("@/config/db", () => ({
       findMany: mockProductFindMany,
       findUnique: mockProductFindUnique,
       create: mockProductCreate,
-      update: mockProductUpdate,
-      delete: mockProductDelete,
+      updateMany: mockProductUpdateMany,
+      deleteMany: mockProductDeleteMany,
       count: mockProductCount,
-      findUniqueOrThrow: mock((_args: any) => Promise.resolve({})),
+      findUniqueOrThrow: mockProductFindUniqueOrThrow,
+      update: mock((_args: any) => Promise.resolve({})),
+      delete: mock((_args: any) => Promise.resolve({})),
     },
     category: {
       findMany: mockCategoryFindMany,
       findUnique: mockCategoryFindUnique,
       create: mockCategoryCreate,
-      update: mockCategoryUpdate,
-      delete: mockCategoryDelete,
+      updateMany: mockCategoryUpdateMany,
+      deleteMany: mockCategoryDeleteMany,
       count: mockCategoryCount,
+      findUniqueOrThrow: mockCategoryFindUniqueOrThrow,
+      update: mock((_args: any) => Promise.resolve({})),
+      delete: mock((_args: any) => Promise.resolve({})),
     },
     orderItem: {
       count: mockOrderItemCount,
@@ -158,10 +165,10 @@ describe("POST /api/products", () => {
 
 describe("PUT /api/products/:id", () => {
   test("updates a product", async () => {
-    mockProductFindUnique.mockReset()
-    mockProductUpdate.mockReset()
-    mockProductFindUnique.mockResolvedValueOnce(makeProduct())
-    mockProductUpdate.mockResolvedValueOnce(makeProduct({ name: "Nasi Goreng Spesial", price: 30000 }))
+    mockProductUpdateMany.mockReset()
+    mockProductFindUniqueOrThrow.mockReset()
+    mockProductUpdateMany.mockResolvedValueOnce({ count: 1 })
+    mockProductFindUniqueOrThrow.mockResolvedValueOnce(makeProduct({ name: "Nasi Goreng Spesial", price: 30000 }))
 
     const req = mockReq({
       params: { id: "p1" },
@@ -174,18 +181,40 @@ describe("PUT /api/products/:id", () => {
 
     expect(res.getStatus()).toBe(200)
     expect(res.getBody().data.name).toBe("Nasi Goreng Spesial")
+    expect(mockProductUpdateMany).toHaveBeenCalledWith({
+      where: { id: "p1", ownerId: "u1" },
+      data: { name: "Nasi Goreng Spesial", price: 30000, categoryId: undefined },
+    })
+  })
+
+  test("returns 404 when product belongs to another owner", async () => {
+    mockProductUpdateMany.mockReset()
+    mockProductUpdateMany.mockResolvedValueOnce({ count: 0 })
+
+    const req = mockReq({
+      params: { id: "p-other" },
+      body: { name: "Hacked" },
+      user: { id: "u1", email: "admin@test.com", role: "admin" },
+    })
+    const res = mockRes()
+
+    try {
+      await updateProduct(req as any, res as any)
+      expect.unreachable("should have thrown")
+    } catch (e: any) {
+      expect(e.statusCode).toBe(404)
+      expect(e.message).toContain("product not found")
+    }
   })
 })
 
 describe("DELETE /api/products/:id", () => {
   test("deletes product with no order references", async () => {
-    mockProductFindUnique.mockReset()
     mockOrderItemCount.mockReset()
-    mockProductDelete.mockReset()
+    mockProductDeleteMany.mockReset()
 
-    mockProductFindUnique.mockResolvedValueOnce(makeProduct())
     mockOrderItemCount.mockResolvedValueOnce(0)
-    mockProductDelete.mockResolvedValueOnce(makeProduct())
+    mockProductDeleteMany.mockResolvedValueOnce({ count: 1 })
 
     const req = mockReq({
       params: { id: "p1" },
@@ -196,12 +225,11 @@ describe("DELETE /api/products/:id", () => {
     await deleteProduct(req as any, res as any)
 
     expect(res.getStatus()).toBe(200)
+    expect(mockProductDeleteMany).toHaveBeenCalledWith({ where: { id: "p1", ownerId: "u1" } })
   })
 
   test("rejects delete when product has order references", async () => {
-    mockProductFindUnique.mockReset()
     mockOrderItemCount.mockReset()
-    mockProductFindUnique.mockResolvedValueOnce(makeProduct())
     mockOrderItemCount.mockResolvedValueOnce(3)
 
     const req = mockReq({
@@ -216,6 +244,27 @@ describe("DELETE /api/products/:id", () => {
     } catch (e: any) {
       expect(e.statusCode).toBe(400)
       expect(e.message).toContain("3 pesanan")
+    }
+  })
+
+  test("returns 404 when product belongs to another owner", async () => {
+    mockOrderItemCount.mockReset()
+    mockProductDeleteMany.mockReset()
+    mockOrderItemCount.mockResolvedValueOnce(0)
+    mockProductDeleteMany.mockResolvedValueOnce({ count: 0 })
+
+    const req = mockReq({
+      params: { id: "p-other" },
+      user: { id: "u1", email: "admin@test.com", role: "admin" },
+    })
+    const res = mockRes()
+
+    try {
+      await deleteProduct(req as any, res as any)
+      expect.unreachable("should have thrown")
+    } catch (e: any) {
+      expect(e.statusCode).toBe(404)
+      expect(e.message).toContain("product not found")
     }
   })
 })
@@ -260,13 +309,11 @@ describe("POST /api/products/categories", () => {
 
 describe("DELETE /api/products/categories/:id", () => {
   test("deletes empty category", async () => {
-    mockCategoryFindUnique.mockReset()
     mockProductCount.mockReset()
-    mockCategoryDelete.mockReset()
+    mockCategoryDeleteMany.mockReset()
 
-    mockCategoryFindUnique.mockResolvedValueOnce({ id: "c1", name: "Old" })
     mockProductCount.mockResolvedValueOnce(0)
-    mockCategoryDelete.mockResolvedValueOnce({ id: "c1" })
+    mockCategoryDeleteMany.mockResolvedValueOnce({ count: 1 })
 
     const req = mockReq({
       params: { id: "c1" },
@@ -277,5 +324,27 @@ describe("DELETE /api/products/categories/:id", () => {
     await deleteCategory(req as any, res as any)
 
     expect(res.getStatus()).toBe(200)
+    expect(mockCategoryDeleteMany).toHaveBeenCalledWith({ where: { id: "c1", ownerId: "u1" } })
+  })
+
+  test("returns 404 when category belongs to another owner", async () => {
+    mockProductCount.mockReset()
+    mockCategoryDeleteMany.mockReset()
+    mockProductCount.mockResolvedValueOnce(0)
+    mockCategoryDeleteMany.mockResolvedValueOnce({ count: 0 })
+
+    const req = mockReq({
+      params: { id: "c-other" },
+      user: { id: "u1", email: "admin@test.com", role: "admin" },
+    })
+    const res = mockRes()
+
+    try {
+      await deleteCategory(req as any, res as any)
+      expect.unreachable("should have thrown")
+    } catch (e: any) {
+      expect(e.statusCode).toBe(404)
+      expect(e.message).toContain("category not found")
+    }
   })
 })
