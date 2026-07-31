@@ -130,34 +130,34 @@ describe("ProductModel.updateProduct", () => {
 describe("CategoryModel.deleteCategory", () => {
   afterEach(() => {
     mockProductCount.mockClear()
-    mockCategoryDelete.mockClear()
+    mockCategoryDeleteMany.mockClear()
   })
 
   test("deletes category when no products reference it", async () => {
-    await CategoryModel.deleteCategory("cat-1")
+    await CategoryModel.deleteCategory("owner-1", "cat-1")
 
     expect(mockProductCount).toHaveBeenCalledWith({ where: { categoryId: "cat-1" } })
-    expect(mockCategoryDelete).toHaveBeenCalledWith({ where: { id: "cat-1" } })
+    expect(mockCategoryDeleteMany).toHaveBeenCalledWith({ where: { id: "cat-1", ownerId: "owner-1" } })
   })
 
   test("throws BadRequestError when products exist", async () => {
     mockProductCount.mockImplementationOnce(() => Promise.resolve(5))
 
     try {
-      await CategoryModel.deleteCategory("cat-1")
+      await CategoryModel.deleteCategory("owner-1", "cat-1")
       expect.unreachable("should have thrown")
     } catch (e: any) {
       expect(e.message).toContain("5 produk")
       expect(e.statusCode).toBe(400)
     }
 
-    expect(mockCategoryDelete).not.toHaveBeenCalled()
+    expect(mockCategoryDeleteMany).not.toHaveBeenCalled()
   })
 
   test("deletes empty category", async () => {
     mockProductCount.mockImplementationOnce(() => Promise.resolve(0))
 
-    await CategoryModel.deleteCategory("cat-2")
+    await CategoryModel.deleteCategory("owner-1", "cat-2")
 
     expect(mockCategoryDelete).toHaveBeenCalledWith({ where: { id: "cat-2" } })
   })
