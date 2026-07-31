@@ -165,6 +165,7 @@ export class ProductModel extends BaseModel {
   }
 
   static async updateProduct(
+    ownerId: string,
     id: string,
     data: {
       name?: string
@@ -187,14 +188,14 @@ export class ProductModel extends BaseModel {
     return toProductResponse(row)
   }
 
-  static async deleteProduct(id: string): Promise<void> {
+  static async deleteProduct(ownerId: string, id: string): Promise<void> {
     const orderCount = await this.db.orderItem.count({ where: { productId: id } })
     if (orderCount > 0) {
       throw new BadRequestError(
         `Produk tidak bisa dihapus karena sudah digunakan di ${orderCount} pesanan. Nonaktifkan produk jika tidak ingin ditampilkan.`,
       )
     }
-    await this.delegate.delete({ where: { id } })
+    await this.deleteOwned(ownerId, id, "product")
   }
 }
 
@@ -236,6 +237,7 @@ export class CategoryModel extends BaseModel {
   }
 
   static async updateCategory(
+    ownerId: string,
     id: string,
     data: { name?: string; description?: string | null },
   ): Promise<CategoryResponse> {
@@ -247,7 +249,7 @@ export class CategoryModel extends BaseModel {
     return toCategoryResponse(row)
   }
 
-  static async deleteCategory(id: string): Promise<void> {
+  static async deleteCategory(ownerId: string, id: string): Promise<void> {
     const productCount = await this.db.product.count({ where: { categoryId: id } })
     if (productCount > 0) {
       throw new BadRequestError(
