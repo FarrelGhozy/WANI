@@ -309,13 +309,11 @@ describe("POST /api/products/categories", () => {
 
 describe("DELETE /api/products/categories/:id", () => {
   test("deletes empty category", async () => {
-    mockCategoryFindUnique.mockReset()
     mockProductCount.mockReset()
-    mockCategoryDelete.mockReset()
+    mockCategoryDeleteMany.mockReset()
 
-    mockCategoryFindUnique.mockResolvedValueOnce({ id: "c1", name: "Old" })
     mockProductCount.mockResolvedValueOnce(0)
-    mockCategoryDelete.mockResolvedValueOnce({ id: "c1" })
+    mockCategoryDeleteMany.mockResolvedValueOnce({ count: 1 })
 
     const req = mockReq({
       params: { id: "c1" },
