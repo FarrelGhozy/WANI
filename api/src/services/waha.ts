@@ -80,11 +80,21 @@ class WahaService {
       const live = await this.apiInstance.get<GetSessionResponse>(
         `/sessions/${session.waSessionName}`
       );
-      return WaSessionModel.upsertByOwner(ownerId, {
-        status: live.data.status,
+      const status = live.data.status;
+      const synced = await WaSessionModel.upsertByOwner(ownerId, {
+        status,
         phone: live.data.me?.id ?? session.phone,
         lastSyncedAt: new Date(),
       });
+
+      // Keep the stored QR fresh while pairing is pending; drop it once connected.
+      if (status === "SCAN_QR_CODE") {
+        return (await this.refreshQr(ownerId)) ?? synced;
+      }
+      if (status === "WORKING" && synced.qr) {
+        return WaSessionModel.upsertByOwner(ownerId, { qr: null });
+      }
+      return synced;
     } catch (err) {
       if (isAxiosError(err) && err.response?.status === 404) {
         return WaSessionModel.upsertByOwner(ownerId, {
@@ -98,6 +108,31 @@ class WahaService {
 
   async getSession(ownerId: string): Promise<WaSession | null> {
     return WaSessionModel.findByOwner(ownerId);
+  }
+
+  /**
+   * Push a text message to a customer through the owner's WA session.
+   * Returns the WAHA message id on success, null when no session exists.
+   */
+  async sendText(
+    ownerId: string,
+    phone: string,
+    text: string
+  ): Promise<{ messageId: string } | null> {
+    const session = await WaSessionModel.findByOwner(ownerId);
+    if (!session) return null;
+
+    const chatId = phone.includes("@") ? phone : `${phone}@c.us`;
+    try {
+      const res = await this.apiInstance.post<{ id: string }>("/sendText", {
+        session: session.waSessionName,
+        chatId,
+        text,
+      });
+      return { messageId: res.data.id };
+    } catch (err) {
+      throw new InternalServerError("Failed to send message via WAHA", err);
+    }
   }
 
   async resetSession(ownerId: string): Promise<WaSession> {
@@ -149,9 +184,10 @@ class WahaService {
     }
 
     try {
-      await this.apiInstance.post(`/sessions/${session.waSessionName}/auth/request-code`, {
-        phone,
-      });
+      await this.apiInstance.post(
+        `/sessions/${session.waSessionName}/auth/request-code`,
+        { phoneNumber: phone }
+      );
 
       return WaSessionModel.upsertByOwner(ownerId, {
         pairingPhone: phone,
@@ -159,6 +195,30 @@ class WahaService {
       });
     } catch (err) {
       throw new InternalServerError("Failed to request pairing code from WAHA", err);
+    }
+  }
+
+  /**
+   * Fetch the current QR (as a data URI) for the owner's session and
+   * persist it on the row. Returns null when no session exists.
+   */
+  async refreshQr(ownerId: string): Promise<WaSession | null> {
+    const session = await WaSessionModel.findByOwner(ownerId);
+    if (!session) return null;
+
+    try {
+      const res = await this.apiInstance.get<Record<string, string>>(
+        `/sessions/${session.waSessionName}/auth/qr`,
+        { headers: { Accept: "application/json" } }
+      );
+      const qr = typeof res.data?.qr === "string" ? res.data.qr : "";
+      return WaSessionModel.upsertByOwner(ownerId, { qr: qr || null });
+    } catch (err) {
+      // Not in SCAN_QR_CODE state (or WAHA down) — keep last known QR.
+      logger.debug("QR fetch skipped", {
+        err: isAxiosError(err) ? err.message : String(err),
+      });
+      return session;
     }
   }
 }

@@ -77,10 +77,11 @@ export class MessageModel extends BaseModel {
     }));
   }
 
-  static async markDelivered(id: string): Promise<void> {
+  /** Stamp the real WAHA message id once the reply is pushed successfully. */
+  static async markSent(id: string, waMsgId: string): Promise<void> {
     await this.delegate.update({
       where: { id },
-      data: { waMsgId: `sent-${id}` },
+      data: { waMsgId },
     });
   }
 }

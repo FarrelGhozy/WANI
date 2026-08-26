@@ -12,7 +12,6 @@ import usageRoutes from "@/routes/usage";
 import authRoutes from "@/routes/auth";
 import websiteRoutes from "@/routes/website";
 import uploadRoutes from "@/routes/upload";
-import outgoingRoutes from "@/routes/outgoing";
 import monitoringRoutes from "@/routes/monitoring";
 import debugRoutes from "@/routes/debug";
 import sessionsRoutes from "@/routes/sessions";
@@ -33,7 +32,6 @@ router.use("/usage", usageRoutes);
 router.use("/auth", authRoutes);
 router.use("/website", websiteRoutes);
 router.use("/upload", uploadRoutes);
-router.use("/outgoing", outgoingRoutes);
 router.use("/sessions", sessionsRoutes);
 router.use("/", monitoringRoutes);
 

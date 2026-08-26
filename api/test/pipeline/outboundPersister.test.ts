@@ -1,13 +1,13 @@
 import { expect, test, describe, mock, afterEach } from "bun:test";
 
 const mockAppend = mock((data: any) => Promise.resolve({ id: "msg-123" }));
-const mockMarkDelivered = mock((_id: string) => Promise.resolve());
+const mockMarkSent = mock((_id: string, _waMsgId: string) => Promise.resolve());
 const mockTouch = mock((_id: string) => Promise.resolve());
 
 mock.module("@/models/message", () => ({
   MessageModel: {
     append: mockAppend,
-    markDelivered: mockMarkDelivered,
+    markSent: mockMarkSent,
   },
 }));
 
@@ -17,86 +17,108 @@ mock.module("@/models/conversation", () => ({
   },
 }));
 
+const mockSendText = mock(() =>
+  Promise.resolve({ messageId: "waha-msg-1" })
+);
+const fakeWahaService = { sendText: mockSendText };
+mock.module("@/services/waha", () => ({
+  default: fakeWahaService,
+  wahaService: fakeWahaService,
+}));
+
 import { outboundPersisterStep } from "@/ai/pipeline/steps/outboundPersister";
 import type { PipelineContext } from "@/ai/pipeline/types";
 
 function makeCtx(overrides: Partial<PipelineContext> = {}): PipelineContext {
   return {
-    ownerId: "test",
-    input: { ownerId: "test", phone: "628123456789", text: "Halo" },
+    ownerId: "owner-1",
+    input: { ownerId: "owner-1", phone: "628123456789", text: "Halo" },
     conversationId: "conv-1",
+    customerPhone: "628123456789",
     finalReply: "Halo juga! Ada yang bisa dibantu?",
     trace: { set: () => null as any, begin: () => null as any } as any,
     ...overrides,
-  };
+  } as PipelineContext;
 }
 
 describe("outboundPersisterStep", () => {
   afterEach(() => {
-    mockAppend.mockClear();
-    mockMarkDelivered.mockClear();
-    mockTouch.mockClear();
+    [mockAppend, mockMarkSent, mockTouch, mockSendText].forEach((m) =>
+      m.mockClear()
+    );
   });
 
   test("returns continue", async () => {
-    const ctx = makeCtx();
-    const result = await outboundPersisterStep.run(ctx);
+    const result = await outboundPersisterStep.run(makeCtx());
     expect(result.kind).toBe("continue");
   });
 
   test("calls MessageModel.append with role BOT and finalReply", async () => {
-    const ctx = makeCtx();
-    await outboundPersisterStep.run(ctx);
+    await outboundPersisterStep.run(makeCtx());
 
     expect(mockAppend).toHaveBeenCalledTimes(1);
     expect(mockAppend).toHaveBeenCalledWith({
-      ownerId: "test",
+      ownerId: "owner-1",
       conversationId: "conv-1",
       role: "BOT",
       content: "Halo juga! Ada yang bisa dibantu?",
     });
   });
 
-  test("calls MessageModel.markDelivered with the returned id", async () => {
-    const ctx = makeCtx();
-    await outboundPersisterStep.run(ctx);
+  test("pushes reply via wahaService.sendText(ownerId, phone, reply)", async () => {
+    await outboundPersisterStep.run(makeCtx());
 
-    expect(mockMarkDelivered).toHaveBeenCalledTimes(1);
-    expect(mockMarkDelivered).toHaveBeenCalledWith("msg-123");
+    expect(mockSendText).toHaveBeenCalledTimes(1);
+    expect(mockSendText).toHaveBeenCalledWith(
+      "owner-1",
+      "628123456789",
+      "Halo juga! Ada yang bisa dibantu?"
+    );
   });
 
-  test("calls markDelivered with different id per call", async () => {
-    mockAppend.mockImplementationOnce(() => Promise.resolve({ id: "msg-456" }));
+  test("stamps real WAHA message id after successful push", async () => {
+    await outboundPersisterStep.run(makeCtx());
+    expect(mockMarkSent).toHaveBeenCalledWith("msg-123", "waha-msg-1");
+  });
 
-    const ctx = makeCtx({ conversationId: "conv-2" });
-    await outboundPersisterStep.run(ctx);
+  test("fail-open: WAHA error is swallowed, reply stays persisted", async () => {
+    mockSendText.mockImplementationOnce(() =>
+      Promise.reject(new Error("WAHA down"))
+    );
 
-    expect(mockMarkDelivered).toHaveBeenCalledWith("msg-456");
+    const result = await outboundPersisterStep.run(makeCtx());
+
+    expect(result.kind).toBe("continue");
+    expect(mockAppend).toHaveBeenCalledTimes(1); // persisted first
+    expect(mockMarkSent).not.toHaveBeenCalled();
+  });
+
+  test("skips push when customerPhone missing", async () => {
+    await outboundPersisterStep.run(makeCtx({ customerPhone: undefined }));
+    expect(mockSendText).not.toHaveBeenCalled();
   });
 
   test("calls ConversationModel.touch with conversationId", async () => {
-    const ctx = makeCtx();
-    await outboundPersisterStep.run(ctx);
-
+    await outboundPersisterStep.run(makeCtx());
     expect(mockTouch).toHaveBeenCalledTimes(1);
     expect(mockTouch).toHaveBeenCalledWith("conv-1");
   });
 
-  test("all three calls happen in order: append → markDelivered → touch", async () => {
+  test("order: append → touch → push", async () => {
     const order: string[] = [];
     mockAppend.mockImplementationOnce(async () => {
       order.push("append");
       return { id: "m1" };
     });
-    mockMarkDelivered.mockImplementationOnce(async () => {
-      order.push("markDelivered");
-    });
     mockTouch.mockImplementationOnce(async () => {
       order.push("touch");
     });
+    mockSendText.mockImplementationOnce(async () => {
+      order.push("push");
+      return { messageId: "w1" };
+    });
 
     await outboundPersisterStep.run(makeCtx());
-
-    expect(order).toEqual(["append", "markDelivered", "touch"]);
+    expect(order).toEqual(["append", "touch", "push"]);
   });
 });
