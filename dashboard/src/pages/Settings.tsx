@@ -51,9 +51,15 @@ export default function Settings() {
   const pairingCode = livePairingCode;
   const pairingPhone = livePairingPhone;
 
-  const handleDisconnect = useCallback(() => {
-    setOverride({ connection: "disconnected", qr: "", phone: "" });
-  }, []);
+  const handleDisconnect = useCallback(async () => {
+    try {
+      await fetchApi("/sessions", { method: "DELETE" });
+      setOverride({ connection: "disconnected", qr: "", phone: "" });
+      toast("Sesi WhatsApp diputus", "success");
+    } catch (e) {
+      apiError(e, "Gagal memutus sesi WhatsApp");
+    }
+  }, [toast, apiError]);
 
   const handleConnect = useCallback(() => {
     setOverride(null);
@@ -79,7 +85,7 @@ export default function Settings() {
     if (resetting) return;
     setResetting(true);
     try {
-      await fetchApi("/qr/reset", { method: "POST" });
+      await fetchApi("/sessions/reset", { method: "POST" });
       setOverride(null);
       toast(
         "Koneksi WhatsApp direset. Scan QR baru untuk menghubungkan.",
@@ -96,7 +102,7 @@ export default function Settings() {
     async (phone: string) => {
       setRequestingPairing(true);
       try {
-        await fetchApi("/qr/pairing", {
+        await fetchApi("/sessions/pairing", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ phone }),
@@ -115,7 +121,7 @@ export default function Settings() {
   const handleRefreshPairing = useCallback(async () => {
     setRefreshingPairing(true);
     try {
-      await fetchApi("/qr/refresh-pairing", { method: "POST" });
+      await fetchApi("/sessions/refresh-pairing", { method: "POST" });
       toast("Kode pairing baru diminta", "info");
     } catch (e) {
       apiError(e, "Gagal memperbarui kode pairing");
