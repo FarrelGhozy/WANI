@@ -221,6 +221,33 @@ class WahaService {
       return session;
     }
   }
+
+  /**
+   * Log the session out on WAHA and remove the local row.
+   * Returns false when the owner has no session.
+   */
+  async deleteSession(ownerId: string): Promise<boolean> {
+    const session = await WaSessionModel.findByOwner(ownerId);
+    if (!session) return false;
+
+    try {
+      await this.apiInstance.post(`/sessions/${session.waSessionName}/logout`);
+    } catch (err) {
+      if (!isAxiosError(err) || err.response?.status !== 404) {
+        logger.error("Failed to logout session during delete", { err });
+      }
+    }
+    try {
+      await this.apiInstance.delete(`/sessions/${session.waSessionName}`);
+    } catch (err) {
+      if (!isAxiosError(err) || err.response?.status !== 404) {
+        logger.error("Failed to delete session from WAHA", { err });
+      }
+    }
+
+    await WaSessionModel.deleteByOwner(ownerId);
+    return true;
+  }
 }
 
 const wahaService = new WahaService();

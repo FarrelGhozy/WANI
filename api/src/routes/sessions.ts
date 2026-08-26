@@ -50,3 +50,5 @@ router.post(
 );
 
 export default router;
+
+router.delete("/", requireJwt, SessionsController.deleteSession);

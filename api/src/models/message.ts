@@ -10,12 +10,6 @@ export interface AppendData {
   msgType?: string;
 }
 
-export interface OutgoingItem {
-  id: string;
-  jid: string;
-  text: string;
-}
-
 export class MessageModel extends BaseModel {
   protected static override get delegate() {
     return this.db.message;
@@ -51,31 +45,6 @@ export class MessageModel extends BaseModel {
     });
   }
 
-  static async listOutgoing(): Promise<OutgoingItem[]> {
-    const messages = await this.delegate.findMany({
-      where: {
-        OR: [
-          { role: "HUMAN", waMsgId: null },
-          { msgType: "notification", waMsgId: null },
-        ],
-      },
-      include: {
-        conversation: {
-          select: {
-            customer: { select: { phone: true } },
-          },
-        },
-      },
-      orderBy: { createdAt: "asc" },
-      take: 20,
-    });
-
-    return messages.map((m) => ({
-      id: m.id,
-      jid: `${m.conversation.customer.phone}@s.whatsapp.net`,
-      text: m.content,
-    }));
-  }
 
   /** Stamp the real WAHA message id once the reply is pushed successfully. */
   static async markSent(id: string, waMsgId: string): Promise<void> {

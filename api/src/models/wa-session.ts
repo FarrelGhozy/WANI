@@ -34,4 +34,8 @@ export class WaSessionModel extends BaseModel {
       data: { qr: null },
     }) as Promise<WaSession>;
   }
+
+  static async deleteByOwner(ownerId: string): Promise<void> {
+    await this.db.waSession.delete({ where: { ownerId } });
+  }
 }

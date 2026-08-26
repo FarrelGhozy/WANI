@@ -112,3 +112,18 @@ export const refreshPairing = async (
 
   sendResponse(res, 200, "Pairing code refreshed", updated);
 };
+
+export const deleteSession = async (
+  req: Request,
+  res: Response
+) => {
+  const ownerId = req.user?.id!;
+
+  const deleted = await WahaService.deleteSession(ownerId);
+
+  if (!deleted) {
+    return sendResponse(res, 200, "No session found for this store", null);
+  }
+
+  sendResponse(res, 200, "Session deleted successfully", null);
+};
