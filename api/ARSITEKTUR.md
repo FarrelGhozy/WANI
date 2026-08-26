@@ -72,9 +72,7 @@ api/
 │   │
 │   ├── routes/
 │   │   ├── index.ts              # Combines all routers under /api
-│   │   ├── qr.ts                 # GET /, GET /status, POST /, DELETE /, POST /reset, POST /pairing, POST /refresh-pairing
-│   │   ├── chat.ts               # POST /
-│   │   ├── sessions.ts           # (planned) 11 endpoints untuk manajemen session multi-tenant
+│   │   ├── sessions.ts           # 8 endpoints owner-scoped: GET /, POST /, POST /sync, POST /reset, POST /pairing, POST /refresh-pairing, DELETE /, POST /messages (WAHA webhook)
 │   │   ├── store.ts              # GET /, PUT /
 │   │   ├── store-payment.ts      # GET /, POST /, PUT /:id, DELETE /:id
 │   │   ├── ai-config.ts          # GET /, PUT /
@@ -88,12 +86,10 @@ api/
 │   │   ├── website.ts            # GET /, PUT /, POST /generate, GET /download, POST /publish, GET /generations, DELETE /generations/:id
 │   │   ├── upload.ts             # POST /
 │   │   ├── monitoring.ts         # GET /health, GET /metrics
-│   │   ├── outgoing.ts           # GET / (list outgoing), PATCH /:id/delivered
 │   │   └── debug.ts              # Dev-only: GET /traces, GET /traces/:id, DELETE /traces, GET /status, POST /circuit/reset
 │   │
-│   ├── controllers/              # 16 controllers
-│   │   ├── qr.ts                 # getQr, getStatus, upsertQr, clearQr
-│   │   ├── chat.ts               # postChat
+│   ├── controllers/              # 14 controllers (qr/chat/outgoing deleted — consolidated to sessions)
+│   │   ├── sessions.ts           # getSession, createSession, syncSession, resetSession, requestPairing, refreshPairing, deleteSession, postMessage
 │   │   ├── store.ts              # getStore (includes hasPaymentMethods), upsertStore
 │   │   ├── store-payment.ts      # listPaymentMethods, createPaymentMethod, updatePaymentMethod, deletePaymentMethod
 │   │   ├── ai-config.ts          # getAiConfig, upsertAiConfig
@@ -106,12 +102,11 @@ api/
 │   │   ├── upload.ts             # uploadFile (multer)
 │   │   ├── website.ts            # getWebsiteConfig, updateWebsiteConfig, generateWebsite, downloadWebsite, publishWebsite
 │   │   ├── monitoring.ts         # getHealth, getMetricsHandler
-│   │   ├── outgoing.ts           # listOutgoing, markDelivered
 │   │   └── debug.ts              # getRecentTraces, getTraceDetail, deleteTraces, getStatus, postResetCircuit
 │   │
 │   ├── schemas/                  # 12 Zod v4 schemas
-│   │   ├── wa-session.ts         # upsertQrSchema
-│   │   ├── chat.ts               # chatRequestSchema
+│   │   ├── sessions.ts           # createSessionSchema, sessionQuerySchema, pairingSchema
+│   │   ├── chat.ts               # chatRequestSchema (legacy, kept for webhook compat)
 │   │   ├── store.ts              # upsertStoreSchema
 │   │   ├── store-payment.ts      # createPaymentMethodSchema (discriminated union), updatePaymentMethodSchema
 │   │   ├── ai-config.ts          # upsertAiConfigSchema
@@ -131,14 +126,12 @@ api/
 │   │
 │   ├── services/
 │   │   ├── email.ts              # EmailService — nodemailer SMTP integration
-│   │   └── waha.ts               # WAHA HTTP API wrapper (planned) — typed class for session/message/auth endpoints
-│   │   └── waha.ts               # WAHA HTTP API wrapper (planned) — typed class for session/message/auth endpoints
+│   │   └── waha.ts               # WAHA HTTP API wrapper — typed class for session/message/auth endpoints (owner-scoped)
 │   │
 │   ├── utils/
 │   │   ├── errors.ts             # AppError hierarchy (BadRequest, Unauthorized, Forbidden, NotFound, InternalServer)
 │   │   ├── response.ts           # sendResponse — unified JSON format
 │   │   ├── auth.ts               # hashPassword, comparePassword helpers
-│   │   └── wa-bot-db.ts          # WA Bot DB config utility (deprecated)
 │   │
 │   ├── types/
 │   │   ├── express.d.ts          # Augmented Request type (validatedQuery, validatedParams, user)
@@ -388,13 +381,17 @@ Dua mekanisme auth:
 | `DELETE` | `/api/debug/traces`               | —    | `deleteTraces`             | Dev: clear trace buffer                            |
 | `GET`    | `/api/debug/status`               | —    | `getStatus`                | Dev: uptime + memory usage                         |
 | `POST`   | `/api/debug/circuit/reset`        | —    | `postResetCircuit`         | Dev: reset circuit breaker                         |
+| `GET`    | `/api/sessions`                   | JWT  | `getSession`               | Get owner's session                                |
+| `POST`   | `/api/sessions`                   | JWT  | `createSession`            | Create or get session                              |
+| `POST`   | `/api/sessions/sync`              | JWT  | `syncSession`              | Sync with WAHA live state + QR refresh             |
+| `POST`   | `/api/sessions/reset`             | JWT  | `resetSession`             | Logout + restart session                           |
+| `POST`   | `/api/sessions/pairing`           | JWT  | `requestPairing`           | Request pairing code                               |
+| `POST`   | `/api/sessions/refresh-pairing`   | JWT  | `refreshPairing`           | Refresh pairing code                               |
+| `DELETE` | `/api/sessions`                   | JWT  | `deleteSession`            | Delete session (disconnect)                        |
+| `POST`   | `/api/sessions/messages`          | 🔒   | `postMessage`              | WAHA webhook — incoming message                    |
 | `GET`    | `/api/health`                     | —    | `getHealth`                | Health check                                       |
 | `GET`    | `/api/metrics`                    | —    | `getMetricsHandler`        | Prometheus metrics                                 |
-| `GET`    | `/api/outgoing`                   | 🔒   | `listOutgoing`             | List outgoing messages (legacy)                    |
-| `PATCH`  | `/api/outgoing/:id/delivered`     | 🔒   | `markDelivered`            | Mark message delivered                             |
 | `GET`    | `/s/:slug`                        | —    | Express static             | Serve generated static site                        |
-
-> **Planned (WAHA Migration):** Session endpoints akan dipindah ke `/api/sessions` — lihat [TODO.md](../TODO.md)
 
 > 🔒 = `requireAuth` (Bearer API_TOKEN), JWT = `requireJwt` (JWT dari login)
 
@@ -967,8 +964,8 @@ bun test                     # Run all tests (bun:test)
 | **P12** | ✅ Selesai | Dashboard integrasi — semua hooks pakai real API                                 |
 | **P13** | ✅ Selesai | Website endpoints + web-gen integration                                          |
 | **P14** | ✅ Selesai | StorePaymentMethod + upload + manual payment flow                                |
-| **P15** | 🔄 Dikerjakan | WAHA Service Wrapper + multi-tenant WaSession schema                            |
-| **P16** | ⏳ Rencana | Session routes/controller consolidation under `/api/sessions`                   |
-| **P17** | ⏳ Rencana | Push outgoing via WAHA (AI pipeline outboundPersister)                          |
-| **P18** | ⏳ Rencana | Cleanup legacy Baileys code + env vars                                          |
-| **P19** | ⏳ Rencana | Frontend update for new sessions API                                            |
+| **P15** | ✅ Selesai | WAHA Service Wrapper + multi-tenant WaSession schema                            |
+| **P16** | ✅ Selesai | Session routes/controller consolidation under `/api/sessions`                   |
+| **P17** | ✅ Selesai | Push outgoing via WAHA (AI pipeline outboundPersister)                          |
+| **P18** | ✅ Selesai | Cleanup legacy Baileys code + env vars (chat/outgoing/qr deleted)               |
+| **P19** | ✅ Selesai | Frontend update for new sessions API (useWaStatus + WaSessionTab)               |
