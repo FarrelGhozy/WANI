@@ -11,9 +11,36 @@ function toConnection(status: string | null | undefined): string {
     case "WORKING":
       return "connected";
     case "STARTING":
+    case "SCAN_QR_CODE":
+    case "PASSKEY_REQUIRED":
+    case "PASSKEY_CONFIRMATION_REQUIRED":
       return "connecting";
+    case "STOPPED":
+    case "FAILED":
+      return "disconnected";
     default:
       return "disconnected";
+  }
+}
+
+/** Human-readable label for SessionStatus (for debugging/tooltip). */
+export function toStatusLabel(status: string | null | undefined): string {
+  switch (status) {
+    case "WORKING":
+      return "Terhubung";
+    case "SCAN_QR_CODE":
+      return "Scan QR Code";
+    case "STARTING":
+      return "Menghubungkan…";
+    case "PASSKEY_REQUIRED":
+    case "PASSKEY_CONFIRMATION_REQUIRED":
+      return "Menunggu pairing";
+    case "STOPPED":
+      return "Terputus";
+    case "FAILED":
+      return "Gagal";
+    default:
+      return "Tidak diketahui";
   }
 }
 

@@ -53,6 +53,9 @@ const statusConfig: Record<string, { dot: string; label: string; bg: string }> =
     },
   };
 
+// Verified stable with /api/sessions endpoints (TODO Phase 5): status enum from WAHA
+// (WORKING/SCAN_QR_CODE/STARTING/etc.) is normalized via useWaStatus.toConnection.
+// QR is refreshed via POST /sessions/sync while SCAN_QR_CODE; pairingCode via POST /sessions/pairing.
 const isMockQr = (qr: string) => !qr || qr === "mock-qr-data-for-development";
 
 export default function WaSessionTab({
@@ -278,7 +281,7 @@ export default function WaSessionTab({
               <div className="h-px flex-1 bg-stone-200" />
             </div>
 
-            {/* Pairing Code Section */}
+            {/* Pairing Code Section — stable with /api/sessions/pairing + /refresh-pairing */}
             {pairingCode ? (
               <div className="rounded-lg border-2 border-teal-200 bg-teal-50 p-5 text-center">
                 <div className="mb-3 flex items-center justify-center gap-2">
@@ -296,6 +299,11 @@ export default function WaSessionTab({
                 <p className="mb-3 text-3xl font-bold tracking-[0.3em] text-teal-900 select-all">
                   {formatPairingCode(pairingCode)}
                 </p>
+                {pairingPhone && (
+                  <p className="mb-2 text-xs text-teal-600">
+                    Untuk nomor: <span className="font-semibold">{pairingPhone}</span>
+                  </p>
+                )}
                 <p className="text-xs text-teal-700">
                   Buka WhatsApp di ponsel →{" "}
                   <span className="font-semibold">Perangkat Tertaut</span> →{" "}

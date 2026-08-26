@@ -15,14 +15,14 @@ export function errorHandler(
       res,
       err.statusCode,
       err.message,
-      env.nodeEnv === "development" ? err.details : undefined
+      env.nodeEnv !== "production" ? err.details : undefined
     );
     return;
   }
 
   logger.error(err);
 
-  const data = env.nodeEnv === "development" ? { stack: err.stack } : undefined;
+  const data = env.nodeEnv !== "production" ? { stack: err.stack } : undefined;
 
   sendResponse(res, 500, "internal server error", data);
 }

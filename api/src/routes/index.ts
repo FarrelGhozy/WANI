@@ -1,5 +1,4 @@
 import { Router } from "express";
-import chatRoutes from "@/routes/chat";
 import storeRoutes from "@/routes/store";
 import storePaymentRoutes from "@/routes/store-payment";
 import aiConfigRoutes from "@/routes/ai-config";
@@ -17,7 +16,6 @@ import debugRoutes from "@/routes/debug";
 import sessionsRoutes from "@/routes/sessions";
 
 const router = Router();
-router.use("/chat", chatRoutes);
 router.use("/store", storeRoutes);
 router.use("/store/payment-methods", storePaymentRoutes);
 router.use("/ai-config", aiConfigRoutes);

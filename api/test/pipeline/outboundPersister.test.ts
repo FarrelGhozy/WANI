@@ -1,4 +1,4 @@
-import { expect, test, describe, mock, afterEach } from "bun:test";
+import { expect, test, describe, mock, afterEach, beforeEach } from "bun:test";
 
 const mockAppend = mock((data: any) => Promise.resolve({ id: "msg-123" }));
 const mockMarkSent = mock((_id: string, _waMsgId: string) => Promise.resolve());
@@ -17,17 +17,20 @@ mock.module("@/models/conversation", () => ({
   },
 }));
 
+import { outboundPersisterStep } from "@/ai/pipeline/steps/outboundPersister";
+import type { PipelineContext } from "@/ai/pipeline/types";
+import wahaService from "@/services/waha";
+
 const mockSendText = mock(() =>
   Promise.resolve({ messageId: "waha-msg-1" })
 );
-const fakeWahaService = { sendText: mockSendText };
-mock.module("@/services/waha", () => ({
-  default: fakeWahaService,
-  wahaService: fakeWahaService,
-}));
-
-import { outboundPersisterStep } from "@/ai/pipeline/steps/outboundPersister";
-import type { PipelineContext } from "@/ai/pipeline/types";
+const _originalSendText = wahaService.sendText.bind(wahaService);
+beforeEach(() => {
+  (wahaService as any).sendText = mockSendText;
+});
+afterEach(() => {
+  (wahaService as any).sendText = _originalSendText;
+});
 
 function makeCtx(overrides: Partial<PipelineContext> = {}): PipelineContext {
   return {

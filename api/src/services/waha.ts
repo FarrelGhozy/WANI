@@ -184,14 +184,24 @@ class WahaService {
     }
 
     try {
-      await this.apiInstance.post(
-        `/sessions/${session.waSessionName}/auth/request-code`,
-        { phoneNumber: phone }
-      );
+      const res = await this.apiInstance.post<
+        Record<string, string | undefined>
+      >(`/sessions/${session.waSessionName}/auth/request-code`, {
+        phoneNumber: phone,
+      });
+
+      // WAHA may return the pairing code directly (code / pairingCode) or via async webhook.
+      // Persist whatever it returns so the dashboard can show it immediately.
+      const raw = res.data as Record<string, any> | undefined;
+      const pairingCode =
+        (raw?.code as string | undefined) ??
+        (raw?.pairingCode as string | undefined) ??
+        (raw?.pairing_code as string | undefined) ??
+        null;
 
       return WaSessionModel.upsertByOwner(ownerId, {
         pairingPhone: phone,
-        pairingCode: null,
+        pairingCode,
       });
     } catch (err) {
       throw new InternalServerError("Failed to request pairing code from WAHA", err);

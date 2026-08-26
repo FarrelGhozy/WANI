@@ -10,6 +10,10 @@ export class WaSessionModel extends BaseModel {
     return this.delegate.findUnique({ where: { ownerId } }) as Promise<WaSession | null>;
   }
 
+  static async findBySessionName(waSessionName: string): Promise<WaSession | null> {
+    return this.delegate.findUnique({ where: { waSessionName } }) as Promise<WaSession | null>;
+  }
+
   static async upsertByOwner(
     ownerId: string,
     data: Partial<WaSession>
