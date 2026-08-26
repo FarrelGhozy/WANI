@@ -51,15 +51,18 @@ Because Store↔Session is 1:1, there's no `:sessionId` param — the session is
 
 ## Phase 3: Push Outgoing — Update AI Pipeline
 
-- [ ] Modify `api/src/ai/pipeline/steps/outboundPersister.ts` — after persisting reply, call `waha.sendMessage(sessionId, phone, reply)` to push it to WAHA
-- [ ] Remove `api/src/models/message.ts` methods: `listOutgoing`, `markDelivered`
-- [ ] Add `sendText(waSessionName, to, text)` to `WahaService`
+- [x] Modify `api/src/ai/pipeline/steps/outboundPersister.ts` — after persisting reply, call `wahaService.sendText(ownerId, phone, reply)` to push it to WAHA (fail-open)
+- [x] Remove `api/src/models/message.ts` methods: `listOutgoing`, `markDelivered` (→ `markSent(id, waMsgId)` dengan id WAHA asli)
+- [x] Add `sendText(ownerId, phone, text)` to `WahaService`
+- [x] Fix: pairing request body `{phoneNumber}` sesuai docs WAHA
+- [x] Add `WahaService.refreshQr` — QR di-refresh saat sync ketika `SCAN_QR_CODE`
 
 ## Tahap 3: Cleanup — Remove legacy Baileys references
 
-- [ ] Remove `api/src/utils/wa-bot-db.ts`
-- [ ] Remove `WABOT_DATABASE_URL` / `WA_BOT_DATABASE_URL` env var references if present
-- [ ] Remove `WAHA_SWAGGER_USERNAME`, `WAHA_SWAGGER_PASSWORD`, `WAHA_BASE_URL` from any remaining files
+- [x] Remove `api/src/utils/wa-bot-db.ts`
+- [x] Remove `WABOT_DATABASE_URL` / `WA_BOT_DATABASE_URL` env var references if present
+- [x] Remove outgoing routes/controllers (`/api/outgoing`)
+- [ ] `routes/chat.ts` masih dipakai sebagai penerima webhook pesan masuk WAHA — hapus setelah webhook dipindah ke `/api/sessions/...`
 
 ## Tahap 4: Controllers + AI Pipeline — Scope queries by `ownerId`
 
@@ -69,6 +72,6 @@ Because Store↔Session is 1:1, there's no `:sessionId` param — the session is
 
 ## Tahap 5: Frontend — Verify
 
-- [ ] Update `dashboard/src/hooks/useWaStatus.ts` — replace `/qr` + `/qr/status` polls with single `GET /api/sessions`
-- [ ] Update `dashboard/src/pages/Settings.tsx` — repoint `/qr/reset` → `/sessions/reset`, `/qr/pairing` → `/sessions/pairing`, `/qr/refresh-pairing` → `/sessions/refresh-pairing`
-- [ ] Update `dashboard/src/components/WaSessionTab.tsx` — match new session endpoints
+- [x] Update `dashboard/src/hooks/useWaStatus.ts` — poll `POST /api/sessions/sync` (live status + QR refresh), mapping status enum → UI (`WORKING`=connected)
+- [x] Update `dashboard/src/pages/Settings.tsx` — repoint ke `/sessions/reset`, `/sessions/pairing`, `/sessions/refresh-pairing`; disconnect → `DELETE /api/sessions`
+- [ ] Update `dashboard/src/components/WaSessionTab.tsx` — cek ulang setelah endpoint stabil
