@@ -14,30 +14,35 @@ export default function TrustBar() {
   );
 
   return (
-    <section className="bg-[#fafaf9] py-12">
-      <div className="mx-auto max-w-6xl px-6">
+    <section className="border-y border-stone-200/80 bg-white py-10 sm:py-12">
+      <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
         <div
           ref={containerRef}
-          className="rounded-2xl border border-stone-200 bg-white p-8 shadow-sm"
+          className="grid gap-8 lg:grid-cols-[0.75fr_2fr] lg:items-center"
           style={{ opacity: 0 }}
         >
-          <p className="mb-8 text-center text-sm font-medium uppercase tracking-widest text-stone-400">
-            Dipercaya ribuan UMKM di seluruh Indonesia
-          </p>
-          <div ref={statsRef} className="grid grid-cols-2 gap-6 lg:grid-cols-4">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-teal-700">
+              Dipercaya UMKM
+            </p>
+            <p className="mt-2 max-w-xs text-sm leading-6 text-stone-500">
+              Membantu bisnis di seluruh Indonesia melayani pelanggan lebih konsisten.
+            </p>
+          </div>
+          <div ref={statsRef} className="grid grid-cols-2 gap-x-4 gap-y-7 sm:grid-cols-4">
             {TRUST_STATS.map(({ value, label }) => (
               <div
                 key={label}
-                className="stat-item text-center"
+                className="stat-item border-l border-stone-200 pl-4 sm:pl-6"
                 style={{ opacity: 0 }}
               >
                 <p
-                  className="text-3xl font-bold text-teal-700"
+                  className="text-2xl font-semibold text-stone-950 sm:text-3xl"
                   style={{ fontFamily: "'Instrument Serif', serif" }}
                 >
                   {value}
                 </p>
-                <p className="mt-1 text-sm text-stone-500">{label}</p>
+                <p className="mt-1 text-xs text-stone-500">{label}</p>
               </div>
             ))}
           </div>

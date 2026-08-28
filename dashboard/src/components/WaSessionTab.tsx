@@ -64,6 +64,7 @@ export default function WaSessionTab({
   phone,
   connectedAt,
   pairingCode,
+  pairingPhone,
   onDisconnect,
   onReset,
   onRequestPairing,

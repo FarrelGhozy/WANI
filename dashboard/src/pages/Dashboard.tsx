@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 import { useWaStatusContext } from "@/contexts/WaStatusContext.tsx";
 import { useStoreContext } from "@/contexts/StoreContext.tsx";
@@ -17,6 +17,7 @@ import {
   BagIcon,
   ClipboardIcon,
   PeopleIcon,
+  GlobeIcon,
 } from "@/components/Icons.tsx";
 import { formatPrice } from "@/utils/format.ts";
 
@@ -40,25 +41,29 @@ const statusLabel: Record<string, string> = {
 };
 
 function mapAccent(status: string): "teal" | "amber" | "red" {
-  switch (status) {
-    case "connected":
-      return "teal";
-    case "connecting":
-      return "amber";
-    default:
-      return "red";
-  }
+  if (status === "connected") return "teal";
+  if (status === "connecting") return "amber";
+  return "red";
 }
 
 function connectionLabel(status: string): string {
-  switch (status) {
-    case "connected":
-      return "Terhubung";
-    case "connecting":
-      return "Menghubungkan\u2026";
-    default:
-      return "Terputus";
-  }
+  if (status === "connected") return "Terhubung";
+  if (status === "connecting") return "Menghubungkan…";
+  return "Terputus";
+}
+
+function formatOrderCode(id: string) {
+  const part = id.split("-")[1] ?? id.slice(-4);
+  return `#${part.toUpperCase().padStart(3, "0")}`;
+}
+
+function formatOrderTime(value: string) {
+  return new Intl.DateTimeFormat("id-ID", {
+    day: "numeric",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(value));
 }
 
 export default function Dashboard() {
@@ -77,7 +82,7 @@ export default function Dashboard() {
         const res = await fetchApi<{ hasPaymentMethods: boolean }>("/store");
         if (!cancelled) setNeedsPaymentMethod(!res.data?.hasPaymentMethods);
       } catch {
-        // silent
+        // The rest of the dashboard should stay usable if this check fails.
       }
     })();
     return () => {
@@ -86,89 +91,86 @@ export default function Dashboard() {
   }, []);
 
   const coreLoading = ordersLoading || prodLoading || custLoading;
-
   const totalRevenue = useMemo(
     () =>
       allOrders
-        .filter((o) => o.status === "COMPLETED")
-        .reduce((sum, o) => sum + o.totalAmount, 0),
+        .filter((order) => order.status === "COMPLETED")
+        .reduce((sum, order) => sum + order.totalAmount, 0),
     [allOrders]
   );
-
   const pendingProcessOrders = useMemo(
     () =>
       allOrders.filter(
-        (o) => o.status === "PENDING" || o.status === "CONFIRMED"
+        (order) => order.status === "PENDING" || order.status === "CONFIRMED"
       ),
     [allOrders]
   );
-
   const activeProducts = useMemo(
-    () => products.filter((p) => p.isAvailable),
+    () => products.filter((product) => product.isAvailable),
     [products]
   );
-
   const lowStockProducts = useMemo(
-    () => products.filter((p) => p.stock === 0 || !p.isAvailable),
+    () =>
+      products.filter(
+        (product) => product.stock === 0 || !product.isAvailable
+      ),
     [products]
   );
-
   const unreadCustomerCount = useMemo(
-    () => allCustomers.filter((c) => c.unreadCount > 0).length,
+    () => allCustomers.filter((customer) => customer.unreadCount > 0).length,
     [allCustomers]
   );
 
+  const today = new Intl.DateTimeFormat("id-ID", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(new Date());
+
   if (coreLoading || storeLoading) {
     return (
-      <div className="space-y-6">
-        <Skeleton variant="text" className="h-6 w-48" />
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {[1, 2, 3, 4].map((i) => (
+      <div className="mx-auto max-w-7xl space-y-6">
+        <Skeleton variant="rectangular" className="h-48 rounded-2xl" />
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {[1, 2, 3, 4].map((item) => (
             <Skeleton
-              key={i}
+              key={item}
               variant="rectangular"
-              className="h-28 rounded-xl"
+              className="h-32 rounded-2xl"
             />
           ))}
         </div>
-        <SkeletonCard height="h-64" />
+        <SkeletonCard height="h-72" />
       </div>
     );
   }
 
   if (!store) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 text-center">
-        <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-teal-100 text-teal-600">
-          <svg
-            width="40"
-            height="40"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-          >
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-            <polyline points="9 22 9 12 15 12 15 22" />
-          </svg>
+      <div className="mx-auto flex min-h-[68vh] max-w-xl flex-col items-center justify-center text-center">
+        <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-teal-100 text-teal-700 shadow-sm">
+          <GlobeIcon />
         </div>
-        <h2 className="text-xl font-semibold text-stone-900">
-          Selamat Datang di WANI!
-        </h2>
-        <p className="mt-2 text-sm text-stone-500 max-w-md">
-          Anda belum memiliki toko. Mulai dengan mengatur profil toko, produk,
-          dan metode pembayaran.
+        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-teal-700">
+          Langkah pertama
         </p>
-        <div className="mt-6 flex gap-3">
-          <Button onClick={() => navigate("/settings?tab=store")}>
-            Atur Toko
+        <h2 className="text-2xl font-semibold tracking-tight text-stone-950">
+          Selamat datang di WANI
+        </h2>
+        <p className="mt-3 max-w-md text-sm leading-6 text-stone-500">
+          Siapkan profil toko dan metode pembayaran agar pelanggan bisa mulai
+          berbelanja melalui WhatsApp.
+        </p>
+        <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+          <Button onClick={() => navigate("/app/settings?tab=store")}>
+            Siapkan Toko
           </Button>
           <Button
             variant="secondary"
-            onClick={() => navigate("/settings?tab=payment")}
+            onClick={() => navigate("/app/settings?tab=payment")}
           >
-            Metode Pembayaran
+            Atur Pembayaran
           </Button>
         </div>
       </div>
@@ -176,273 +178,289 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight text-stone-900">
-          Dashboard
-        </h1>
-        <p className="mt-1 text-sm text-stone-500">
-          Ringkasan bisnis dan status penting
-        </p>
-      </div>
+    <div className="mx-auto max-w-7xl space-y-6 lg:space-y-8">
+      <section className="relative overflow-hidden rounded-2xl bg-teal-900 px-5 py-6 text-white shadow-[0_18px_50px_-24px_rgba(19,78,74,0.65)] sm:px-7 sm:py-7">
+        <div className="pointer-events-none absolute -right-16 -top-28 h-72 w-72 rounded-full border-[44px] border-white/[0.04]" />
+        <div className="pointer-events-none absolute -bottom-24 right-40 h-48 w-48 rounded-full bg-teal-400/10 blur-2xl" />
+        <div className="relative flex flex-col gap-7 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <p className="text-sm font-medium capitalize text-teal-200">
+              {today}
+            </p>
+            <h1 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
+              Selamat datang, {store.businessName}
+            </h1>
+            <p className="mt-2 max-w-xl text-sm leading-6 text-teal-100/75">
+              Pantau pesanan, pelanggan, dan kesiapan toko dari satu tempat.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <button
+              onClick={() => navigate("/app/orders")}
+              className="inline-flex h-10 items-center justify-center rounded-lg border border-white/15 bg-white/10 px-4 text-sm font-medium text-white transition hover:bg-white/15 focus:outline-none focus:ring-2 focus:ring-white/40"
+            >
+              Lihat Pesanan
+            </button>
+            <button
+              onClick={() => navigate("/app/products/new")}
+              className="inline-flex h-10 items-center justify-center rounded-lg bg-white px-4 text-sm font-semibold text-teal-900 shadow-sm transition hover:bg-teal-50 focus:outline-none focus:ring-2 focus:ring-white/50"
+            >
+              <span className="mr-2 text-lg leading-none">+</span>
+              Tambah Produk
+            </button>
+          </div>
+        </div>
+      </section>
 
-      {/* Payment Method Warning */}
       {needsPaymentMethod && (
-        <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
+        <div className="flex flex-col gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
           <div className="flex items-start gap-3">
-            <div className="mt-0.5 shrink-0 text-amber-500">
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-              >
-                <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
-                <line x1="12" y1="9" x2="12" y2="13" />
-                <line x1="12" y1="17" x2="12.01" y2="17" />
-              </svg>
-            </div>
-            <div className="flex-1">
-              <p className="text-sm font-medium text-amber-900">
-                Belum ada metode pembayaran
+            <span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-amber-500 ring-4 ring-amber-100" />
+            <div>
+              <p className="text-sm font-semibold text-amber-950">
+                Metode pembayaran belum tersedia
               </p>
-              <p className="mt-0.5 text-xs text-amber-700">
-                Pelanggan belum bisa melihat informasi pembayaran.{" "}
-                <button
-                  onClick={() => navigate("/app/settings?tab=payment")}
-                  className="font-medium underline underline-offset-2 transition-colors hover:text-amber-900"
-                >
-                  Atur metode pembayaran
-                </button>
+              <p className="mt-0.5 text-xs leading-5 text-amber-700">
+                Lengkapi sekarang agar pelanggan bisa menyelesaikan pesanan.
               </p>
             </div>
           </div>
+          <button
+            onClick={() => navigate("/app/settings?tab=payment")}
+            className="self-start text-sm font-semibold text-amber-900 underline decoration-amber-400 underline-offset-4 hover:text-amber-700 sm:self-auto"
+          >
+            Atur pembayaran
+          </button>
         </div>
       )}
 
-      {/* Key Metrics */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatusCard
-          label="Total Pendapatan"
-          value={formatPrice(totalRevenue)}
-          accent="teal"
-          icon={<BagIcon />}
-          subText="Dari pesanan selesai"
-        />
-        <StatusCard
-          label="Perlu Diproses"
-          value={String(pendingProcessOrders.length)}
-          accent={pendingProcessOrders.length > 0 ? "amber" : "teal"}
-          icon={<ClipboardIcon />}
-          subText={
-            pendingProcessOrders.length > 0
-              ? "Menunggu konfirmasi"
-              : "Semua sudah diproses"
-          }
-        />
-        <StatusCard
-          label="Produk Aktif"
-          value={`${activeProducts.length}/${products.length}`}
-          accent={activeProducts.length > 0 ? "teal" : "red"}
-          icon={<BagIcon />}
-          subText={`${lowStockProducts.length} perlu perhatian`}
-        />
-        <StatusCard
-          label="Pelanggan"
-          value={String(allCustomers.length)}
-          accent="teal"
-          icon={<PeopleIcon />}
-          subText={
-            unreadCustomerCount > 0
-              ? `${unreadCustomerCount} pesan belum dibaca`
-              : "Tidak ada pesan baru"
-          }
-        />
-      </div>
-
-      {/* Pending Orders List */}
-      <Card>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-sm font-semibold text-stone-900">
-            Pesanan Perlu Diproses
+      <section aria-label="Ringkasan bisnis">
+        <div className="mb-3">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-stone-400">
+            Ringkasan
+          </p>
+          <h2 className="mt-1 text-lg font-semibold text-stone-950">
+            Kondisi toko saat ini
           </h2>
-          {pendingProcessOrders.length > 0 && (
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <StatusCard
+            label="Total pendapatan"
+            value={formatPrice(totalRevenue)}
+            accent="teal"
+            icon={<BagIcon />}
+            subText="Dari seluruh pesanan selesai"
+          />
+          <StatusCard
+            label="Perlu diproses"
+            value={String(pendingProcessOrders.length)}
+            accent={pendingProcessOrders.length > 0 ? "amber" : "teal"}
+            icon={<ClipboardIcon />}
+            subText={
+              pendingProcessOrders.length > 0
+                ? "Menunggu tindakan Anda"
+                : "Semua pesanan sudah beres"
+            }
+          />
+          <StatusCard
+            label="Produk aktif"
+            value={`${activeProducts.length}/${products.length}`}
+            accent={activeProducts.length > 0 ? "teal" : "red"}
+            icon={<BagIcon />}
+            subText={`${lowStockProducts.length} produk perlu perhatian`}
+          />
+          <StatusCard
+            label="Pelanggan"
+            value={String(allCustomers.length)}
+            accent="teal"
+            icon={<PeopleIcon />}
+            subText={
+              unreadCustomerCount > 0
+                ? `${unreadCustomerCount} percakapan belum dibaca`
+                : "Tidak ada pesan baru"
+            }
+          />
+        </div>
+      </section>
+
+      <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1.55fr)_minmax(300px,0.75fr)]">
+        <Card className="overflow-hidden" padding={false}>
+          <div className="flex items-center justify-between border-b border-stone-100 px-5 py-4 sm:px-6">
+            <div>
+              <h2 className="text-base font-semibold text-stone-950">
+                Pesanan terbaru
+              </h2>
+              <p className="mt-0.5 text-xs text-stone-500">
+                Pesanan yang membutuhkan perhatian Anda
+              </p>
+            </div>
             <button
               onClick={() => navigate("/app/orders")}
-              className="text-xs font-medium text-teal-600 transition-colors hover:text-teal-700"
+              className="text-xs font-semibold text-teal-700 transition hover:text-teal-900"
             >
-              Lihat Semua &rarr;
+              Lihat semua <span aria-hidden="true">→</span>
             </button>
-          )}
-        </div>
-        {pendingProcessOrders.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-10 text-center">
-            <div className="mb-3 rounded-full bg-emerald-50 p-3 text-emerald-500">
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-              >
-                <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
-                <path d="M22 4L12 14.01l-3-3" />
-              </svg>
-            </div>
-            <p className="text-sm font-medium text-stone-900">
-              Semua pesanan sudah diproses
-            </p>
-            <p className="mt-1 text-xs text-stone-500">
-              Tidak ada pesanan yang menunggu konfirmasi
-            </p>
           </div>
-        ) : (
-          <div className="divide-y divide-stone-100">
-            {pendingProcessOrders.slice(0, 5).map((order) => (
-              <div
-                key={order.id}
-                onClick={() => navigate(`/app/orders/${order.id}`)}
-                className="flex cursor-pointer items-center justify-between gap-3 px-1 py-3 transition-colors hover:bg-stone-50 -mx-1 rounded-lg"
-              >
-                <div className="flex items-center gap-3 min-w-0">
-                  <span className="shrink-0 font-mono text-xs font-medium text-teal-600">
-                    #{order.id.split("-")[1].toUpperCase().padStart(3, "0")}
-                  </span>
-                  <span className="truncate text-sm font-medium text-stone-900">
-                    {order.customerName}
-                  </span>
-                </div>
-                <div className="flex items-center gap-3 shrink-0">
-                  <span className="hidden sm:block text-xs text-stone-400">
-                    {formatPrice(order.totalAmount)}
-                  </span>
-                  <Badge variant={statusBadgeVariant[order.status]} dot>
-                    {statusLabel[order.status]}
-                  </Badge>
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    className="text-stone-300"
-                  >
-                    <path d="M9 18l6-6-6-6" />
-                  </svg>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </Card>
 
-      {/* Bottom Row: WhatsApp + Stock Alert */}
-      <div className="grid gap-6 lg:grid-cols-2">
-        {/* WhatsApp Connection */}
-        <Card>
-          <div className="flex items-start gap-4">
-            <div
-              className={`rounded-lg p-2.5 ${
-                connection === "connected"
-                  ? "bg-emerald-50 text-emerald-600"
-                  : connection === "connecting"
-                    ? "bg-amber-50 text-amber-600"
-                    : "bg-red-50 text-red-600"
-              }`}
-            >
-              <SignalIcon />
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center justify-between gap-2">
-                <h3 className="text-sm font-semibold text-stone-900">
-                  WhatsApp
-                </h3>
-                <Badge variant={mapAccent(connection)} dot>
-                  {connectionLabel(connection)}
-                </Badge>
+          {pendingProcessOrders.length === 0 ? (
+            <div className="flex min-h-64 flex-col items-center justify-center px-6 py-10 text-center">
+              <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+                <span className="text-lg">✓</span>
               </div>
-              {phone && (
-                <p className="mt-0.5 text-xs text-stone-500">{phone}</p>
-              )}
-              {connection === "disconnected" || connection === "connecting" ? (
-                <div className="mt-4 flex flex-col items-center gap-3 sm:flex-row">
-                  <QRCode value={qr} />
-                  <p className="text-xs text-stone-400 sm:text-left text-center">
-                    Scan QR code dengan WhatsApp untuk menghubungkan
-                  </p>
-                </div>
-              ) : (
-                <p className="mt-2 text-xs text-stone-500">
-                  Bot aktif melayani pelanggan
-                </p>
-              )}
+              <p className="text-sm font-semibold text-stone-900">
+                Semua pesanan sudah diproses
+              </p>
+              <p className="mt-1 text-xs text-stone-500">
+                Pesanan baru akan muncul di sini.
+              </p>
             </div>
-          </div>
+          ) : (
+            <div className="divide-y divide-stone-100">
+              {pendingProcessOrders.slice(0, 5).map((order) => (
+                <button
+                  key={order.id}
+                  onClick={() => navigate(`/app/orders/${order.id}`)}
+                  className="group grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-4 px-5 py-4 text-left transition hover:bg-stone-50/80 focus:bg-stone-50 focus:outline-none sm:grid-cols-[minmax(0,1.2fr)_minmax(100px,0.7fr)_auto] sm:px-6"
+                >
+                  <div className="flex min-w-0 items-center gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-teal-50 text-xs font-bold text-teal-700">
+                      {order.customerName.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-semibold text-stone-900">
+                        {order.customerName}
+                      </p>
+                      <p className="mt-0.5 text-xs text-stone-400">
+                        {formatOrderCode(order.id)} · {formatOrderTime(order.createdAt)}
+                      </p>
+                    </div>
+                  </div>
+                  <p className="hidden text-sm font-semibold text-stone-700 sm:block">
+                    {formatPrice(order.totalAmount)}
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <Badge variant={statusBadgeVariant[order.status]} dot>
+                      {statusLabel[order.status]}
+                    </Badge>
+                    <span className="text-stone-300 transition group-hover:translate-x-0.5 group-hover:text-teal-600">
+                      ›
+                    </span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
         </Card>
 
-        {/* Stock Alert */}
-        <Card>
-          <div className="flex items-start gap-4">
-            <div className="rounded-lg p-2.5 bg-amber-50 text-amber-600">
-              <BagIcon />
+        <div className="space-y-6">
+          <Card>
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div
+                  className={`flex h-10 w-10 items-center justify-center rounded-xl ${
+                    connection === "connected"
+                      ? "bg-emerald-50 text-emerald-600"
+                      : connection === "connecting"
+                        ? "bg-amber-50 text-amber-600"
+                        : "bg-red-50 text-red-600"
+                  }`}
+                >
+                  <SignalIcon />
+                </div>
+                <div>
+                  <h2 className="text-sm font-semibold text-stone-950">
+                    WhatsApp
+                  </h2>
+                  <p className="mt-0.5 text-xs text-stone-500">
+                    {phone || "Kanal penjualan utama"}
+                  </p>
+                </div>
+              </div>
+              <Badge variant={mapAccent(connection)} dot>
+                {connectionLabel(connection)}
+              </Badge>
             </div>
-            <div className="flex-1 min-w-0">
-              <h3 className="text-sm font-semibold text-stone-900">
-                Perhatian Stok
-              </h3>
-              {lowStockProducts.length === 0 ? (
-                <div className="mt-3 flex flex-col items-center justify-center py-6 text-center">
-                  <div className="mb-2 rounded-full bg-emerald-50 p-2 text-emerald-500">
-                    <svg
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                    >
-                      <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
-                      <path d="M22 4L12 14.01l-3-3" />
-                    </svg>
-                  </div>
-                  <p className="text-sm font-medium text-stone-900">
+            {connection === "disconnected" || connection === "connecting" ? (
+              <div className="mt-5 rounded-xl bg-stone-50 p-4">
+                <div className="flex flex-col items-center gap-3 sm:flex-row xl:flex-col 2xl:flex-row">
+                  <QRCode value={qr} />
+                  <p className="text-center text-xs leading-5 text-stone-500 sm:text-left xl:text-center 2xl:text-left">
+                    Scan kode QR melalui WhatsApp untuk mulai menerima pesan
+                    pelanggan.
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="mt-5 flex items-center gap-2 rounded-xl bg-emerald-50 px-3 py-2.5 text-xs font-medium text-emerald-700">
+                <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                Bot aktif dan siap melayani pelanggan
+              </div>
+            )}
+          </Card>
+
+          <Card>
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <h2 className="text-sm font-semibold text-stone-950">
+                  Perhatian stok
+                </h2>
+                <p className="mt-0.5 text-xs text-stone-500">
+                  Produk yang perlu ditinjau
+                </p>
+              </div>
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-50 text-amber-600">
+                <BagIcon />
+              </div>
+            </div>
+
+            {lowStockProducts.length === 0 ? (
+              <div className="mt-5 flex items-center gap-3 rounded-xl bg-emerald-50 px-3 py-3">
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-sm text-emerald-600 shadow-sm">
+                  ✓
+                </span>
+                <div>
+                  <p className="text-xs font-semibold text-emerald-800">
                     Semua stok aman
                   </p>
+                  <p className="mt-0.5 text-[11px] text-emerald-700/70">
+                    Belum ada produk yang perlu ditinjau.
+                  </p>
                 </div>
-              ) : (
-                <div className="mt-3 divide-y divide-stone-100">
-                  {lowStockProducts.map((product) => (
-                    <div
-                      key={product.id}
-                      onClick={() => navigate(`/app/products/${product.id}`)}
-                      className="flex cursor-pointer items-center justify-between py-2 transition-colors hover:text-teal-600"
+              </div>
+            ) : (
+              <div className="mt-4 space-y-1">
+                {lowStockProducts.slice(0, 4).map((product) => (
+                  <button
+                    key={product.id}
+                    onClick={() => navigate(`/app/products/${product.id}`)}
+                    className="flex w-full items-center justify-between gap-3 rounded-lg px-2 py-2.5 text-left transition hover:bg-stone-50 focus:bg-stone-50 focus:outline-none"
+                  >
+                    <span className="truncate text-xs font-medium text-stone-700">
+                      {product.name}
+                    </span>
+                    <span
+                      className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-semibold ${
+                        product.stock === 0
+                          ? "bg-red-50 text-red-600"
+                          : "bg-stone-100 text-stone-500"
+                      }`}
                     >
-                      <span className="text-sm text-stone-700">
-                        {product.name}
-                      </span>
-                      <span
-                        className={`text-xs font-medium ${product.stock === 0 ? "text-red-500" : "text-stone-400"}`}
-                      >
-                        {product.isAvailable
-                          ? `Stok: ${product.stock}`
-                          : "Tidak aktif"}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        </Card>
+                      {product.isAvailable ? `Stok ${product.stock}` : "Nonaktif"}
+                    </span>
+                  </button>
+                ))}
+                {lowStockProducts.length > 4 && (
+                  <button
+                    onClick={() => navigate("/app/products")}
+                    className="mt-2 w-full text-center text-xs font-semibold text-teal-700 hover:text-teal-900"
+                  >
+                    Lihat {lowStockProducts.length - 4} produk lainnya
+                  </button>
+                )}
+              </div>
+            )}
+          </Card>
+        </div>
       </div>
     </div>
   );

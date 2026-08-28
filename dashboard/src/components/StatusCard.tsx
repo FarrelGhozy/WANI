@@ -16,26 +16,42 @@ export default function StatusCard({
   icon,
   subText,
 }: StatusCardProps) {
+  const accentStyles = {
+    teal: {
+      icon: "bg-teal-50 text-teal-700",
+      detail: "bg-teal-500",
+    },
+    amber: {
+      icon: "bg-amber-50 text-amber-700",
+      detail: "bg-amber-500",
+    },
+    red: {
+      icon: "bg-red-50 text-red-700",
+      detail: "bg-red-500",
+    },
+  }[accent];
+
   return (
-    <Card accent={accent}>
-      <div className="flex items-start justify-between">
-        <div className="space-y-1">
-          <p className="text-xs font-medium uppercase tracking-wider text-stone-500">
+    <Card className="relative min-h-32 overflow-hidden">
+      <span
+        className={`absolute inset-x-0 top-0 h-0.5 ${accentStyles.detail}`}
+      />
+      <div className="flex items-start justify-between gap-4">
+        <div className="min-w-0">
+          <p className="text-xs font-medium text-stone-500">
             {label}
           </p>
-          <p className="text-2xl font-semibold text-stone-900">{value}</p>
-          {subText && <p className="text-xs text-stone-400">{subText}</p>}
+          <p className="mt-2 truncate text-2xl font-semibold tracking-tight text-stone-950">
+            {value}
+          </p>
+          {subText && (
+            <p className="mt-2 truncate text-[11px] text-stone-400">
+              {subText}
+            </p>
+          )}
         </div>
         {icon && (
-          <div
-            className={`rounded-lg p-2 ${
-              accent === "teal"
-                ? "bg-teal-50 text-teal-600"
-                : accent === "amber"
-                  ? "bg-amber-50 text-amber-600"
-                  : "bg-red-50 text-red-600"
-            }`}
-          >
+          <div className={`shrink-0 rounded-xl p-2.5 ${accentStyles.icon}`}>
             {icon}
           </div>
         )}

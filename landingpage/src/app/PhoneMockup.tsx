@@ -39,7 +39,7 @@ export default function PhoneMockup() {
   return (
     <div
       ref={phoneRef}
-      className="relative mx-auto w-[300px] select-none"
+      className="relative mx-auto w-[240px] select-none min-[360px]:w-[270px] sm:w-[300px]"
       style={{ opacity: 0 }}
     >
       <div className="absolute -inset-6 rounded-[3rem] bg-teal-400/20 blur-2xl" />
@@ -59,7 +59,7 @@ export default function PhoneMockup() {
 
           <div
             ref={chatRef}
-            className="flex h-[440px] flex-col gap-2 overflow-y-auto px-3 py-3"
+            className="flex h-[390px] flex-col gap-2 overflow-y-auto px-3 py-3 sm:h-[420px]"
           >
             {CHAT_MESSAGES.slice(0, visible).map((msg, i) => (
               <div

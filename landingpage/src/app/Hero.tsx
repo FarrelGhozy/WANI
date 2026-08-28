@@ -1,154 +1,126 @@
 import { useEffect, useRef } from "react";
 import { Link } from "react-router";
-import { ArrowRight, MessageCircle } from "lucide-react";
+import { ArrowRight, Check, Play } from "lucide-react";
 import gsap from "gsap";
 import PhoneMockup from "./PhoneMockup.tsx";
 
+const BENEFITS = ["Aktif 24/7", "Siap dalam 5 menit", "Tanpa kartu kredit"];
+
 export default function Hero() {
-  const badgeRef = useRef<HTMLDivElement>(null);
-  const headingRef = useRef<HTMLHeadingElement>(null);
-  const bodyRef = useRef<HTMLParagraphElement>(null);
-  const ctaRef = useRef<HTMLDivElement>(null);
-  const noteRef = useRef<HTMLParagraphElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const previewRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const tl = gsap.timeline({ delay: 0.3 });
-    tl.fromTo(
-      badgeRef.current,
-      { opacity: 0, y: 20 },
-      { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }
-    )
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+    if (reducedMotion) return;
+
+    const timeline = gsap.timeline({ delay: 0.1 });
+    timeline
       .fromTo(
-        headingRef.current,
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" },
-        "-=0.2"
+        contentRef.current,
+        { opacity: 0, y: 24 },
+        { opacity: 1, y: 0, duration: 0.7, ease: "power3.out" }
       )
       .fromTo(
-        bodyRef.current,
-        { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" },
-        "-=0.3"
-      )
-      .fromTo(
-        ctaRef.current,
-        { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" },
-        "-=0.2"
-      )
-      .fromTo(
-        noteRef.current,
-        { opacity: 0 },
-        { opacity: 1, duration: 0.4 },
-        "-=0.1"
+        previewRef.current,
+        { opacity: 0, y: 28, scale: 0.98 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: "power3.out" },
+        "-=0.45"
       );
+
+    return () => {
+      timeline.kill();
+    };
   }, []);
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-teal-700 via-teal-800 to-teal-900 pb-28 pt-32">
-      <div className="absolute inset-0 opacity-10">
-        <div
-          className="absolute -right-40 -top-40 h-[600px] w-[600px] rounded-full bg-teal-400"
-          style={{ filter: "blur(120px)" }}
-        />
-        <div
-          className="absolute -bottom-20 -left-20 h-[400px] w-[400px] rounded-full bg-teal-300"
-          style={{ filter: "blur(100px)" }}
-        />
-      </div>
-      <div
-        className="absolute inset-0 opacity-5"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(255,255,255,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.3) 1px, transparent 1px)",
-          backgroundSize: "60px 60px",
-        }}
-      />
+    <section className="relative overflow-hidden bg-[#f7f8f6] pb-18 pt-40 sm:pb-22 sm:pt-44 lg:min-h-[820px] lg:pb-24 lg:pt-44">
+      <div className="pointer-events-none absolute -right-64 -top-64 h-[640px] w-[640px] rounded-full bg-teal-100/60 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-48 -left-48 h-[480px] w-[480px] rounded-full bg-amber-100/50 blur-3xl" />
 
-      <div className="relative mx-auto max-w-6xl px-6">
-        <div className="grid items-center gap-16 lg:grid-cols-2">
-          <div>
-            <div
-              ref={badgeRef}
-              className="mb-5 inline-flex items-center gap-2 rounded-full border border-teal-500/40 bg-teal-800/60 px-4 py-1.5 text-sm text-teal-200"
-              style={{ opacity: 0 }}
-            >
-              <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-400" />
-              2.400+ UMKM sudah pakai WANI
-            </div>
-
-            <h1
-              ref={headingRef}
-              className="mb-6 text-4xl font-bold leading-tight text-white lg:text-5xl xl:text-6xl"
-              style={{ fontFamily: "'Instrument Serif', serif", opacity: 0 }}
-            >
-              WhatsApp AI{" "}
-              <span className="italic text-teal-300">untuk bisnis</span>
-              <br />
-              kamu yang lebih{" "}
-              <span className="italic text-teal-300">produktif</span>
-            </h1>
-
-            <p
-              ref={bodyRef}
-              className="mb-10 text-lg leading-relaxed text-teal-100/80"
-              style={{ opacity: 0 }}
-            >
-              WANI mengubah WhatsApp bisnismu jadi asisten AI yang siap melayani
-              pelanggan 24/7 — terima pesanan, jawab pertanyaan, dan kirim
-              laporan otomatis. Tanpa keahlian teknis.
-            </p>
-
-            <div
-              ref={ctaRef}
-              className="flex flex-wrap gap-4"
-              style={{ opacity: 0 }}
-            >
-              <Link
-                to="/app/signup"
-                className="group inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 text-base font-semibold text-teal-800 shadow-lg transition-all hover:bg-teal-50 hover:shadow-xl"
-              >
-                Coba Gratis 14 Hari
-                <ArrowRight
-                  size={16}
-                  className="transition-transform group-hover:translate-x-1"
-                />
-              </Link>
-              <a
-                href="#cara-kerja"
-                className="inline-flex items-center gap-2 rounded-full border border-teal-400/50 px-7 py-3.5 text-base font-semibold text-white transition-all hover:border-teal-300 hover:bg-teal-800/40"
-              >
-                <MessageCircle size={16} />
-                Lihat Demo
-              </a>
-            </div>
-
-            <p
-              ref={noteRef}
-              className="mt-5 text-sm text-teal-300/60"
-              style={{ opacity: 0 }}
-            >
-              Gratis 14 hari · Tanpa kartu kredit · Batalkan kapan saja
-            </p>
+      <div className="relative mx-auto grid max-w-7xl items-center gap-14 px-5 sm:px-6 lg:grid-cols-[minmax(0,1.02fr)_minmax(400px,0.98fr)] lg:gap-16 lg:px-8">
+        <div ref={contentRef}>
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-teal-200 bg-white px-3 py-1.5 text-xs font-semibold text-teal-800 shadow-sm">
+            <span className="h-2 w-2 rounded-full bg-emerald-500" />
+            Dipakai 2.400+ UMKM Indonesia
           </div>
 
-          <div className="flex items-center justify-center lg:justify-end">
+          <h1
+            className="max-w-3xl text-4xl font-semibold leading-[1.08] tracking-[-0.035em] text-stone-950 sm:text-5xl lg:text-[3.75rem]"
+            style={{ fontFamily: "'Instrument Serif', serif" }}
+          >
+            Bisnis tetap melayani, bahkan saat kamu{" "}
+            <span className="italic text-teal-700">sedang istirahat.</span>
+          </h1>
+
+          <p className="mt-6 max-w-xl text-base leading-7 text-stone-600 sm:text-lg sm:leading-8">
+            WANI adalah asisten WhatsApp berbasis AI yang menjawab pelanggan,
+            mencatat pesanan, dan menjaga tokomu tetap responsif selama 24 jam.
+          </p>
+
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <Link
+              to="/app/signup"
+              className="group inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-teal-700 px-6 text-sm font-semibold text-white shadow-[0_10px_30px_-12px_rgba(15,118,110,0.7)] transition hover:bg-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-600/30"
+            >
+              Coba Gratis 14 Hari
+              <ArrowRight
+                size={17}
+                className="transition-transform group-hover:translate-x-0.5"
+              />
+            </Link>
+            <a
+              href="#cara-kerja"
+              className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-stone-300 bg-white px-6 text-sm font-semibold text-stone-700 transition hover:border-stone-400 hover:bg-stone-50"
+            >
+              <Play size={16} fill="currentColor" />
+              Lihat Cara Kerja
+            </a>
+          </div>
+
+          <ul className="mt-6 flex flex-wrap gap-x-5 gap-y-2" aria-label="Keuntungan mencoba WANI">
+            {BENEFITS.map((benefit) => (
+              <li
+                key={benefit}
+                className="flex items-center gap-1.5 text-xs font-medium text-stone-500"
+              >
+                <span className="flex h-4 w-4 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
+                  <Check size={10} strokeWidth={3} />
+                </span>
+                {benefit}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div ref={previewRef} className="relative flex justify-center lg:justify-end">
+          <div className="absolute inset-x-2 bottom-8 top-8 rotate-2 rounded-[2rem] bg-teal-900 shadow-[0_35px_80px_-35px_rgba(19,78,74,0.75)] sm:inset-x-8 lg:inset-x-0" />
+          <div className="absolute left-0 top-12 hidden rounded-2xl border border-white/10 bg-white/95 p-4 shadow-xl backdrop-blur sm:block lg:hidden xl:-left-8 xl:block">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-stone-400">
+              Respons pelanggan
+            </p>
+            <div className="mt-2 flex items-end gap-2">
+              <span className="text-2xl font-bold text-stone-950">&lt; 1 mnt</span>
+              <span className="mb-1 text-xs font-semibold text-emerald-600">24/7</span>
+            </div>
+          </div>
+          <div className="relative z-10 px-0 py-7 sm:px-12 sm:py-10">
             <PhoneMockup />
           </div>
+          <div className="absolute -bottom-2 right-0 z-20 hidden rounded-2xl border border-stone-100 bg-white p-4 shadow-xl sm:block lg:-right-4">
+            <div className="flex items-center gap-3">
+              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
+                <Check size={18} strokeWidth={2.5} />
+              </span>
+              <div>
+                <p className="text-xs font-semibold text-stone-900">Pesanan dicatat</p>
+                <p className="mt-0.5 text-[10px] text-stone-400">Otomatis ke dashboard</p>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-
-      <div className="absolute inset-x-0 bottom-0">
-        <svg
-          viewBox="0 0 1440 60"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M0 60L60 50C120 40 240 20 360 16.7C480 13.3 600 26.7 720 30C840 33.3 960 26.7 1080 23.3C1200 20 1320 20 1380 20L1440 20V60H1380C1320 60 1200 60 1080 60C960 60 840 60 720 60C600 60 480 60 360 60C240 60 120 60 60 60H0Z"
-            fill="#fafaf9"
-          />
-        </svg>
       </div>
     </section>
   );

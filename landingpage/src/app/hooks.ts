@@ -7,18 +7,25 @@ gsap.registerPlugin(ScrollTrigger);
 export function useFadeUp(ref: React.RefObject<HTMLElement | null>, delay = 0) {
   useEffect(() => {
     if (!ref.current) return;
-    gsap.fromTo(
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      gsap.set(ref.current, { opacity: 1, y: 0 });
+      return;
+    }
+    const animation = gsap.fromTo(
       ref.current,
-      { opacity: 0, y: 40 },
+      { opacity: 0, y: 28 },
       {
         opacity: 1,
         y: 0,
-        duration: 0.8,
+        duration: 0.7,
         delay,
         ease: "power3.out",
-        scrollTrigger: { trigger: ref.current, start: "top 88%" },
+        scrollTrigger: { trigger: ref.current, start: "top 90%" },
       }
     );
+    return () => {
+      animation.kill();
+    };
   }, []);
 }
 
@@ -30,17 +37,24 @@ export function useStagger(
   useEffect(() => {
     if (!containerRef.current) return;
     const children = containerRef.current.querySelectorAll(childSelector);
-    gsap.fromTo(
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      gsap.set(children, { opacity: 1, y: 0 });
+      return;
+    }
+    const animation = gsap.fromTo(
       children,
-      { opacity: 0, y: 36 },
+      { opacity: 0, y: 24 },
       {
         opacity: 1,
         y: 0,
         duration: 0.7,
         stagger: staggerAmount,
         ease: "power3.out",
-        scrollTrigger: { trigger: containerRef.current, start: "top 85%" },
+        scrollTrigger: { trigger: containerRef.current, start: "top 90%" },
       }
     );
+    return () => {
+      animation.kill();
+    };
   }, []);
 }

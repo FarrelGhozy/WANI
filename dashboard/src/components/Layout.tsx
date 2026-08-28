@@ -51,12 +51,12 @@ function LayoutInner({
   removeToast: ReturnType<typeof useToast>["removeToast"];
 }) {
   return (
-    <div className="flex min-h-screen bg-stone-50">
+    <div className="flex min-h-screen bg-[#f7f8f6]">
       <NavProgress />
       <Sidebar connection={connection} />
       <div className="flex flex-1 flex-col lg:ml-64">
         <Topbar connection={connection} />
-        <main className="flex-1 p-4 pb-24 sm:p-6 sm:pb-24 lg:p-8">
+        <main className="flex-1 p-4 pb-24 sm:p-6 sm:pb-24 lg:p-8 xl:px-10">
           <ErrorBoundary>
             <Outlet />
           </ErrorBoundary>

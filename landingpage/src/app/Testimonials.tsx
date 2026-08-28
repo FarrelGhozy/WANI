@@ -11,18 +11,18 @@ export default function Testimonials() {
   useStagger(cardsRef, ".testi-card", 0.15);
 
   return (
-    <section id="testimoni" className="bg-white py-24">
-      <div className="mx-auto max-w-6xl px-6">
+    <section id="testimoni" className="scroll-mt-20 bg-white py-20 sm:py-24">
+      <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
         <div
           ref={headingRef}
           className="mb-16 text-center"
           style={{ opacity: 0 }}
         >
-          <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-teal-600">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-teal-700">
             Testimoni
           </p>
           <h2
-            className="text-3xl font-bold text-stone-900 lg:text-4xl"
+            className="text-3xl font-semibold text-stone-950 sm:text-4xl"
             style={{ fontFamily: "'Instrument Serif', serif" }}
           >
             Cerita nyata dari{" "}
@@ -34,12 +34,12 @@ export default function Testimonials() {
           {TESTIMONIALS.map((t) => (
             <div
               key={t.name}
-              className="testi-card flex flex-col justify-between rounded-2xl border border-stone-200 bg-white p-7 shadow-sm transition-shadow hover:shadow-md"
+              className="testi-card flex flex-col justify-between rounded-2xl border border-stone-200 bg-[#fcfcfb] p-6 transition-all hover:border-teal-100 hover:shadow-[0_18px_45px_-30px_rgba(15,118,110,0.4)] sm:p-7"
               style={{ opacity: 0 }}
             >
               <div>
                 <StarRating count={t.rating} />
-                <p className="mt-4 leading-relaxed text-stone-600">
+                <p className="mt-4 text-sm leading-7 text-stone-600">
                   "{t.quote}"
                 </p>
               </div>
