@@ -17,12 +17,12 @@ function todayKey(): string {
 }
 
 /** True when today's LLM call count has reached the configured daily budget. */
-export async function isBudgetExceeded(): Promise<boolean> {
+export async function isBudgetExceeded(ownerId: string): Promise<boolean> {
   const budget = env.guardrails.dailyLlmBudget;
   if (budget <= 0) return false;
   try {
     const row = await prisma.usageCounter.findUnique({
-      where: { id: todayKey() },
+      where: { ownerId_date: { ownerId, date: todayKey() } },
     });
     return (row?.llmCalls ?? 0) >= budget;
   } catch (err) {
@@ -33,13 +33,17 @@ export async function isBudgetExceeded(): Promise<boolean> {
 }
 
 /** Increment today's usage counter after a successful LLM call. */
-export async function recordLlmUsage(usage: TokenUsage): Promise<void> {
-  const id = todayKey();
+export async function recordLlmUsage(
+  ownerId: string,
+  usage: TokenUsage
+): Promise<void> {
+  const date = todayKey();
   try {
     await prisma.usageCounter.upsert({
-      where: { id },
+      where: { ownerId_date: { ownerId, date } },
       create: {
-        id,
+        ownerId,
+        date,
         llmCalls: 1,
         tokensIn: usage.promptTokens,
         tokensOut: usage.completionTokens,

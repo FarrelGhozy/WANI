@@ -84,7 +84,10 @@ describe("concurrency safety (#183)", () => {
 
     await Promise.all(
       Array.from({ length: 10 }, (_, i) =>
-        recordLlmUsage({ promptTokens: i + 1, completionTokens: 2 })
+        recordLlmUsage("owner-1", {
+          promptTokens: i + 1,
+          completionTokens: 2,
+        })
       )
     );
 

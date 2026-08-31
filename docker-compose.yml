@@ -33,6 +33,7 @@ services:
       DATABASE_NAME: ${DATABASE_NAME}
       PORT: ${PORT}
       NODE_ENV: production
+      ALLOW_LEGACY_API_TOKEN: ${ALLOW_LEGACY_API_TOKEN:-false}
       API_TOKEN: ${API_TOKEN}
       JWT_SECRET: ${JWT_SECRET}
       JWT_EXPIRES: ${JWT_EXPIRES}

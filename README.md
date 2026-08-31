@@ -71,7 +71,8 @@ Semua konfigurasi lewat `.env` (root project). Lihat [`.env.example`](.env.examp
 | `DATABASE_NAME`     |       | `wani_api`                        | Nama database API                                  |
 | `DATABASE_USER`     |       | `postgres`                        | User PostgreSQL                                    |
 | `PORT`              |       | `3001`                            | Port API server                                    |
-| `API_TOKEN`         | ✅    | —                                 | Shared secret bot↔API auth                         |
+| `ALLOW_LEGACY_API_TOKEN` |       | `false`                    | Aktifkan shared token sementara saat migrasi       |
+| `API_TOKEN`         |       | —                                 | Legacy only; minimal 32 karakter                   |
 | `JWT_SECRET`        | ✅    | —                                 | Secret untuk JWT auth                              |
 | `LLM_API_KEY`       | ✅    | —                                 | API key OpenCode Zen (dapat gratis di opencode.ai) |
 | `LLM_MODEL`         |       | `opencode/deepseek-v4-flash-free` | Model utama                                        |
@@ -101,7 +102,6 @@ cp .env.example .env
 | Variable            | Contoh           | Keterangan           |
 | ------------------- | ---------------- | -------------------- |
 | `DATABASE_PASSWORD` | `postgres`       | Password PostgreSQL  |
-| `API_TOKEN`         | `rahasia123`     | Shared secret        |
 | `JWT_SECRET`        | `jwt-rahasia456` | Secret JWT           |
 | `LLM_API_KEY`       | `sk-xxx`         | API key OpenCode Zen |
 
@@ -190,12 +190,12 @@ Semua response format:
 | -------- | --------------------------------- | ------------ | ------------------------------------- |
 | `GET`    | `/api/qr`                         | —            | QR code string                        |
 | `GET`    | `/api/qr/status`                  | —            | Status koneksi + nomor HP             |
-| `POST`   | `/api/qr`                         | 🔒 API_TOKEN | Push QR / update status               |
-| `DELETE` | `/api/qr`                         | 🔒 API_TOKEN | Clear QR (saat connect)               |
+| `POST`   | `/api/qr`                         | 🔒 Service key | Push QR / update status             |
+| `DELETE` | `/api/qr`                         | 🔒 Service key | Clear QR (saat connect)             |
 | `POST`   | `/api/qr/reset`                   | 🔒 JWT       | Full reset session                    |
 | `POST`   | `/api/qr/pairing`                 | 🔒 JWT       | Minta kode pairing                    |
 | `POST`   | `/api/qr/refresh-pairing`         | 🔒 JWT       | Refresh kode pairing                  |
-| `POST`   | `/api/chat`                       | 🔒 API_TOKEN | Proses pesan WA → AI reply            |
+| `POST`   | `/api/chat`                       | 🔒 Service key | Proses pesan WA → AI reply          |
 | `GET`    | `/api/store`                      | —            | Profil toko + `hasPaymentMethods`     |
 | `PUT`    | `/api/store`                      | 🔒 JWT       | Update profil toko                    |
 | `GET`    | `/api/ai-config`                  | 🔒 JWT       | Konfigurasi AI                        |
@@ -214,21 +214,24 @@ Semua response format:
 | `PUT`    | `/api/orders/:id/status`          | 🔒 JWT       | Update status                         |
 | `PUT`    | `/api/orders/:id/notes`           | 🔒 JWT       | Update catatan                        |
 | `PUT`    | `/api/orders/:id/payment`         | 🔒 JWT       | Buat/update pembayaran                |
-| `GET`    | `/api/customers`                  | —            | Daftar pelanggan                      |
-| `GET`    | `/api/customers/:id`              | —            | Detail pelanggan                      |
+| `GET`    | `/api/customers`                  | 🔒 JWT       | Daftar pelanggan                      |
+| `GET`    | `/api/customers/:id`              | 🔒 JWT       | Detail pelanggan                      |
 | `PUT`    | `/api/customers/:id`              | 🔒 JWT       | Update pelanggan                      |
-| `GET`    | `/api/conversations/:id`          | —            | Pesan percakapan                      |
+| `GET`    | `/api/conversations/:id`          | 🔒 JWT       | Pesan percakapan                      |
 | `PUT`    | `/api/conversations/:id/status`   | 🔒 JWT       | Update status percakapan              |
 | `POST`   | `/api/conversations/:id/messages` | 🔒 JWT       | Kirim pesan HUMAN                     |
-| `GET`    | `/api/dashboard/stats`            | —            | Statistik dashboard                   |
-| `GET`    | `/api/logs`                       | —            | Activity log (paginated)              |
-| `GET`    | `/api/usage`                      | —            | Counter LLM usage (hari ini)          |
+| `GET`    | `/api/dashboard/stats`            | 🔒 JWT       | Statistik dashboard                   |
+| `GET`    | `/api/logs`                       | 🔒 JWT       | Activity log (paginated)              |
+| `GET`    | `/api/usage`                      | 🔒 JWT       | Counter LLM usage (hari ini)          |
 | `POST`   | `/api/auth/register`              | —            | Register                              |
 | `POST`   | `/api/auth/login`                 | —            | Login → JWT                           |
 | `GET`    | `/api/auth/me`                    | 🔒 JWT       | Current user                          |
 | `POST`   | `/api/auth/logout`                | —            | Logout                                |
 | `POST`   | `/api/auth/forgot-password`       | —            | Generate reset token                  |
 | `POST`   | `/api/auth/reset-password`        | —            | Reset password                        |
+| `GET`    | `/api/api-keys`                   | 🔒 JWT       | Daftar managed service key            |
+| `POST`   | `/api/api-keys`                   | 🔒 JWT       | Generate managed service key          |
+| `DELETE` | `/api/api-keys/:id`               | 🔒 JWT       | Revoke managed service key            |
 | `GET`    | `/api/store/payment-methods`      | —            | Daftar metode pembayaran              |
 | `POST`   | `/api/store/payment-methods`      | 🔒 JWT       | Tambah metode bayar                   |
 | `PUT`    | `/api/store/payment-methods/:id`  | 🔒 JWT       | Edit metode bayar                     |
@@ -242,8 +245,8 @@ Semua response format:
 | `GET`    | `/api/website/generations`        | 🔒 JWT       | Riwayat generasi                      |
 | `DELETE` | `/api/website/generations/:id`    | 🔒 JWT       | Hapus record generasi                 |
 | `GET`    | `/s/:slug`                        | —            | Serve generated static site           |
-| `GET`    | `/api/outgoing`                   | 🔒 API_TOKEN | Daftar outgoing message (legacy)      |
-| `PATCH`  | `/api/outgoing/:id/delivered`     | 🔒 API_TOKEN | Tandai terkirim (legacy)              |
+| `GET`    | `/api/outgoing`                   | 🔒 Service key | Daftar outgoing message (legacy)    |
+| `PATCH`  | `/api/outgoing/:id/delivered`     | 🔒 Service key | Tandai terkirim (legacy)            |
 | `GET`    | `/api/debug/traces`               | —            | Pipeline traces (dev)                 |
 | `GET`    | `/api/debug/traces/:id`           | —            | Trace detail (dev)                    |
 | `DELETE` | `/api/debug/traces`               | —            | Clear traces (dev)                    |
@@ -261,14 +264,14 @@ Semua response format:
 | `GET`    | `/api/sessions/:sessionId`                 | —            | Detail session                   |
 | `DELETE` | `/api/sessions/:sessionId`                 | 🔒 JWT       | Stop & delete session            |
 | `GET`    | `/api/sessions/:sessionId/qr`              | —            | QR code                          |
-| `POST`   | `/api/sessions/:sessionId/qr`              | 🔒 API_TOKEN | WAHA webhook — upsert QR/status  |
-| `DELETE` | `/api/sessions/:sessionId/qr`              | 🔒 API_TOKEN | Clear QR                         |
+| `POST`   | `/api/sessions/:sessionId/qr`              | 🔒 Service key | WAHA webhook — upsert QR/status |
+| `DELETE` | `/api/sessions/:sessionId/qr`              | 🔒 Service key | Clear QR                        |
 | `POST`   | `/api/sessions/:sessionId/pairing`         | 🔒 JWT       | Minta pairing code               |
 | `POST`   | `/api/sessions/:sessionId/refresh-pairing` | 🔒 JWT       | Refresh pairing code             |
 | `POST`   | `/api/sessions/:sessionId/reset`           | 🔒 JWT       | Reset session                    |
-| `POST`   | `/api/sessions/:sessionId/messages`        | 🔒 API_TOKEN | WAHA webhook — incoming message  |
+| `POST`   | `/api/sessions/messages`                   | 🔒 Service key | WAHA webhook — incoming message |
 
-> 🔒 API_TOKEN = `requireAuth` (Bearer API_TOKEN), 🔒 JWT = `requireJwt` (JWT dari login)
+> 🔒 Service key dibuat dari **Pengaturan → API Keys**. Setiap key terikat ke pemilik toko, scope, dan tanggal kedaluwarsa. `API_TOKEN` hanya tersedia untuk migrasi jika `ALLOW_LEGACY_API_TOKEN=true`.
 
 ---
 

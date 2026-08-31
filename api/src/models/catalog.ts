@@ -1,5 +1,5 @@
 import { BaseModel } from "@/models/base";
-import { BadRequestError } from "@/utils/errors";
+import { BadRequestError, NotFoundError } from "@/utils/errors";
 import type { Product, Category } from "@db/client";
 
 export type ProductResponse = {
@@ -180,7 +180,28 @@ export class ProductModel extends BaseModel {
     return toProductResponse(row);
   }
 
+  static async getOwnedByIdWithCategory(
+    ownerId: string,
+    id: string
+  ): Promise<ProductResponse | null> {
+    const row = await this.delegate.findFirst({
+      where: { id, ownerId },
+      include: { category: true },
+    });
+    return row ? toProductResponse(row) : null;
+  }
+
+  static async getOwnedOrThrow(
+    ownerId: string,
+    id: string
+  ): Promise<ProductResponse> {
+    const product = await this.getOwnedByIdWithCategory(ownerId, id);
+    if (!product) throw new NotFoundError("product not found");
+    return product;
+  }
+
   static async updateProduct(
+    ownerId: string,
     id: string,
     data: {
       name?: string;
@@ -192,8 +213,9 @@ export class ProductModel extends BaseModel {
       imageUrl?: string | null;
     }
   ): Promise<ProductResponse> {
+    await this.getOwnedOrThrow(ownerId, id);
     const row = await this.delegate.update({
-      where: { id },
+      where: { id, ownerId },
       data: {
         ...data,
         categoryId: data.categoryId === undefined ? undefined : data.categoryId,
@@ -203,7 +225,8 @@ export class ProductModel extends BaseModel {
     return toProductResponse(row);
   }
 
-  static async deleteProduct(id: string): Promise<void> {
+  static async deleteProduct(ownerId: string, id: string): Promise<void> {
+    await this.getOwnedOrThrow(ownerId, id);
     const orderCount = await this.db.orderItem.count({
       where: { productId: id },
     });
@@ -212,7 +235,7 @@ export class ProductModel extends BaseModel {
         `Produk tidak bisa dihapus karena sudah digunakan di ${orderCount} pesanan. Nonaktifkan produk jika tidak ingin ditampilkan.`
       );
     }
-    await this.delegate.delete({ where: { id } });
+    await this.delegate.delete({ where: { id, ownerId } });
   }
 }
 
@@ -238,6 +261,26 @@ export class CategoryModel extends BaseModel {
     return row ? toCategoryResponse(row) : null;
   }
 
+  static async getOwnedByIdWithCount(
+    ownerId: string,
+    id: string
+  ): Promise<CategoryResponse | null> {
+    const row = await this.delegate.findFirst({
+      where: { id, ownerId },
+      include: { _count: { select: { products: true } } },
+    });
+    return row ? toCategoryResponse(row) : null;
+  }
+
+  static async getOwnedOrThrow(
+    ownerId: string,
+    id: string
+  ): Promise<CategoryResponse> {
+    const category = await this.getOwnedByIdWithCount(ownerId, id);
+    if (!category) throw new NotFoundError("category not found");
+    return category;
+  }
+
   static async createCategory(
     ownerId: string,
     data: {
@@ -257,26 +300,29 @@ export class CategoryModel extends BaseModel {
   }
 
   static async updateCategory(
+    ownerId: string,
     id: string,
     data: { name?: string; description?: string | null }
   ): Promise<CategoryResponse> {
+    await this.getOwnedOrThrow(ownerId, id);
     const row = await this.delegate.update({
-      where: { id },
+      where: { id, ownerId },
       data,
       include: { _count: { select: { products: true } } },
     });
     return toCategoryResponse(row);
   }
 
-  static async deleteCategory(id: string): Promise<void> {
+  static async deleteCategory(ownerId: string, id: string): Promise<void> {
+    await this.getOwnedOrThrow(ownerId, id);
     const productCount = await this.db.product.count({
-      where: { categoryId: id },
+      where: { ownerId, categoryId: id },
     });
     if (productCount > 0) {
       throw new BadRequestError(
         `Kategori tidak bisa dihapus karena masih memiliki ${productCount} produk. Pindahkan atau hapus produk terlebih dahulu.`
       );
     }
-    await this.delegate.delete({ where: { id } });
+    await this.delegate.delete({ where: { id, ownerId } });
   }
 }

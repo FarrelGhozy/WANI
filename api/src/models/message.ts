@@ -26,6 +26,18 @@ export class MessageModel extends BaseModel {
     });
   }
 
+  static async recentByOwnerConversation(
+    ownerId: string,
+    convId: string,
+    limit = 20
+  ): Promise<Message[]> {
+    return this.delegate.findMany({
+      where: { ownerId, conversationId: convId },
+      orderBy: { createdAt: "asc" },
+      take: limit,
+    });
+  }
+
   static async existsByWaMsgId(waMsgId: string): Promise<boolean> {
     const msg = await this.delegate.findUnique({ where: { waMsgId } });
     return msg !== null;

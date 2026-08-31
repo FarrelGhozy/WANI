@@ -19,6 +19,7 @@ mock.module("@/config/db", () => ({
     product: {
       findMany: mockProductFindMany,
       findUnique: mockProductFindUnique,
+      findFirst: mockProductFindUnique,
       create: mockProductCreate,
       update: mockProductUpdate,
       delete: mockProductDelete,
@@ -28,6 +29,7 @@ mock.module("@/config/db", () => ({
     category: {
       findMany: mockCategoryFindMany,
       findUnique: mockCategoryFindUnique,
+      findFirst: mockCategoryFindUnique,
       create: mockCategoryCreate,
       update: mockCategoryUpdate,
       delete: mockCategoryDelete,

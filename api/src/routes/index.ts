@@ -14,6 +14,7 @@ import uploadRoutes from "@/routes/upload";
 import monitoringRoutes from "@/routes/monitoring";
 import debugRoutes from "@/routes/debug";
 import sessionsRoutes from "@/routes/sessions";
+import apiKeyRoutes from "@/routes/api-key";
 
 const router = Router();
 router.use("/store", storeRoutes);
@@ -31,6 +32,7 @@ router.use("/auth", authRoutes);
 router.use("/website", websiteRoutes);
 router.use("/upload", uploadRoutes);
 router.use("/sessions", sessionsRoutes);
+router.use("/api-keys", apiKeyRoutes);
 router.use("/", monitoringRoutes);
 
 // Dev-only: pipeline traces, circuit breaker status/reset

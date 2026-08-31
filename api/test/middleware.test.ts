@@ -1,7 +1,8 @@
 import { expect, test, describe, beforeEach, afterEach } from "bun:test";
 import type { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { requireAuth } from "@/middleware/auth";
+import { requireAuth, requireServiceAuth } from "@/middleware/auth";
+import { ApiKeyModel } from "@/models/api-key";
 import { validate } from "@/middleware/validate";
 import { errorHandler } from "@/middleware/error";
 import {
@@ -13,49 +14,115 @@ import {
 import { z } from "zod";
 
 const ORIGINAL_API_TOKEN = process.env.API_TOKEN;
+const ORIGINAL_ALLOW_LEGACY = process.env.ALLOW_LEGACY_API_TOKEN;
+const TEST_API_TOKEN = "test-api-token-that-is-at-least-32-characters";
 
 beforeEach(() => {
-  process.env.API_TOKEN = "test-api-token";
+  process.env.API_TOKEN = TEST_API_TOKEN;
+  process.env.ALLOW_LEGACY_API_TOKEN = "true";
 });
 
 afterEach(() => {
   process.env.API_TOKEN = ORIGINAL_API_TOKEN;
+  process.env.ALLOW_LEGACY_API_TOKEN = ORIGINAL_ALLOW_LEGACY;
 });
 
 // ── requireAuth ──────────────────────────────────────────────
 
 describe("requireAuth", () => {
-  test("passes with valid Bearer token", () => {
+  test("passes with explicitly enabled secure legacy token", async () => {
     const req = {
-      headers: { authorization: "Bearer test-api-token" },
+      headers: { authorization: `Bearer ${TEST_API_TOKEN}` },
     } as Request;
     let called = false;
     const next: NextFunction = () => {
       called = true;
     };
-    requireAuth(req, {} as Response, next);
+    await requireAuth(req, {} as Response, next);
     expect(called).toBe(true);
+    expect(req.serviceAuth?.apiKeyId).toBe("legacy");
   });
 
-  test("throws on missing header", () => {
+  test("throws on missing header", async () => {
     const req = { headers: {} } as Request;
-    expect(() => requireAuth(req, {} as Response, () => {})).toThrow(
+    await expect(requireAuth(req, {} as Response, () => {})).rejects.toBeInstanceOf(
       UnauthorizedError
     );
   });
 
-  test("throws on wrong scheme", () => {
+  test("throws on wrong scheme", async () => {
     const req = { headers: { authorization: "Basic xxx" } } as Request;
-    expect(() => requireAuth(req, {} as Response, () => {})).toThrow(
+    await expect(requireAuth(req, {} as Response, () => {})).rejects.toBeInstanceOf(
       UnauthorizedError
     );
   });
 
-  test("throws on wrong token", () => {
+  test("throws on wrong token", async () => {
     const req = { headers: { authorization: "Bearer wrong-token" } } as Request;
-    expect(() => requireAuth(req, {} as Response, () => {})).toThrow(
+    await expect(requireAuth(req, {} as Response, () => {})).rejects.toBeInstanceOf(
       UnauthorizedError
     );
+  });
+
+  test("rejects placeholder API_TOKEN even when legacy mode is enabled", async () => {
+    process.env.API_TOKEN = "change-me-to-a-random-secret";
+    const req = {
+      headers: { authorization: "Bearer change-me-to-a-random-secret" },
+    } as Request;
+    await expect(requireAuth(req, {} as Response, () => {})).rejects.toBeInstanceOf(
+      UnauthorizedError
+    );
+  });
+
+  test("enforces scope on managed API keys", async () => {
+    const original = ApiKeyModel.authenticate;
+    ApiKeyModel.authenticate = async () => ({
+      id: "key-1",
+      ownerId: "owner-1",
+      name: "WAHA",
+      scopes: ["outgoing:read"],
+    });
+    const req = {
+      headers: {
+        authorization: `Bearer wani_sk_abcdef123456_${"x".repeat(43)}`,
+      },
+    } as Request;
+    try {
+      await expect(
+        requireServiceAuth("sessions:messages")(req, {} as Response, () => {})
+      ).rejects.toMatchObject({ statusCode: 403 });
+    } finally {
+      ApiKeyModel.authenticate = original;
+    }
+  });
+
+  test("attaches the managed key owner to the request", async () => {
+    const original = ApiKeyModel.authenticate;
+    ApiKeyModel.authenticate = async () => ({
+      id: "key-1",
+      ownerId: "owner-1",
+      name: "WAHA",
+      scopes: ["sessions:messages"],
+    });
+    const req = {
+      headers: {
+        authorization: `Bearer wani_sk_abcdef123456_${"x".repeat(43)}`,
+      },
+    } as Request;
+    let called = false;
+    try {
+      await requireServiceAuth("sessions:messages")(
+        req,
+        {} as Response,
+        () => {
+          called = true;
+        }
+      );
+      expect(called).toBe(true);
+      expect(req.serviceAuth?.ownerId).toBe("owner-1");
+    } finally {
+      ApiKeyModel.authenticate = original;
+    }
   });
 });
 

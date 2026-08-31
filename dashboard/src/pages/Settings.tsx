@@ -7,6 +7,7 @@ import { fetchApi } from "@/lib/api.ts";
 import StoreTab from "@/components/StoreTab.tsx";
 import AiTab from "@/components/AiTab.tsx";
 import WaSessionTab from "@/components/WaSessionTab.tsx";
+import ApiKeysTab from "@/components/ApiKeysTab.tsx";
 import { Skeleton, SkeletonCard } from "@/components/ui/Skeleton.tsx";
 import type { AiConfig } from "@/hooks/useSettings.ts";
 
@@ -14,6 +15,7 @@ const tabs = [
   { id: "store", label: "Toko" },
   { id: "ai", label: "AI Agent" },
   { id: "wa", label: "WA Session" },
+  { id: "api-keys", label: "API Keys" },
 ] as const;
 
 export default function Settings() {
@@ -204,6 +206,7 @@ export default function Settings() {
           refreshingPairing={refreshingPairing}
         />
       )}
+      {activeTab === "api-keys" && <ApiKeysTab />}
     </div>
   );
 }

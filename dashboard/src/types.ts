@@ -169,6 +169,24 @@ export interface WaStatus {
   error: string | null;
 }
 
+export type ApiKeyScope =
+  | "sessions:messages"
+  | "sessions:qr"
+  | "chat:write"
+  | "outgoing:read"
+  | "outgoing:write";
+
+export interface ApiKeyItem {
+  id: string;
+  name: string;
+  prefix: string;
+  scopes: ApiKeyScope[];
+  expiresAt: string;
+  revokedAt: string | null;
+  lastUsedAt: string | null;
+  createdAt: string;
+}
+
 export interface WebsiteConfig {
   heroHeadline: string;
   heroSubheadline: string;

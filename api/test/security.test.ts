@@ -59,3 +59,22 @@ describe("Rate limiting", () => {
     expect(res.status).toBe(401);
   });
 });
+
+describe("Sensitive endpoint authentication", () => {
+  const protectedGets = [
+    "/api/customers",
+    "/api/customers/customer-1",
+    "/api/conversations/conversation-1",
+    "/api/dashboard/stats",
+    "/api/logs",
+    "/api/usage",
+    "/api/api-keys",
+  ];
+
+  for (const endpoint of protectedGets) {
+    test(`returns 401 for GET ${endpoint} without auth`, async () => {
+      const res = await request(app).get(endpoint);
+      expect(res.status).toBe(401);
+    });
+  }
+});

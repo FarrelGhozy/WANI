@@ -13,10 +13,11 @@ const router = Router();
 
 router.get(
   "/",
+  requireJwt,
   validate({ query: customerQuerySchema }),
   customerController.listCustomers
 );
-router.get("/:id", customerController.getCustomer);
+router.get("/:id", requireJwt, customerController.getCustomer);
 router.put(
   "/:id",
   requireJwt,
@@ -28,7 +29,7 @@ export default router;
 
 export const conversationRouter = Router();
 
-conversationRouter.get("/:id", customerController.getConversation);
+conversationRouter.get("/:id", requireJwt, customerController.getConversation);
 conversationRouter.put(
   "/:id/status",
   requireJwt,

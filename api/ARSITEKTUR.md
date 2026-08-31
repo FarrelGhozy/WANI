@@ -318,7 +318,7 @@ Dua mekanisme auth:
 
 | Auth          | Middleware    | Header                              | Used By                                           |
 | ------------- | ------------- | ----------------------------------- | ------------------------------------------------- |
-| **API_TOKEN** | `requireAuth` | `Authorization: Bearer {API_TOKEN}` | Bot endpoints (qr, chat)                          |
+| **Service API key** | `requireServiceAuth(scope)` | `Authorization: Bearer wani_sk_...` | Owner-bound webhook/service endpoints |
 | **JWT**       | `requireJwt`  | `Authorization: Bearer {jwt_token}` | Admin endpoints (products, orders, settings, dll) |
 
 ### Endpoints
@@ -393,7 +393,7 @@ Dua mekanisme auth:
 | `GET`    | `/api/metrics`                    | —    | `getMetricsHandler`        | Prometheus metrics                                 |
 | `GET`    | `/s/:slug`                        | —    | Express static             | Serve generated static site                        |
 
-> 🔒 = `requireAuth` (Bearer API_TOKEN), JWT = `requireJwt` (JWT dari login)
+> 🔒 = managed service API key (owner, scope, expiry, revoke), JWT = `requireJwt` (JWT dari login)
 
 Lihat `dashboard/API_SPEC.md` untuk kontrak lengkap request/response tiap endpoint.
 
@@ -476,9 +476,9 @@ Urutan middleware di `src/server.ts`:
 
 ```typescript
 // middleware/auth.ts
-// Extracts Bearer token → compares with API_TOKEN env
-// Throws UnauthorizedError() on mismatch/missing
-// Sync — not async
+// Validates a hashed managed API key from the database
+// Checks revokedAt, expiresAt, owner binding, and required scope
+// Legacy API_TOKEN works only when explicitly enabled for migration
 ```
 
 ### requireJwt

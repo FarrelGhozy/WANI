@@ -55,7 +55,9 @@ Untuk endpoint yang butuh auth:
 Authorization: Bearer {API_TOKEN}
 ```
 
-`API_TOKEN` dari env variable. Endpoint yang butuh auth ditandai dengan 🔒.
+Untuk service/webhook gunakan managed API key dari **Pengaturan → API Keys**.
+Key terikat ke owner, scope, dan tanggal kedaluwarsa. `API_TOKEN` dari env hanya
+merupakan fallback migrasi yang nonaktif secara default.
 
 ### Format Halaman (Pagination)
 

@@ -6,7 +6,7 @@ import { MessageModel } from "@/models/message";
 import { sendResponse } from "@/utils/response";
 import { NotFoundError } from "@/utils/errors";
 import { getValidatedQuery } from "@/middleware/validate";
-import { getOwnerId, getOwnerIdOrFirst } from "@/middleware/owner";
+import { getOwnerId } from "@/middleware/owner";
 import { customerQuerySchema, updateCustomerSchema } from "@/schemas/customer";
 import {
   updateConversationStatusSchema,
@@ -22,7 +22,7 @@ export async function listCustomers(
   req: Request<Record<string, string>, any, any, CustomerQuery>,
   res: Response
 ): Promise<void> {
-  const ownerId = await getOwnerIdOrFirst(req);
+  const ownerId = getOwnerId(req);
   const result = await CustomerModel.list(
     ownerId,
     getValidatedQuery<CustomerQuery>(req)
@@ -34,7 +34,8 @@ export async function getCustomer(
   req: Request<{ id: string }>,
   res: Response
 ): Promise<void> {
-  const customer = await CustomerModel.getByIdWithDetail(req.params.id);
+  const ownerId = getOwnerId(req);
+  const customer = await CustomerModel.getByIdWithDetail(ownerId, req.params.id);
   if (!customer) {
     throw new NotFoundError("customer not found");
   }
@@ -45,9 +46,12 @@ export async function updateCustomer(
   req: Request<{ id: string }, any, UpdateCustomerBody>,
   res: Response
 ): Promise<void> {
-  getOwnerId(req);
-  await CustomerModel.getOrThrow(req.params.id, "customer");
-  const customer = await CustomerModel.update(req.params.id, req.body);
+  const ownerId = getOwnerId(req);
+  const customer = await CustomerModel.updateOwned(
+    ownerId,
+    req.params.id,
+    req.body
+  );
   sendResponse(res, 200, "customer updated", customer);
 }
 
@@ -55,10 +59,13 @@ export async function getConversation(
   req: Request<{ id: string }>,
   res: Response
 ): Promise<void> {
-  const messages = await MessageModel.recentByConversation(req.params.id, 100);
-  if (messages.length === 0) {
-    throw new NotFoundError("conversation not found");
-  }
+  const ownerId = getOwnerId(req);
+  await ConversationModel.getOwnedOrThrow(ownerId, req.params.id);
+  const messages = await MessageModel.recentByOwnerConversation(
+    ownerId,
+    req.params.id,
+    100
+  );
   sendResponse(res, 200, "conversation retrieved", {
     id: req.params.id,
     messages: messages.map((m) => ({
@@ -77,8 +84,12 @@ export async function updateConversationStatus(
   req: Request<{ id: string }, any, UpdateConvStatusBody>,
   res: Response
 ): Promise<void> {
-  getOwnerId(req);
-  await ConversationModel.setStatus(req.params.id, req.body.status);
+  const ownerId = getOwnerId(req);
+  await ConversationModel.setStatusOwned(
+    ownerId,
+    req.params.id,
+    req.body.status
+  );
   sendResponse(res, 200, "conversation status updated");
 }
 
@@ -87,13 +98,14 @@ export async function sendMessage(
   res: Response
 ): Promise<void> {
   const ownerId = getOwnerId(req);
+  await ConversationModel.getOwnedOrThrow(ownerId, req.params.id);
   const msg = await MessageModel.append({
     ownerId,
     conversationId: req.params.id,
     role: "HUMAN",
     content: req.body.text,
   });
-  await ConversationModel.touch(req.params.id);
+  await ConversationModel.touchOwned(ownerId, req.params.id);
   sendResponse(res, 201, "message sent", {
     id: msg.id,
     role: msg.role,

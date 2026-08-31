@@ -614,18 +614,12 @@ paths:
         "200":
           $ref: "#/components/responses/ActionSuccess"
 
-  /api/sessions/{sessionId}/messages:
+  /api/sessions/messages:
     post:
       tags: [Chat]
       summary: WAHA webhook — incoming message
       security:
         - ApiKeyAuth: []
-      parameters:
-        - name: sessionId
-          in: path
-          required: true
-          schema:
-            type: string
       requestBody:
         required: true
         content:
@@ -1307,6 +1301,8 @@ paths:
     get:
       tags: [Customers]
       summary: List customers (paginated, searchable)
+      security:
+        - BearerAuth: []
       parameters:
         - $ref: "#/components/parameters/Page"
         - $ref: "#/components/parameters/Limit"
@@ -1329,11 +1325,15 @@ paths:
                     properties:
                       data:
                         $ref: "#/components/schemas/CustomerListResult"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
 
   /api/customers/{id}:
     get:
       tags: [Customers]
       summary: Get customer detail with orders and conversation
+      security:
+        - BearerAuth: []
       parameters:
         - name: id
           in: path
@@ -1402,6 +1402,8 @@ paths:
     get:
       tags: [Conversations]
       summary: Get conversation messages
+      security:
+        - BearerAuth: []
       parameters:
         - name: id
           in: path
@@ -1431,6 +1433,8 @@ paths:
                               $ref: "#/components/schemas/Message"
         "404":
           $ref: "#/components/responses/NotFound"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
 
   /api/conversations/{id}/status:
     put:
@@ -1521,6 +1525,8 @@ paths:
     get:
       tags: [Dashboard]
       summary: Get aggregated dashboard statistics
+      security:
+        - BearerAuth: []
       responses:
         "200":
           description: Dashboard stats
@@ -1533,12 +1539,16 @@ paths:
                     properties:
                       data:
                         $ref: "#/components/schemas/DashboardStats"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
 
   # ── Logs ──────────────────────────────────────────────────────
   /api/logs:
     get:
       tags: [Logs]
       summary: List activity logs (paginated, filterable)
+      security:
+        - BearerAuth: []
       parameters:
         - $ref: "#/components/parameters/Page"
         - $ref: "#/components/parameters/Limit"
@@ -1573,12 +1583,16 @@ paths:
                     properties:
                       data:
                         $ref: "#/components/schemas/LogListResult"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
 
   # ── Usage ─────────────────────────────────────────────────────
   /api/usage:
     get:
       tags: [Usage]
       summary: Get daily LLM usage counters
+      security:
+        - BearerAuth: []
       responses:
         "200":
           description: Daily usage
@@ -1598,6 +1612,8 @@ paths:
                             type: integer
                           tokensOut:
                             type: integer
+        "401":
+          $ref: "#/components/responses/Unauthorized"
 
   # ── Website ───────────────────────────────────────────────────
   /api/website:
@@ -2001,7 +2017,7 @@ components:
     ApiKeyAuth:
       type: http
       scheme: bearer
-      description: Static API token from `API_TOKEN` env var. Used by webhook-style internal endpoints (chat, outgoing, QR write).
+      description: Owner-bound managed service API key with explicit scopes and expiry. Legacy `API_TOKEN` is disabled by default.
     BearerAuth:
       type: http
       scheme: bearer

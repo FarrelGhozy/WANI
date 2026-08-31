@@ -19,6 +19,7 @@ mock.module("@/config/db", () => ({
     storePaymentMethod: {
       findMany: mockPmFindMany,
       findUnique: mockPmFindUnique,
+      findFirst: mockPmFindUnique,
       create: mockPmCreate,
       update: mockPmUpdate,
       delete: mockPmDelete,
@@ -232,10 +233,18 @@ describe("PUT /api/store/payment-methods/:id", () => {
 
     expect(res.getStatus()).toBe(200);
     expect(res.getBody().data.label).toBe("QRIS Updated");
+    expect(mockPmFindUnique).toHaveBeenCalledWith({
+      where: { id: "pm1", ownerId: "u1" },
+    });
+    expect(mockPmUpdate).toHaveBeenCalledWith({
+      where: { id: "pm1", ownerId: "u1" },
+      data: { label: "QRIS Updated", isActive: false },
+    });
   });
 
   test("returns 404 for non-existent payment method", async () => {
     mockPmFindUnique.mockReset();
+    mockPmUpdate.mockReset();
     mockPmFindUnique.mockResolvedValueOnce(null);
 
     const req = mockReq({
@@ -251,6 +260,7 @@ describe("PUT /api/store/payment-methods/:id", () => {
     } catch (e: any) {
       expect(e.statusCode).toBe(404);
     }
+    expect(mockPmUpdate).not.toHaveBeenCalled();
   });
 });
 
@@ -271,5 +281,25 @@ describe("DELETE /api/store/payment-methods/:id", () => {
 
     expect(res.getStatus()).toBe(200);
     expect(res.getBody().status).toBe("success");
+    expect(mockPmDelete).toHaveBeenCalledWith({
+      where: { id: "pm1", ownerId: "u1" },
+    });
+  });
+
+  test("does not delete another tenant's payment method", async () => {
+    mockPmFindUnique.mockReset();
+    mockPmDelete.mockReset();
+    mockPmFindUnique.mockResolvedValueOnce(null);
+
+    const req = mockReq({
+      params: { id: "foreign-pm" },
+      user: { id: "u1", email: "admin@test.com", role: "admin" },
+    });
+    const res = mockRes();
+
+    await expect(deletePaymentMethod(req as any, res as any)).rejects.toMatchObject({
+      statusCode: 404,
+    });
+    expect(mockPmDelete).not.toHaveBeenCalled();
   });
 });

@@ -1,6 +1,7 @@
 import { prisma } from "@/config/db";
 import { BaseModel } from "@/models/base";
 import type { Customer, Prisma } from "@db/client";
+import { NotFoundError } from "@/utils/errors";
 
 export type CustomerListItem = {
   id: string;
@@ -91,6 +92,27 @@ export class CustomerModel extends BaseModel {
     });
   }
 
+  static async getOwnedOrThrow(
+    ownerId: string,
+    id: string
+  ): Promise<Customer> {
+    const customer = await this.delegate.findFirst({ where: { id, ownerId } });
+    if (!customer) throw new NotFoundError("customer not found");
+    return customer as Customer;
+  }
+
+  static async updateOwned(
+    ownerId: string,
+    id: string,
+    data: Record<string, unknown>
+  ): Promise<Customer> {
+    await this.getOwnedOrThrow(ownerId, id);
+    return this.delegate.update({
+      where: { id, ownerId },
+      data,
+    }) as Promise<Customer>;
+  }
+
   static async list(
     ownerId: string,
     params: {
@@ -165,15 +187,18 @@ export class CustomerModel extends BaseModel {
     return this.listResult(items, total, page, limit);
   }
 
-  static async getByIdWithDetail(id: string): Promise<CustomerDetail | null> {
-    const customer = await this.delegate.findUnique({
-      where: { id },
+  static async getByIdWithDetail(
+    ownerId: string,
+    id: string
+  ): Promise<CustomerDetail | null> {
+    const customer = await this.delegate.findFirst({
+      where: { id, ownerId },
     });
     if (!customer) return null;
 
     const [orders, conversation] = await Promise.all([
       prisma.order.findMany({
-        where: { customerId: id },
+        where: { ownerId, customerId: id },
         orderBy: { createdAt: "desc" },
         take: 50,
         select: {
@@ -184,10 +209,11 @@ export class CustomerModel extends BaseModel {
         },
       }),
       prisma.conversation.findFirst({
-        where: { customerId: id, status: "ACTIVE" },
+        where: { ownerId, customerId: id, status: "ACTIVE" },
         orderBy: { createdAt: "desc" },
         include: {
           messages: {
+            where: { ownerId },
             orderBy: { createdAt: "asc" },
             take: 100,
           },

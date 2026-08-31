@@ -8,7 +8,7 @@ import { STEP_REPLIES, type PipelineStep } from "../types";
 export const budgetStep: PipelineStep = {
   name: "budget_check",
   async run(ctx) {
-    if (await isBudgetExceeded()) {
+    if (await isBudgetExceeded(ctx.ownerId)) {
       await ActivityLogModel.log(
         ctx.ownerId,
         "budget_exceeded",

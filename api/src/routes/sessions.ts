@@ -1,6 +1,6 @@
 import { Router } from "express";
 import * as SessionsController from "@/controllers/sessions";
-import { requireAuth } from "@/middleware/auth";
+import { requireServiceAuth } from "@/middleware/auth";
 import { requireJwt } from "@/middleware/jwt";
 import { validate } from "@/middleware/validate";
 import {
@@ -54,7 +54,11 @@ router.delete("/", requireJwt, SessionsController.deleteSession);
 
 // Incoming WhatsApp message webhook (WAHA -> API)
 // Supports both WAHA webhook shape { session, payload } and legacy { phone, text }
-// Auth via API_TOKEN (WAHA uses shared secret), not JWT.
-router.post("/messages", requireAuth, SessionsController.postMessage);
+// Service API keys are owner-bound and need the sessions:messages scope.
+router.post(
+  "/messages",
+  requireServiceAuth("sessions:messages"),
+  SessionsController.postMessage
+);
 
 export default router;

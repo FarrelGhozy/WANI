@@ -1,6 +1,5 @@
 import { Router } from "express";
 import * as productController from "@/controllers/product";
-import { requireAuth } from "@/middleware/auth";
 import { requireJwt } from "@/middleware/jwt";
 import { validate } from "@/middleware/validate";
 import {

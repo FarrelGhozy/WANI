@@ -1817,6 +1817,7 @@
       "get": {
         "tags": ["Customers"],
         "summary": "List customers (paginated)",
+        "security": [{ "BearerAuth": [] }],
         "parameters": [
           {
             "$ref": "#/components/parameters/Page"
@@ -1860,6 +1861,9 @@
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
           }
         }
       }
@@ -1868,6 +1872,7 @@
       "get": {
         "tags": ["Customers"],
         "summary": "Get customer detail with orders and conversation",
+        "security": [{ "BearerAuth": [] }],
         "parameters": [
           {
             "name": "id",
@@ -1982,6 +1987,7 @@
       "get": {
         "tags": ["Conversations"],
         "summary": "Get conversation messages (last 100)",
+        "security": [{ "BearerAuth": [] }],
         "parameters": [
           {
             "name": "id",
@@ -2027,6 +2033,9 @@
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
           },
           "404": {
             "$ref": "#/components/responses/NotFound"
@@ -2173,6 +2182,7 @@
       "get": {
         "tags": ["Dashboard"],
         "summary": "Get dashboard statistics",
+        "security": [{ "BearerAuth": [] }],
         "responses": {
           "200": {
             "description": "Dashboard stats",
@@ -2195,6 +2205,9 @@
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
           }
         }
       }
@@ -2203,6 +2216,7 @@
       "get": {
         "tags": ["Logs"],
         "summary": "List activity logs (paginated)",
+        "security": [{ "BearerAuth": [] }],
         "parameters": [
           {
             "$ref": "#/components/parameters/Page"
@@ -2266,6 +2280,9 @@
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
           }
         }
       }
@@ -2274,6 +2291,7 @@
       "get": {
         "tags": ["Usage"],
         "summary": "Get daily LLM usage counters",
+        "security": [{ "BearerAuth": [] }],
         "responses": {
           "200": {
             "description": "Daily usage",
@@ -2307,6 +2325,9 @@
                 }
               }
             }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
           }
         }
       }
@@ -3090,7 +3111,7 @@
       "ApiKeyAuth": {
         "type": "http",
         "scheme": "bearer",
-        "description": "Static API token from the `API_TOKEN` env var. Used by webhook-style internal endpoints (chat, outgoing, QR write). Set via `bun run api:token:set` or in the .env file.\n"
+        "description": "Owner-bound managed service API key with explicit scopes and expiry. Legacy API_TOKEN is disabled by default.\n"
       },
       "BearerAuth": {
         "type": "http",

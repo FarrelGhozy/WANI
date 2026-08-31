@@ -8,7 +8,7 @@ import type { PipelineStep } from "../types";
 export const usageRecorderStep: PipelineStep = {
   name: "record_usage",
   async run(ctx) {
-    await recordLlmUsage(ctx.completion!.usage);
+    await recordLlmUsage(ctx.ownerId, ctx.completion!.usage);
     await ActivityLogModel.log(
       ctx.ownerId,
       "llm_call",

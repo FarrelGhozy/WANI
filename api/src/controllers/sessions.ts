@@ -207,11 +207,13 @@ export const postMessage = async (req: Request, res: Response) => {
     throw new BadRequestError("text is required (payload.body or body.text)");
   }
 
-  // Resolve ownerId: explicit > session name > DB lookup > fallback first user
-  let ownerId: string | undefined = (extracted as any).ownerId ?? body.ownerId;
+  // A managed API key is owner-bound. Legacy migration tokens still use the
+  // payload/session lookup until they are disabled.
+  let ownerId: string | undefined =
+    req.serviceAuth?.ownerId ?? (extracted as any).ownerId ?? body.ownerId;
   const sessionName: string | undefined = extracted.session ?? body.session;
 
-  if (!ownerId && sessionName) {
+  if (!req.serviceAuth?.ownerId && !ownerId && sessionName) {
     if (sessionName.startsWith("store-")) {
       ownerId = sessionName.replace(/^store-/, "");
     } else {

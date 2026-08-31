@@ -93,14 +93,14 @@ export class ActivityLogModel extends BaseModel {
     );
   }
 
-  static async getDailyUsage(): Promise<{
+  static async getDailyUsage(ownerId: string): Promise<{
     llmCalls: number;
     tokensIn: number;
     tokensOut: number;
   }> {
     const today = new Date().toISOString().slice(0, 10);
     const counter = await prisma.usageCounter.findUnique({
-      where: { id: today },
+      where: { ownerId_date: { ownerId, date: today } },
     });
     return {
       llmCalls: counter?.llmCalls ?? 0,
