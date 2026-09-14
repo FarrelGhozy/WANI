@@ -22,6 +22,7 @@ export const OVERRIDE_PATTERNS: readonly RegExp[] = [
   /abaikan\s+(?:semua\s+|saja\s+)?(?:instruksi|perintah|aturan|peraturan|pesan|arahan)/i,
   /lupakan\s+(?:semua\s+)?(?:instruksi|perintah|aturan|peraturan)/i,
   /(?:sekarang|mulai\s+(?:sekarang|saat\s+ini))\s+(?:kamu|lo|anda)\s+(?:akan|harus|boleh)/i,
+  /(?:kamu|lo|anda)\s+(?:sekarang|mulai\s+(?:sekarang|saat\s+ini))\s+(?:akan|harus|boleh|adalah)/i,
   /(?: instruksi|perintah|aturan?)\s+(?:sebelumnya|diatas)\s+(?:diabaikan|diganti|dihapus|tidak\s+berlaku)/i,
   /(?:previous|above|prior)\s+(?:instructions?|prompts?|rules?)\s+(?:are|were|have\s+been)\s+(?:overridden|cancelled|replaced|ignored)/i,
 ]
@@ -40,14 +41,15 @@ export const EXTRACTION_PATTERNS: readonly RegExp[] = [
   /what\s+(?:are|where)\s+(?:your|the)\s+(?:core|initial|original|base)\s+(?:instructions?|rules?|guidelines?)/i,
   /(?:how\s+(?:are|do)|what's)\s+your\s+(?:system\s+)?prompt/i,
 ]
-
 // ROLE / PERSONA HIJACKING — "you are now a..."
 export const ROLE_HIJACK_PATTERNS: readonly RegExp[] = [
   /you\s+are\s+now\s+(?:a|an|the)/i,
   /kamu\s+(?:sekarang\s+)?(?:adalah|berperan\s+sebagai|menjadi|jadi)/i,
+  /anda\s+(?:sekarang\s+)?(?:adalah|berperan\s+sebagai|menjadi)/i,
   /(?:pretend|act)\s+(?:to\s+be|as)\s+/i,
   /berpura-?pura\s+(?:menjadi|jadi|sebagai)/i,
   /(?:mulai|sekarang)\s+(?:kamu|anda)\s+(?:adalah|berperan)/i,
+  /(?:kamu|anda)\s+(?:sekarang)\s+(?:adalah|berperan)/i,
   /from\s+now\s+on\s+(?:you\s+are|you'll\s+(?:be|act))/i,
   /(?:DAN|developer\s+mode|debug\s+mode|god\s+mode|admin\s+mode)\b/i,
   /jailbreak/i,
@@ -64,7 +66,6 @@ export const AUTHORITY_PATTERNS: readonly RegExp[] = [
   /(?:saya|aku)\s+(?:adalah|sebagai)\s+(?:developer|pembuat|admin|programmer)/i,
   /(?:testing|audit|maintenance|update)\s+(?:mode|session|protocol)/i,
 ]
-
 // TOKEN / COMMAND INJECTION — XSS, shell, SQL
 export const TOKEN_INJECTION_PATTERNS: readonly RegExp[] = [
   /(?:javascript|script|alert|eval|exec)\s*[({]/i,
@@ -73,6 +74,7 @@ export const TOKEN_INJECTION_PATTERNS: readonly RegExp[] = [
   /```\s*(?:bash|sh|zsh|powershell|cmd|python|ruby|php)/i,
   /(?:curl|wget|nc|netcat)\s+/i,
   /(?:DROP|DELETE|INSERT|UPDATE)\s+(?:TABLE|FROM|INTO)/i,
+  /\b(?:SYSTEM|USER|ASSISTANT|HUMAN|AI)\s*:\s*(?:anda|kamu|you)/i,
 ]
 
 // CRESCENDO / MULTI-TURN DRIFT MARKERS
@@ -99,6 +101,7 @@ export const QUICK_INJECTION_PATTERNS: readonly RegExp[] = [
   ROLE_HIJACK_PATTERNS[1]!,
   ROLE_HIJACK_PATTERNS[2]!,
   ROLE_HIJACK_PATTERNS[3]!,
+  ROLE_HIJACK_PATTERNS[4]!,
   /developer\s+mode/i,
   /jailbreak/i,
   /\bDAN\s+mode\b/i,

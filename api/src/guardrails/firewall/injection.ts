@@ -69,6 +69,15 @@ export function scanInput(text: string): ScanResult {
   for (const re of LEET_PATTERNS) {
     if (re.test(leet)) { reasons.push("leet_obfuscated"); break }
   }
+  // Broader leetspeak — strip vowels to catch extra-char evasion (e.g. "aabaaikaan")
+  if (!reasons.includes("leet_obfuscated")) {
+    const condensed = leet.replace(/[aeiou]/g, "")
+    const overrideSkeletons = [
+      /bkn.*nstrks/i, /bkn.*prnt/i, /bkn.*trn/i, /bkn.*prtn/i, /bkn.*rhn/i,
+      /lpkn.*nstrks/i, /lpkn.*trn/i, /lpkn.*prtn/i,
+    ]
+    if (overrideSkeletons.some((re) => re.test(condensed))) reasons.push("leet_obfuscated")
+  }
 
   if (detectContextOverflow(normalized)) reasons.push("context_overflow")
 
