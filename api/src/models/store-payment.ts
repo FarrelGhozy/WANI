@@ -6,6 +6,20 @@ export class StorePaymentMethodModel extends BaseModel {
     return this.db.storePaymentMethod
   }
 
+  static async updateByOwner(
+    ownerId: string,
+    id: string,
+    data: Record<string, unknown>,
+  ): Promise<StorePaymentMethod> {
+    await super.updateOwned(ownerId, id, data, "payment method")
+    const row = await this.delegate.findUniqueOrThrow({ where: { id } })
+    return row as StorePaymentMethod
+  }
+
+  static async deleteByOwner(ownerId: string, id: string): Promise<void> {
+    await super.deleteOwned(ownerId, id, "payment method")
+  }
+
   static async listByOwner(ownerId: string): Promise<StorePaymentMethod[]> {
     return this.delegate.findMany({
       where: { ownerId },

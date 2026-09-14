@@ -47,11 +47,7 @@ export async function updateProduct(
   res: Response,
 ): Promise<void> {
   const ownerId = getOwnerId(req)
-  const existing = await ProductModel.getByIdWithCategory(req.params.id)
-  if (!existing) {
-    throw new NotFoundError("product not found")
-  }
-  const product = await ProductModel.updateProduct(req.params.id, req.body)
+  const product = await ProductModel.updateProduct(ownerId, req.params.id, req.body)
   sendResponse(res, 200, "product updated", product)
 }
 
@@ -59,12 +55,8 @@ export async function deleteProduct(
   req: Request<{ id: string }>,
   res: Response,
 ): Promise<void> {
-  getOwnerId(req)
-  const existing = await ProductModel.getByIdWithCategory(req.params.id)
-  if (!existing) {
-    throw new NotFoundError("product not found")
-  }
-  await ProductModel.deleteProduct(req.params.id)
+  const ownerId = getOwnerId(req)
+  await ProductModel.deleteProduct(ownerId, req.params.id)
   sendResponse(res, 200, "product deleted")
 }
 
@@ -90,12 +82,8 @@ export async function updateCategory(
   req: Request<{ id: string }, any, UpdateCategoryBody>,
   res: Response,
 ): Promise<void> {
-  getOwnerId(req)
-  const existing = await CategoryModel.getByIdWithCount(req.params.id)
-  if (!existing) {
-    throw new NotFoundError("category not found")
-  }
-  const category = await CategoryModel.updateCategory(req.params.id, req.body)
+  const ownerId = getOwnerId(req)
+  const category = await CategoryModel.updateCategory(ownerId, req.params.id, req.body)
   sendResponse(res, 200, "category updated", category)
 }
 
@@ -103,11 +91,7 @@ export async function deleteCategory(
   req: Request<{ id: string }>,
   res: Response,
 ): Promise<void> {
-  getOwnerId(req)
-  const existing = await CategoryModel.getByIdWithCount(req.params.id)
-  if (!existing) {
-    throw new NotFoundError("category not found")
-  }
-  await CategoryModel.deleteCategory(req.params.id)
+  const ownerId = getOwnerId(req)
+  await CategoryModel.deleteCategory(ownerId, req.params.id)
   sendResponse(res, 200, "category deleted")
 }

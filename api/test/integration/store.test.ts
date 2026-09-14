@@ -5,8 +5,9 @@ const mockStoreUpsert = mock((_args: any) => Promise.resolve({}))
 const mockPmFindMany = mock((_args: any) => Promise.resolve([]))
 const mockPmFindUnique = mock((_args: any) => Promise.resolve(null))
 const mockPmCreate = mock((_args: any) => Promise.resolve({}))
-const mockPmUpdate = mock((_args: any) => Promise.resolve({}))
-const mockPmDelete = mock((_args: any) => Promise.resolve({}))
+const mockPmUpdateMany = mock((_args: any) => Promise.resolve({ count: 1 }))
+const mockPmDeleteMany = mock((_args: any) => Promise.resolve({ count: 1 }))
+const mockPmFindUniqueOrThrow = mock((_args: any) => Promise.resolve({}))
 const mockPmCount = mock((_args: any) => Promise.resolve(0))
 
 mock.module("@/config/db", () => ({
@@ -20,9 +21,12 @@ mock.module("@/config/db", () => ({
       findMany: mockPmFindMany,
       findUnique: mockPmFindUnique,
       create: mockPmCreate,
-      update: mockPmUpdate,
-      delete: mockPmDelete,
+      updateMany: mockPmUpdateMany,
+      deleteMany: mockPmDeleteMany,
       count: mockPmCount,
+      findUniqueOrThrow: mockPmFindUniqueOrThrow,
+      update: mock((_args: any) => Promise.resolve({})),
+      delete: mock((_args: any) => Promise.resolve({})),
     },
     $transaction: mock((fn: any) => fn({})),
   } as any,
@@ -171,10 +175,10 @@ describe("POST /api/store/payment-methods", () => {
 
 describe("PUT /api/store/payment-methods/:id", () => {
   test("updates a payment method", async () => {
-    mockPmFindUnique.mockReset()
-    mockPmUpdate.mockReset()
-    mockPmFindUnique.mockResolvedValueOnce({ id: "pm1" })
-    mockPmUpdate.mockResolvedValueOnce({
+    mockPmUpdateMany.mockReset()
+    mockPmFindUniqueOrThrow.mockReset()
+    mockPmUpdateMany.mockResolvedValueOnce({ count: 1 })
+    mockPmFindUniqueOrThrow.mockResolvedValueOnce({
       id: "pm1", type: "QRIS", label: "QRIS Updated", isActive: false, sortOrder: 1,
     })
 
@@ -189,11 +193,15 @@ describe("PUT /api/store/payment-methods/:id", () => {
 
     expect(res.getStatus()).toBe(200)
     expect(res.getBody().data.label).toBe("QRIS Updated")
+    expect(mockPmUpdateMany).toHaveBeenCalledWith({
+      where: { id: "pm1", ownerId: "u1" },
+      data: { label: "QRIS Updated", isActive: false },
+    })
   })
 
   test("returns 404 for non-existent payment method", async () => {
-    mockPmFindUnique.mockReset()
-    mockPmFindUnique.mockResolvedValueOnce(null)
+    mockPmUpdateMany.mockReset()
+    mockPmUpdateMany.mockResolvedValueOnce({ count: 0 })
 
     const req = mockReq({
       params: { id: "nonexistent" },
@@ -213,10 +221,8 @@ describe("PUT /api/store/payment-methods/:id", () => {
 
 describe("DELETE /api/store/payment-methods/:id", () => {
   test("deletes a payment method", async () => {
-    mockPmFindUnique.mockReset()
-    mockPmDelete.mockReset()
-    mockPmFindUnique.mockResolvedValueOnce({ id: "pm1" })
-    mockPmDelete.mockResolvedValueOnce({})
+    mockPmDeleteMany.mockReset()
+    mockPmDeleteMany.mockResolvedValueOnce({ count: 1 })
 
     const req = mockReq({
       params: { id: "pm1" },
@@ -228,5 +234,24 @@ describe("DELETE /api/store/payment-methods/:id", () => {
 
     expect(res.getStatus()).toBe(200)
     expect(res.getBody().status).toBe("success")
+    expect(mockPmDeleteMany).toHaveBeenCalledWith({ where: { id: "pm1", ownerId: "u1" } })
+  })
+
+  test("returns 404 when payment method belongs to another owner", async () => {
+    mockPmDeleteMany.mockReset()
+    mockPmDeleteMany.mockResolvedValueOnce({ count: 0 })
+
+    const req = mockReq({
+      params: { id: "pm-other" },
+      user: { id: "u1", email: "admin@test.com", role: "admin" },
+    })
+    const res = mockRes()
+
+    try {
+      await deletePaymentMethod(req as any, res as any)
+      expect.unreachable("should have thrown")
+    } catch (e: any) {
+      expect(e.statusCode).toBe(404)
+    }
   })
 })
