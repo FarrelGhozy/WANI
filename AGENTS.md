@@ -25,7 +25,7 @@ Bot pushes QR/status → API stores in WaSession DB → Dashboard polls GET /api
 - **api/src/services/email.ts** — Nodemailer SMTP transport for password reset emails
 - **api/src/ai/** — Typed pipeline: `PipelineBuilder<I,O>` chain of `Step<I,O>` (16 typed steps), `Either<E,T>` railway-oriented error handling, per-label circuit breaker registry, OpenRouter LLM engine with retry+fallback, intent action handlers, hardened system prompt builder with canary
 - **api/src/guardrails/** — Multi-layer defense: PII scanner/redactor, ML classifier (OpenRouter fast model), deep LLM-judge, output grounding check. Plus per-customer sliding-window rate limit, regex injection detection (EN+ID), daily LLM budget tracker, output sanitizer + leak detector. 3-tier injection defense (T1 regex → T2 classifier → T3 judge) with conditional slow path
-- **dashboard/vite.config.ts** — `@vitejs/plugin-react` + `@rolldown/plugin-babel` with `reactCompilerPreset`, Tailwind v4, **proxies `/api` → `http://localhost:3001`**
+- **dashboard/vite.config.ts** — `@vitejs/plugin-react` + `@rolldown/plugin-babel` with `reactCompilerPreset`, Tailwind v4, alias `@` → `src` dan `@landingpage` → `../landingpage/src`. **Tidak ada proxy `/api`**: dev butuh `dashboard/.env` berisi `VITE_API_URL=http://localhost:3001/api`; di Docker nginx yang mem-proxy `/api`, `/uploads`, `/s` ke `api:3001`
 - **dashboard/src/index.css** — `@import "tailwindcss"` (Tailwind v4 CSS-first config, no `tailwind.config.*`)
 - **dashboard/src/hooks/** — Hooks use real API via `fetchApi()` (JWT auth from localStorage). `useWaStatus` and `useAuth` retain `MOCK = false` toggle for legacy compatibility.
 - **wa-bot/src/index.ts** — Baileys `makeWASocket`, QR terminal print + API POST, auto-reconnect, **forwards messages to API's POST /api/chat** and sends the AI reply back
@@ -63,7 +63,7 @@ Bot pushes QR/status → API stores in WaSession DB → Dashboard polls GET /api
 
 ## API Endpoints
 
-Semua endpoint **sudah diimplementasikan**. See `api/ARSITEKTUR.md` for the full table (~40 endpoints).
+Semua endpoint **sudah diimplementasikan** — **60+ endpoint**. Tabel lengkap + bentuk request/response: **`Docs/API_CONTRACT.md`**. Tabel di bawah hanya ringkasan cepat (bila ragu, cek `Docs/API_CONTRACT.md`).
 
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
@@ -72,10 +72,13 @@ Semua endpoint **sudah diimplementasikan**. See `api/ARSITEKTUR.md` for the full
 | `GET` | `/api/qr/status` | — | Get connection status + phone number |
 | `POST` | `/api/qr` | Bearer API_TOKEN | Push QR code / update status (Zod validated) |
 | `DELETE` | `/api/qr` | Bearer API_TOKEN | Clear QR on successful connection |
+| `POST` | `/api/qr/reset` | 🔒 JWT | Reset sesi bot (hapus `WaSession` + `Creds`/`SignalKey`) |
+| `POST` | `/api/qr/pairing` | 🔒 JWT | Minta pairing code untuk nomor tertentu |
+| `POST` | `/api/qr/refresh-pairing` | 🔒 JWT | Buang pairing code agar bot membuat kode baru |
 | `POST` | `/api/chat` | Bearer API_TOKEN | Process message through AI pipeline → reply |
 | `GET` | `/api/store` | — | Get store profile |
 | `PUT` | `/api/store` | 🔒 JWT | Update store profile |
-| `GET` | `/api/ai-config` | — | Get AI config |
+| `GET` | `/api/ai-config` | 🔒 JWT | Get AI config |
 | `PUT` | `/api/ai-config` | 🔒 JWT | Update AI config (model, prompt, etc.) |
 | `GET` | `/api/products` | — | Product list (paginated, searchable) |
 | `GET/POST/PUT/DELETE` | `/api/products/:id` | —/🔒 JWT | Product CRUD |
@@ -88,26 +91,35 @@ Semua endpoint **sudah diimplementasikan**. See `api/ARSITEKTUR.md` for the full
 | `PUT` | `/api/orders/:id/payment` | 🔒 JWT | Create / update payment |
 | `GET` | `/api/customers` | — | Customer list |
 | `GET/PUT` | `/api/customers/:id` | —/🔒 JWT | Customer detail / update |
-| `GET` | `/api/conversations/:id` | — | Conversation messages |
+| `GET` | `/api/conversations/:id` | 🔒 JWT | Conversation messages |
 | `PUT` | `/api/conversations/:id/status` | 🔒 JWT | Update conversation status |
 | `POST` | `/api/conversations/:id/messages` | 🔒 JWT | Send HUMAN message |
-| `GET` | `/api/dashboard/stats` | — | Aggregated dashboard stats |
-| `GET` | `/api/logs` | — | Activity log (paginated) |
-| `GET` | `/api/usage` | — | LLM usage counters (today) |
-| `POST` | `/api/auth/register` | — | Register account |
-| `POST` | `/api/auth/login` | — | Login (JWT token) |
-| `GET` | `/api/auth/me` | — | Current user (token auto-verify) |
-| `POST` | `/api/auth/logout` | — | Logout |
-| `POST` | `/api/auth/forgot-password` | — | Generate reset token |
+| `GET` | `/api/dashboard/stats` | 🔒 JWT | Aggregated dashboard stats |
+| `GET` | `/api/logs` | 🔒 JWT | Activity log (paginated) |
+| `GET` | `/api/usage` | 🔒 JWT | LLM usage counters (today, global) |
+| `POST` | `/api/auth/register` | — | Register account (auto-create Store) |
+| `POST` | `/api/auth/login` | — | Login (JWT token; 403 bila email belum diverifikasi) |
+| `GET` | `/api/auth/me` | 🔒 JWT | Current user |
+| `POST` | `/api/auth/logout` | — | Logout (stateless) |
+| `GET` | `/api/auth/verify-email?token=` | — | Verify email |
+| `POST` | `/api/auth/resend-verification` | — | Kirim ulang email verifikasi |
+| `POST` | `/api/auth/forgot-password` | — | Kirim link reset password |
 | `POST` | `/api/auth/reset-password` | — | Reset password |
 | `GET` | `/api/website` | — | Get website config |
 | `PUT` | `/api/website` | 🔒 JWT | Update website config |
 | `POST` | `/api/website/generate` | 🔒 JWT | Generate static site |
 | `GET` | `/api/website/download` | 🔒 JWT | Download ZIP |
-| `POST` | `/api/website/publish` | 🔒 JWT | Mark as published |
+| `POST` | `/api/website/publish` | 🔒 JWT | Mark as published (tidak men-deploy) |
+| `GET` | `/api/website/generations` | 🔒 JWT | Riwayat generate |
+| `DELETE` | `/api/website/generations/:id` | 🔒 JWT | Hapus generation + folder |
+| `GET` | `/api/outgoing` | Bearer API_TOKEN | Pesan HUMAN/notification yang belum terkirim (bot) |
+| `PATCH` | `/api/outgoing/:id/delivered` | Bearer API_TOKEN | Tandai pesan terkirim |
+| `GET` | `/api/health` | — | Health check (DB + LLM key) |
+| `GET` | `/api/metrics` | — | Prometheus metrics |
 | `GET` | `/s/:slug` | — | Serve generated static site |
+| `GET` | `/uploads/:file` | — | Serve uploaded file |
 
-> 🔒 = `requireAuth` (Bearer API_TOKEN), 🔒 JWT = `requireJwt` (JWT), — = public
+> 🔒 = `requireJwt` (Authorization: Bearer `<JWT>`), `Bearer API_TOKEN` = `requireAuth` (bot ↔ API), — = publik (JWT opsional via `optionalJwt` global)
 
 Unified response: `{ status: "success"|"failure", message, data? }`
 
@@ -115,9 +127,9 @@ Error classes: BadRequestError (400), UnauthorizedError (401), ForbiddenError (4
 
 ## Dashboard
 
-- **11 pages implemented**: Dashboard, Products (+ProductForm), Orders (+OrderDetail), Customers (dual-panel inline chat), Settings (Store + AI + WA + Payment tabs), Website, LoginPage, SignUpPage, ForgotPasswordPage
-- **Settings has 4 tabs**: Store, AI Agent, WA Session, Pembayaran
-- **All hooks use real API**: `useProducts`, `useOrders`, `useCustomers`, `useSettings`, `usePaymentMethods`, `useWebsite` — no MOCK toggle, fetch via `fetchApi()`. `useWaStatus` and `useAuth` retain `MOCK = false` toggle for legacy compatibility.
+- **14 halaman**: Dashboard, Products (+ProductForm), Orders (+OrderDetail), Customers (dual-panel inline chat), Settings, Website, LoginPage, SignUpPage, ForgotPasswordPage, ResetPasswordPage, VerifyEmailPage, NotFoundPage + landing page publik di `/`
+- **Settings punya 3 tab**: `Toko` (termasuk metode pembayaran via `PaymentTab`), `AI Agent`, `WA Session`
+- **Semua hook pakai API asli**: `useProducts`, `useOrders`, `useCustomers`, `useSettings`, `usePaymentMethods`, `useWebsite`, `useWaStatus`, `useAuth` — tanpa mock toggle, fetch via `fetchApi()`
 - **UI primitives** in `components/ui/` (Button, Card, Badge, Table, Modal, Input, Select, Spinner, EmptyState, Pagination) — no external component library
 - **Feature components**: StoreTab, AiTab, WaSessionTab, PaymentTab, CategoryModal, ProductListView, ProductCard, OrderListView, OrderTimeline, CustomerListView, ChatView
 - **Layout**: `Layout.tsx` shell with `Sidebar.tsx` + `Topbar.tsx` + `<Outlet />`, `BottomNav.tsx` for mobile; `AuthLayout.tsx` for public pages
@@ -158,7 +170,7 @@ Database `wani_api` + `wa_bot` dibuat otomatis via `init-dbs.sh`.
 
 - `verbatimModuleSyntax` is on everywhere — use `import type` for type-only imports
 - `api/`, `web-gen/`, and `wa-bot/` use `module: "Preserve"`, `allowImportingTsExtensions`, `noEmit: true` (Bun runtime, no tsc emit)
-- API + wa-bot path aliases: `@db/*` → `./generated/prisma/*`, `@/*` → `./*`
+- API + wa-bot path aliases: `@db/*` → `./generated/prisma/*`, `@/*` → `./src/*`
 - web-gen path alias: `@/*` → `./*`
 - Dashboard has TypeScript project references: `tsconfig.app.json` (src/) + `tsconfig.node.json` (vite.config.ts)
 - ESLint 10 flat config with `eslint/config` module — not `.eslintrc*`
@@ -309,8 +321,20 @@ scanInput reasons mapped by confidence:
 
 ## Referensi Dokumen
 
-- **`dashboard/ARCHITECTURE.md`** — Component tree, routing, design system (warm teal+amber palette), data flow, page spec, mock strategy
-- **`dashboard/API_SPEC.md`** — Full API contract spec for all 5 pages, request/response shapes, error codes
+Semua dokumentasi kanonik ada di **`Docs/`** (README root adalah symlink ke `Docs/README.md`). File lama `api/ARSITEKTUR.md`, `dashboard/ARCHITECTURE.md`, `dashboard/API_SPEC.md`, `web-gen/ARCHITECTURE.md`, `web-gen/API_SPEC.md` adalah symlink ke `Docs/` — edit di `Docs/`, jangan bikin dokumen paralel.
+
+| Dokumen | Isi |
+|---------|-----|
+| `Docs/README.md` | Indeks + ringkasan proyek |
+| `Docs/ARCHITECTURE.md` | Alur sistem, multi-tenancy, topologi |
+| `Docs/REPOSITORY_STRUCTURE.md` | Struktur folder, path alias, konvensi |
+| `Docs/CONFIGURATION.md` | Semua env var + presedensi LLM |
+| `Docs/DATA_MODEL.md` | 17 tabel `wani_api` + 2 tabel `wa_bot`, enum, migrasi |
+| `Docs/API_CONTRACT.md` | Semua endpoint, auth, format respons, rate limit |
+| `Docs/AI_PIPELINE.md` | 16 step pipeline, LLM engine, intent action |
+| `Docs/GUARDRAILS.md` | 3-tier firewall, PII, rate limit, budget, output |
+| `Docs/SERVICES/API.md` · `DASHBOARD.md` · `WA_BOT.md` · `WEB_GEN.md` | Detail per paket |
+| `Docs/DEVELOPMENT.md` · `Docs/DEPLOYMENT.md` | Setup lokal · deploy, CI/CD, backup |
 
 ## Workflow Step-by-Step
 
