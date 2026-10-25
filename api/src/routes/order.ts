@@ -11,8 +11,8 @@ import {
 
 const router = Router()
 
-router.get("/", validate({ query: orderQuerySchema }), orderController.listOrders)
-router.get("/:id", orderController.getOrder)
+router.get("/", requireJwt, validate({ query: orderQuerySchema }), orderController.listOrders)
+router.get("/:id", requireJwt, orderController.getOrder)
 router.put("/:id/status", requireJwt, validate({ body: updateOrderStatusSchema }), orderController.updateOrderStatus)
 router.put("/:id/notes", requireJwt, validate({ body: updateOrderNotesSchema }), orderController.updateOrderNotes)
 router.put("/:id/payment", requireJwt, validate({ body: updateOrderPaymentSchema }), orderController.updateOrderPayment)

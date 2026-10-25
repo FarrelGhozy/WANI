@@ -2,13 +2,13 @@
 
 <div align="center">
 
-<img src="assets/logo.png" alt="WANI — Warung AI Nexus Indonesia" width="180" />
+<img src="../assets/logo.png" alt="WANI — Warung AI Nexus Indonesia" width="180" />
 
 ### AI-powered commerce for Indonesian UMKM.
 
 Automate customer conversations, manage your business, and generate storefront websites — powered by AI.
 
-[Getting Started](#quick-start) · [Documentation](#dokumentasi) · [Architecture](Docs/ARCHITECTURE.md)
+[Getting Started](../README.md#quick-start) · [Documentation](#dokumentasi) · [Architecture](ARCHITECTURE.md)
 
 </div>
 
@@ -46,17 +46,19 @@ VITE_API_URL=http://localhost:3001/api
 
 ## Dokumentasi
 
-
 | Dokumen | Isi |
 |---------|-----|
-| [ARCHITECTURE.md](Docs/ARCHITECTURE.md) | Gambaran sistem, alur runtime, multi-tenancy, topologi deploy |
-| [REPOSITORY_STRUCTURE.md](Docs/REPOSITORY_STRUCTURE.md) | Struktur folder, batas paket, path alias, konvensi kode |
-| [CONFIGURATION.md](Docs/CONFIGURATION.md) | Semua environment variable + presedensi konfigurasi LLM |
-| [DATA_MODEL.md](Docs/DATA_MODEL.md) | 18 tabel `wani_api`, relasi, enum, migrasi; state WAHA di database `postgres` |
-| [API_CONTRACT.md](Docs/API_CONTRACT.md) | Semua endpoint, model auth berlapis (JWT/service key), format respons, rate limit |
-| [AI_PIPELINE.md](Docs/AI_PIPELINE.md) | 16 step pipeline, LLM engine, circuit breaker, intent action |
-| [GUARDRAILS.md](Docs/GUARDRAILS.md) | 3-tier firewall, PII, rate limit, budget, output scan, grounding |
-| [SERVICES/](Docs/SERVICES/README.md) | Detail per paket: [API](Docs/SERVICES/API.md) · [DASHBOARD](Docs/SERVICES/DASHBOARD.md) · [WAHA](Docs/SERVICES/WAHA.md) · [WEB_GEN](Docs/SERVICES/WEB_GEN.md) |
-| [DEVELOPMENT.md](Docs/DEVELOPMENT.md) | Setup lokal, perintah per paket, workflow git, checklist kontribusi |
-| [DEPLOYMENT.md](Docs/DEPLOYMENT.md) | Docker Compose produksi, CI/CD GHCR, backup, migrasi |
+| [ARCHITECTURE.md](ARCHITECTURE.md) | Gambaran sistem, alur runtime, multi-tenancy, topologi deploy |
+| [REPOSITORY_STRUCTURE.md](REPOSITORY_STRUCTURE.md) | Struktur folder, batas paket, path alias, konvensi kode |
+| [CONFIGURATION.md](CONFIGURATION.md) | Semua environment variable + presedensi konfigurasi LLM |
+| [DATA_MODEL.md](DATA_MODEL.md) | 18 tabel `wani_api`, relasi, enum, migrasi; state WAHA di database `postgres` |
+| [API_CONTRACT.md](API_CONTRACT.md) | Semua endpoint, model auth berlapis (JWT/service key), format respons, rate limit |
+| [AI_PIPELINE.md](AI_PIPELINE.md) | 16 step pipeline, LLM engine, circuit breaker, intent action |
+| [GUARDRAILS.md](GUARDRAILS.md) | 3-tier firewall, PII, rate limit, budget, output scan, grounding |
+| [SERVICES/](SERVICES/README.md) | Detail per paket: [API](SERVICES/API.md) · [DASHBOARD](SERVICES/DASHBOARD.md) · [WAHA](SERVICES/WAHA.md) · [WEB_GEN](SERVICES/WEB_GEN.md) |
+| [DEVELOPMENT.md](DEVELOPMENT.md) | Setup lokal, perintah per paket, workflow git, checklist kontribusi |
+| [DEPLOYMENT.md](DEPLOYMENT.md) | Docker Compose produksi, CI/CD GHCR, backup, migrasi |
 
+## Status Rilis
+
+Lihat [CHANGELOG.md](../CHANGELOG.md) dan [releases](https://github.com/FarrelGhozy/WANI/releases).

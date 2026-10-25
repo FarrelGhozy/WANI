@@ -62,7 +62,7 @@ WAHA webhook → POST /api/sessions/messages → AI pipeline → WAHA sendText
 - `bun install` — install dependencies
 - `bun run src/generator.ts` — test generate (CLI mode)
 - `bun run build:template` — install dep + build template standalone
-- `bun run tsc --noEmit` — type check
+- `bun run typecheck` — type check (`tsc --noEmit`)
 
 ## API Endpoints
 
@@ -90,12 +90,12 @@ Semua endpoint **sudah diimplementasikan** — **60+ endpoint**. Tabel lengkap +
 | `GET/POST/PUT/DELETE` | `/api/products/:id` | —/🔒 JWT | Product CRUD |
 | `GET/POST` | `/api/products/categories` | —/🔒 JWT | Category list / create |
 | `PUT/DELETE` | `/api/products/categories/:id` | 🔒 JWT | Category update / delete |
-| `GET` | `/api/orders` | — | Order list (paginated, filterable) |
-| `GET` | `/api/orders/:id` | — | Order detail |
+| `GET` | `/api/orders` | 🔒 JWT | Order list (paginated, filterable) |
+| `GET` | `/api/orders/:id` | 🔒 JWT | Order detail (owner-scoped) |
 | `PUT` | `/api/orders/:id/status` | 🔒 JWT | Update order status |
 | `PUT` | `/api/orders/:id/notes` | 🔒 JWT | Update order notes |
 | `PUT` | `/api/orders/:id/payment` | 🔒 JWT | Create / update payment |
-| `GET` | `/api/customers` | — | Customer list |
+| `GET` | `/api/customers` | 🔒 JWT | Customer list |
 | `GET/PUT` | `/api/customers/:id` | —/🔒 JWT | Customer detail / update |
 | `GET` | `/api/conversations/:id` | 🔒 JWT | Conversation messages |
 | `PUT` | `/api/conversations/:id/status` | 🔒 JWT | Update conversation status |
@@ -111,7 +111,7 @@ Semua endpoint **sudah diimplementasikan** — **60+ endpoint**. Tabel lengkap +
 | `POST` | `/api/auth/resend-verification` | — | Kirim ulang email verifikasi |
 | `POST` | `/api/auth/forgot-password` | — | Kirim link reset password |
 | `POST` | `/api/auth/reset-password` | — | Reset password |
-| `GET` | `/api/website` | — | Get website config |
+| `GET` | `/api/website` | 🔒 JWT | Get website config |
 | `PUT` | `/api/website` | 🔒 JWT | Update website config |
 | `POST` | `/api/website/generate` | 🔒 JWT | Generate static site |
 | `GET` | `/api/website/download` | 🔒 JWT | Download ZIP |
@@ -190,6 +190,7 @@ CI: `.github/workflows/api.yaml` + `.github/workflows/dashboard.yaml`.
 - WAHA must be running before creating a WhatsApp session from the dashboard
 - WAHA env: `WAHA_API_KEY` (shared API ↔ WAHA), `WAHA_API_URL` (`http://waha:3000/api` in Compose, `http://localhost:3000/api` locally)
 - Both databases on same PG server: `wani_api` (API) + `postgres` (WAHA session/media state)
+- **Bun inlines `process.env.NODE_ENV` at build time.** Always read it via `getNodeEnv()` (`Bun.env.NODE_ENV`) in `api/src/config/env.ts`; API CI greps `dist/index.js` for `NODE_ENV` to catch regressions
 - `import.meta.env.PROD == null` check in `api/src/config/db.ts` — this is always true under Bun; the global Prisma cache works in both dev and prod
 - `optionalJwt` middleware applied globally in `api/src/server.ts` — silently parses JWT on all `/api` routes; `req.user` available for public endpoints when JWT is present, falls through when absent
 
@@ -325,11 +326,11 @@ scanInput reasons mapped by confidence:
 ### What's missing
 
 - No embeddings / vector store / RAG (the `knowledgeBase` field is plain text)
-- 247+ unit tests (guardrails + firewall + schemas + auth + middleware + errors + response + intent + golden-reply + pipeline)
+- 325 unit tests (guardrails + firewall + schemas + auth + middleware + errors + response + intent + golden-reply + pipeline)
 
 ## Referensi Dokumen
 
-Semua dokumentasi kanonik ada di **`Docs/`** (README root adalah symlink ke `Docs/README.md`). File lama `api/ARSITEKTUR.md`, `dashboard/ARCHITECTURE.md`, `dashboard/API_SPEC.md`, `web-gen/ARCHITECTURE.md`, `web-gen/API_SPEC.md` adalah symlink ke `Docs/` — edit di `Docs/`, jangan bikin dokumen paralel.
+Semua dokumentasi kanonik ada di **`Docs/`** (`README.md` root adalah indeks utama; `Docs/README.md` adalah indeks dokumentasi). File lama `api/ARSITEKTUR.md`, `dashboard/ARCHITECTURE.md`, `dashboard/API_SPEC.md`, `web-gen/ARCHITECTURE.md`, `web-gen/API_SPEC.md` adalah symlink ke `Docs/` — edit di `Docs/`, jangan bikin dokumen paralel.
 
 | Dokumen | Isi |
 |---------|-----|
@@ -421,10 +422,11 @@ git commit -m "🔥 api: add products CRUD — route, schema, controller, model"
 
 ### Test Status
 
-- `bun run test` → 247 pass, 0 fail, 2 skip (env-based SMTP/API key)
+- `bun run test` → 323 pass, 0 fail, 2 skip (325 tests; env-based SMTP/API key)
+- `bun run typecheck` → typecheck source produksi (`tsconfig.build.json`)
 - `bun run test:e2e` → 6 pass, 0 fail (pipeline integration)
 - Dashboard `vitest run` → 97 pass, 0 fail (7 test files)
-- Dashboard `bun run build` → clean (519 KB JS, 50 KB CSS)
+- Dashboard `bun run build` → clean (744 KB JS, 110 KB CSS; chunk-size warning)
 
 ### Key Decisions
 

@@ -1,3 +1,7 @@
+export function getNodeEnv(): string {
+  return Bun.env.NODE_ENV ?? "development"
+}
+
 function num(key: string, fallback: number): number {
   const raw = process.env[key];
   if (raw === undefined || raw === "") return fallback;
@@ -12,7 +16,7 @@ function bool(key: string, fallback: boolean): boolean {
 }
 
 export const env = {
-  nodeEnv: process.env.NODE_ENV ?? "development",
+  nodeEnv: getNodeEnv(),
 
   ai: {
     llmApiKey: process.env.LLM_API_KEY ?? process.env.OPENROUTER_API_KEY ?? "",

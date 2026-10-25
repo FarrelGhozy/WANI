@@ -21,7 +21,10 @@ services:
         max-file: "3"
 
   api:
-    image: ghcr.io/farrelghozy/wani-api:1.0.9
+    image: ghcr.io/farrelghozy/wani-api:1.2.0
+    build:
+      context: .
+      dockerfile: api/Dockerfile
     depends_on:
       db:
         condition: service_healthy
@@ -91,7 +94,12 @@ services:
         max-file: "3"
 
   dashboard:
-    image: ghcr.io/farrelghozy/wani-dashboard:1.0.10
+    image: ghcr.io/farrelghozy/wani-dashboard:1.2.0
+    build:
+      context: .
+      dockerfile: dashboard/Dockerfile
+      args:
+        VITE_API_URL: /api
     depends_on:
       api:
         condition: service_started

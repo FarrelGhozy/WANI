@@ -1,5 +1,28 @@
 # Changelog
 
+## 1.2.0 — 2026-10-25
+
+### What's Changed
+
+- **WhatsApp via WAHA** — replaced the bundled Baileys bot with the `waha` Docker service; API calls WAHA through `api/src/services/waha.ts`
+- **Multi-tenant isolation** — `ownerId` scoping across Store, Product, Order, Customer, Conversation, AiConfig, Website, UsageCounter, ActivityLog, WaSession
+- **Order access hardening** — `GET /api/orders`, `GET /api/orders/:id`, order notes/payment/status now require JWT and are scoped to the authenticated owner
+- **Website config** — `GET /api/website` now requires JWT
+- **Typed AI pipeline** — 16-step `PipelineBuilder` + `Either` chain, per-label circuit breakers, URL-safe history, output grounding
+- **Guardrails** — 3-tier injection defense, PII scan/redact, per-customer rate limit, daily LLM budget, output leak detection
+- **Auth** — email verification, password reset via SMTP, managed service API keys with scopes
+- **Docs** — root README separated from `Docs/README.md` so links render correctly on GitHub
+- **Release engineering** — API/dashboard versions bumped to 1.2.0, Compose builds and runs 1.2.0 images, Bun lockfiles standardized
+- **Production runtime env** — Bun no longer bakes `NODE_ENV` into the API bundle; debug routes stay disabled and `JWT_SECRET` fail-fast works in the Docker image
+- **CI** — web-gen typecheck, API typecheck (source), production build guard, landingpage build, API e2e
+
+### Package versions
+
+- `api` — 1.2.0
+- `dashboard` — 1.2.0
+- `landingpage` — 1.2.0
+- `web-gen` — unchanged
+
 ## api v1.1.1 — 2026-07-08
 
 ### What's Changed

@@ -38,10 +38,13 @@ for (const [, spec] of SPECS) {
   const regex = /@font-face\s*\{([\s\S]*?)\}/g;
   let m: RegExpExecArray | null;
   while ((m = regex.exec(css))) {
-    let block = m[1].trim();
+    const body = m[1];
+    if (body === undefined) continue;
+    let block = body.trim();
     const urlM = block.match(/url\(([^)]+)\)/);
     if (!urlM) continue;
     const remote = urlM[1];
+    if (remote === undefined) continue;
     const name = remote.split("/").pop()!;
     const local = join(OUT, name);
     if (!downloaded.has(name) && !existsSync(local)) {

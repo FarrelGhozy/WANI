@@ -1,4 +1,5 @@
-import { Router } from "express";
+import { Router } from "express"
+import { getNodeEnv } from "@/config/env";
 import storeRoutes from "@/routes/store";
 import storePaymentRoutes from "@/routes/store-payment";
 import aiConfigRoutes from "@/routes/ai-config";
@@ -36,7 +37,7 @@ router.use("/api-keys", apiKeyRoutes);
 router.use("/", monitoringRoutes);
 
 // Dev-only: pipeline traces, circuit breaker status/reset
-if (process.env.NODE_ENV !== "production") {
+if (getNodeEnv() !== "production") {
   router.use("/debug", debugRoutes);
 }
 

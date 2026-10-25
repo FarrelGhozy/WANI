@@ -2,11 +2,12 @@ import type { Request, Response, NextFunction } from "express"
 import jwt from "jsonwebtoken"
 import { randomBytes } from "node:crypto"
 import { UnauthorizedError } from "@/utils/errors"
+import { getNodeEnv } from "@/config/env"
 
 function getJwtSecret(): string {
   const secret = process.env.JWT_SECRET
   if (secret) return secret
-  if (process.env.NODE_ENV === "production") {
+  if (getNodeEnv() === "production") {
     throw new Error(
       "JWT_SECRET environment variable is required in production. " +
       "Generate: openssl rand -hex 32"

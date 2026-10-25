@@ -6,7 +6,7 @@ import { MessageModel } from "@/models/message"
 import { sendResponse } from "@/utils/response"
 import { NotFoundError } from "@/utils/errors"
 import { getValidatedQuery } from "@/middleware/validate"
-import { getOwnerId, getOwnerIdOrFirst } from "@/middleware/owner"
+import { getOwnerId } from "@/middleware/owner"
 import {
   orderQuerySchema,
   updateOrderStatusSchema,
@@ -66,7 +66,7 @@ export async function listOrders(
   req: Request<Record<string, string>, any, any, OrderQuery>,
   res: Response,
 ): Promise<void> {
-  const ownerId = await getOwnerIdOrFirst(req)
+  const ownerId = getOwnerId(req)
   const result = await OrderModel.list(ownerId, getValidatedQuery<OrderQuery>(req))
   sendResponse(res, 200, "orders retrieved", result)
 }
@@ -75,7 +75,8 @@ export async function getOrder(
   req: Request<{ id: string }>,
   res: Response,
 ): Promise<void> {
-  const order = await OrderModel.getByIdWithRelations(req.params.id)
+  const ownerId = getOwnerId(req)
+  const order = await OrderModel.getByIdWithRelations(ownerId, req.params.id)
   if (!order) throw new NotFoundError("order not found")
   sendResponse(res, 200, "order retrieved", order)
 }
@@ -92,7 +93,7 @@ export async function updateOrderStatus(
   res: Response,
 ): Promise<void> {
   const ownerId = getOwnerId(req)
-  const order = await OrderModel.updateStatus(req.params.id, req.body.status as $Enums.OrderStatus)
+  const order = await OrderModel.updateStatus(ownerId, req.params.id, req.body.status as $Enums.OrderStatus)
 
   const statusMsg = STATUS_MSGS[order.status]
   if (statusMsg) {
@@ -114,8 +115,8 @@ export async function updateOrderNotes(
   req: Request<{ id: string }, any, UpdateNotesBody>,
   res: Response,
 ): Promise<void> {
-  getOwnerId(req)
-  const order = await OrderModel.updateNotes(req.params.id, req.body.notes)
+  const ownerId = getOwnerId(req)
+  const order = await OrderModel.updateNotes(ownerId, req.params.id, req.body.notes)
   sendResponse(res, 200, "order notes updated", order)
 }
 
@@ -124,7 +125,7 @@ export async function updateOrderPayment(
   res: Response,
 ): Promise<void> {
   const ownerId = getOwnerId(req)
-  const order = await OrderModel.updatePayment(req.params.id, {
+  const order = await OrderModel.updatePayment(ownerId, req.params.id, {
     method: req.body.method as $Enums.PaymentMethod,
     amount: req.body.amount,
     status: req.body.status as $Enums.PaymentStatus,

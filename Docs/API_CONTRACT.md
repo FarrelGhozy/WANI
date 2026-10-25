@@ -153,8 +153,8 @@ Field opsional umum: `label`, `instructions`, `isActive`, `sortOrder`.
 
 | Method | Path | Auth | Keterangan |
 |--------|------|------|-----------|
-| GET | `/api/orders` | 🌐 | Query: `page`, `limit`, `status` (`PENDING`/`CONFIRMED`/`PROCESSING`/`COMPLETED`/`CANCELLED`), `customerId`, `dateFrom`, `dateTo`, `sort` (`createdAt`/`updatedAt`/`totalAmount`/`status`), `order` |
-| GET | `/api/orders/:id` | 🌐 | Termasuk `items`, `payment`, `customer` |
+| GET | `/api/orders` | 🔒 | Query: `page`, `limit`, `status` (`PENDING`/`CONFIRMED`/`PROCESSING`/`COMPLETED`/`CANCELLED`), `customerId`, `dateFrom`, `dateTo`, `sort` (`createdAt`/`updatedAt`/`totalAmount`/`status`), `order` |
+| GET | `/api/orders/:id` | 🔒 | Termasuk `items`, `payment`, `customer` |
 | PUT | `/api/orders/:id/status` | 🔒 | `{ status }`; transisi divalidasi: `PENDING→CONFIRMED\|CANCELLED`, `CONFIRMED→PROCESSING\|CANCELLED`, `PROCESSING→COMPLETED\|CANCELLED`, `COMPLETED`/`CANCELLED` final. Stok dipotong saat `CONFIRMED` dan dikembalikan saat `CANCELLED` — masing-masing sekali, dijaga flag `stockReleased` |
 | PUT | `/api/orders/:id/notes` | 🔒 | `{ notes }` |
 | PUT | `/api/orders/:id/payment` | 🔒 | `{ method, amount, status, paidAt? }` — upsert (create bila belum ada) |
@@ -163,7 +163,7 @@ Field opsional umum: `label`, `instructions`, `isActive`, `sortOrder`.
 
 | Method | Path | Auth | Keterangan |
 |--------|------|------|-----------|
-| GET | `/api/customers` | 🌐 | Query: `page`, `limit`, `search`, `sort` (`createdAt`/`updatedAt`/`name`/`totalOrders`), `order` |
+| GET | `/api/customers` | 🔒 | Query: `page`, `limit`, `search`, `sort` (`createdAt`/`updatedAt`/`name`/`totalOrders`), `order` |
 | GET | `/api/customers/:id` | 🔒 | Detail pelanggan |
 | PUT | `/api/customers/:id` | 🔒 | `{ name?, notes? }` |
 | GET | `/api/conversations/:id` | 🔒 | `data: { id, messages: [{ id, role, content, msgType, waMsgId, metadata, createdAt }] }` (100 pesan terakhir) |
@@ -197,7 +197,7 @@ Email dikirim via SMTP; bila `SMTP_*` kosong, `sendEmail()` melewati pengiriman 
 
 | Method | Path | Auth | Keterangan |
 |--------|------|------|-----------|
-| GET | `/api/website` | 🌐 | `data` = `WebSite.config` (`{}` bila belum ada) |
+| GET | `/api/website` | 🔒 | `data` = `WebSite.config` (`{}` bila belum ada) |
 | PUT | `/api/website` | 🔒 | `heroHeadline, heroSubheadline, aboutText, primaryColor, secondaryColor, phone, selectedProductIds, template, theme (classic\|modern\|vibrant\|elegant), contactEmail, contactMapsUrl, socialMedia, heroImageUrl, aboutImageUrl, logoUrl, faviconUrl, ctaText` |
 | POST | `/api/website/generate` | 🔒 | `{ template }` (default `"default"`) → `{ slug, outputPath }`; slug `gen-YYYYMMDD-HHmmss` |
 | GET | `/api/website/download?slug=` | 🔒 | ZIP; tanpa `slug` → generation terbaru owner. `404` bila belum ada |

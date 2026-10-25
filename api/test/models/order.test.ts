@@ -1,6 +1,7 @@
 import { expect, test, describe, beforeEach, mock } from "bun:test"
 
 const mockOrderFindUnique = mock((_args: any) => Promise.resolve(null))
+const mockOrderFindFirst = mock((_args: any) => Promise.resolve(null))
 const mockOrderUpdate = mock((_args: any) => Promise.resolve({}))
 const mockOrderCreate = mock((_args: any) => Promise.resolve({}))
 const mockOrderFindUniqueOrThrow = mock((_args: any) => Promise.resolve({}))
@@ -12,6 +13,7 @@ const mockProductUpdate = mock((_args: any) => Promise.resolve({}))
 const mockTransaction = mock((fn: any) => fn({
   order: {
     findUnique: mockOrderFindUnique,
+    findFirst: mockOrderFindFirst,
     update: mockOrderUpdate,
     create: mockOrderCreate,
     findUniqueOrThrow: mockOrderFindUniqueOrThrow,
@@ -30,6 +32,7 @@ mock.module("@/config/db", () => ({
   prisma: {
     order: {
       findUnique: mockOrderFindUnique,
+      findFirst: mockOrderFindFirst,
       findUniqueOrThrow: mockOrderFindUniqueOrThrow,
       update: mockOrderUpdate,
       create: mockOrderCreate,
@@ -66,6 +69,7 @@ const baseOrder = {
 describe("OrderModel.updateStatus", () => {
   beforeEach(() => {
     mockOrderFindUnique.mockReset()
+    mockOrderFindFirst.mockReset()
     mockOrderUpdate.mockReset()
     mockOrderFindUniqueOrThrow.mockReset()
     mockOrderItemFindMany.mockReset()
@@ -74,10 +78,10 @@ describe("OrderModel.updateStatus", () => {
   })
 
   test("throws NotFoundError for missing order", async () => {
-    mockOrderFindUnique.mockResolvedValueOnce(null)
+    mockOrderFindFirst.mockResolvedValueOnce(null)
 
     try {
-      await OrderModel.updateStatus("nonexistent", "CONFIRMED")
+      await OrderModel.updateStatus("owner-1", "nonexistent", "CONFIRMED")
       expect.unreachable("should have thrown")
     } catch (e: any) {
       expect(e.statusCode).toBe(404)
@@ -85,10 +89,10 @@ describe("OrderModel.updateStatus", () => {
   })
 
   test("throws BadRequestError on invalid transition", async () => {
-    mockOrderFindUnique.mockResolvedValueOnce(baseOrder)
+    mockOrderFindFirst.mockResolvedValueOnce(baseOrder)
 
     try {
-      await OrderModel.updateStatus("order-1", "PROCESSING")
+      await OrderModel.updateStatus("owner-1", "order-1", "PROCESSING")
       expect.unreachable("should have thrown")
     } catch (e: any) {
       expect(e.message).toContain("invalid status transition")
@@ -97,10 +101,10 @@ describe("OrderModel.updateStatus", () => {
   })
 
   test("throws on transition from CANCELLED (terminal)", async () => {
-    mockOrderFindUnique.mockResolvedValueOnce({ ...baseOrder, status: "CANCELLED", stockReleased: false })
+    mockOrderFindFirst.mockResolvedValueOnce({ ...baseOrder, status: "CANCELLED", stockReleased: false })
 
     try {
-      await OrderModel.updateStatus("order-1", "CONFIRMED")
+      await OrderModel.updateStatus("owner-1", "order-1", "CONFIRMED")
       expect.unreachable("should have thrown")
     } catch (e: any) {
       expect(e.message).toContain("invalid status transition")
@@ -108,10 +112,10 @@ describe("OrderModel.updateStatus", () => {
   })
 
   test("throws on transition from COMPLETED (terminal)", async () => {
-    mockOrderFindUnique.mockResolvedValueOnce({ ...baseOrder, status: "COMPLETED", stockReleased: true })
+    mockOrderFindFirst.mockResolvedValueOnce({ ...baseOrder, status: "COMPLETED", stockReleased: true })
 
     try {
-      await OrderModel.updateStatus("order-1", "CANCELLED")
+      await OrderModel.updateStatus("owner-1", "order-1", "CANCELLED")
       expect.unreachable("should have thrown")
     } catch (e: any) {
       expect(e.message).toContain("invalid status transition")
@@ -119,21 +123,38 @@ describe("OrderModel.updateStatus", () => {
   })
 
   test("valid transition: CONFIRMED → PROCESSING", async () => {
-    mockOrderFindUnique.mockResolvedValueOnce({ ...baseOrder, status: "CONFIRMED", stockReleased: true })
+    mockOrderFindFirst.mockResolvedValueOnce({ ...baseOrder, status: "CONFIRMED", stockReleased: true })
     mockOrderFindUniqueOrThrow.mockResolvedValueOnce({ ...baseOrder, status: "PROCESSING", stockReleased: true })
 
-    const result = await OrderModel.updateStatus("order-1", "PROCESSING")
+    const result = await OrderModel.updateStatus("owner-1", "order-1", "PROCESSING")
 
     expect(result.status).toBe("PROCESSING")
   })
 
   test("valid transition: PROCESSING → COMPLETED", async () => {
-    mockOrderFindUnique.mockResolvedValueOnce({ ...baseOrder, status: "PROCESSING", stockReleased: true })
+    mockOrderFindFirst.mockResolvedValueOnce({ ...baseOrder, status: "PROCESSING", stockReleased: true })
     mockOrderFindUniqueOrThrow.mockResolvedValueOnce({ ...baseOrder, status: "COMPLETED", stockReleased: true })
 
-    const result = await OrderModel.updateStatus("order-1", "COMPLETED")
+    const result = await OrderModel.updateStatus("owner-1", "order-1", "COMPLETED")
 
     expect(result.status).toBe("COMPLETED")
+  })
+})
+
+describe("OrderModel.getByIdWithRelations", () => {
+  beforeEach(() => {
+    mockOrderFindFirst.mockReset()
+  })
+
+  test("scopes lookup by ownerId", async () => {
+    mockOrderFindFirst.mockResolvedValueOnce(baseOrder)
+
+    await OrderModel.getByIdWithRelations("owner-1", "order-1")
+
+    expect(mockOrderFindFirst.mock.calls[0]![0].where).toEqual({
+      id: "order-1",
+      ownerId: "owner-1",
+    })
   })
 })
 

@@ -1,6 +1,9 @@
+import { validateProductionEnv } from "@/config/validate-env"
 import { app } from "@/server"
 import { prisma } from "@/config/db"
 import { logger } from "@/config/logger"
+
+validateProductionEnv()
 
 const port = process.env.PORT ?? "3001"
 

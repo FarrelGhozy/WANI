@@ -4,7 +4,6 @@ node_modules/
 dist
 out
 build
-bun.lock
 graphify-out
 .env
 .env.*

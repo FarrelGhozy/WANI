@@ -2,10 +2,10 @@ FROM oven/bun:1-alpine AS build
 WORKDIR /app
 
 COPY dashboard/package.json dashboard/bun.lock ./
-RUN bun install
+RUN bun install --frozen-lockfile
 
-COPY landingpage/package.json landingpage/package-lock.json ../landingpage/
-RUN bun install --cwd ../landingpage
+COPY landingpage/package.json landingpage/bun.lock ../landingpage/
+RUN bun install --cwd ../landingpage --frozen-lockfile
 
 COPY dashboard/ ./
 COPY landingpage/ ../landingpage/

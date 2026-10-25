@@ -32,6 +32,9 @@ describe("auth gates on sensitive endpoints", () => {
     ["GET /api/dashboard/stats", "/api/dashboard/stats"],
     ["GET /api/logs", "/api/logs?page=1&limit=10"],
     ["GET /api/usage", "/api/usage"],
+    ["GET /api/orders", "/api/orders?page=1&limit=10"],
+    ["GET /api/orders/:id", "/api/orders/order-1"],
+    ["GET /api/website", "/api/website"],
   ])("rejects unauthenticated %s", async (_label, url) => {
     const res = await request(app).get(url)
     expect(res.status).toBe(401)

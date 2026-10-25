@@ -45,7 +45,12 @@ function parseStrMap(src: string): Record<string, string> {
   const r: Record<string, string> = {};
   const re = /["']?([a-zA-Z][a-zA-Z0-9-]*)["']?\s*:\s*"([^"]+)"/g;
   let m: RegExpExecArray | null;
-  while ((m = re.exec(src)) !== null) r[m[1]] = m[2];
+  while ((m = re.exec(src)) !== null) {
+    const key = m[1];
+    const value = m[2];
+    if (key === undefined || value === undefined) continue;
+    r[key] = value;
+  }
   return r;
 }
 
@@ -55,7 +60,10 @@ function parseFontFamily(src: string): Record<string, string> {
   let m: RegExpExecArray | null;
   while ((m = re.exec(src)) !== null) {
     // ["Plus Jakarta Sans"] -> "Plus Jakarta Sans"
-    r[m[1]] = m[2].replace(/["']/g, "").trim();
+    const key = m[1];
+    const value = m[2];
+    if (key === undefined || value === undefined) continue;
+    r[key] = value.replace(/["']/g, "").trim();
   }
   return r;
 }
@@ -67,7 +75,10 @@ function parseFontSize(src: string): Record<string, string> {
     /["']?([a-zA-Z][a-zA-Z0-9-]*)["']?\s*:\s*\["([^"]+)"(?:,\s*\{[^}]*\})?\s*\]/g;
   let m: RegExpExecArray | null;
   while ((m = re.exec(src)) !== null) {
-    r[m[1]] = m[2];
+    const key = m[1];
+    const value = m[2];
+    if (key === undefined || value === undefined) continue;
+    r[key] = value;
   }
   return r;
 }

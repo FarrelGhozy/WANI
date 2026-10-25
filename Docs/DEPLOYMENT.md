@@ -9,8 +9,8 @@ Sistem dijalankan sebagai satu Docker Compose stack. Image produksi di-*build* d
 | Service | Image | Port | Volume |
 |---------|-------|------|--------|
 | `db` | `postgres:17-alpine` | internal 5432 | `pgdata` |
-| `api` | `ghcr.io/farrelghozy/wani-api:1.0.9` | `expose 3001` (internal) | `generated-sites`, `uploads` |
-| `dashboard` | `ghcr.io/farrelghozy/wani-dashboard:1.0.10` | `5173:80` | — |
+| `api` | `ghcr.io/farrelghozy/wani-api:1.2.0` | `expose 3001` (internal) | `generated-sites`, `uploads` |
+| `dashboard` | `ghcr.io/farrelghozy/wani-dashboard:1.2.0` | `5173:80` | — |
 | `waha` | `devlikeapro/waha:latest` | internal `3000` (tidak dipublish) | state di database `postgres` |
 | `backup` | `postgres:17-alpine` + `scripts/backup-db.sh` | — | `backups` |
 

@@ -6,7 +6,7 @@ import { updateWebsiteSchema, generateWebsiteSchema } from "@/schemas/website"
 
 const router = Router()
 
-router.get("/", websiteController.getWebsiteConfig)
+router.get("/", requireJwt, websiteController.getWebsiteConfig)
 router.put("/", requireJwt, validate({ body: updateWebsiteSchema }), websiteController.updateWebsiteConfig)
 router.post("/generate", requireJwt, validate({ body: generateWebsiteSchema }), websiteController.generateWebsite)
 router.get("/download", requireJwt, websiteController.downloadWebsite)

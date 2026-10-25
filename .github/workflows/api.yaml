@@ -45,8 +45,28 @@ jobs:
         run: bun run test
         working-directory: api
 
+      - name: Typecheck source
+        run: bun run typecheck
+        working-directory: api
+
+      - name: Build
+        run: bun run build
+        working-directory: api
+
+      - name: Verify runtime NODE_ENV access
+        run: grep -q 'Bun.env.NODE_ENV' dist/index.js
+        working-directory: api
+
+      - name: Run E2E tests
+        run: bun run test:e2e
+        working-directory: api
+
       - name: Install web-gen dependencies
         run: bun install --frozen-lockfile
+        working-directory: web-gen
+
+      - name: Typecheck web-gen
+        run: bun run typecheck
         working-directory: web-gen
 
       - name: Run web-gen tests

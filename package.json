@@ -1,5 +1,6 @@
 {
   "name": "wani",
+  "version": "1.2.0",
   "private": false,
   "scripts": {
     "dev": "bash scripts/dev.sh",

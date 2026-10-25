@@ -165,17 +165,17 @@ export class OrderModel extends BaseModel {
     return this.listResult(rows.map(toOrderResponse), total, page, limit)
   }
 
-  static async getByIdWithRelations(id: string): Promise<OrderResponse | null> {
-    const row = await this.delegate.findUnique({
-      where: { id },
+  static async getByIdWithRelations(ownerId: string, id: string): Promise<OrderResponse | null> {
+    const row = await this.delegate.findFirst({
+      where: { id, ownerId },
       include: orderInclude,
     })
     return row ? toOrderResponse(row) : null
   }
 
-  static async updateStatus(id: string, newStatus: $Enums.OrderStatus): Promise<OrderResponse> {
-    const current = await this.delegate.findUnique({
-      where: { id },
+  static async updateStatus(ownerId: string, id: string, newStatus: $Enums.OrderStatus): Promise<OrderResponse> {
+    const current = await this.delegate.findFirst({
+      where: { id, ownerId },
       select: { status: true, stockReleased: true },
     })
     if (!current) {
@@ -247,7 +247,13 @@ export class OrderModel extends BaseModel {
     return toOrderResponse(row)
   }
 
-  static async updateNotes(id: string, notes: string): Promise<OrderResponse> {
+  static async updateNotes(ownerId: string, id: string, notes: string): Promise<OrderResponse> {
+    const owned = await this.delegate.findFirst({
+      where: { id, ownerId },
+      select: { id: true },
+    })
+    if (!owned) throw new NotFoundError("order not found")
+
     const row = await this.delegate.update({
       where: { id },
       data: { notes },
@@ -270,6 +276,7 @@ export class OrderModel extends BaseModel {
   }
 
   static async updatePayment(
+    ownerId: string,
     id: string,
     data: {
       method: $Enums.PaymentMethod
@@ -278,6 +285,12 @@ export class OrderModel extends BaseModel {
       paidAt?: string | null
     },
   ): Promise<OrderResponse> {
+    const owned = await this.delegate.findFirst({
+      where: { id, ownerId },
+      select: { id: true },
+    })
+    if (!owned) throw new NotFoundError("order not found")
+
     await this.db.$transaction(async (tx) => {
       const prev = await tx.payment.findUnique({ where: { orderId: id } })
       if (prev?.status === "PAID") {

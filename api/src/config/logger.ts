@@ -1,6 +1,8 @@
 import winston from "winston";
 
-const isProd = process.env.NODE_ENV === "production";
+import { getNodeEnv } from "@/config/env"
+
+const isProd = getNodeEnv() === "production";
 
 const { timestamp, printf, combine, errors, json, label } = winston.format;
 

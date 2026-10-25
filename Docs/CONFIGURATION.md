@@ -62,6 +62,8 @@ Header khusus dikirim otomatis bila `LLM_BASE_URL` mengandung `openrouter.ai`: `
 
 **Managed API key** untuk integrasi (termasuk webhook WAHA) dibuat lewat `POST /api/api-keys` dan disimpan di tabel `ApiKey`, bukan di env. Scope yang tersedia: `sessions:messages`, `sessions:qr`, `chat:write`, `outgoing:read`, `outgoing:write`. Webhook `/api/sessions/messages` membutuhkan scope `sessions:messages`.
 
+> **Validasi startup (produksi).** Saat `NODE_ENV=production`, API menolak start bila `DATABASE_HOST`, `DATABASE_PORT`, `DATABASE_USER`, `DATABASE_PASSWORD`, `DATABASE_NAME`, atau `JWT_SECRET` kosong. `JWT_SECRET` juga harus ≥ 32 karakter dan bukan nilai contoh (`change-me…`). `DATABASE_PASSWORD` dan `WAHA_API_KEY` tidak boleh memakai placeholder dari `.env.example`.
+
 ### 2.2 LLM & Guardrails
 
 | Variabel | Default | Keterangan |

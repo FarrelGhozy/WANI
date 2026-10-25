@@ -1,5 +1,6 @@
 {
   "name": "web-gen",
+  "version": "1.2.0",
   "module": "src/index.ts",
   "type": "module",
   "private": true,
@@ -7,7 +8,8 @@
     "build": "bun run build:template",
     "generate": "bun run src/index.ts",
     "build:template": "cd src/templates/default && npm install && npx astro build",
-    "test": "bun test"
+    "test": "bun test",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@tailwindcss/cli": "^4.3.2",

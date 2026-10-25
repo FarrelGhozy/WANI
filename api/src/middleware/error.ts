@@ -2,6 +2,7 @@ import type { Request, Response, NextFunction } from "express"
 import { AppError } from "@/utils/errors"
 import { sendResponse } from "@/utils/response"
 import { logger } from "@/config/logger"
+import { getNodeEnv } from "@/config/env"
 
 export function errorHandler(
   err: Error,
@@ -17,7 +18,7 @@ export function errorHandler(
   logger.error(err)
 
   const data =
-    process.env.NODE_ENV === "development"
+    getNodeEnv() === "development"
       ? { stack: err.stack }
       : undefined
 
