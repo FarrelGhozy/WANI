@@ -1,3 +1,32 @@
+# TODO — RAG Knowledge Base (Issue #192)
+
+**Status:** branch `feat/rag` (`9c48d4a`, 14 Jul 2026) **belum siap di-merge apa adanya**:
+56 commit ahead / **283 commit behind** `main`, merge-base 4 Jul, **92 file konflik**,
+masih single-tenant, masih memakai pipeline lama, dan belum pernah ada CI/PR.
+
+**Rencana:** port **hanya fitur RAG** ke branch baru dari `main`. Jangan merge branch utuh
+dan jangan bawa perubahan `landingpage/` yang sudah usang.
+
+- [ ] #193 — Multi-tenant: `ownerId` + scoping knowledge base
+- [ ] #194 — Integrasi retrieval ke typed pipeline `main`
+- [ ] #195 — Infrastruktur pgvector + migrasi aman
+- [ ] #196 — Provider embedding, konfigurasi, dan dokumentasi
+- [ ] #197 — Dashboard Knowledge Base tab
+- [ ] #198 — Test, CI, dan E2E docker compose
+
+**Definition of Done**
+
+- [ ] Semua knowledge document/chunk terikat `ownerId`; tidak ada query lintas owner
+- [ ] Retrieval berjalan di typed pipeline `main`
+- [ ] `docker compose` memakai `pgvector/pgvector:pg17`; migrasi aman untuk DB existing
+- [ ] `OPENAI_API_KEY` / `EMBEDDING_MODEL` terdokumentasi di `.env.example` + Docs
+- [ ] Tab Knowledge Base di dashboard berfungsi dengan auth + scoping
+- [ ] Unit/integration test + CI hijau
+- [ ] E2E docker: migrate → index → search → chat menjawab dari knowledge
+- [ ] Docs dan TODO diperbarui
+
+---
+
 # TODO: Multi-Tenant Data Isolation
 
 **Goal:** Setiap user punya data sendiri (Store, Product, Order, Customer, dll).
