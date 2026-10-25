@@ -31,8 +31,11 @@ WhatsApp is handled by **WAHA**, a separate Docker service (`devlikeapro/waha`) 
 
 ```bash
 cp .env.example .env
+# Wajib: ganti DATABASE_PASSWORD, JWT_SECRET (>=32 karakter), dan WAHA_API_KEY
 docker compose up --build
 ```
+
+> API produksi menolak start bila masih memakai nilai placeholder `change-me…`.
 
 Open the dashboard at [http://localhost:5173](http://localhost:5173).
 
