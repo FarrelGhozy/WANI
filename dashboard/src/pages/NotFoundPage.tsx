@@ -1,5 +1,5 @@
-import { Link } from 'react-router'
-import Button from '@/components/ui/Button.tsx'
+import { Link } from "react-router";
+import Button from "@/components/ui/Button.tsx";
 
 export default function NotFoundPage() {
   return (
@@ -10,13 +10,17 @@ export default function NotFoundPage() {
         </div>
         <div className="space-y-5 text-center">
           <p className="text-6xl font-bold text-teal-600">404</p>
-          <h2 className="text-lg font-semibold text-stone-900">Halaman Tidak Ditemukan</h2>
+          <h2 className="text-lg font-semibold text-stone-900">
+            Halaman Tidak Ditemukan
+          </h2>
           <p className="text-sm text-stone-500">
             Halaman yang Anda cari tidak ada atau telah dipindahkan.
           </p>
           <div className="flex flex-col gap-3 pt-2">
             <Link to="/">
-              <Button size="lg" className="w-full">Kembali ke Beranda</Button>
+              <Button size="lg" className="w-full">
+                Kembali ke Beranda
+              </Button>
             </Link>
             <Link
               to="/login"
@@ -28,5 +32,5 @@ export default function NotFoundPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

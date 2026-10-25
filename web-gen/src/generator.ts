@@ -17,7 +17,7 @@ import type { GenerateParams, GenerateResult, ProductData } from "./types.ts";
 const TEMPLATES_DIR = join(import.meta.dir, "templates");
 
 export async function generate(
-  params: GenerateParams,
+  params: GenerateParams
 ): Promise<GenerateResult> {
   const templatePath = join(TEMPLATES_DIR, params.template);
 
@@ -42,7 +42,7 @@ export async function generate(
 function generateHtml(
   params: GenerateParams,
   templatePath: string,
-  _htmlPath: string,
+  _htmlPath: string
 ): GenerateResult {
   const ctx = buildContext(params);
 
@@ -55,8 +55,9 @@ function generateHtml(
   }
 
   // determine pages: all .html that aren't partials; fallback code.html
-  let pages = readdirSync(templatePath)
-    .filter((f) => f.endsWith(".html") && !f.startsWith("_"));
+  let pages = readdirSync(templatePath).filter(
+    (f) => f.endsWith(".html") && !f.startsWith("_")
+  );
 
   // ponytail: single-file redirect until migrated
   if (pages.length === 0) {
@@ -66,7 +67,11 @@ function generateHtml(
   }
 
   if (pages.length === 0) {
-    return { success: false, outputPath: null, error: "no HTML templates found" };
+    return {
+      success: false,
+      outputPath: null,
+      error: "no HTML templates found",
+    };
   }
 
   const outDir = params.outputDir;
@@ -95,19 +100,24 @@ function generateHtml(
     }
 
     // strip Google Fonts CDN links (but keep Material Symbols), inject local fonts.css
-    html = html.replace(/<link(?![^>]*Material\+Symbols)[^>]*fonts\.(googleapis|gstatic)\.com[^>]*>/gi, "");
-    html = html.replace("</head>", '<link href="./assets/fonts.css" rel="stylesheet"/></head>');
+    html = html.replace(
+      /<link(?![^>]*Material\+Symbols)[^>]*fonts\.(googleapis|gstatic)\.com[^>]*>/gi,
+      ""
+    );
+    html = html.replace(
+      "</head>",
+      '<link href="./assets/fonts.css" rel="stylesheet"/></head>'
+    );
 
     // product loop
-    html = html.replace(
-      /{{#products}}([\s\S]*?){{\/products}}/g,
-      (_, block) => resolvedProducts.map((p) => renderItem(block, p)).join("\n"),
+    html = html.replace(/{{#products}}([\s\S]*?){{\/products}}/g, (_, block) =>
+      resolvedProducts.map((p) => renderItem(block, p)).join("\n")
     );
 
     // {{^products}} fallback
     html = html.replace(
       /{{\^products}}([\s\S]*?){{\/products}}/g,
-      (_, block) => resolvedProducts.length === 0 ? block : "",
+      (_, block) => (resolvedProducts.length === 0 ? block : "")
     );
 
     // page context for active nav highlighting
@@ -127,14 +137,14 @@ function generateHtml(
         (_, key, block) => {
           const val = fullCtx[key] ?? pageCtx[key];
           return val && String(val).length > 0 ? block : "";
-        },
+        }
       );
       html = html.replace(
         /{{\^([a-zA-Z.]+)}}([\s\S]*?){{\/\1}}/g,
         (_, key, block) => {
           const val = fullCtx[key] ?? pageCtx[key];
-          return (val && String(val).length > 0) ? "" : block;
-        },
+          return val && String(val).length > 0 ? "" : block;
+        }
       );
       if (html === before) break;
     }
@@ -148,7 +158,10 @@ function generateHtml(
 
     // ponytail: "index" → index.html for clean URL, others keep name
     const pageName = page.replace(/\.html$/, "");
-    const outName = pageName === "index" || page === "code.html" ? "index.html" : `${pageName}.html`;
+    const outName =
+      pageName === "index" || page === "code.html"
+        ? "index.html"
+        : `${pageName}.html`;
     writeFileSync(join(outDir, outName), html);
   }
 
@@ -162,9 +175,18 @@ function generateHtml(
   }
 
   // Write asset manifest
-  const manifestEntries = Object.entries(imageMap).filter(([k]) => k.startsWith("product.") || k === "hero.imageUrl" || k === "about.imageUrl" || k === "store.logoUrl");
+  const manifestEntries = Object.entries(imageMap).filter(
+    ([k]) =>
+      k.startsWith("product.") ||
+      k === "hero.imageUrl" ||
+      k === "about.imageUrl" ||
+      k === "store.logoUrl"
+  );
   if (manifestEntries.length > 0) {
-    writeFileSync(join(outDir, "assets-manifest.json"), JSON.stringify(Object.fromEntries(manifestEntries), null, 2));
+    writeFileSync(
+      join(outDir, "assets-manifest.json"),
+      JSON.stringify(Object.fromEntries(manifestEntries), null, 2)
+    );
   }
 
   return { success: true, outputPath: outDir };
@@ -208,7 +230,7 @@ export function renderItem(block: string, item: ProductData): string {
 /* ── Astro Template ─────────────────────────────────── */
 function generateAstro(
   params: GenerateParams,
-  templatePath: string,
+  templatePath: string
 ): GenerateResult {
   let workingDir = "";
   try {
@@ -221,9 +243,15 @@ function generateAstro(
     if (existsSync(themeSrc)) {
       const publicDir = join(workingDir, "public");
       mkdirSync(publicDir, { recursive: true });
-      writeFileSync(join(publicDir, "theme.css"), readFileSync(themeSrc, "utf-8"));
+      writeFileSync(
+        join(publicDir, "theme.css"),
+        readFileSync(themeSrc, "utf-8")
+      );
       if (existsSync(baseSrc)) {
-        writeFileSync(join(publicDir, "base.css"), readFileSync(baseSrc, "utf-8"));
+        writeFileSync(
+          join(publicDir, "base.css"),
+          readFileSync(baseSrc, "utf-8")
+        );
       }
     }
 
@@ -235,11 +263,18 @@ function generateAstro(
       paymentMethods: params.store.paymentMethods,
     });
 
-    writeDataFile(workingDir, "products.json",
+    writeDataFile(
+      workingDir,
+      "products.json",
       params.products.map((p) => ({
-        id: p.id, name: p.name, description: p.description,
-        price: p.price, stock: p.stock, isAvailable: p.isAvailable, imageUrl: p.imageUrl,
-      })),
+        id: p.id,
+        name: p.name,
+        description: p.description,
+        price: p.price,
+        stock: p.stock,
+        isAvailable: p.isAvailable,
+        imageUrl: p.imageUrl,
+      }))
     );
 
     writeDataFile(workingDir, "site-config.json", {
@@ -249,7 +284,8 @@ function generateAstro(
       contact: params.config.contact,
       colors: params.config.colors,
       basePath: `/s/${params.slug}/`,
-      waOrderTemplate: params.config.waOrderTemplate ?? buildDefaultWaTemplate(),
+      waOrderTemplate:
+        params.config.waOrderTemplate ?? buildDefaultWaTemplate(),
     });
 
     writeDataFile(workingDir, "orders-stats.json", {
@@ -259,17 +295,29 @@ function generateAstro(
     });
 
     const install = spawnSync("bun", ["install", "--silent"], {
-      cwd: workingDir, stdio: ["ignore", "pipe", "pipe"], timeout: 120_000,
+      cwd: workingDir,
+      stdio: ["ignore", "pipe", "pipe"],
+      timeout: 120_000,
     });
     if (install.status !== 0) {
-      return { success: false, outputPath: null, error: install.stderr?.toString() || "npm install failed" };
+      return {
+        success: false,
+        outputPath: null,
+        error: install.stderr?.toString() || "npm install failed",
+      };
     }
 
     const build = spawnSync("bunx", ["astro", "build"], {
-      cwd: workingDir, stdio: ["ignore", "pipe", "pipe"], timeout: 120_000,
+      cwd: workingDir,
+      stdio: ["ignore", "pipe", "pipe"],
+      timeout: 120_000,
     });
     if (build.status !== 0) {
-      return { success: false, outputPath: null, error: build.stderr?.toString() || "astro build failed" };
+      return {
+        success: false,
+        outputPath: null,
+        error: build.stderr?.toString() || "astro build failed",
+      };
     }
 
     const outDir = params.outputDir;
@@ -295,8 +343,8 @@ export function buildContext(params: GenerateParams): Record<string, unknown> {
   const s = config.colors.secondary;
   const logoUrl = config.logoUrl ?? store.logoUrl ?? "";
   const faviconUrl = config.faviconUrl ?? logoUrl ?? null;
-  const hasHeroImage = !!(config.hero.imageUrl);
-  const hasAboutImage = !!(config.about.imageUrl);
+  const hasHeroImage = !!config.hero.imageUrl;
+  const hasAboutImage = !!config.about.imageUrl;
   const hasLogo = !!logoUrl;
   const hasFavicon = !!faviconUrl;
   const initial = store.businessName?.charAt(0)?.toUpperCase() ?? "S";
@@ -342,12 +390,16 @@ export function buildContext(params: GenerateParams): Record<string, unknown> {
     "stats.pending": String(stats.pending),
     "whatsapp.url": `https://wa.me/${store.phone}`,
     "wa.text": encodeURIComponent(
-      config.waOrderTemplate ?? buildDefaultWaTemplate(),
+      config.waOrderTemplate ?? buildDefaultWaTemplate()
     ),
     "placeholders.hero": makePlaceholderSvg(p, s, "Hero"),
     "placeholders.about": makePlaceholderSvg(p, s, "Tentang"),
     "placeholders.product": makePlaceholderSvg("#f5f5f4", "#e7e5e4", "Produk"),
-    "placeholders.logo": makePlaceholderSvg(p, p, store.businessName.charAt(0).toUpperCase()),
+    "placeholders.logo": makePlaceholderSvg(
+      p,
+      p,
+      store.businessName.charAt(0).toUpperCase()
+    ),
   };
 }
 
@@ -359,7 +411,11 @@ function buildDefaultWaTemplate(): string {
   ].join("\n");
 }
 
-function makePlaceholderSvg(primary: string, secondary: string, label: string): string {
+function makePlaceholderSvg(
+  primary: string,
+  secondary: string,
+  label: string
+): string {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
 <defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
 <stop offset="0%" style="stop-color:${escapeHtml(primary)}33"/>
@@ -373,7 +429,12 @@ function makePlaceholderSvg(primary: string, secondary: string, label: string): 
 }
 
 export function escapeHtml(s: string): string {
-  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
 function makeFaviconSvg(initial: string, color: string): string {
@@ -402,7 +463,10 @@ function copyAssetImages(params: GenerateParams, outDir: string): ImageMap {
   const imageMap: ImageMap = {};
   const uploadsDir = resolveUploadsDir(params);
 
-  function resolveImage(sourceUrl: string | null | undefined, destName: string): string | null {
+  function resolveImage(
+    sourceUrl: string | null | undefined,
+    destName: string
+  ): string | null {
     if (!sourceUrl) return null;
 
     // Local uploads: resolve from the uploads directory
@@ -410,7 +474,9 @@ function copyAssetImages(params: GenerateParams, outDir: string): ImageMap {
       const filename = sourceUrl.split("/").pop() ?? destName;
       const sourcePath = join(uploadsDir, filename);
       if (existsSync(sourcePath)) {
-        const ext = sourcePath.includes(".") ? `.${sourcePath.split(".").pop()}` : ".jpg";
+        const ext = sourcePath.includes(".")
+          ? `.${sourcePath.split(".").pop()}`
+          : ".jpg";
         const dest = join(imagesDir, `${destName}${ext}`);
         copyFileSync(sourcePath, dest);
         return `./assets/images/${destName}${ext}`;
@@ -441,14 +507,18 @@ function copyAssetImages(params: GenerateParams, outDir: string): ImageMap {
   if (logoLocal) imageMap["store.logoUrl"] = logoLocal;
 
   // Favicon — fallback: faviconUrl → logoUrl → SVG (handled in template via favicon.svg)
-  const faviconSource = params.config.faviconUrl ?? params.config.logoUrl ?? params.store.logoUrl;
+  const faviconSource =
+    params.config.faviconUrl ?? params.config.logoUrl ?? params.store.logoUrl;
   const faviconLocal = resolveImage(faviconSource, "favicon");
   if (faviconLocal) imageMap["favicon.url"] = faviconLocal;
 
   // Product images
   for (const product of params.products) {
     if (product.imageUrl) {
-      const productLocal = resolveImage(product.imageUrl, `product-${product.id}`);
+      const productLocal = resolveImage(
+        product.imageUrl,
+        `product-${product.id}`
+      );
       if (productLocal) {
         // Inject into the product data so renderItem picks it up
         imageMap[`product.${product.id}.imageUrl`] = productLocal;
@@ -477,17 +547,34 @@ if (import.meta.main) {
     },
     products: [
       {
-        id: "p1", name: "Produk A", description: "Deskripsi produk A",
-        price: 25000, stock: 10, isAvailable: true, imageUrl: null,
+        id: "p1",
+        name: "Produk A",
+        description: "Deskripsi produk A",
+        price: 25000,
+        stock: 10,
+        isAvailable: true,
+        imageUrl: null,
       },
       {
-        id: "p2", name: "Produk B", description: "Deskripsi produk B",
-        price: 50000, stock: 5, isAvailable: true, imageUrl: null,
+        id: "p2",
+        name: "Produk B",
+        description: "Deskripsi produk B",
+        price: 50000,
+        stock: 5,
+        isAvailable: true,
+        imageUrl: null,
       },
     ],
     config: {
-      hero: { headline: "Selamat Datang", subheadline: "Toko demo kami", ctaText: "Lihat Produk" },
-      about: { description: "Toko demo untuk testing generator", mission: null },
+      hero: {
+        headline: "Selamat Datang",
+        subheadline: "Toko demo kami",
+        ctaText: "Lihat Produk",
+      },
+      about: {
+        description: "Toko demo untuk testing generator",
+        mission: null,
+      },
       socialMedia: { instagram: "https://instagram.com/demo" },
       contact: { email: null, mapsUrl: null },
       selectedProductIds: ["p1", "p2"],
@@ -496,13 +583,13 @@ if (import.meta.main) {
     },
     stats: { totalOrders: 10, completed: 7, pending: 3 },
     outputDir: join(import.meta.dir, "..", "generated-sites", "demo-toko"),
-  }
+  };
 
-  const result = await generate(params)
+  const result = await generate(params);
   if (result.success) {
-    console.log(`✓ Generated: ${result.outputPath}`)
+    console.log(`✓ Generated: ${result.outputPath}`);
   } else {
-    console.error(`✗ Failed: ${result.error}`)
-    process.exit(1)
+    console.error(`✗ Failed: ${result.error}`);
+    process.exit(1);
   }
 }

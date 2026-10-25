@@ -1,4 +1,4 @@
-import { z } from "zod"
+import { z } from "zod";
 
 export const upsertStoreSchema = z.object({
   businessName: z.string().optional(),
@@ -10,4 +10,4 @@ export const upsertStoreSchema = z.object({
   shippingInfo: z.string().optional().nullable(),
   returnPolicy: z.string().optional().nullable(),
   isActive: z.boolean().optional(),
-})
+});

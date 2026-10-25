@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+
+# Build / output
+dist
+out
+build
+s/
+api/generated/
+api/generated-sites/
+web-gen/src/templates/default/.astro/
+web-gen/src/templates/default/node_modules/
+
+# Environment
+.env
+.env.*
+
+# Generated / cached
+bun.lock
+graphify-out
+coverage/
+
+# LaTeX build artifacts
+Docs/*.aux
+Docs/*.toc
+Docs/*.lof
+Docs/*.lot
+Docs/*.log
+Docs/*.out
+Docs/*.fdb_latexmk
+Docs/*.fls
+Docs/*.synctex.gz
+
+# Git / tooling
+.git/
+.claude/
+
+# System
+.DS_Store

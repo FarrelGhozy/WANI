@@ -4,10 +4,10 @@ Semua konfigurasi runtime lewat **environment variable**. Tidak ada file config 
 
 | Sumber template | Dipakai untuk |
 |-----------------|---------------|
-| `.env.example` (root) | Docker Compose (produksi & dev) |
-| `api/.env.example` | Menjalankan API langsung dengan Bun di lokal |
+| `.env.example` (root) | Docker Compose (produksi & dev) — dipakai API **dan** WAHA |
+| root `.env` (API lokal) | Disalin/dibaca API saat dijalankan langsung dengan Bun (`bun --env-file=../.env`) |
 | `dashboard/.env.example` | Menjalankan Vite dev server di lokal |
-| `wa-bot` / `web-gen` | Membaca env yang sama dari shell / file `.env` paketnya |
+| `web-gen` | Membaca env yang sama dari shell / file `.env` paketnya |
 
 ---
 
@@ -43,29 +43,30 @@ Header khusus dikirim otomatis bila `LLM_BASE_URL` mengandung `openrouter.ai`: `
 
 ## 2. Environment Variable
 
-### 2.1 Database & API (root `.env.example` + `api/.env.example`)
+### 2.1 Database & API (root `.env.example`)
 
 | Variabel | Default | Wajib | Keterangan |
 |----------|---------|-------|------------|
-| `POSTGRES_PASSWORD` | — | ✅ (compose) | Password user Postgres |
+| `DATABASE_PASSWORD` | — | ✅ | Password user Postgres (dipakai `db`, `api`, `waha`, `backup`) |
 | `DATABASE_USER` | `postgres` | — | User Postgres |
 | `DATABASE_HOST` | `db` (compose) / `localhost` (lokal) | — | Host Postgres |
 | `DATABASE_PORT` | `5432` | — | Port Postgres |
-| `DATABASE_NAME_API` / `DATABASE_NAME` | `wani_api` | — | DB untuk API |
-| `DATABASE_NAME_BOT` / `DATABASE_NAME` | `wa_bot` | — | DB untuk bot |
-| `DATABASE_PASSWORD` | — | ✅ (lokal) | Dipakai `prisma.config.ts` di lokal (compose memakai `POSTGRES_PASSWORD`) |
-| `API_PORT` / `PORT` | `3001` | — | Port API (compose: `expose`, bukan publish) |
+| `DATABASE_NAME` | `wani_api` | — | DB untuk API. WAHA memakai database `postgres` di server yang sama |
+| `PORT` | `3001` | — | Port API (compose: `expose`, bukan publish) |
 | `NODE_ENV` | `development` | — | `production` mematikan endpoint debug & mewajibkan `JWT_SECRET` |
-| `API_TOKEN` | — | ✅ | Shared secret bot ↔ API (`Authorization: Bearer <API_TOKEN>`) |
+| `ALLOWED_ORIGINS` | `http://localhost:5173,https://wani.app,https://wani.utc.web.id` | — | Allowlist CORS (dipisah koma) |
+| `ALLOW_LEGACY_API_TOKEN` | `false` | — | `true` mengaktifkan `API_TOKEN` lama untuk endpoint service |
+| `API_TOKEN` | — | — | Legacy shared secret (min. 32 karakter); hanya berlaku bila `ALLOW_LEGACY_API_TOKEN=true` |
 | `JWT_SECRET` | — | ✅ produksi | Di dev, bila kosong dibuat acak per proses (token invalid setelah restart) |
 | `JWT_EXPIRES` | `7d` | — | Masa berlaku token JWT |
-| `WABOT_DATABASE_URL` | dibangun otomatis di compose | — | Hanya untuk fitur reset sesi WA (hapus `Creds`/`SignalKey`) |
+
+**Managed API key** untuk integrasi (termasuk webhook WAHA) dibuat lewat `POST /api/api-keys` dan disimpan di tabel `ApiKey`, bukan di env. Scope yang tersedia: `sessions:messages`, `sessions:qr`, `chat:write`, `outgoing:read`, `outgoing:write`. Webhook `/api/sessions/messages` membutuhkan scope `sessions:messages`.
 
 ### 2.2 LLM & Guardrails
 
 | Variabel | Default | Keterangan |
 |----------|---------|------------|
-| `LLM_BASE_URL` | OpenRouter chat completions | Root `.env.example` memakai OpenCode Zen, `api/.env.example` memakai OpenRouter |
+| `LLM_BASE_URL` | OpenRouter chat completions | Root `.env.example` memakai OpenCode Zen; ganti ke OpenRouter bila perlu |
 | `LLM_API_KEY` | — | Kunci provider (wajib agar `/api/health` hijau & pipeline jalan) |
 | `OPENROUTER_API_KEY` | — | Alias legacy, masih dibaca |
 | `LLM_MODEL`, `LLM_FALLBACK_MODEL`, `LLM_MAX_TOKENS`, `LLM_TEMPERATURE` | lihat §1 | Default LLM |
@@ -80,14 +81,21 @@ Header khusus dikirim otomatis bila `LLM_BASE_URL` mengandung `openrouter.ai`: `
 
 Semua nilai boolean memakai `1` / `true` (case-insensitive) sebagai `true`; angka non-valid jatuh ke default.
 
-### 2.3 WhatsApp Bot
+### 2.3 WhatsApp (WAHA)
 
-| Variabel | Default | Keterangan |
-|----------|---------|------------|
-| `API_URL` | `http://api:3001` (compose) | Base URL API yang dipakai bot |
-| `API_TOKEN` | — | Harus sama dengan API |
-| `OUTGOING_POLL_INTERVAL` | `3000` | Interval polling `GET /api/outgoing` (ms) |
-| `DATABASE_*` | — | DB `wa_bot` |
+API dan WAHA membaca **root `.env` yang sama**; Compose meneruskan variabel yang dibutuhkan ke masing-masing container.
+
+| Variabel | Default | Wajib | Keterangan |
+|----------|---------|-------|------------|
+| `WAHA_API_KEY` | — | ✅ | Shared key API ↔ WAHA; API mengirim `X-Api-Key`, WAHA memvalidasinya |
+| `WAHA_API_URL` | `http://localhost:3000/api` (lokal) / `http://waha:3000/api` (Compose) | — | Base URL REST WAHA |
+| `WHATSAPP_DEFAULT_ENGINE` | `GOWS` | — | Engine WhatsApp di service WAHA |
+| `WHATSAPP_SESSIONS_POSTGRESQL_URL` | `postgres://…@db:5432/postgres` | — | State sesi/autentikasi WAHA (database `postgres`) |
+| `WAHA_MEDIA_STORAGE` / `WAHA_MEDIA_POSTGRESQL_URL` | `POSTGRESQL` / `…/postgres` | — | Penyimpanan media WAHA |
+| `WAHA_DASHBOARD_ENABLED` | `false` (prod) / `true` (lokal) | — | Dashboard bawaan WAHA |
+| `WAHA_DASHBOARD_USERNAME` / `WAHA_DASHBOARD_PASSWORD` | `admin` / — | — | Kredensial dashboard WAHA (lokal) |
+| `WAHA_PRINT_QR` | `false` (prod) / `true` (lokal) | — | Cetak QR ke log WAHA |
+| `WAHA_LOG_LEVEL` / `WAHA_LOG_FORMAT` | `info` (prod) / `debug` (lokal) / `PRETTY` | — | Logging WAHA |
 
 ### 2.4 Dashboard
 
@@ -111,32 +119,34 @@ Dipakai oleh: verifikasi email (register & resend), reset password.
 | Variabel | Keterangan |
 |----------|------------|
 | `ASTRO_TELEMETRY_DISABLED=1` | Mematikan telemetri Astro saat build template (dipakai image API) |
-| `OWNER_ID` | Dideklarasikan (commented) di `.env.example` bot, **tidak dibaca kode** — jangan diandalkan |
+| `TZ` | Zona waktu container WAHA (default Compose `Asia/Jakarta`) |
 
 ---
 
 ## 3. Contoh `.env` Minimum untuk Produksi
 
 ```dotenv
-POSTGRES_PASSWORD=<acak>
+DATABASE_PASSWORD=<acak>
 DATABASE_USER=postgres
 DATABASE_HOST=db
 DATABASE_PORT=5432
-DATABASE_NAME_API=wani_api
-DATABASE_NAME_BOT=wa_bot
+DATABASE_NAME=wani_api
 
-API_PORT=3001
-API_TOKEN=<acak, sama untuk api & wa-bot>
+PORT=3001
+ALLOWED_ORIGINS=https://wani.app,https://wani.utc.web.id
+ALLOW_LEGACY_API_TOKEN=false
+# API_TOKEN=<acak ≥32 karakter>   # hanya selama migrasi ke managed API key
 JWT_SECRET=<openssl rand -hex 32>
 JWT_EXPIRES=7d
+
+WAHA_API_KEY=<uuid tanpa dash>
+WAHA_API_URL=http://waha:3000/api
 
 LLM_BASE_URL=https://openrouter.ai/api/v1/chat/completions
 LLM_API_KEY=<kunci>
 LLM_MODEL=deepseek-v4-flash-free
 LLM_FALLBACK_MODEL=north-mini-code-free
 
-API_URL=http://api:3001
-OUTGOING_POLL_INTERVAL=3000
 VITE_API_URL=/api
 
 SMTP_HOST=smtp.gmail.com
@@ -146,4 +156,4 @@ SMTP_PASSWORD=<app password>
 SMTP_FROM=WANI <noreply@wani.app>
 ```
 
-> Compose produksi **tidak** memakai `docker-compose.dev.yml`; image diambil dari GHCR. Semua variabel di atas di-`${...}` dari file `.env` root — variabel yang tidak diisi akan menjadi string kosong di container.
+> Compose produksi memakai `docker-compose.yml`; image diambil dari GHCR. Semua variabel di atas di-`${...}` dari file `.env` root — variabel yang tidak diisi akan menjadi string kosong di container. `WAHA_API_URL` di-set langsung oleh Compose ke `http://waha:3000/api`.

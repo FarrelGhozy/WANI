@@ -1,108 +1,162 @@
-import { prisma } from "@/config/db"
-import { BaseModel } from "@/models/base"
-import type { Customer, Prisma } from "@db/client"
+import { prisma } from "@/config/db";
+import { BaseModel } from "@/models/base";
+import type { Customer, Prisma } from "@db/client";
+import { NotFoundError } from "@/utils/errors";
 
 export type CustomerListItem = {
-  id: string
-  phone: string
-  name: string
-  notes: string | null
-  totalOrders: number
-  unreadCount: number
-  lastMessage: { content: string; role: string; createdAt: string } | null
-  recentOrder: { id: string; status: string; totalAmount: number; createdAt: string } | null
-  createdAt: string
-  updatedAt: string
-}
+  id: string;
+  phone: string;
+  name: string;
+  notes: string | null;
+  totalOrders: number;
+  unreadCount: number;
+  lastMessage: { content: string; role: string; createdAt: string } | null;
+  recentOrder: {
+    id: string;
+    status: string;
+    totalAmount: number;
+    createdAt: string;
+  } | null;
+  createdAt: string;
+  updatedAt: string;
+};
 
 export type CustomerDetail = {
-  id: string
-  phone: string
-  name: string
-  notes: string | null
-  totalOrders: number
-  orders: Array<{ id: string; status: string; totalAmount: number; createdAt: string }>
+  id: string;
+  phone: string;
+  name: string;
+  notes: string | null;
+  totalOrders: number;
+  orders: Array<{
+    id: string;
+    status: string;
+    totalAmount: number;
+    createdAt: string;
+  }>;
   conversation: {
-    id: string
-    status: string
+    id: string;
+    status: string;
     messages: Array<{
-      id: string
-      role: string
-      content: string
-      msgType: string
-      waMsgId: string | null
-      metadata: Record<string, unknown> | null
-      createdAt: string
-    }>
-  } | null
-  createdAt: string
-  updatedAt: string
-}
+      id: string;
+      role: string;
+      content: string;
+      msgType: string;
+      waMsgId: string | null;
+      metadata: Record<string, unknown> | null;
+      createdAt: string;
+    }>;
+  } | null;
+  createdAt: string;
+  updatedAt: string;
+};
 
 export type CustomerListResult = {
-  items: CustomerListItem[]
-  total: number
-  page: number
-  limit: number
-  totalPages: number
-}
+  items: CustomerListItem[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+};
 
 export class CustomerModel extends BaseModel {
   protected static override get delegate() {
-    return this.db.customer
+    return this.db.customer;
   }
 
-  static async upsertByOwnerPhone(ownerId: string, phone: string, name?: string): Promise<Customer> {
-    return this.delegate.upsert({
+  static async upsertByOwnerPhone(
+    ownerId: string,
+    phone: string,
+    name?: string
+  ): Promise<Customer> {
+    const existing = await this.delegate.findUnique({
       where: { ownerId_phone: { ownerId, phone } },
-      update: name ? { name } : {},
-      create: { ownerId, phone, name: name ?? phone },
-    })
+    });
+    if (existing) {
+      if (name && existing.name !== name) {
+        return this.delegate.update({
+          where: { ownerId_phone: { ownerId, phone } },
+          data: { name },
+        });
+      }
+      return existing;
+    }
+    return this.delegate.create({
+      data: { ownerId, phone, name: name ?? phone },
+    });
   }
 
   static async incrementOrders(id: string): Promise<void> {
     await this.delegate.update({
       where: { id },
       data: { totalOrders: { increment: 1 } },
-    })
+    });
   }
 
-  static async list(ownerId: string, params: {
-    page: number | string
-    limit: number | string
-    search?: string
-    sort: string
-    order: string
-  }): Promise<CustomerListResult> {
-    const { page, limit, skip } = this.paginate(params.page, params.limit)
-    const where: Record<string, unknown> = { ownerId }
+  static async getOwnedOrThrow(
+    ownerId: string,
+    id: string
+  ): Promise<Customer> {
+    const customer = await this.delegate.findFirst({ where: { id, ownerId } });
+    if (!customer) throw new NotFoundError("customer not found");
+    return customer as Customer;
+  }
+
+  static async updateOwnedCustomer(
+    ownerId: string,
+    id: string,
+    data: Record<string, unknown>
+  ): Promise<Customer> {
+    await this.getOwnedOrThrow(ownerId, id);
+    return this.delegate.update({
+      where: { id, ownerId },
+      data,
+    }) as Promise<Customer>;
+  }
+
+  static async list(
+    ownerId: string,
+    params: {
+      page: number | string;
+      limit: number | string;
+      search?: string;
+      sort: string;
+      order: string;
+    }
+  ): Promise<CustomerListResult> {
+    const { page, limit, skip } = this.paginate(params.page, params.limit);
+    const where: Record<string, unknown> = { ownerId };
 
     if (params.search) {
       where.OR = [
         { name: { contains: params.search, mode: "insensitive" } },
         { phone: { contains: params.search } },
-      ]
+      ];
     }
 
-    const w = where as Prisma.CustomerWhereInput
+    const w = where as Prisma.CustomerWhereInput;
     const [customers, total] = await Promise.all([
-      this.delegate.findMany({ where: w, skip, take: limit, orderBy: { [params.sort]: params.order } }),
+      this.delegate.findMany({
+        where: w,
+        skip,
+        take: limit,
+        orderBy: { [params.sort]: params.order },
+      }),
       this.delegate.count({ where: w }),
-    ])
+    ]);
 
-    const customerIds = customers.map((c: Customer) => c.id)
+    const customerIds = customers.map((c: Customer) => c.id);
 
     const [lastMessages, recentOrders] = await Promise.all([
       fetchLastMessages(customerIds),
       fetchRecentOrders(customerIds),
-    ])
+    ]);
 
-    const lastMsgMap = new Map(lastMessages.map((r) => [r.customerId, r]))
-    const recentOrderMap = new Map(recentOrders.map((r) => [r.customerId, r]))
+    const lastMsgMap = new Map(lastMessages.map((r) => [r.customerId, r]));
+    const recentOrderMap = new Map(recentOrders.map((r) => [r.customerId, r]));
 
     const items: CustomerListItem[] = customers.map((c: Customer) => {
-      const lm = lastMsgMap.get(c.id)
-      const ro = recentOrderMap.get(c.id)
+      const lm = lastMsgMap.get(c.id);
+      const ro = recentOrderMap.get(c.id);
       return {
         id: c.id,
         phone: c.phone,
@@ -111,7 +165,11 @@ export class CustomerModel extends BaseModel {
         totalOrders: c.totalOrders,
         unreadCount: 0,
         lastMessage: lm
-          ? { content: lm.content, role: lm.role, createdAt: lm.createdAt.toISOString() }
+          ? {
+              content: lm.content,
+              role: lm.role,
+              createdAt: lm.createdAt.toISOString(),
+            }
           : null,
         recentOrder: ro
           ? {
@@ -123,21 +181,24 @@ export class CustomerModel extends BaseModel {
           : null,
         createdAt: c.createdAt.toISOString(),
         updatedAt: c.updatedAt.toISOString(),
-      }
-    })
+      };
+    });
 
-    return this.listResult(items, total, page, limit)
+    return this.listResult(items, total, page, limit);
   }
 
-  static async getByIdWithDetail(ownerId: string, id: string): Promise<CustomerDetail | null> {
+  static async getByIdWithDetail(
+    ownerId: string,
+    id: string
+  ): Promise<CustomerDetail | null> {
     const customer = await this.delegate.findFirst({
       where: { id, ownerId },
-    })
-    if (!customer) return null
+    });
+    if (!customer) return null;
 
     const [orders, conversation] = await Promise.all([
       prisma.order.findMany({
-        where: { customerId: id },
+        where: { ownerId, customerId: id },
         orderBy: { createdAt: "desc" },
         take: 50,
         select: {
@@ -148,16 +209,17 @@ export class CustomerModel extends BaseModel {
         },
       }),
       prisma.conversation.findFirst({
-        where: { customerId: id, status: "ACTIVE" },
+        where: { ownerId, customerId: id, status: "ACTIVE" },
         orderBy: { createdAt: "desc" },
         include: {
           messages: {
+            where: { ownerId },
             orderBy: { createdAt: "asc" },
             take: 100,
           },
         },
       }),
-    ])
+    ]);
 
     return {
       id: customer.id,
@@ -188,19 +250,21 @@ export class CustomerModel extends BaseModel {
         : null,
       createdAt: customer.createdAt.toISOString(),
       updatedAt: customer.updatedAt.toISOString(),
-    }
+    };
   }
 }
 
 type LastMessageRow = {
-  customerId: string
-  content: string
-  role: string
-  createdAt: Date
-}
+  customerId: string;
+  content: string;
+  role: string;
+  createdAt: Date;
+};
 
-async function fetchLastMessages(customerIds: string[]): Promise<LastMessageRow[]> {
-  if (customerIds.length === 0) return []
+async function fetchLastMessages(
+  customerIds: string[]
+): Promise<LastMessageRow[]> {
+  if (customerIds.length === 0) return [];
 
   const rows = await prisma.$queryRaw<LastMessageRow[]>`
     SELECT DISTINCT ON (conv."customerId")
@@ -212,21 +276,23 @@ async function fetchLastMessages(customerIds: string[]): Promise<LastMessageRow[
     JOIN "Message" msg ON msg."conversationId" = conv.id
     WHERE conv."customerId" = ANY(${customerIds}::text[])
     ORDER BY conv."customerId", msg."createdAt" DESC
-  `
+  `;
 
-  return rows
+  return rows;
 }
 
 type RecentOrderRow = {
-  customerId: string
-  id: string
-  status: string
-  totalAmount: number
-  createdAt: Date
-}
+  customerId: string;
+  id: string;
+  status: string;
+  totalAmount: number;
+  createdAt: Date;
+};
 
-async function fetchRecentOrders(customerIds: string[]): Promise<RecentOrderRow[]> {
-  if (customerIds.length === 0) return []
+async function fetchRecentOrders(
+  customerIds: string[]
+): Promise<RecentOrderRow[]> {
+  if (customerIds.length === 0) return [];
 
   const rows = await prisma.$queryRaw<RecentOrderRow[]>`
     SELECT DISTINCT ON (o."customerId")
@@ -238,10 +304,10 @@ async function fetchRecentOrders(customerIds: string[]): Promise<RecentOrderRow[
     FROM "Order" o
     WHERE o."customerId" = ANY(${customerIds}::text[])
     ORDER BY o."customerId", o."createdAt" DESC
-  `
+  `;
 
   return rows.map((r) => ({
     ...r,
     totalAmount: Number(r.totalAmount),
-  }))
+  }));
 }

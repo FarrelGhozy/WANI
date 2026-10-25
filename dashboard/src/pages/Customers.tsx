@@ -1,27 +1,49 @@
-import { useCustomers } from '@/hooks/useCustomers.ts'
-import CustomerListView from '@/components/CustomerListView.tsx'
-import ChatView from '@/components/ChatView.tsx'
-import { Skeleton, SkeletonText } from '@/components/ui/Skeleton.tsx'
-import Spinner from '@/components/ui/Spinner.tsx'
+import { useCustomers } from "@/hooks/useCustomers.ts";
+import CustomerListView from "@/components/CustomerListView.tsx";
+import ChatView from "@/components/ChatView.tsx";
+import { Skeleton, SkeletonText } from "@/components/ui/Skeleton.tsx";
+import Spinner from "@/components/ui/Spinner.tsx";
 
 function EmptyChatPanel() {
   return (
     <div className="flex flex-col items-center justify-center text-center">
       <div className="mb-4 rounded-full bg-stone-100 p-5 text-stone-300">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+        <svg
+          width="32"
+          height="32"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+        >
           <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
         </svg>
       </div>
       <h3 className="text-sm font-semibold text-stone-900">Pilih Customer</h3>
       <p className="mt-1 max-w-xs text-xs text-stone-500">
-        Klik customer di sebelah kiri untuk melihat percakapan dan riwayat pesanan
+        Klik customer di sebelah kiri untuk melihat percakapan dan riwayat
+        pesanan
       </p>
     </div>
-  )
+  );
 }
 
 export default function Customers() {
-  const { customers, loading, error, reload, search, setSearch, selectedId, setSelectedId, selected, conversation, sendMessage, convLoading } = useCustomers()
+  const {
+    customers,
+    loading,
+    error,
+    reload,
+    search,
+    setSearch,
+    selectedId,
+    setSelectedId,
+    selected,
+    conversation,
+    sendMessage,
+    convLoading,
+  } = useCustomers();
 
   if (loading) {
     return (
@@ -42,14 +64,18 @@ export default function Customers() {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
     <div className="flex h-[calc(100dvh-12rem)] flex-col pb-16 lg:h-[calc(100vh-9rem)] lg:pb-0">
       <div className="mb-4">
-        <h1 className="text-2xl font-semibold tracking-tight text-stone-900">Pelanggan</h1>
-        <p className="mt-1 text-sm text-stone-500">{customers.length} pelanggan</p>
+        <h1 className="text-2xl font-semibold tracking-tight text-stone-900">
+          Pelanggan
+        </h1>
+        <p className="mt-1 text-sm text-stone-500">
+          {customers.length} pelanggan
+        </p>
       </div>
 
       {/* Error */}
@@ -70,8 +96,18 @@ export default function Customers() {
       {/* Search */}
       <div className="mb-4">
         <div className="relative">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-stone-400">
-            <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-stone-400"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <path d="M21 21l-4.35-4.35" />
           </svg>
           <input
             value={search}
@@ -85,7 +121,9 @@ export default function Customers() {
       {/* Two-panel */}
       <div className="flex flex-1 gap-4 overflow-hidden">
         {/* Left: Customer list */}
-        <div className={`overflow-hidden rounded-xl border border-stone-200 bg-white ${selectedId ? 'hidden lg:flex lg:w-80' : 'flex-1 lg:w-80 lg:shrink-0'}`}>
+        <div
+          className={`overflow-hidden rounded-xl border border-stone-200 bg-white ${selectedId ? "hidden lg:flex lg:w-80" : "flex-1 lg:w-80 lg:shrink-0"}`}
+        >
           {customers.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <p className="text-sm text-stone-500">Tidak ada pelanggan</p>
@@ -100,7 +138,9 @@ export default function Customers() {
         </div>
 
         {/* Right: Chat + Detail */}
-        <div className={`relative overflow-hidden rounded-xl border border-stone-200 bg-white ${!selectedId ? 'hidden lg:block lg:flex-1' : 'flex-1'}`}>
+        <div
+          className={`relative overflow-hidden rounded-xl border border-stone-200 bg-white ${!selectedId ? "hidden lg:block lg:flex-1" : "flex-1"}`}
+        >
           {selected && conversation ? (
             <ChatView
               customerName={selected.name}
@@ -121,5 +161,5 @@ export default function Customers() {
         </div>
       </div>
     </div>
-  )
+  );
 }

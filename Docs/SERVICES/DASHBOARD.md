@@ -77,7 +77,7 @@ ErrorBoundary
 | `Orders` (+ `OrderDetail`) | List dengan filter status/tanggal, timeline status, update status/notes/payment |
 | `Customers` | Panel ganda: daftar pelanggan + `ChatView` (riwayat pesan, kirim pesan HUMAN, ubah status percakapan) |
 | `Website` | Editor konfigurasi (hero, about, warna, sosial, pilih produk), pilih template, generate, preview, download ZIP, riwayat generation |
-| `Settings` | **3 tab**: `Toko`, `AI Agent`, `WA Session` |
+| `Settings` | **4 tab**: `Toko`, `AI Agent`, `WA Session`, `API Keys` |
 | `NotFoundPage` | 404 + navigasi kembali |
 
 ### Tab Settings
@@ -87,6 +87,7 @@ ErrorBoundary
 | `store` | `StoreTab` (+ `PaymentTab` + `CategoryModal`) | Profil toko, logo, jam buka, pengiriman, retur, kategori, **metode pembayaran** |
 | `ai` | `AiTab` | Model, system prompt, knowledge base, temperature/maxTokens, greeting, status aktif |
 | `wa` | `WaSessionTab` | QR / pairing code, status koneksi, tombol reset sesi |
+| `api-keys` | `ApiKeysTab` | Buat/cabut managed API key + pilih scope (`sessions:messages`, dll) |
 
 Metode pembayaran **bukan** tab tersendiri: dikelola di dalam tab Toko memakai `usePaymentMethods()`.
 
@@ -119,7 +120,7 @@ const API_BASE = import.meta.env.VITE_API_URL || window.__ENV__?.API_URL || "/ap
 
 **Layout & navigasi**: `Layout`, `Sidebar` (desktop, `lg:`), `Topbar`, `BottomNav` (mobile), `AuthLayout`, `ProtectedRoute`, `ErrorBoundary`, `TourOverlay` + `config/tourSteps.ts`.
 
-**Fitur**: `StoreTab`, `AiTab`, `WaSessionTab`, `PaymentTab`, `CategoryModal`, `ProductListView`, `ProductCard`, `OrderListView`, `OrderTimeline`, `CustomerListView`, `ChatView`, `QRCode`, `StatusCard`, `ImageUpload`, `Icons`.
+**Fitur**: `StoreTab`, `AiTab`, `WaSessionTab`, `ApiKeysTab`, `PaymentTab`, `CategoryModal`, `ProductListView`, `ProductCard`, `OrderListView`, `OrderTimeline`, `CustomerListView`, `ChatView`, `QRCode`, `StatusCard`, `ImageUpload`, `Icons`.
 
 **Primitif UI** (`components/ui/`, tanpa library eksternal): `Button`, `Card`, `Badge`, `Table`, `Modal`, `Input`, `Select`, `Textarea`, `Spinner`, `Skeleton`, `EmptyState`, `Pagination`, `Toast` (+ `ToastContainer`), `ImageUpload`.
 
@@ -155,7 +156,7 @@ src/utils/__tests__/format.test.ts
 
 ## 9. Catatan & Utang Teknis
 
-- `src/pages/Dashboard.tsx` memiliki dua tombol yang menavigasi ke `/settings?tab=store` dan `/settings?tab=payment` **tanpa prefix `/app`** → akan berakhir di 404. Tombol lain sudah memakai `/app/...`. Ada juga navigasi ke `/app/settings?tab=payment`, padahal `payment` bukan id tab lagi (tab valid: `store`, `ai`, `wa`).
+- `src/pages/Dashboard.tsx` memiliki dua tombol yang menavigasi ke `/settings?tab=store` dan `/settings?tab=payment` **tanpa prefix `/app`** → akan berakhir di 404. Tombol lain sudah memakai `/app/...`. Ada juga navigasi ke `/app/settings?tab=payment`, padahal `payment` bukan id tab lagi (tab valid: `store`, `ai`, `wa`, `api-keys`).
 - `dashboard/default.conf` (nginx) melayani SPA dengan `try_files … /index.html` dan mem-proxy `/api/`, `/uploads/`, `/s/` ke `api:3001`; `docker-entrypoint.sh` menulis `/env.js` (`window.__ENV__.API_URL`) untuk konfigurasi runtime tanpa rebuild.
 - `dashboard/tsconfig.json` hanya berisi project references ke `tsconfig.app.json` (kode aplikasi) dan `tsconfig.node.json` (config Vite).
 - `erasableSyntaxOnly` aktif → jangan pakai `enum`/`namespace`/parameter property.

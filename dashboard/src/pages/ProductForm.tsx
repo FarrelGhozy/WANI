@@ -1,150 +1,166 @@
-import { useState, useEffect, useRef, useMemo } from 'react'
-import { useNavigate, useParams } from 'react-router'
-import { useProductsContext } from '@/contexts/ProductsContext.tsx'
-import type { ProductFormData } from '@/hooks/useProducts.ts'
-import { useToast } from '@/hooks/useToast.ts'
-import { useUnsavedChanges } from '@/hooks/useUnsavedChanges.ts'
-import { uploadFile } from '@/lib/upload.ts'
-import { mediaUrl } from '@/lib/media.ts'
-import Button from '@/components/ui/Button.tsx'
-import Input from '@/components/ui/Input.tsx'
-import Select from '@/components/ui/Select.tsx'
-import Textarea from '@/components/ui/Textarea.tsx'
-import Card from '@/components/ui/Card.tsx'
+import { useState, useEffect, useRef, useMemo } from "react";
+import { useNavigate, useParams } from "react-router";
+import { useProductsContext } from "@/contexts/ProductsContext.tsx";
+import type { ProductFormData } from "@/hooks/useProducts.ts";
+import { useToast } from "@/hooks/useToast.ts";
+import { useUnsavedChanges } from "@/hooks/useUnsavedChanges.ts";
+import { uploadFile } from "@/lib/upload.ts";
+import { mediaUrl } from "@/lib/media.ts";
+import Button from "@/components/ui/Button.tsx";
+import Input from "@/components/ui/Input.tsx";
+import Select from "@/components/ui/Select.tsx";
+import Textarea from "@/components/ui/Textarea.tsx";
+import Card from "@/components/ui/Card.tsx";
 
 function formatPriceInput(value: string) {
-  const num = value.replace(/[^\d]/g, '')
-  if (!num) return ''
-  return Number(num).toLocaleString('id-ID')
+  const num = value.replace(/[^\d]/g, "");
+  if (!num) return "";
+  return Number(num).toLocaleString("id-ID");
 }
 
 function parsePrice(value: string) {
-  return Number(value.replace(/[^\d]/g, ''))
+  return Number(value.replace(/[^\d]/g, ""));
 }
 
 export default function ProductForm() {
-  const { id } = useParams()
-  const navigate = useNavigate()
-  const { getProduct, categories, createProduct, updateProduct, createCategory } = useProductsContext()
-  const { toast, apiError } = useToast()
-  const isEdit = Boolean(id)
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const {
+    getProduct,
+    categories,
+    createProduct,
+    updateProduct,
+    createCategory,
+  } = useProductsContext();
+  const { toast, apiError } = useToast();
+  const isEdit = Boolean(id);
 
   const [form, setForm] = useState<ProductFormData>({
-    name: '',
+    name: "",
     price: 0,
     stock: 0,
-    categoryId: '',
-    description: '',
+    categoryId: "",
+    description: "",
     isAvailable: true,
-    imageUrl: '',
-  })
+    imageUrl: "",
+  });
 
-  const [priceDisplay, setPriceDisplay] = useState('')
-  const [saving, setSaving] = useState(false)
-  const [errors, setErrors] = useState<Partial<Record<keyof ProductFormData, string>>>({})
-  const fileRef = useRef<HTMLInputElement>(null)
-  const pendingFile = useRef<File | null>(null)
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
-  const [showNewCategory, setShowNewCategory] = useState(false)
-  const [newCategoryName, setNewCategoryName] = useState('')
-  const [newCategoryDesc, setNewCategoryDesc] = useState('')
-  const [creatingCategory, setCreatingCategory] = useState(false)
-  const [initialForm, setInitialForm] = useState<ProductFormData>(form)
+  const [priceDisplay, setPriceDisplay] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [errors, setErrors] = useState<
+    Partial<Record<keyof ProductFormData, string>>
+  >({});
+  const fileRef = useRef<HTMLInputElement>(null);
+  const pendingFile = useRef<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [showNewCategory, setShowNewCategory] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState("");
+  const [newCategoryDesc, setNewCategoryDesc] = useState("");
+  const [creatingCategory, setCreatingCategory] = useState(false);
+  const [initialForm, setInitialForm] = useState<ProductFormData>(form);
 
   const isDirty = useMemo(() => {
-    return form.name !== initialForm.name
-      || form.price !== initialForm.price
-      || form.stock !== initialForm.stock
-      || form.categoryId !== initialForm.categoryId
-      || form.description !== initialForm.description
-      || form.isAvailable !== initialForm.isAvailable
-      || form.imageUrl !== initialForm.imageUrl
-  }, [form, initialForm])
+    return (
+      form.name !== initialForm.name ||
+      form.price !== initialForm.price ||
+      form.stock !== initialForm.stock ||
+      form.categoryId !== initialForm.categoryId ||
+      form.description !== initialForm.description ||
+      form.isAvailable !== initialForm.isAvailable ||
+      form.imageUrl !== initialForm.imageUrl
+    );
+  }, [form, initialForm]);
 
-  useUnsavedChanges(isDirty)
+  useUnsavedChanges(isDirty);
 
   useEffect(() => {
     return () => {
-      if (previewUrl) URL.revokeObjectURL(previewUrl)
-    }
-  }, [previewUrl])
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    };
+  }, [previewUrl]);
 
   function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0]
-    if (!file) return
-    if (previewUrl) URL.revokeObjectURL(previewUrl)
-    const url = URL.createObjectURL(file)
-    setPreviewUrl(url)
-    pendingFile.current = file
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    const url = URL.createObjectURL(file);
+    setPreviewUrl(url);
+    pendingFile.current = file;
   }
 
   useEffect(() => {
-    if (!id) return
-    const product = getProduct(id)
-    if (!product) return
+    if (!id) return;
+    const product = getProduct(id);
+    if (!product) return;
     const formData: ProductFormData = {
       name: product.name,
       price: product.price,
       stock: product.stock,
-      categoryId: product.categoryId ?? '',
-      description: product.description ?? '',
+      categoryId: product.categoryId ?? "",
+      description: product.description ?? "",
       isAvailable: product.isAvailable,
-      imageUrl: product.imageUrl ?? '',
-    }
+      imageUrl: product.imageUrl ?? "",
+    };
     /* eslint-disable react-hooks/set-state-in-effect */
-    setForm(formData)
-    setInitialForm(formData)
-    setPriceDisplay(formatPriceInput(String(product.price)))
+    setForm(formData);
+    setInitialForm(formData);
+    setPriceDisplay(formatPriceInput(String(product.price)));
     /* eslint-enable react-hooks/set-state-in-effect */
-  }, [id, getProduct])
+  }, [id, getProduct]);
 
-  function setField<K extends keyof ProductFormData>(key: K, value: ProductFormData[K]) {
-    setForm((prev) => ({ ...prev, [key]: value }))
-    setErrors((prev) => ({ ...prev, [key]: undefined }))
+  function setField<K extends keyof ProductFormData>(
+    key: K,
+    value: ProductFormData[K]
+  ) {
+    setForm((prev) => ({ ...prev, [key]: value }));
+    setErrors((prev) => ({ ...prev, [key]: undefined }));
   }
 
   function validate(): boolean {
-    const errs: typeof errors = {}
-    if (!form.name.trim()) errs.name = 'Nama produk harus diisi'
-    if (form.price <= 0) errs.price = 'Harga harus lebih dari 0'
-    if (form.stock < 0) errs.stock = 'Stok tidak boleh negatif'
-    setErrors(errs)
-    return Object.keys(errs).length === 0
+    const errs: typeof errors = {};
+    if (!form.name.trim()) errs.name = "Nama produk harus diisi";
+    if (form.price <= 0) errs.price = "Harga harus lebih dari 0";
+    if (form.stock < 0) errs.stock = "Stok tidak boleh negatif";
+    setErrors(errs);
+    return Object.keys(errs).length === 0;
   }
 
   async function handleCreateCategory() {
-    if (!newCategoryName.trim()) return
-    setCreatingCategory(true)
+    if (!newCategoryName.trim()) return;
+    setCreatingCategory(true);
     try {
-      const cat = await createCategory({ name: newCategoryName.trim(), description: newCategoryDesc.trim() || null })
+      const cat = await createCategory({
+        name: newCategoryName.trim(),
+        description: newCategoryDesc.trim() || null,
+      });
       if (cat) {
-        setField('categoryId', cat.id)
-        toast('Kategori berhasil ditambahkan', 'success')
+        setField("categoryId", cat.id);
+        toast("Kategori berhasil ditambahkan", "success");
       }
-      setShowNewCategory(false)
-      setNewCategoryName('')
-      setNewCategoryDesc('')
+      setShowNewCategory(false);
+      setNewCategoryName("");
+      setNewCategoryDesc("");
     } catch (e) {
-      apiError(e, 'Gagal menambahkan kategori')
+      apiError(e, "Gagal menambahkan kategori");
     } finally {
-      setCreatingCategory(false)
+      setCreatingCategory(false);
     }
   }
 
   async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    if (!validate()) return
-    setSaving(true)
+    e.preventDefault();
+    if (!validate()) return;
+    setSaving(true);
 
-    let imageUrl = form.imageUrl || null
+    let imageUrl = form.imageUrl || null;
     if (pendingFile.current) {
-      const result = await uploadFile(pendingFile.current, 'product')
+      const result = await uploadFile(pendingFile.current, "product");
       if (result.success && result.url) {
-        imageUrl = result.url
+        imageUrl = result.url;
       } else {
-        apiError(new Error(result.error), 'Gagal upload gambar')
-        setSaving(false)
-        return
+        apiError(new Error(result.error), "Gagal upload gambar");
+        setSaving(false);
+        return;
       }
     }
 
@@ -153,22 +169,22 @@ export default function ProductForm() {
       categoryId: form.categoryId || null,
       description: form.description || null,
       imageUrl,
-    }
+    };
     try {
       if (isEdit && id) {
-        await updateProduct(id, data)
-        toast('Produk berhasil diperbarui', 'success')
+        await updateProduct(id, data);
+        toast("Produk berhasil diperbarui", "success");
       } else {
-        await createProduct(data)
-        toast('Produk berhasil dibuat', 'success')
+        await createProduct(data);
+        toast("Produk berhasil dibuat", "success");
       }
       setTimeout(() => {
-        setSaving(false)
-        navigate('/app/products')
-      }, 300)
+        setSaving(false);
+        navigate("/app/products");
+      }, 300);
     } catch (e) {
-      apiError(e, isEdit ? 'Gagal memperbarui produk' : 'Gagal membuat produk')
-      setSaving(false)
+      apiError(e, isEdit ? "Gagal memperbarui produk" : "Gagal membuat produk");
+      setSaving(false);
     }
   }
 
@@ -176,33 +192,59 @@ export default function ProductForm() {
     <div className="mx-auto max-w-2xl space-y-6">
       {/* Back */}
       <button
-        onClick={() => navigate('/app/products')}
+        onClick={() => navigate("/app/products")}
         className="inline-flex items-center gap-1.5 text-sm text-stone-500 transition-colors hover:text-stone-700"
       >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+        >
+          <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
         Kembali ke Produk
       </button>
 
       {/* Header */}
       <div>
         <h1 className="text-2xl font-semibold tracking-tight text-stone-900">
-          {isEdit ? 'Edit Produk' : 'Tambah Produk'}
+          {isEdit ? "Edit Produk" : "Tambah Produk"}
         </h1>
         <p className="mt-1 text-sm text-stone-500">
-          {isEdit ? 'Update detail produk Anda' : 'Tambahkan produk baru ke daftar'}
+          {isEdit
+            ? "Update detail produk Anda"
+            : "Tambahkan produk baru ke daftar"}
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Image */}
         <Card>
-          <h2 className="mb-4 text-xs font-medium uppercase tracking-wider text-stone-500">Gambar</h2>
+          <h2 className="mb-4 text-xs font-medium uppercase tracking-wider text-stone-500">
+            Gambar
+          </h2>
           <div className="flex flex-col items-start gap-4 sm:flex-row">
             <div className="flex h-28 w-28 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-stone-200 bg-stone-50">
               {previewUrl || form.imageUrl ? (
-                <img src={mediaUrl(previewUrl || form.imageUrl)} alt="Pratinjau produk" className="h-full w-full object-cover" />
+                <img
+                  src={mediaUrl(previewUrl || form.imageUrl)}
+                  alt="Pratinjau produk"
+                  className="h-full w-full object-cover"
+                />
               ) : (
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-stone-300">
+                <svg
+                  width="32"
+                  height="32"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  className="text-stone-300"
+                >
                   <rect x="3" y="3" width="18" height="18" rx="2" />
                   <circle cx="8.5" cy="8.5" r="1.5" />
                   <path d="M21 15l-5-5L5 21" />
@@ -214,13 +256,13 @@ export default function ProductForm() {
                 label="URL Gambar"
                 placeholder="https://example.com/image.jpg"
                 hint="Tempel link gambar atau upload file"
-                value={form.imageUrl ?? ''}
+                value={form.imageUrl ?? ""}
                 onChange={(e) => {
-                  setField('imageUrl', e.target.value)
-                  pendingFile.current = null
+                  setField("imageUrl", e.target.value);
+                  pendingFile.current = null;
                   if (previewUrl) {
-                    URL.revokeObjectURL(previewUrl)
-                    setPreviewUrl(null)
+                    URL.revokeObjectURL(previewUrl);
+                    setPreviewUrl(null);
                   }
                 }}
               />
@@ -231,7 +273,15 @@ export default function ProductForm() {
                   onClick={() => fileRef.current?.click()}
                   className="inline-flex items-center gap-1.5 rounded-lg border border-stone-300 px-3 py-1.5 text-xs font-medium text-stone-600 transition-colors hover:bg-stone-50 hover:text-stone-800"
                 >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  >
                     <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
                     <polyline points="17 8 12 3 7 8" />
                     <line x1="12" y1="3" x2="12" y2="15" />
@@ -252,21 +302,23 @@ export default function ProductForm() {
 
         {/* Basic Info */}
         <Card accent="teal">
-          <h2 className="mb-4 text-xs font-medium uppercase tracking-wider text-stone-500">Info Dasar</h2>
+          <h2 className="mb-4 text-xs font-medium uppercase tracking-wider text-stone-500">
+            Info Dasar
+          </h2>
           <div className="space-y-4">
             <Input
               label="Nama Produk"
               placeholder="Nasi Goreng Spesial"
               value={form.name}
-              onChange={(e) => setField('name', e.target.value)}
+              onChange={(e) => setField("name", e.target.value)}
               error={errors.name}
             />
             <Select
               label="Kategori"
               options={categories.map((c) => ({ value: c.id, label: c.name }))}
               placeholder="Tanpa Kategori"
-              value={form.categoryId ?? ''}
-              onChange={(e) => setField('categoryId', e.target.value)}
+              value={form.categoryId ?? ""}
+              onChange={(e) => setField("categoryId", e.target.value)}
             />
             {showNewCategory ? (
               <div className="mt-2 space-y-2 rounded-lg border border-teal-200 bg-teal-50 p-3">
@@ -281,10 +333,23 @@ export default function ProductForm() {
                   placeholder="Deskripsi (opsional)"
                 />
                 <div className="flex gap-2">
-                  <Button size="sm" onClick={handleCreateCategory} loading={creatingCategory} disabled={!newCategoryName.trim()}>
+                  <Button
+                    size="sm"
+                    onClick={handleCreateCategory}
+                    loading={creatingCategory}
+                    disabled={!newCategoryName.trim()}
+                  >
                     Simpan
                   </Button>
-                  <Button size="sm" variant="secondary" onClick={() => { setShowNewCategory(false); setNewCategoryName(''); setNewCategoryDesc('') }}>
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    onClick={() => {
+                      setShowNewCategory(false);
+                      setNewCategoryName("");
+                      setNewCategoryDesc("");
+                    }}
+                  >
                     Batal
                   </Button>
                 </div>
@@ -295,7 +360,15 @@ export default function ProductForm() {
                 onClick={() => setShowNewCategory(true)}
                 className="mt-1.5 inline-flex items-center gap-1 text-xs font-medium text-teal-600 transition-colors hover:text-teal-700"
               >
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                >
                   <path d="M12 5v14M5 12h14" />
                 </svg>
                 Tambah Kategori Baru
@@ -304,8 +377,8 @@ export default function ProductForm() {
             <Textarea
               label="Deskripsi"
               placeholder="Deskripsi produk..."
-              value={form.description ?? ''}
-              onChange={(e) => setField('description', e.target.value)}
+              value={form.description ?? ""}
+              onChange={(e) => setField("description", e.target.value)}
               rows={3}
             />
           </div>
@@ -313,7 +386,9 @@ export default function ProductForm() {
 
         {/* Pricing & Stock */}
         <Card accent="amber">
-          <h2 className="mb-4 text-xs font-medium uppercase tracking-wider text-stone-500">Harga & Stok</h2>
+          <h2 className="mb-4 text-xs font-medium uppercase tracking-wider text-stone-500">
+            Harga & Stok
+          </h2>
           <div className="grid gap-4 sm:grid-cols-2">
             <Input
               label="Harga"
@@ -321,10 +396,10 @@ export default function ProductForm() {
               placeholder="25.000"
               value={priceDisplay}
               onChange={(e) => {
-                const raw = e.target.value
-                const num = parsePrice(raw)
-                setField('price', num)
-                setPriceDisplay(formatPriceInput(raw))
+                const raw = e.target.value;
+                const num = parsePrice(raw);
+                setField("price", num);
+                setPriceDisplay(formatPriceInput(raw));
               }}
               error={errors.price}
             />
@@ -334,19 +409,23 @@ export default function ProductForm() {
               min={0}
               placeholder="0"
               value={form.stock}
-              onChange={(e) => setField('stock', Math.max(0, Number(e.target.value)))}
+              onChange={(e) =>
+                setField("stock", Math.max(0, Number(e.target.value)))
+              }
               error={errors.stock}
             />
           </div>
           <div className="mt-4">
-            <label className="text-xs font-medium uppercase tracking-wider text-stone-500">Status</label>
+            <label className="text-xs font-medium uppercase tracking-wider text-stone-500">
+              Status
+            </label>
             <div className="mt-1.5 flex items-center gap-4">
               <label className="flex cursor-pointer items-center gap-2 text-sm text-stone-700">
                 <input
                   type="radio"
                   name="availability"
                   checked={form.isAvailable}
-                  onChange={() => setField('isAvailable', true)}
+                  onChange={() => setField("isAvailable", true)}
                   className="h-4 w-4 accent-teal-600"
                 />
                 Aktif
@@ -356,7 +435,7 @@ export default function ProductForm() {
                   type="radio"
                   name="availability"
                   checked={!form.isAvailable}
-                  onChange={() => setField('isAvailable', false)}
+                  onChange={() => setField("isAvailable", false)}
                   className="h-4 w-4 accent-red-500"
                 />
                 Nonaktif
@@ -367,14 +446,18 @@ export default function ProductForm() {
 
         {/* Actions */}
         <div className="flex items-center justify-end gap-3">
-          <Button type="button" variant="secondary" onClick={() => navigate('/app/products')}>
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() => navigate("/app/products")}
+          >
             Batal
           </Button>
           <Button type="submit" loading={saving}>
-            {isEdit ? 'Update Produk' : 'Simpan Produk'}
+            {isEdit ? "Update Produk" : "Simpan Produk"}
           </Button>
         </div>
       </form>
     </div>
-  )
+  );
 }

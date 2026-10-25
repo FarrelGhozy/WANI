@@ -1,0 +1,31 @@
+{
+  "name": "WANI",
+  "variables": [
+    {
+      "name": "baseUrl",
+      "value": "http://localhost:3001/api",
+      "type": "text",
+      "enabled": true,
+      "secret": false
+    },
+    {
+      "name": "apiToken",
+      "value": "",
+      "type": "text",
+      "enabled": true,
+      "secret": true
+    },
+    {
+      "name": "jwtSecret",
+      "value": "",
+      "type": "text",
+      "enabled": true,
+      "secret": true
+    }
+  ],
+  "info": {
+    "type": "bruno-environment",
+    "exportedAt": "2026-07-25T05:25:43.127Z",
+    "exportedUsing": "Bruno/v3.5.1"
+  }
+}

@@ -4,6 +4,7 @@ generated/
 generated/prisma/
 dist/
 build/
+.opencode
 .git
 .gitignore
 *.md

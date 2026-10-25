@@ -1,18 +1,25 @@
 <!-- ============================================================
      CYBERPUNK NAVBAR — Fixed top nav with functional mobile menu
      ============================================================ -->
-<nav class="fixed top-0 left-0 w-full z-50 bg-[#0a0a0f]/85 backdrop-blur-xl border-b border-[#00d4ff]/20">
+<nav
+  class="fixed top-0 left-0 w-full z-50 bg-[#0a0a0f]/85 backdrop-blur-xl border-b border-[#00d4ff]/20"
+>
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex items-center justify-between h-16 lg:h-18">
-
       <!-- Brand / Logo -->
       <div class="flex-shrink-0">
         <a href="./" class="flex items-center gap-2">
           {{#store.hasLogo}}
-          <img src="{{store.logoUrl}}" alt="{{store.name}}" class="h-8 lg:h-9 w-auto" />
-          {{/store.hasLogo}}
-          {{^store.hasLogo}}
-          <span class="text-xl lg:text-2xl font-['Plus_Jakarta_Sans'] font-extrabold tracking-tight text-[#00d4ff] hover:text-[#00e5ff] transition-colors duration-200" style="text-shadow: 0 0 12px rgba(0,212,255,0.4);">
+          <img
+            src="{{store.logoUrl}}"
+            alt="{{store.name}}"
+            class="h-8 lg:h-9 w-auto"
+          />
+          {{/store.hasLogo}} {{^store.hasLogo}}
+          <span
+            class="text-xl lg:text-2xl font-['Plus_Jakarta_Sans'] font-extrabold tracking-tight text-[#00d4ff] hover:text-[#00e5ff] transition-colors duration-200"
+            style="text-shadow: 0 0 12px rgba(0, 212, 255, 0.4)"
+          >
             {{store.name}}
           </span>
           {{/store.hasLogo}}
@@ -21,42 +28,60 @@
 
       <!-- Desktop Nav Links -->
       <div class="hidden md:flex items-center gap-1 lg:gap-2">
-        <a href="./"
-           class="px-3 py-2 text-sm font-['Inter'] font-medium tracking-wider uppercase transition-all duration-200 rounded
+        <a
+          href="./"
+          class="px-3 py-2 text-sm font-['Inter'] font-medium tracking-wider uppercase transition-all duration-200 rounded
                   {{#page.beranda}}text-[#00d4ff] bg-[#00d4ff]/10 border-b-2 border-[#00d4ff]{{/page.beranda}}
-                  {{^page.beranda}}text-[#8888a0] hover:text-[#00d4ff] hover:bg-[#00d4ff]/5{{/page.beranda}}">
+                  {{^page.beranda}}text-[#8888a0] hover:text-[#00d4ff] hover:bg-[#00d4ff]/5{{/page.beranda}}"
+        >
           Beranda
         </a>
-        <a href="./produk.html"
-           class="px-3 py-2 text-sm font-['Inter'] font-medium tracking-wider uppercase transition-all duration-200 rounded
+        <a
+          href="./produk.html"
+          class="px-3 py-2 text-sm font-['Inter'] font-medium tracking-wider uppercase transition-all duration-200 rounded
                   {{#page.produk}}text-[#b388ff] bg-[#b388ff]/10 border-b-2 border-[#b388ff]{{/page.produk}}
-                  {{^page.produk}}text-[#8888a0] hover:text-[#b388ff] hover:bg-[#b388ff]/5{{/page.produk}}">
+                  {{^page.produk}}text-[#8888a0] hover:text-[#b388ff] hover:bg-[#b388ff]/5{{/page.produk}}"
+        >
           Produk
         </a>
-        <a href="./tentang.html"
-           class="px-3 py-2 text-sm font-['Inter'] font-medium tracking-wider uppercase transition-all duration-200 rounded
+        <a
+          href="./tentang.html"
+          class="px-3 py-2 text-sm font-['Inter'] font-medium tracking-wider uppercase transition-all duration-200 rounded
                   {{#page.tentang}}text-[#b388ff] bg-[#b388ff]/10 border-b-2 border-[#b388ff]{{/page.tentang}}
-                  {{^page.tentang}}text-[#8888a0] hover:text-[#b388ff] hover:bg-[#b388ff]/5{{/page.tentang}}">
+                  {{^page.tentang}}text-[#8888a0] hover:text-[#b388ff] hover:bg-[#b388ff]/5{{/page.tentang}}"
+        >
           Tentang
         </a>
-        <a href="./kontak.html"
-           class="px-3 py-2 text-sm font-['Inter'] font-medium tracking-wider uppercase transition-all duration-200 rounded
+        <a
+          href="./kontak.html"
+          class="px-3 py-2 text-sm font-['Inter'] font-medium tracking-wider uppercase transition-all duration-200 rounded
                   {{#page.kontak}}text-[#b388ff] bg-[#b388ff]/10 border-b-2 border-[#b388ff]{{/page.kontak}}
-                  {{^page.kontak}}text-[#8888a0] hover:text-[#b388ff] hover:bg-[#b388ff]/5{{/page.kontak}}">
+                  {{^page.kontak}}text-[#8888a0] hover:text-[#b388ff] hover:bg-[#b388ff]/5{{/page.kontak}}"
+        >
           Kontak
         </a>
       </div>
 
       <!-- Right side: WhatsApp CTA + Mobile Toggle -->
       <div class="flex items-center gap-3">
-        <a href="{{whatsapp.url}}" target="_blank" rel="noopener"
-           class="hidden sm:flex items-center gap-1.5 px-4 py-2 text-xs font-['Inter'] font-bold uppercase tracking-wider text-[#0a0a0f] bg-[#00d4ff] rounded hover:bg-[#00e5ff] hover:shadow-[0_0_12px_rgba(0,212,255,0.4)] active:scale-95 transition-all duration-200">
+        <a
+          href="{{whatsapp.url}}"
+          target="_blank"
+          rel="noopener"
+          class="hidden sm:flex items-center gap-1.5 px-4 py-2 text-xs font-['Inter'] font-bold uppercase tracking-wider text-[#0a0a0f] bg-[#00d4ff] rounded hover:bg-[#00e5ff] hover:shadow-[0_0_12px_rgba(0,212,255,0.4)] active:scale-95 transition-all duration-200"
+        >
           <span class="material-symbols-outlined text-sm">chat</span>Order
         </a>
 
         <!-- Mobile menu toggle -->
-        <button onclick="document.getElementById('cyber-mobile-menu').classList.toggle('hidden')"
-                class="md:hidden p-2 text-[#8888a0] hover:text-[#00d4ff] hover:bg-[#00d4ff]/10 rounded transition-all duration-200 active:scale-95">
+        <button
+          onclick="
+            document
+              .getElementById('cyber-mobile-menu')
+              .classList.toggle('hidden')
+          "
+          class="md:hidden p-2 text-[#8888a0] hover:text-[#00d4ff] hover:bg-[#00d4ff]/10 rounded transition-all duration-200 active:scale-95"
+        >
           <span class="material-symbols-outlined text-xl">menu</span>
         </button>
       </div>
@@ -64,36 +89,61 @@
   </div>
 
   <!-- Mobile Menu -->
-  <div id="cyber-mobile-menu" class="hidden md:hidden border-t border-[#00d4ff]/10 bg-[#0a0a0f]/95 backdrop-blur-xl">
+  <div
+    id="cyber-mobile-menu"
+    class="hidden md:hidden border-t border-[#00d4ff]/10 bg-[#0a0a0f]/95 backdrop-blur-xl"
+  >
     <div class="max-w-7xl mx-auto px-4 py-4 space-y-1">
-      <a href="./"
-         class="block px-4 py-3 rounded text-sm font-['Inter'] font-medium tracking-wider uppercase transition-all duration-200
+      <a
+        href="./"
+        class="block px-4 py-3 rounded text-sm font-['Inter'] font-medium tracking-wider uppercase transition-all duration-200
                 {{#page.beranda}}text-[#00d4ff] bg-[#00d4ff]/10 border-l-2 border-[#00d4ff]{{/page.beranda}}
-                {{^page.beranda}}text-[#8888a0] hover:text-[#00d4ff] hover:bg-[#00d4ff]/5{{/page.beranda}}">
-        <span class="material-symbols-outlined text-sm align-middle mr-2">home</span>Beranda
+                {{^page.beranda}}text-[#8888a0] hover:text-[#00d4ff] hover:bg-[#00d4ff]/5{{/page.beranda}}"
+      >
+        <span class="material-symbols-outlined text-sm align-middle mr-2"
+          >home</span
+        >Beranda
       </a>
-      <a href="./produk.html"
-         class="block px-4 py-3 rounded text-sm font-['Inter'] font-medium tracking-wider uppercase transition-all duration-200
+      <a
+        href="./produk.html"
+        class="block px-4 py-3 rounded text-sm font-['Inter'] font-medium tracking-wider uppercase transition-all duration-200
                 {{#page.produk}}text-[#b388ff] bg-[#b388ff]/10 border-l-2 border-[#b388ff]{{/page.produk}}
-                {{^page.produk}}text-[#8888a0] hover:text-[#b388ff] hover:bg-[#b388ff]/5{{/page.produk}}">
-        <span class="material-symbols-outlined text-sm align-middle mr-2">inventory_2</span>Produk
+                {{^page.produk}}text-[#8888a0] hover:text-[#b388ff] hover:bg-[#b388ff]/5{{/page.produk}}"
+      >
+        <span class="material-symbols-outlined text-sm align-middle mr-2"
+          >inventory_2</span
+        >Produk
       </a>
-      <a href="./tentang.html"
-         class="block px-4 py-3 rounded text-sm font-['Inter'] font-medium tracking-wider uppercase transition-all duration-200
+      <a
+        href="./tentang.html"
+        class="block px-4 py-3 rounded text-sm font-['Inter'] font-medium tracking-wider uppercase transition-all duration-200
                 {{#page.tentang}}text-[#b388ff] bg-[#b388ff]/10 border-l-2 border-[#b388ff]{{/page.tentang}}
-                {{^page.tentang}}text-[#8888a0] hover:text-[#b388ff] hover:bg-[#b388ff]/5{{/page.tentang}}">
-        <span class="material-symbols-outlined text-sm align-middle mr-2">info</span>Tentang
+                {{^page.tentang}}text-[#8888a0] hover:text-[#b388ff] hover:bg-[#b388ff]/5{{/page.tentang}}"
+      >
+        <span class="material-symbols-outlined text-sm align-middle mr-2"
+          >info</span
+        >Tentang
       </a>
-      <a href="./kontak.html"
-         class="block px-4 py-3 rounded text-sm font-['Inter'] font-medium tracking-wider uppercase transition-all duration-200
+      <a
+        href="./kontak.html"
+        class="block px-4 py-3 rounded text-sm font-['Inter'] font-medium tracking-wider uppercase transition-all duration-200
                 {{#page.kontak}}text-[#b388ff] bg-[#b388ff]/10 border-l-2 border-[#b388ff]{{/page.kontak}}
-                {{^page.kontak}}text-[#8888a0] hover:text-[#b388ff] hover:bg-[#b388ff]/5{{/page.kontak}}">
-        <span class="material-symbols-outlined text-sm align-middle mr-2">contact_mail</span>Kontak
+                {{^page.kontak}}text-[#8888a0] hover:text-[#b388ff] hover:bg-[#b388ff]/5{{/page.kontak}}"
+      >
+        <span class="material-symbols-outlined text-sm align-middle mr-2"
+          >contact_mail</span
+        >Kontak
       </a>
       <hr class="border-[#00d4ff]/10 my-3" />
-      <a href="{{whatsapp.url}}" target="_blank" rel="noopener"
-         class="block px-4 py-3 rounded text-sm font-['Inter'] font-medium tracking-wider uppercase text-[#00d4ff] hover:bg-[#00d4ff]/10 transition-all duration-200">
-        <span class="material-symbols-outlined text-sm align-middle mr-2">chat</span>Chat WhatsApp
+      <a
+        href="{{whatsapp.url}}"
+        target="_blank"
+        rel="noopener"
+        class="block px-4 py-3 rounded text-sm font-['Inter'] font-medium tracking-wider uppercase text-[#00d4ff] hover:bg-[#00d4ff]/10 transition-all duration-200"
+      >
+        <span class="material-symbols-outlined text-sm align-middle mr-2"
+          >chat</span
+        >Chat WhatsApp
       </a>
     </div>
   </div>

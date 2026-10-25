@@ -1,4 +1,4 @@
-import { z } from "zod"
+import { z } from "zod";
 
 export const logQuerySchema = z.object({
   page: z.string().regex(/^\d+$/).optional().default("1"),
@@ -9,4 +9,4 @@ export const logQuerySchema = z.object({
   dateTo: z.string().optional(),
   sort: z.enum(["createdAt"]).optional().default("createdAt"),
   order: z.enum(["asc", "desc"]).optional().default("desc"),
-})
+});

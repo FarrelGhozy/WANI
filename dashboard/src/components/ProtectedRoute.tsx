@@ -1,26 +1,26 @@
-import { Navigate } from 'react-router'
-import type { ReactNode } from 'react'
-import { useAuth } from '@/hooks/useAuth.ts'
-import Spinner from '@/components/ui/Spinner.tsx'
+import { Navigate } from "react-router";
+import type { ReactNode } from "react";
+import { useAuth } from "@/hooks/useAuth.ts";
+import Spinner from "@/components/ui/Spinner.tsx";
 
 interface ProtectedRouteProps {
-  children: ReactNode
+  children: ReactNode;
 }
 
 export default function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { isAuthenticated, loading } = useAuth()
+  const { isAuthenticated, loading } = useAuth();
 
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-stone-50">
         <Spinner size={32} />
       </div>
-    )
+    );
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/app/login" replace />
+    return <Navigate to="/app/login" replace />;
   }
 
-  return <>{children}</>
+  return <>{children}</>;
 }

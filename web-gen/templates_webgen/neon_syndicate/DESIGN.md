@@ -1,101 +1,101 @@
 ---
 name: Neon Syndicate
 colors:
-  surface: '#131315'
-  surface-dim: '#131315'
-  surface-bright: '#39393b'
-  surface-container-lowest: '#0e0e10'
-  surface-container-low: '#1c1b1d'
-  surface-container: '#201f21'
-  surface-container-high: '#2a2a2c'
-  surface-container-highest: '#353437'
-  on-surface: '#e5e1e4'
-  on-surface-variant: '#b9cacb'
-  inverse-surface: '#e5e1e4'
-  inverse-on-surface: '#313032'
-  outline: '#849495'
-  outline-variant: '#3a494b'
-  surface-tint: '#00dbe7'
-  primary: '#e1fdff'
-  on-primary: '#00363a'
-  primary-container: '#00f2ff'
-  on-primary-container: '#006a71'
-  inverse-primary: '#00696f'
-  secondary: '#ebb2ff'
-  on-secondary: '#520071'
-  secondary-container: '#ce5dff'
-  on-secondary-container: '#480064'
-  tertiary: '#fff5f5'
-  on-tertiary: '#67001d'
-  tertiary-container: '#ffcfd2'
-  on-tertiary-container: '#c0003e'
-  error: '#ffb4ab'
-  on-error: '#690005'
-  error-container: '#93000a'
-  on-error-container: '#ffdad6'
-  primary-fixed: '#74f5ff'
-  primary-fixed-dim: '#00dbe7'
-  on-primary-fixed: '#002022'
-  on-primary-fixed-variant: '#004f54'
-  secondary-fixed: '#f8d8ff'
-  secondary-fixed-dim: '#ebb2ff'
-  on-secondary-fixed: '#320047'
-  on-secondary-fixed-variant: '#74009f'
-  tertiary-fixed: '#ffdadb'
-  tertiary-fixed-dim: '#ffb2b8'
-  on-tertiary-fixed: '#40000f'
-  on-tertiary-fixed-variant: '#91002d'
-  background: '#131315'
-  on-background: '#e5e1e4'
-  surface-variant: '#353437'
+  surface: "#131315"
+  surface-dim: "#131315"
+  surface-bright: "#39393b"
+  surface-container-lowest: "#0e0e10"
+  surface-container-low: "#1c1b1d"
+  surface-container: "#201f21"
+  surface-container-high: "#2a2a2c"
+  surface-container-highest: "#353437"
+  on-surface: "#e5e1e4"
+  on-surface-variant: "#b9cacb"
+  inverse-surface: "#e5e1e4"
+  inverse-on-surface: "#313032"
+  outline: "#849495"
+  outline-variant: "#3a494b"
+  surface-tint: "#00dbe7"
+  primary: "#e1fdff"
+  on-primary: "#00363a"
+  primary-container: "#00f2ff"
+  on-primary-container: "#006a71"
+  inverse-primary: "#00696f"
+  secondary: "#ebb2ff"
+  on-secondary: "#520071"
+  secondary-container: "#ce5dff"
+  on-secondary-container: "#480064"
+  tertiary: "#fff5f5"
+  on-tertiary: "#67001d"
+  tertiary-container: "#ffcfd2"
+  on-tertiary-container: "#c0003e"
+  error: "#ffb4ab"
+  on-error: "#690005"
+  error-container: "#93000a"
+  on-error-container: "#ffdad6"
+  primary-fixed: "#74f5ff"
+  primary-fixed-dim: "#00dbe7"
+  on-primary-fixed: "#002022"
+  on-primary-fixed-variant: "#004f54"
+  secondary-fixed: "#f8d8ff"
+  secondary-fixed-dim: "#ebb2ff"
+  on-secondary-fixed: "#320047"
+  on-secondary-fixed-variant: "#74009f"
+  tertiary-fixed: "#ffdadb"
+  tertiary-fixed-dim: "#ffb2b8"
+  on-tertiary-fixed: "#40000f"
+  on-tertiary-fixed-variant: "#91002d"
+  background: "#131315"
+  on-background: "#e5e1e4"
+  surface-variant: "#353437"
 typography:
   headline-xl:
     fontFamily: Inter
     fontSize: 64px
-    fontWeight: '900'
+    fontWeight: "900"
     lineHeight: 72px
     letterSpacing: -0.02em
   headline-xl-mobile:
     fontFamily: Inter
     fontSize: 40px
-    fontWeight: '900'
+    fontWeight: "900"
     lineHeight: 44px
     letterSpacing: -0.01em
   headline-lg:
     fontFamily: Inter
     fontSize: 32px
-    fontWeight: '800'
+    fontWeight: "800"
     lineHeight: 40px
     letterSpacing: -0.01em
   headline-md:
     fontFamily: Inter
     fontSize: 24px
-    fontWeight: '700'
+    fontWeight: "700"
     lineHeight: 32px
   body-lg:
     fontFamily: Inter
     fontSize: 18px
-    fontWeight: '400'
+    fontWeight: "400"
     lineHeight: 28px
   body-md:
     fontFamily: Inter
     fontSize: 16px
-    fontWeight: '400'
+    fontWeight: "400"
     lineHeight: 24px
   data-lg:
     fontFamily: JetBrains Mono
     fontSize: 20px
-    fontWeight: '700'
+    fontWeight: "700"
     lineHeight: 24px
   data-md:
     fontFamily: JetBrains Mono
     fontSize: 14px
-    fontWeight: '500'
+    fontWeight: "500"
     lineHeight: 20px
   label-caps:
     fontFamily: JetBrains Mono
     fontSize: 12px
-    fontWeight: '700'
+    fontWeight: "700"
     lineHeight: 16px
     letterSpacing: 0.1em
 rounded:
@@ -121,7 +121,7 @@ The style is a hybrid of **High-Contrast Bold** and **Glassmorphism**, set again
 
 ## Colors
 
-The palette is anchored by a nearly black base to provide maximum contrast for the neon accents. 
+The palette is anchored by a nearly black base to provide maximum contrast for the neon accents.
 
 - **Primary (Neon Cyan):** Used for primary actions, success states, and critical navigation links. It represents the "active" digital flow.
 - **Secondary (Electric Purple):** Used for interactive elements, hover states, and promotional highlights.
@@ -130,7 +130,7 @@ The palette is anchored by a nearly black base to provide maximum contrast for t
 
 ## Typography
 
-Typography is used to distinguish between narrative/marketing content and technical data. 
+Typography is used to distinguish between narrative/marketing content and technical data.
 
 **Inter** is the workhorse for headings and body copy, utilized in heavy weights to command attention. Headlines should use tight tracking and uppercase styling for a more aggressive, structural feel.
 
@@ -138,7 +138,7 @@ Typography is used to distinguish between narrative/marketing content and techni
 
 ## Layout & Spacing
 
-This design system uses a **Fluid Grid** model based on an 8px technical scale. 
+This design system uses a **Fluid Grid** model based on an 8px technical scale.
 
 - **Desktop:** 12-column grid with 24px gutters. Wide margins (64px) allow the neon glows to "breathe" against the black background.
 - **Mobile:** 4-column grid with 16px margins.
@@ -154,7 +154,7 @@ Depth is achieved through light and transparency rather than traditional soft sh
 
 ## Shapes
 
-The shape language is sharp and industrial. While the default roundedness is set to "Soft" (4px), it is used sparingly to prevent the UI from looking too friendly. 
+The shape language is sharp and industrial. While the default roundedness is set to "Soft" (4px), it is used sparingly to prevent the UI from looking too friendly.
 
 - **Containers:** 4px radius for a slight "screen-edge" feel.
 - **Interactive Elements:** Use 0px (sharp) corners for buttons and inputs to lean into the retro-brutalist cyberpunk vibe.

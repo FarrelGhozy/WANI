@@ -1,91 +1,91 @@
 ---
 name: Renaissance Modern
 colors:
-  surface: '#fff8f3'
-  surface-dim: '#e3d8cc'
-  surface-bright: '#fff8f3'
-  surface-container-lowest: '#ffffff'
-  surface-container-low: '#fdf2e5'
-  surface-container: '#f7ecdf'
-  surface-container-high: '#f1e7d9'
-  surface-container-highest: '#ece1d4'
-  on-surface: '#201b13'
-  on-surface-variant: '#4f4535'
-  inverse-surface: '#353027'
-  inverse-on-surface: '#faefe2'
-  outline: '#817563'
-  outline-variant: '#d3c4af'
-  surface-tint: '#7b5800'
-  primary: '#785600'
-  on-primary: '#ffffff'
-  primary-container: '#986d00'
-  on-primary-container: '#fffbff'
-  inverse-primary: '#f7bd48'
-  secondary: '#5f5e5e'
-  on-secondary: '#ffffff'
-  secondary-container: '#e4e2e1'
-  on-secondary-container: '#656464'
-  tertiary: '#085ea2'
-  on-tertiary: '#ffffff'
-  tertiary-container: '#3477bc'
-  on-tertiary-container: '#fdfcff'
-  error: '#ba1a1a'
-  on-error: '#ffffff'
-  error-container: '#ffdad6'
-  on-error-container: '#93000a'
-  primary-fixed: '#ffdea6'
-  primary-fixed-dim: '#f7bd48'
-  on-primary-fixed: '#271900'
-  on-primary-fixed-variant: '#5d4200'
-  secondary-fixed: '#e4e2e1'
-  secondary-fixed-dim: '#c8c6c6'
-  on-secondary-fixed: '#1b1c1c'
-  on-secondary-fixed-variant: '#474747'
-  tertiary-fixed: '#d2e4ff'
-  tertiary-fixed-dim: '#a1c9ff'
-  on-tertiary-fixed: '#001c37'
-  on-tertiary-fixed-variant: '#004880'
-  background: '#fff8f3'
-  on-background: '#201b13'
-  surface-variant: '#ece1d4'
+  surface: "#fff8f3"
+  surface-dim: "#e3d8cc"
+  surface-bright: "#fff8f3"
+  surface-container-lowest: "#ffffff"
+  surface-container-low: "#fdf2e5"
+  surface-container: "#f7ecdf"
+  surface-container-high: "#f1e7d9"
+  surface-container-highest: "#ece1d4"
+  on-surface: "#201b13"
+  on-surface-variant: "#4f4535"
+  inverse-surface: "#353027"
+  inverse-on-surface: "#faefe2"
+  outline: "#817563"
+  outline-variant: "#d3c4af"
+  surface-tint: "#7b5800"
+  primary: "#785600"
+  on-primary: "#ffffff"
+  primary-container: "#986d00"
+  on-primary-container: "#fffbff"
+  inverse-primary: "#f7bd48"
+  secondary: "#5f5e5e"
+  on-secondary: "#ffffff"
+  secondary-container: "#e4e2e1"
+  on-secondary-container: "#656464"
+  tertiary: "#085ea2"
+  on-tertiary: "#ffffff"
+  tertiary-container: "#3477bc"
+  on-tertiary-container: "#fdfcff"
+  error: "#ba1a1a"
+  on-error: "#ffffff"
+  error-container: "#ffdad6"
+  on-error-container: "#93000a"
+  primary-fixed: "#ffdea6"
+  primary-fixed-dim: "#f7bd48"
+  on-primary-fixed: "#271900"
+  on-primary-fixed-variant: "#5d4200"
+  secondary-fixed: "#e4e2e1"
+  secondary-fixed-dim: "#c8c6c6"
+  on-secondary-fixed: "#1b1c1c"
+  on-secondary-fixed-variant: "#474747"
+  tertiary-fixed: "#d2e4ff"
+  tertiary-fixed-dim: "#a1c9ff"
+  on-tertiary-fixed: "#001c37"
+  on-tertiary-fixed-variant: "#004880"
+  background: "#fff8f3"
+  on-background: "#201b13"
+  surface-variant: "#ece1d4"
 typography:
   display-lg:
     fontFamily: Bodoni Moda
     fontSize: 64px
-    fontWeight: '600'
-    lineHeight: '1.1'
+    fontWeight: "600"
+    lineHeight: "1.1"
     letterSpacing: -0.02em
   display-lg-mobile:
     fontFamily: Bodoni Moda
     fontSize: 40px
-    fontWeight: '600'
-    lineHeight: '1.2'
+    fontWeight: "600"
+    lineHeight: "1.2"
   headline-lg:
     fontFamily: Bodoni Moda
     fontSize: 48px
-    fontWeight: '500'
-    lineHeight: '1.2'
+    fontWeight: "500"
+    lineHeight: "1.2"
   headline-md:
     fontFamily: Bodoni Moda
     fontSize: 32px
-    fontWeight: '500'
-    lineHeight: '1.3'
+    fontWeight: "500"
+    lineHeight: "1.3"
   body-lg:
     fontFamily: Plus Jakarta Sans
     fontSize: 18px
-    fontWeight: '400'
-    lineHeight: '1.6'
+    fontWeight: "400"
+    lineHeight: "1.6"
     letterSpacing: 0.01em
   body-md:
     fontFamily: Plus Jakarta Sans
     fontSize: 16px
-    fontWeight: '400'
-    lineHeight: '1.6'
+    fontWeight: "400"
+    lineHeight: "1.6"
   label-sm:
     fontFamily: Plus Jakarta Sans
     fontSize: 12px
-    fontWeight: '700'
-    lineHeight: '1.0'
+    fontWeight: "700"
+    lineHeight: "1.0"
     letterSpacing: 0.1em
 rounded:
   sm: 0.125rem
@@ -123,17 +123,17 @@ Use the primary gold primarily for call-to-actions, borders, and delicate separa
 
 ## Typography
 
-The typographic hierarchy relies on the high-contrast tension between the serif and sans-serif faces. 
+The typographic hierarchy relies on the high-contrast tension between the serif and sans-serif faces.
 
 **Bodoni Moda** is reserved for large headlines and display moments. Its vertical stress and sharp serifs provide the "classical" anchor. Avoid using it for long-form body text.
 
-**Plus Jakarta Sans** provides a clean, approachable counterpoint for functional text. Its modern geometry ensures readability at small scales. 
+**Plus Jakarta Sans** provides a clean, approachable counterpoint for functional text. Its modern geometry ensures readability at small scales.
 
 **Label styling:** Always use uppercase with increased letter-spacing (tracking) for labels and overlines to mimic classical inscriptions.
 
 ## Layout & Spacing
 
-This design system uses a **Fluid Grid** model with generous vertical rhythm. 
+This design system uses a **Fluid Grid** model with generous vertical rhythm.
 
 - **Desktop:** 12-column grid with wide 32px gutters. Margins scale with viewport width to maintain a centered, editorial look.
 - **Tablet:** 8-column grid with 24px gutters.
@@ -146,7 +146,7 @@ Spacing should prioritize asymmetrical balance. Use "xl" (80px) spacing between 
 Hierarchy is achieved through **Tonal Layers** and **Low-Contrast Outlines** rather than heavy shadows.
 
 - **Level 0 (Base):** The primary surface color.
-- **Level 1 (Cards):** A slightly lighter or darker tint (depending on theme) with a 1px solid border in a metallic accent color (Gold/Silver). 
+- **Level 1 (Cards):** A slightly lighter or darker tint (depending on theme) with a 1px solid border in a metallic accent color (Gold/Silver).
 - **Overlay:** When using modals or menus, apply a subtle backdrop blur (8px) to suggest glass-like transparency without breaking the classical structure.
 - **Shadows:** If used, they must be "Ambient Shadows"—extremely soft, 10% opacity, with a large spread and a tint matching the secondary color.
 
@@ -158,22 +158,27 @@ Interactive elements like icons should use "Sharp" or "Soft" variants to match t
 
 ## Components
 
-**Buttons:** 
+**Buttons:**
+
 - Primary: Solid fill (Primary Gold) with Label-SM text (White/Black depending on theme). 4px radius.
 - Secondary: 1px Gold border with transparent background.
 - Hover state: Slight increase in border weight or a very subtle inner glow.
 
 **Input Fields:**
-- Minimalist design. 1px bottom border only (Classical look) or a full 1px border with a 4px radius. 
+
+- Minimalist design. 1px bottom border only (Classical look) or a full 1px border with a 4px radius.
 - Use Plus Jakarta Sans for the input text and Bodoni Moda for the field labels.
 
 **Cards:**
-- Use a 1px border (`#D4AF37` at 30% opacity). 
-- Include generous internal padding (MD or LG). 
+
+- Use a 1px border (`#D4AF37` at 30% opacity).
+- Include generous internal padding (MD or LG).
 - Always align text centrally or to a strict left grid line.
 
 **Chips/Tags:**
+
 - Small, uppercase, with 1px borders. Use them sparingly to avoid cluttering the elegant interface.
 
 **Lists:**
+
 - Use horizontal separators (rules) that are thin and elegant. The last item in a list should never have a bottom rule.

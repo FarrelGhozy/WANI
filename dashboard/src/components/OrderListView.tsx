@@ -1,85 +1,174 @@
-import { useNavigate } from 'react-router'
-import type { Order, OrderStatus, OrderSortField } from '@/hooks/useOrders.ts'
-import Badge from '@/components/ui/Badge.tsx'
-import { formatPrice, formatDate } from '@/utils/format.ts'
+import { useNavigate } from "react-router";
+import type { Order, OrderStatus, OrderSortField } from "@/hooks/useOrders.ts";
+import Badge from "@/components/ui/Badge.tsx";
+import { formatPrice, formatDate } from "@/utils/format.ts";
 
 interface OrderListViewProps {
-  orders: Order[]
-  sortField: string
-  sortDir: 'asc' | 'desc'
-  onSort: (field: OrderSortField) => void
+  orders: Order[];
+  sortField: string;
+  sortDir: "asc" | "desc";
+  onSort: (field: OrderSortField) => void;
 }
 
-const statusBadge: Record<OrderStatus, 'amber' | 'teal' | 'green' | 'gray' | 'red'> = {
-  PENDING: 'amber',
-  CONFIRMED: 'teal',
-  PROCESSING: 'green',
-  COMPLETED: 'gray',
-  CANCELLED: 'red',
-}
+const statusBadge: Record<
+  OrderStatus,
+  "amber" | "teal" | "green" | "gray" | "red"
+> = {
+  PENDING: "amber",
+  CONFIRMED: "teal",
+  PROCESSING: "green",
+  COMPLETED: "gray",
+  CANCELLED: "red",
+};
 
 const statusLabel: Record<OrderStatus, string> = {
-  PENDING: 'Tertunda',
-  CONFIRMED: 'Dikonfirmasi',
-  PROCESSING: 'Diproses',
-  COMPLETED: 'Selesai',
-  CANCELLED: 'Dibatalkan',
-}
+  PENDING: "Tertunda",
+  CONFIRMED: "Dikonfirmasi",
+  PROCESSING: "Diproses",
+  COMPLETED: "Selesai",
+  CANCELLED: "Dibatalkan",
+};
 
-function SortArrow({ field, current, dir }: { field: string; current: string; dir: 'asc' | 'desc' }) {
-  if (field !== current) return null
-  return <span className="ml-1 text-teal-600">{dir === 'asc' ? '\u2191' : '\u2193'}</span>
-}
-
-function SortTh({ field, label, current, dir, onSort, className }: { field: OrderSortField; label: string; current: string; dir: 'asc' | 'desc'; onSort: (f: OrderSortField) => void; className?: string }) {
+function SortArrow({
+  field,
+  current,
+  dir,
+}: {
+  field: string;
+  current: string;
+  dir: "asc" | "desc";
+}) {
+  if (field !== current) return null;
   return (
-    <th className={`max-sm:px-2 max-sm:py-2 sm:px-4 sm:py-3 text-xs font-medium uppercase tracking-wider ${className ?? ''}`}>
-      <button onClick={() => onSort(field)} className="inline-flex items-center text-stone-500 transition-colors hover:text-stone-700">
+    <span className="ml-1 text-teal-600">
+      {dir === "asc" ? "\u2191" : "\u2193"}
+    </span>
+  );
+}
+
+function SortTh({
+  field,
+  label,
+  current,
+  dir,
+  onSort,
+  className,
+}: {
+  field: OrderSortField;
+  label: string;
+  current: string;
+  dir: "asc" | "desc";
+  onSort: (f: OrderSortField) => void;
+  className?: string;
+}) {
+  return (
+    <th
+      className={`max-sm:px-2 max-sm:py-2 sm:px-4 sm:py-3 text-xs font-medium uppercase tracking-wider ${className ?? ""}`}
+    >
+      <button
+        onClick={() => onSort(field)}
+        className="inline-flex items-center text-stone-500 transition-colors hover:text-stone-700"
+      >
         {label}
         <SortArrow field={field} current={current} dir={dir} />
       </button>
     </th>
-  )
+  );
 }
 
-export default function OrderListView({ orders, sortField, sortDir, onSort }: OrderListViewProps) {
-  const navigate = useNavigate()
+export default function OrderListView({
+  orders,
+  sortField,
+  sortDir,
+  onSort,
+}: OrderListViewProps) {
+  const navigate = useNavigate();
 
-  if (orders.length === 0) return null
+  if (orders.length === 0) return null;
 
   return (
     <div className="overflow-x-auto rounded-xl border border-stone-200 bg-white max-lg:h-full">
       <table className="w-full border-collapse text-left max-sm:text-xs sm:text-sm">
         <thead>
           <tr className="border-b border-stone-100 bg-stone-50">
-            <SortTh field="id" label="Pesanan" current={sortField} dir={sortDir} onSort={onSort} />
-            <SortTh field="customerName" label="Pelanggan" current={sortField} dir={sortDir} onSort={onSort} />
-            <SortTh field="items" label="Item" current={sortField} dir={sortDir} onSort={onSort} />
-            <SortTh field="totalAmount" label="Total" current={sortField} dir={sortDir} onSort={onSort} className="text-right" />
-            <SortTh field="status" label="Status" current={sortField} dir={sortDir} onSort={onSort} />
-            <SortTh field="createdAt" label="Tanggal" current={sortField} dir={sortDir} onSort={onSort} className="text-right" />
+            <SortTh
+              field="id"
+              label="Pesanan"
+              current={sortField}
+              dir={sortDir}
+              onSort={onSort}
+            />
+            <SortTh
+              field="customerName"
+              label="Pelanggan"
+              current={sortField}
+              dir={sortDir}
+              onSort={onSort}
+            />
+            <SortTh
+              field="items"
+              label="Item"
+              current={sortField}
+              dir={sortDir}
+              onSort={onSort}
+            />
+            <SortTh
+              field="totalAmount"
+              label="Total"
+              current={sortField}
+              dir={sortDir}
+              onSort={onSort}
+              className="text-right"
+            />
+            <SortTh
+              field="status"
+              label="Status"
+              current={sortField}
+              dir={sortDir}
+              onSort={onSort}
+            />
+            <SortTh
+              field="createdAt"
+              label="Tanggal"
+              current={sortField}
+              dir={sortDir}
+              onSort={onSort}
+              className="text-right"
+            />
           </tr>
         </thead>
         <tbody className="divide-y divide-stone-50">
           {orders.map((order) => (
             <tr
               key={order.id}
-               onClick={() => navigate(`/app/orders/${order.id}`)}
+              onClick={() => navigate(`/app/orders/${order.id}`)}
               className="cursor-pointer transition-colors hover:bg-stone-50"
             >
               <td className="max-sm:px-2 max-sm:py-2 sm:px-4 sm:py-3">
-                <span className="font-mono text-xs font-medium text-teal-600">#{order.id.split('-')[1].toUpperCase().padStart(3, '0')}</span>
+                <span className="font-mono text-xs font-medium text-teal-600">
+                  #{order.id.split("-")[1].toUpperCase().padStart(3, "0")}
+                </span>
               </td>
               <td className="max-sm:px-2 max-sm:py-2 sm:px-4 sm:py-3">
                 <div>
-                  <p className="max-sm:text-xs sm:text-sm font-medium text-stone-900">{order.customerName}</p>
-                  <p className="text-xs text-stone-400">{order.customerPhone}</p>
+                  <p className="max-sm:text-xs sm:text-sm font-medium text-stone-900">
+                    {order.customerName}
+                  </p>
+                  <p className="text-xs text-stone-400">
+                    {order.customerPhone}
+                  </p>
                 </div>
               </td>
-              <td className="max-sm:px-2 max-sm:py-2 sm:px-4 sm:py-3 text-xs text-stone-500">{order.items.length} item</td>
-              <td className="max-sm:px-2 max-sm:py-2 sm:px-4 sm:py-3 text-right font-medium tabular-nums text-stone-900">{formatPrice(order.totalAmount)}</td>
+              <td className="max-sm:px-2 max-sm:py-2 sm:px-4 sm:py-3 text-xs text-stone-500">
+                {order.items.length} item
+              </td>
+              <td className="max-sm:px-2 max-sm:py-2 sm:px-4 sm:py-3 text-right font-medium tabular-nums text-stone-900">
+                {formatPrice(order.totalAmount)}
+              </td>
               <td className="max-sm:px-2 max-sm:py-2 sm:px-4 sm:py-3">
-                <Badge variant={statusBadge[order.status]} dot>{statusLabel[order.status]}</Badge>
+                <Badge variant={statusBadge[order.status]} dot>
+                  {statusLabel[order.status]}
+                </Badge>
               </td>
               <td className="max-sm:px-2 max-sm:py-2 sm:px-4 sm:py-3 text-right text-xs text-stone-400">
                 {formatDate(order.createdAt)}
@@ -89,5 +178,5 @@ export default function OrderListView({ orders, sortField, sortDir, onSort }: Or
         </tbody>
       </table>
     </div>
-  )
+  );
 }

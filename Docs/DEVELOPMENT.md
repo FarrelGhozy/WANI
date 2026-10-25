@@ -8,7 +8,7 @@ Panduan menyiapkan lingkungan, menjalankan, mengetes, dan berkontribusi ke WANI.
 
 | Kebutuhan | Versi yang dipakai repo |
 |-----------|-------------------------|
-| [Bun](https://bun.sh) | 1.4.x (runtime untuk `api`, `wa-bot`, `web-gen`; package manager untuk semua paket) |
+| [Bun](https://bun.sh) | 1.4.x (runtime untuk `api`, `web-gen`; package manager untuk semua paket) |
 | PostgreSQL | 17 (via Docker Compose `db`, atau instance lokal) |
 | Docker + Docker Compose | Untuk menjalankan stack lengkap |
 | Node.js | Opsional — hanya untuk `landingpage` (`npm`/`bun` sama-sama bisa) |
@@ -22,26 +22,29 @@ Tidak ada workspace/monorepo: setiap paket punya `bun.lock` sendiri, jadi `bun i
 ### Opsi A — Docker Compose (semua service)
 
 ```bash
-cp .env.example .env      # isi POSTGRES_PASSWORD, API_TOKEN, JWT_SECRET, LLM_API_KEY
+cp .env.example .env      # isi DATABASE_PASSWORD, WAHA_API_KEY, JWT_SECRET, LLM_API_KEY
 docker compose up --build
-# Dashboard http://localhost:5173 · API http://localhost:3001/api · Health /api/health
+# Dashboard http://localhost:5173 · API di-proxy lewat /api · Health /api/health
 ```
 
-Untuk memakai Dockerfile lokal (bukan image GHCR):
+Untuk pengembangan dengan API & dashboard langsung dari Bun dan WAHA saja lewat Docker:
 
 ```bash
-docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build
+bun run dev               # WAHA (docker-compose.local.yml) + API + dashboard
 ```
 
 ### Opsi B — Lokal dengan Bun (disarankan untuk ngoding)
 
 ```bash
+# 0. Env root (dipakai Compose + WAHA)
+cp .env.example .env
+
 # 1. Database saja lewat Docker
 docker compose up -d db
 
 # 2. API
 cd api
-cp .env.example .env                       # DATABASE_* → localhost:5432, wani_api
+cp ../.env.example .env                    # DATABASE_HOST=localhost, DATABASE_NAME=wani_api
 bun install && bun run prisma:generate && bun run prisma:migrate
 bun run src/index.ts
 
@@ -50,16 +53,14 @@ cd dashboard
 cp .env.example .env                        # VITE_API_URL=http://localhost:3001/api
 bun install && bun run dev
 
-# 4. WA Bot (terminal lain)
-cd wa-bot
-# .env: DATABASE_* → wa_bot, API_URL=http://localhost:3001, API_TOKEN sama dengan API
-bun install && bun run prisma:generate && bun run prisma:migrate
-bun run src/index.ts
+# 4. WAHA (terminal lain, dari root)
+bun run dev:waha
+# .env root: WAHA_API_KEY; API memakai WAHA_API_URL=http://localhost:3000/api
 ```
 
-Alternatif: dari root, `bun run dev` menjalankan API + bot + dashboard sekaligus (`bun --watch` untuk API & bot).
+Alternatif: dari root, `bun run dev` menjalankan WAHA + API + dashboard sekaligus (`bun --watch` untuk API).
 
-> API wajib jalan sebelum bot start (bot mem-POST QR/status ke API). Dashboard wajib punya `VITE_API_URL` karena Vite dev server tidak mem-proxy `/api`.
+> WAHA harus jalan sebelum membuat sesi WhatsApp dari dashboard. Dashboard wajib punya `VITE_API_URL` karena Vite dev server tidak mem-proxy `/api`.
 
 ---
 
@@ -67,13 +68,13 @@ Alternatif: dari root, `bun run dev` menjalankan API + bot + dashboard sekaligus
 
 | Paket | Perintah | Fungsi |
 |-------|----------|--------|
-| root | `bun run dev` / `dev:api` / `dev:bot` / `dev:dash` | Orkestrasi dev |
+| root | `bun run dev` / `dev:api` / `dev:waha` / `dev:dash` | Orkestrasi dev |
 | `api/` | `bun run src/index.ts` | Start API :3001 |
 | | `bun run prisma:generate` · `prisma:migrate` · `prisma:deploy` | Prisma |
 | | `bun run test` · `bun run test:e2e` | Unit · integrasi |
 | | `bun run build` | Bundle ke `dist/` |
 | `dashboard/` | `bun run dev` · `bun run build` · `bun run lint` · `bun run test` | Vite, tsc+vite, eslint, vitest |
-| `wa-bot/` | `bun run src/index.ts` · `prisma:*` · `bun run test` · `bun run build` | Bot |
+| `waha` (Docker) | `bun run dev:waha` · `bun run dev:waha:logs` | WAHA lokal (`docker-compose.local.yml`) |
 | `web-gen/` | `bun run src/generator.ts` | Demo CLI generate |
 | | `bun run build:template` · `bun test` | Build template Astro · tes |
 | | `bun run src/build-fonts.ts` · `bun run src/build-css.ts` | Regenerasi aset template |
@@ -85,10 +86,9 @@ Alternatif: dari root, `bun run dev` menjalankan API + bot + dashboard sekaligus
 
 | Perintah | Cakupan |
 |----------|---------|
-| `cd api && bun run test` | `api/test/**` — unit + integration (firewall, guardrails, schemas, middleware, ai/, pipeline/, models/, integration/) |
+| `cd api && bun run test` | `api/test/**` — unit + integration (firewall, guardrails, schemas, middleware, ai/, pipeline/, services/waha, wa-session, models/, integration/) |
 | `cd api && bun run test:e2e` | `api/e2e/pipeline.test.ts` — jalur penuh pipeline |
 | `cd dashboard && bun run test` | Vitest (jsdom) — hooks & utils |
-| `cd wa-bot && bun run test` | `test/whatsapp-auth.test.ts` |
 | `cd web-gen && bun test` | `test/generator.test.ts`, `test/zip.test.ts` |
 
 **Pitfall penting:** test unit API dan test e2e **harus dijalankan terpisah** (`test/` vs `e2e/`). File e2e memakai `mock.module` yang mengubah module global, sehingga mencampurnya dengan unit test menyebabkan kebocoran state.
@@ -193,8 +193,9 @@ Jangan menulis SQL migrasi manual dan jangan mengedit migrasi yang sudah ada di 
 | `JWT_SECRET environment variable is required in production` | Set `JWT_SECRET`, atau jalankan dengan `NODE_ENV` selain `production` |
 | Token invalid setelah restart API di dev | Normal: tanpa `JWT_SECRET`, secret dibuat acak per proses |
 | `/api/health` → 503 | DB tidak reachable atau `LLM_API_KEY`/`OPENROUTER_API_KEY` kosong |
-| Bot tidak mengirim balasan dashboard | API harus jalan; cek `API_URL`, `API_TOKEN`, dan `GET /api/outgoing` |
-| Bot minta scan QR berulang | Sesi ter-reset (tabel `Creds`/`SignalKey` kosong) — scan ulang atau pakai pairing code |
+| Balasan AI tidak terkirim ke WhatsApp | Cek `WAHA_API_KEY`/`WAHA_API_URL`, status sesi di dashboard, dan log `docker compose logs -f waha` |
+| Sesi minta scan QR berulang | State sesi WAHA hilang/ter-reset — scan ulang atau minta pairing code baru dari tab WA Session |
+| Webhook pesan masuk → 401/403 | API key tidak dikirim, kedaluwarsa, atau tidak punya scope `sessions:messages`; legacy `API_TOKEN` hanya aktif bila `ALLOW_LEGACY_API_TOKEN=true` dan ≥ 32 karakter |
 | Generate website gagal | Template Astro butuh `bun install` + `astro build` (butuh jaringan, timeout 120 s); cek pesan `error` yang dikembalikan |
 | Prisma Client error/tipe hilang | Jalankan `bun run prisma:generate` setelah `bun install` atau setelah mengubah schema |
 | Email tidak terkirim | `SMTP_*` kosong → fungsi sengaja no-op; isi kredensial SMTP untuk mengaktifkan |

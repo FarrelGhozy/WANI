@@ -1,4 +1,4 @@
-import { z } from "zod"
+import { z } from "zod";
 
 export const upsertAiConfigSchema = z.object({
   isActive: z.boolean().optional(),
@@ -11,4 +11,4 @@ export const upsertAiConfigSchema = z.object({
   llmBaseUrl: z.string().optional().nullable(),
   llmApiKey: z.string().optional().nullable(),
   fallbackModel: z.string().optional().nullable(),
-})
+});

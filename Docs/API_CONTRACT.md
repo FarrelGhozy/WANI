@@ -32,16 +32,18 @@ Selalu envelope JSON seragam (`api/src/utils/response.ts`):
 
 ## 2. Model Auth
 
-Tiga tingkat, diterapkan per route:
+Empat tingkat, diterapkan per route:
 
 | Tingkat | Header | Middleware | Dipakai oleh |
 |---------|--------|-----------|--------------|
 | **Publik** | opsional `Authorization: Bearer <jwt>` | `optionalJwt` (global) | Endpoint baca (GET) & halaman publik |
 | **JWT** | `Authorization: Bearer <jwt>` wajib | `requireJwt` | Semua mutasi dashboard |
-| **API_TOKEN** | `Authorization: Bearer <API_TOKEN>` | `requireAuth` | Bot ↔ API (`/qr`, `/chat`, `/outgoing`) |
+| **Service API key** | `Authorization: Bearer wani_sk_…` | `requireServiceAuth(scope)` | Webhook WAHA (`/sessions/messages`), integrasi service |
+| **Legacy API_TOKEN** | `Authorization: Bearer <API_TOKEN>` | `requireServiceAuth(scope)` | Hanya bila `ALLOW_LEGACY_API_TOKEN=true` dan token ≥ 32 karakter |
 
 Catatan penting:
 
+- Managed API key dibuat lewat `/api/api-keys`, terikat ke owner, punya scope (`sessions:messages`, `sessions:qr`, `chat:write`, `outgoing:read`, `outgoing:write`), dan dapat dicabut.
 - `optionalJwt` dipasang **global** di `/api`. Token invalid diabaikan tanpa error (bukan 401), sehingga `req.user` bisa `undefined` di endpoint publik.
 - Endpoint publik memakai `getOwnerIdOrFirst(req)`: pakai `req.user.id` bila ada, jika tidak → **user tertua di DB**, jika DB kosong → `"default"`.
 - `JWT_SECRET` kosong di dev → dibuat acak per proses (token lama jadi invalid setelah restart). Di produksi, API melempar error saat start bila `JWT_SECRET` tidak diset.
@@ -61,25 +63,30 @@ Catatan penting:
 
 ## 3. Endpoint
 
-Keterangan auth: 🌐 publik (JWT opsional) · 🔒 JWT wajib · 🤖 `API_TOKEN`
+Keterangan auth: 🌐 publik (JWT opsional) · 🔒 JWT wajib · 🤖 service API key (atau legacy `API_TOKEN`)
 
-### 3.1 WhatsApp Session
-
-| Method | Path | Auth | Keterangan |
-|--------|------|------|-----------|
-| GET | `/api/qr` | 🌐 | `data: { qr: string \| null }` |
-| GET | `/api/qr/status` | 🌐 | `data: { status, phone, connectedAt, pairingPhone, pairingCode }` |
-| POST | `/api/qr` | 🤖 | Body: `{ qr?, status?, phone?, pairingPhone?, pairingCode? }` → `"qr updated"` |
-| DELETE | `/api/qr` | 🤖 | Kosongkan QR (dipanggil bot saat tersambung) → `"qr cleared"` |
-| POST | `/api/qr/reset` | 🔒 | Hapus sesi bot (`WaSession` + `Creds`/`SignalKey`) → bot scan QR baru |
-| POST | `/api/qr/pairing` | 🔒 | Body: `{ phone }` (10–15 digit) → `data: { phone }`; bot meminta pairing code |
-| POST | `/api/qr/refresh-pairing` | 🔒 | Buang pairing code lama agar bot membuat kode baru |
-
-### 3.2 Chat (bot → AI)
+### 3.1 WhatsApp Session (WAHA)
 
 | Method | Path | Auth | Keterangan |
 |--------|------|------|-----------|
-| POST | `/api/chat` | 🤖 | Body: `{ ownerId?, phone, name?, text, waMsgId? }` |
+| GET | `/api/sessions` | 🔒 | Sesi owner; query opsional `status` (`STOPPED`/`STARTING`/`SCAN_QR_CODE`/`WORKING`/…) |
+| POST | `/api/sessions` | 🔒 | Body `{ storeName }`; buat/ambil sesi WAHA (`store-<ownerId>`) |
+| DELETE | `/api/sessions` | 🔒 | Logout + hapus sesi WAHA dan row `WaSession` |
+| POST | `/api/sessions/sync` | 🔒 | Sinkronkan status dari WAHA; refresh QR saat `SCAN_QR_CODE` |
+| POST | `/api/sessions/reset` | 🔒 | Logout + hapus sesi WAHA, lalu buat sesi baru dari state bersih |
+| POST | `/api/sessions/pairing` | 🔒 | Body `{ phone }` (10–15 digit) → minta pairing code |
+| POST | `/api/sessions/refresh-pairing` | 🔒 | Minta ulang pairing code untuk nomor yang tersimpan |
+| POST | `/api/sessions/messages` | 🤖 `sessions:messages` | Webhook pesan masuk dari WAHA (lihat §3.2) |
+
+Data sesi (`WaSession`) berisi `waSessionName`, `status`, `phone`, `qr`, `pairingPhone`, `pairingCode`, `lastSyncedAt`.
+
+### 3.2 WhatsApp Webhook (WAHA → AI)
+
+| Method | Path | Auth | Keterangan |
+|--------|------|------|-----------|
+| POST | `/api/sessions/messages` | 🤖 `sessions:messages` | Pesan masuk dari WAHA; dijalankan lewat AI pipeline |
+
+Body menerima bentuk webhook WAHA (`{ event, session, payload: { from, body, id } }`) atau bentuk legacy (`{ ownerId?, phone, name?, text, waMsgId? }`). Event non-pesan diabaikan.
 
 Respons `200 "ok"`:
 
@@ -91,7 +98,7 @@ Respons `200 "ok"`:
 }
 ```
 
-`qrisImageUrl` bernilai `null` bila intent bukan order/QRIS. Bila `ownerId` tidak dikirim, API memakai `getOwnerIdOrFirst()`.
+`qrisImageUrl` bernilai `null` bila intent bukan order/QRIS. Owner di-resolve dari service API key; untuk payload legacy tanpa owner, API memakai `getOwnerIdOrFirst()` atau nama sesi `store-<ownerId>`.
 
 ### 3.3 Toko & Pembayaran
 
@@ -161,7 +168,7 @@ Field opsional umum: `label`, `instructions`, `isActive`, `sortOrder`.
 | PUT | `/api/customers/:id` | 🔒 | `{ name?, notes? }` |
 | GET | `/api/conversations/:id` | 🔒 | `data: { id, messages: [{ id, role, content, msgType, waMsgId, metadata, createdAt }] }` (100 pesan terakhir) |
 | PUT | `/api/conversations/:id/status` | 🔒 | `{ status: ACTIVE \| RESOLVED \| ARCHIVED \| ESCALATED }` |
-| POST | `/api/conversations/:id/messages` | 🔒 | `{ text }` → `201 "message sent"`; pesan `role: "HUMAN"` ini diambil bot lewat `/api/outgoing` |
+| POST | `/api/conversations/:id/messages` | 🔒 | `{ text }` → `201 "message sent"`; pesan disimpan sebagai `role: "HUMAN"` |
 
 ### 3.8 Dashboard, Log & Usage
 
@@ -204,14 +211,13 @@ Email dikirim via SMTP; bila `SMTP_*` kosong, `sendEmail()` melewati pengiriman 
 |--------|------|------|-----------|
 | POST | `/api/upload` | 🔒 | `multipart/form-data`, field `file` (PNG/JPEG/WebP, maks 2 MB), optional `prefix` (huruf/angka) → `201 { url: "/uploads/<prefix>-<uuid>.<ext>" }` |
 
-### 3.12 Outgoing (bot → WA)
+### 3.12 API Keys
 
 | Method | Path | Auth | Keterangan |
 |--------|------|------|-----------|
-| GET | `/api/outgoing` | 🤖 | `data: { items: [{ id, jid, text }] }` — maks 20 pesan; `jid` = `<phone>@s.whatsapp.net` |
-| PATCH | `/api/outgoing/:id/delivered` | 🤖 | Tandai terkirim (`waMsgId = "sent-<id>"`) |
-
-Sumber: pesan `role: "HUMAN"` **atau** `msgType: "notification"`, yang `waMsgId`-nya masih `null`.
+| GET | `/api/api-keys` | 🔒 | `data: { items }` — key milik owner (tanpa secret) |
+| POST | `/api/api-keys` | 🔒 | Body `{ name, scopes[], expiresInDays (1–365) }` → `data: { apiKey, token }`; token hanya ditampilkan sekali |
+| DELETE | `/api/api-keys/:id` | 🔒 | Cabut key (`revokedAt`) |
 
 ### 3.13 Monitoring
 
@@ -258,15 +264,14 @@ curl -s -X PUT localhost:3001/api/ai-config \
   -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
   -d '{"model":"deepseek-v4-flash-free","systemPrompt":"Kamu CS ramah."}'
 
-# 3. Bot mengirim pesan pelanggan
-curl -s -X POST localhost:3001/api/chat \
-  -H "Authorization: Bearer $API_TOKEN" -H 'Content-Type: application/json' \
-  -d '{"phone":"628123456789","name":"Budi","text":"pesan kopi 2","waMsgId":"ABC123"}'
+# 3. WAHA mengirim webhook pesan pelanggan
+curl -s -X POST localhost:3001/api/sessions/messages \
+  -H "Authorization: Bearer $SERVICE_API_KEY" -H 'Content-Type: application/json' \
+  -d '{"event":"message","session":"store-<ownerId>","payload":{"from":"628123456789@c.us","body":"pesan kopi 2","id":"ABC123"}}'
 # → data.reply, data.intent, data.qrisImageUrl
 
-# 4. Bot menarik balasan manusia dari dashboard
-curl -s localhost:3001/api/outgoing -H "Authorization: Bearer $API_TOKEN"
-curl -s -X PATCH localhost:3001/api/outgoing/<id>/delivered -H "Authorization: Bearer $API_TOKEN"
+# 4. Cek status sesi WhatsApp
+curl -s localhost:3001/api/sessions -H "Authorization: Bearer $TOKEN"
 ```
 
 ---
@@ -279,6 +284,7 @@ curl -s -X PATCH localhost:3001/api/outgoing/<id>/delivered -H "Authorization: B
 | `GET /api/ai-config` publik | 🔒 JWT |
 | `/api/products/categories` tanpa auth untuk POST/PUT/DELETE | 🔒 JWT |
 | Dashboard memanggil `/login`, `/products` | Sekarang `/app/login`, `/app/products`, dst. |
-| ~40 endpoint | 60+ endpoint (termasuk auth, website generations, outgoing, monitoring, debug) |
+| ~40 endpoint | 60+ endpoint (termasuk auth, website generations, sessions, api-keys, monitoring, debug) |
 | Pipeline 18 langkah | **16 step** bertipe |
 | `Store`/`WebSite` single-row `id="default"` | Sekarang UUID + `ownerId @unique` |
+| Sesi WhatsApp di endpoint QR lama | Sekarang `/api/sessions*` lewat WAHA |

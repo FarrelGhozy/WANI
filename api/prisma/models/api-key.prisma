@@ -1,0 +1,15 @@
+model ApiKey {
+  id         String    @id @default(uuid())
+  ownerId    String
+  name       String
+  prefix     String    @unique
+  secretHash String
+  scopes     String[]
+  expiresAt  DateTime
+  revokedAt  DateTime?
+  lastUsedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([ownerId, createdAt])
+  @@index([ownerId, revokedAt])
+}

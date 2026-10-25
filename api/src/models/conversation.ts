@@ -1,5 +1,6 @@
 import { BaseModel } from "@/models/base"
 import type { Conversation, $Enums } from "@db/client"
+import { NotFoundError } from "@/utils/errors"
 
 export class ConversationModel extends BaseModel {
   protected static override get delegate() {
@@ -32,6 +33,14 @@ export class ConversationModel extends BaseModel {
     return this.delegate.findFirst({ where: { id, ownerId } })
   }
 
+  static async getOwnedOrThrow(ownerId: string, id: string): Promise<Conversation> {
+    const conversation = await this.delegate.findFirst({
+      where: { id, ownerId },
+    })
+    if (!conversation) throw new NotFoundError("conversation not found")
+    return conversation as Conversation
+  }
+
   static async touch(id: string): Promise<void> {
     await this.delegate.update({
       where: { id },
@@ -39,9 +48,25 @@ export class ConversationModel extends BaseModel {
     })
   }
 
+  static async touchOwned(ownerId: string, id: string): Promise<void> {
+    await this.getOwnedOrThrow(ownerId, id)
+    await this.delegate.update({
+      where: { id, ownerId },
+      data: { lastMessageAt: new Date() },
+    })
+  }
+
   static async setStatus(id: string, status: string): Promise<void> {
     await this.delegate.update({
       where: { id },
+      data: { status: status as $Enums.ConversationStatus },
+    })
+  }
+
+  static async setStatusOwned(ownerId: string, id: string, status: string): Promise<void> {
+    await this.getOwnedOrThrow(ownerId, id)
+    await this.delegate.update({
+      where: { id, ownerId },
       data: { status: status as $Enums.ConversationStatus },
     })
   }

@@ -1,6 +1,6 @@
 # Struktur Repo
 
-Repo WANI **bukan monorepo** — lima paket Bun/Node independen di dalam satu repository. Tidak ada workspaces, tidak ada hoisting dependency: setiap paket punya `package.json`, `bun.lock`, dan `tsconfig.json` sendiri.
+Repo WANI **bukan monorepo** — empat paket Bun/Node independen di dalam satu repository. Tidak ada workspaces, tidak ada hoisting dependency: setiap paket punya `package.json`, `bun.lock`, dan `tsconfig.json` sendiri. WhatsApp dijalankan sebagai service Docker WAHA, bukan paket terpisah.
 
 ---
 
@@ -10,7 +10,7 @@ Repo WANI **bukan monorepo** — lima paket Bun/Node independen di dalam satu re
 WANI/
 ├── api/                      # REST API (Express 5 + Prisma 7) — otak sistem
 │   ├── prisma/
-│   │   ├── models/           # 13 file *.prisma (bukan satu schema.prisma)
+│   │   ├── models/           # 14 file *.prisma (bukan satu schema.prisma)
 │   │   └── migrations/       # migrasi SQL (di-commit ke git)
 │   ├── prisma.config.ts      # Prisma 7 defineConfig: schema dir + migrations path
 │   ├── generated/prisma/     # Prisma Client hasil generate (gitignored)
@@ -22,12 +22,12 @@ WANI/
 │   │   ├── models/           # data access + business logic (BaseModel, per-domain)
 │   │   ├── schemas/          # Zod schema (body/query/params)
 │   │   ├── middleware/       # auth, jwt, owner, validate, error
-│   │   ├── services/         # email (Nodemailer SMTP)
+│   │   ├── services/         # email (Nodemailer SMTP), waha (client WhatsApp HTTP API)
 │   │   ├── ai/               # pipeline 16 step, engine LLM, prompts, schemas, actions, circuit breaker
 │   │   ├── guardrails/       # input, pii, ratelimit, budget, output, classifier + firewall/
 │   │   ├── debug/            # tracer (dev-only endpoints)
 │   │   ├── config/           # db (Prisma singleton), env, logger, metrics
-│   │   ├── utils/            # errors (AppError), response, auth (hash), wa-bot-db
+│   │   ├── utils/            # errors (AppError), response, auth (hash)
 │   │   └── types/            # tipe AI (LLMOutput, ChatMessage, dst)
 │   ├── test/                 # unit test (bun:test)
 │   ├── e2e/                  # integration test pipeline (dipisah)
@@ -52,13 +52,6 @@ WANI/
 │   └── Dockerfile
 ├── landingpage/              # Landing page publik (React 18 + Vite 6 + MUI)
 │   └── src/app/App.tsx       # di-import dashboard via alias @landingpage
-├── wa-bot/                   # Bot WhatsApp (Baileys 7 RC)
-│   ├── src/
-│   │   ├── index.ts          # socket, QR, reconnect, forward pesan, poll outgoing
-│   │   ├── config/db.ts      # Prisma singleton (adapter pg)
-│   │   └── services/whatsapp-auth.ts  # usePrismaAuthState() → SignalKeyStore
-│   ├── prisma/models/        # creds.prisma, signal_key.prisma
-│   └── Dockerfile, docker-entrypoint.sh
 ├── web-gen/                  # Static site generator (Bun + Astro 7)
 │   ├── src/
 │   │   ├── index.ts          # public API: generate, createZipStream, createZipFile, types
@@ -72,11 +65,12 @@ WANI/
 ├── Docs/                     # 📚 dokumentasi ini + aset (ERD, screenshots, proposal)
 ├── scripts/                  # backup-db.sh, screenshot.mjs
 ├── landingpage/, s/demo-toko # (s/ = contoh output generator)
-├── docker-compose.yml        # produksi (image GHCR)
-├── docker-compose.dev.yml    # override dev (build lokal)
-├── init-dbs.sh               # buat database wani_api + wa_bot
-├── .env.example              # template env untuk docker compose
-├── tsconfig.json             # project references: api, dashboard, wa-bot, web-gen
+├── docker-compose.yml        # produksi (image GHCR + service waha)
+├── docker-compose.local.yml  # WAHA untuk dev lokal (network host)
+├── init-dbs.sh               # buat database wani_api
+├── .env.example              # template env untuk docker compose (API + WAHA)
+├── .github/workflows/        # api.yaml, dashboard.yaml
+├── tsconfig.json             # project references: api, dashboard, web-gen
 ├── package.json              # dev script orkestrasi (bukan workspace)
 ├── AGENTS.md                 # panduan agent + ringkasan arsitektur
 └── README.md        → Docs/README.md      (symlink)
@@ -90,10 +84,10 @@ WANI/
 
 | Paket | Boleh akses DB? | Boleh import paket lain? | Catatan |
 |-------|-----------------|--------------------------|---------|
-| `api/` | ✅ `wani_api` (+ `wa_bot` read-only via `pg` untuk reset sesi) | `web-gen` (`@web-gen/*`) | Satu-satunya penulis `wani_api` |
+| `api/` | ✅ `wani_api` | `web-gen` (`@web-gen/*`) | Satu-satunya penulis `wani_api`; klien HTTP ke WAHA |
 | `dashboard/` | ❌ | `landingpage` (alias `@landingpage`) | Hanya HTTP ke API |
 | `landingpage/` | ❌ | ❌ | Berdiri sendiri; hanya dibundel dashboard |
-| `wa-bot/` | ✅ `wa_bot` saja | ❌ | Komunikasi ke API lewat HTTP |
+| `waha` (service) | ✅ `postgres` (database milik WAHA) | ❌ | Dipanggil API lewat HTTP + webhook |
 | `web-gen/` | ❌ | ❌ | Library; data dikirim dari API |
 
 ---
@@ -105,8 +99,6 @@ WANI/
 | `api/` | `@/*` | `./src/*` | |
 | | `@db/*` | `./generated/prisma/*` | Contoh: `@db/client` |
 | | `@web-gen/*` | `../web-gen/src/*` | Contoh: `@web-gen/index.ts` |
-| `wa-bot/` | `@/*` | `./src/*` | |
-| | `@db/*` | `./generated/prisma/*` | |
 | `web-gen/` | `@/*` | `./*` | (root paket) |
 | `dashboard/` | `@/*` | `./src/*` | Wajib diduplikasi di `vite.config.ts` `resolve.alias` |
 | | `@landingpage/*` | `../landingpage/src/*` | Sama, diduplikasi di Vite |
@@ -127,8 +119,8 @@ WANI/
 - **Zod di batas sistem.** Semua body/query/params divalidasi lewat middleware `validate()` (`safeParseAsync`) — bukan parsing manual di controller.
 - **Controller tipis.** Controller hanya: ambil `ownerId`, panggil model, `sendResponse()`. Business logic di `models/` atau `ai/`.
 - **Respons seragam** lewat `sendResponse(res, statusCode, message, data?)`.
-- **Naming file**: kebab-case untuk file multi-kata (`store-payment.ts`, `wa-bot-db.ts`), PascalCase untuk komponen React.
-- **Runtime Bun untuk api/wa-bot/web-gen** (`module: "Preserve"`, `noEmit`, eksekusi langsung `.ts`); dashboard dibundel Vite.
+- **Naming file**: kebab-case untuk file multi-kata (`store-payment.ts`, `wa-session.ts`), PascalCase untuk komponen React.
+- **Runtime Bun untuk api/web-gen** (`module: "Preserve"`, `noEmit`, eksekusi langsung `.ts`); dashboard dibundel Vite.
 
 ---
 
@@ -146,6 +138,7 @@ WANI/
 | Data fetching dashboard | `dashboard/src/hooks/use<X>.ts` (pakai `fetchApi`) |
 | Primitif UI baru | `dashboard/src/components/ui/<Nama>.tsx` |
 | Template website | `web-gen/src/templates/<id>/` (Astro atau HTML+partial) |
+| Integrasi WhatsApp | `api/src/services/waha.ts` + route/controller `sessions` |
 | Script ops/CI | `scripts/` atau `.github/workflows/` |
 
 ---

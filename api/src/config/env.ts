@@ -17,16 +17,18 @@ export const env = {
   ai: {
     llmApiKey: process.env.LLM_API_KEY ?? process.env.OPENROUTER_API_KEY ?? "",
     openrouterApiKey: process.env.OPENROUTER_API_KEY ?? "",
-    llmBaseUrl: process.env.LLM_BASE_URL ?? "https://openrouter.ai/api/v1/chat/completions",
+    llmBaseUrl:
+      process.env.LLM_BASE_URL ??
+      "https://openrouter.ai/api/v1/chat/completions",
     defaultModel: process.env.LLM_MODEL ?? "deepseek-v4-flash-free",
     fallbackModel: process.env.LLM_FALLBACK_MODEL ?? "north-mini-code-free",
     maxTokens: num("LLM_MAX_TOKENS", 2048),
-    temperature: num("LLM_TEMPERATURE", 0.7)
+    temperature: num("LLM_TEMPERATURE", 0.7),
   },
 
   auth: {
     jwtSecret: process.env.JWT_SECRET ?? "",
-    jwtExpires: process.env.JWT_EXPIRES ?? "7d"
+    jwtExpires: process.env.JWT_EXPIRES ?? "7d",
   },
 
   email: {
@@ -35,6 +37,13 @@ export const env = {
     smtpUser: process.env.SMTP_USER ?? "",
     smtpPassword: process.env.SMTP_PASSWORD ?? "",
     smtpFrom: process.env.SMTP_FROM ?? "WANI <noreply@wani.app>",
+  },
+
+  cors: {
+    allowedOrigins: (
+      process.env.ALLOWED_ORIGINS ??
+      "http://localhost:5173,https://wani.app,https://wani.utc.web.id"
+    ).split(","),
   },
 
   guardrails: {
@@ -54,6 +63,11 @@ export const env = {
     judgeModel: process.env.JUDGE_MODEL ?? "north-mini-code-free",
     // Grounding check on output
     groundingEnabled: bool("GROUNDING_CHECK_ENABLED", true),
-    groundingModel: process.env.GROUNDING_MODEL ?? "north-mini-code-free"
-  }
+    groundingModel: process.env.GROUNDING_MODEL ?? "north-mini-code-free",
+  },
+
+  waha: {
+    apiUrl: process.env.WAHA_API_URL ?? "http://localhost:3000/api",
+    apiKey: process.env.WAHA_API_KEY ?? "",
+  },
 } as const;

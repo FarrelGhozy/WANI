@@ -1,43 +1,49 @@
-import { prisma } from "@/config/db"
-import { env } from "@/config/env"
-import { logger } from "@/config/logger"
-import type { TokenUsage } from "@/types/ai"
+import { prisma } from "@/config/db";
+import { env } from "@/config/env";
+import { logger } from "@/config/logger";
+import type { TokenUsage } from "@/types/ai";
 
-let _todayKey: string | null = null
-let _todayKeyTs = 0
+let _todayKey: string | null = null;
+let _todayKeyTs = 0;
 
 function todayKey(): string {
-  const now = Date.now()
+  const now = Date.now();
   // Refresh cached key every 10 minutes (more than enough for daily counter)
   if (_todayKey === null || now - _todayKeyTs > 600_000) {
-    _todayKey = new Date().toISOString().slice(0, 10)
-    _todayKeyTs = now
+    _todayKey = new Date().toISOString().slice(0, 10);
+    _todayKeyTs = now;
   }
-  return _todayKey
+  return _todayKey;
 }
 
 /** True when today's LLM call count has reached the configured daily budget. */
-export async function isBudgetExceeded(): Promise<boolean> {
-  const budget = env.guardrails.dailyLlmBudget
-  if (budget <= 0) return false
+export async function isBudgetExceeded(ownerId: string): Promise<boolean> {
+  const budget = env.guardrails.dailyLlmBudget;
+  if (budget <= 0) return false;
   try {
-    const row = await prisma.usageCounter.findUnique({ where: { id: todayKey() } })
-    return (row?.llmCalls ?? 0) >= budget
+    const row = await prisma.usageCounter.findUnique({
+      where: { ownerId_date: { ownerId, date: todayKey() } },
+    });
+    return (row?.llmCalls ?? 0) >= budget;
   } catch (err) {
     // Fail open on counter read errors — don't take the bot down over telemetry.
-    logger.error("budget check failed", { err })
-    return false
+    logger.error("budget check failed", { err });
+    return false;
   }
 }
 
 /** Increment today's usage counter after a successful LLM call. */
-export async function recordLlmUsage(usage: TokenUsage): Promise<void> {
-  const id = todayKey()
+export async function recordLlmUsage(
+  ownerId: string,
+  usage: TokenUsage
+): Promise<void> {
+  const date = todayKey();
   try {
     await prisma.usageCounter.upsert({
-      where: { id },
+      where: { ownerId_date: { ownerId, date } },
       create: {
-        id,
+        ownerId,
+        date,
         llmCalls: 1,
         tokensIn: usage.promptTokens,
         tokensOut: usage.completionTokens,
@@ -47,8 +53,8 @@ export async function recordLlmUsage(usage: TokenUsage): Promise<void> {
         tokensIn: { increment: usage.promptTokens },
         tokensOut: { increment: usage.completionTokens },
       },
-    })
+    });
   } catch (err) {
-    logger.error("failed to record llm usage", { err })
+    logger.error("failed to record llm usage", { err });
   }
 }

@@ -1,4 +1,0 @@
-model Creds {
-  id   String @id
-  data String
-}

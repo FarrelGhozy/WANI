@@ -11,11 +11,14 @@ model ActivityLog {
   @@index([ownerId, type, createdAt])
 }
 
-// Daily LLM usage, keyed by date (YYYY-MM-DD). Backs the cost/budget guardrail.
+// Daily LLM usage per owner. Backs the cost/budget guardrail.
 model UsageCounter {
-  id        String   @id
+  ownerId   String
+  date      String
   llmCalls  Int      @default(0)
   tokensIn  Int      @default(0)
   tokensOut Int      @default(0)
   updatedAt DateTime @updatedAt
+
+  @@id([ownerId, date])
 }

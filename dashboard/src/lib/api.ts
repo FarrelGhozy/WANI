@@ -1,4 +1,5 @@
-const API_BASE = import.meta.env.VITE_API_URL || window.__ENV__?.API_URL || "/api";
+const API_BASE =
+  import.meta.env.VITE_API_URL || window.__ENV__?.API_URL || "/api";
 
 interface ApiResponse<T> {
   status: "success" | "failure";
@@ -6,10 +7,13 @@ interface ApiResponse<T> {
   data: T | null;
 }
 
-export async function fetchApi<T>(path: string, options?: RequestInit): Promise<ApiResponse<T>> {
+export async function fetchApi<T>(
+  path: string,
+  options?: RequestInit
+): Promise<ApiResponse<T>> {
   const token = localStorage.getItem("wani_auth_token");
   const headers: Record<string, string> = {
-    ...((options?.headers as Record<string, string>) ?? {})
+    ...((options?.headers as Record<string, string>) ?? {}),
   };
 
   if (token) {

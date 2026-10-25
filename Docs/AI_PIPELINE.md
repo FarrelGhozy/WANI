@@ -27,7 +27,7 @@ File utama:
 |---|------|------|----------------|---------|
 | 1 | `normalize` | `steps/normalize.ts` | Strip karakter kontrol/zero-width, NFKC normalisasi, trim, potong `MAX_INPUT_CHARS` | — |
 | 2 | `ensure_customer` | `steps/ensureCustomer.ts` | Upsert `Customer` + `Conversation` (per `ownerId` + phone) | — |
-| 3 | `dedup` | `steps/dedup.ts` | Bila `waMsgId` sudah pernah tersimpan → short-circuit dengan `reply: ""` (bot tidak mengirim apa pun, mencegah balasan ganda saat retry jaringan) | short-circuit `intent: "duplicate"` |
+| 3 | `dedup` | `steps/dedup.ts` | Bila `waMsgId` sudah pernah tersimpan → short-circuit dengan `reply: ""` (tidak ada balasan yang dikirim, mencegah balasan ganda saat retry jaringan) | short-circuit `intent: "duplicate"` |
 | 4 | `persist_inbound` | `steps/persistInbound.ts` | Simpan pesan masuk (`role: CUSTOMER`) | — |
 | 5 | `rate_limit` | `steps/rateLimit.ts` | Sliding window per pelanggan (pendek + panjang) | `STEP_REPLIES.RATE_LIMIT` |
 | 6 | `pii_scan` | `steps/piiScan.ts` | Deteksi & catat PII di pesan masuk (tidak memblokir) | — |
@@ -114,7 +114,7 @@ Parsing (`outputParser.ts`) bertingkat: `JSON.parse` → validasi Zod → bila g
 3. Buat order + item dalam satu transaksi (`OrderModel.createFromItems`), `totalAmount` dihitung server.
 4. `Customer.totalOrders` di-increment, `ActivityLog` tipe `order_created` dicatat.
 5. Balasan berisi rincian item, total Rupiah, dan instruksi pembayaran dari `StorePaymentMethod` aktif (QRIS/transfer/e-wallet/COD).
-6. Bila ada metode QRIS dengan gambar → `qrisImageUrl` dikembalikan dan bot mengirim gambar + caption.
+6. Bila ada metode QRIS dengan gambar → `qrisImageUrl` ikut dikembalikan ke pemanggil webhook.
 
 ---
 
@@ -142,10 +142,10 @@ Rincian lengkap di [GUARDRAILS.md](GUARDRAILS.md).
 
 ## 7. Invarian Penting
 
-- Pipeline **selalu** mengembalikan `reply` berupa string siap kirim — tidak ada jalur yang menghasilkan `undefined` ke bot.
+- Pipeline **selalu** mengembalikan `reply` berupa string siap kirim — tidak ada jalur yang menghasilkan `undefined` ke pemanggil webhook.
 - Dedup (`waMsgId` unik) mencegah pesan WA yang sama diproses dua kali saat retry jaringan.
 - Kegagalan guardrail LLM (classifier/judge/grounding) **fail-open**: pesan tetap diproses, tetapi dicatat di log.
 - `AiConfig.isActive = false` mematikan balasan AI (short-circuit sebelum panggilan LLM).
-- Hasil sukses menyimpan balasan BOT lewat step terakhir, lalu **langsung** menandainya terkirim (`waMsgId = "sent-<id>"`) dan `touch` conversation — jadi balasan AI tidak akan terkirim ulang oleh `/api/outgoing`.
+- Hasil sukses menyimpan balasan BOT lewat step terakhir, lalu mengirimnya via `WahaService.sendText` dan menandainya terkirim (`waMsgId` dari WAHA) serta `touch` conversation. Pengiriman bersifat fail-open: bila WAHA down, balasan tetap tersimpan dan hanya di-log.
 - Short-circuit (`blocked: true`) **tidak** menjalankan step 15–16; hanya step `firewall` dan `rate_limit` yang secara eksplisit menyimpan pesan BOT penolakan. Balasan budget/LLM-fallback tidak tersimpan sebagai pesan BOT.
-- Hasil pipeline selalu punya `reply: string` (bisa string kosong pada kasus duplikat), `intent`, `blocked`, dan `qrisImageUrl` sehingga bot dapat memutuskan apakah perlu mengirim pesan (`if (reply)`).
+- Hasil pipeline selalu punya `reply: string` (bisa string kosong pada kasus duplikat), `intent`, `blocked`, dan `qrisImageUrl` sehingga pemanggil dapat memutuskan apakah perlu mengirim pesan (`if (reply)`).

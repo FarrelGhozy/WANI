@@ -45,6 +45,14 @@ jobs:
         run: bun run test
         working-directory: api
 
+      - name: Install web-gen dependencies
+        run: bun install --frozen-lockfile
+        working-directory: web-gen
+
+      - name: Run web-gen tests
+        run: bun test
+        working-directory: web-gen
+
       - name: Log in to GHCR
         if: github.event_name != 'pull_request'
         uses: docker/login-action@v3

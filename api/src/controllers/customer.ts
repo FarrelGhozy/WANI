@@ -1,64 +1,71 @@
-import type { Request, Response } from "express"
-import type { z } from "zod"
-import { CustomerModel } from "@/models/customer"
-import { ConversationModel } from "@/models/conversation"
-import { MessageModel } from "@/models/message"
-import { sendResponse } from "@/utils/response"
-import { NotFoundError } from "@/utils/errors"
-import { getValidatedQuery } from "@/middleware/validate"
-import { getOwnerId, getOwnerIdOrFirst } from "@/middleware/owner"
-import { customerQuerySchema, updateCustomerSchema } from "@/schemas/customer"
-import { updateConversationStatusSchema, sendMessageSchema } from "@/schemas/customer"
+import type { Request, Response } from "express";
+import type { z } from "zod";
+import { CustomerModel } from "@/models/customer";
+import { ConversationModel } from "@/models/conversation";
+import { MessageModel } from "@/models/message";
+import { sendResponse } from "@/utils/response";
+import { NotFoundError } from "@/utils/errors";
+import { getValidatedQuery } from "@/middleware/validate";
+import { getOwnerId } from "@/middleware/owner";
+import { customerQuerySchema, updateCustomerSchema } from "@/schemas/customer";
+import {
+  updateConversationStatusSchema,
+  sendMessageSchema,
+} from "@/schemas/customer";
 
-type CustomerQuery = z.infer<typeof customerQuerySchema>
-type UpdateCustomerBody = z.infer<typeof updateCustomerSchema>
-type UpdateConvStatusBody = z.infer<typeof updateConversationStatusSchema>
-type SendMessageBody = z.infer<typeof sendMessageSchema>
+type CustomerQuery = z.infer<typeof customerQuerySchema>;
+type UpdateCustomerBody = z.infer<typeof updateCustomerSchema>;
+type UpdateConvStatusBody = z.infer<typeof updateConversationStatusSchema>;
+type SendMessageBody = z.infer<typeof sendMessageSchema>;
 
 export async function listCustomers(
   req: Request<Record<string, string>, any, any, CustomerQuery>,
-  res: Response,
+  res: Response
 ): Promise<void> {
-  const ownerId = await getOwnerIdOrFirst(req)
-  const result = await CustomerModel.list(ownerId, getValidatedQuery<CustomerQuery>(req))
-  sendResponse(res, 200, "customers retrieved", result)
+  const ownerId = getOwnerId(req);
+  const result = await CustomerModel.list(
+    ownerId,
+    getValidatedQuery<CustomerQuery>(req)
+  );
+  sendResponse(res, 200, "customers retrieved", result);
 }
 
 export async function getCustomer(
   req: Request<{ id: string }>,
-  res: Response,
+  res: Response
 ): Promise<void> {
-  const ownerId = getOwnerId(req)
-  const customer = await CustomerModel.getByIdWithDetail(ownerId, req.params.id)
+  const ownerId = getOwnerId(req);
+  const customer = await CustomerModel.getByIdWithDetail(ownerId, req.params.id);
   if (!customer) {
-    throw new NotFoundError("customer not found")
+    throw new NotFoundError("customer not found");
   }
-  sendResponse(res, 200, "customer retrieved", customer)
+  sendResponse(res, 200, "customer retrieved", customer);
 }
 
 export async function updateCustomer(
   req: Request<{ id: string }, any, UpdateCustomerBody>,
-  res: Response,
+  res: Response
 ): Promise<void> {
-  getOwnerId(req)
-  await CustomerModel.getOrThrow(req.params.id, "customer")
-  const customer = await CustomerModel.update(req.params.id, req.body)
-  sendResponse(res, 200, "customer updated", customer)
+  const ownerId = getOwnerId(req);
+  const customer = await CustomerModel.updateOwnedCustomer(
+    ownerId,
+    req.params.id,
+    req.body
+  );
+  sendResponse(res, 200, "customer updated", customer);
 }
 
 export async function getConversation(
   req: Request<{ id: string }>,
-  res: Response,
+  res: Response
 ): Promise<void> {
-  const ownerId = getOwnerId(req)
-  const conversation = await ConversationModel.findByIdOwner(ownerId, req.params.id)
-  if (!conversation) {
-    throw new NotFoundError("conversation not found")
-  }
-  const messages = await MessageModel.recentByConversation(req.params.id, 100)
-  if (messages.length === 0) {
-    throw new NotFoundError("conversation not found")
-  }
+  const ownerId = getOwnerId(req);
+  await ConversationModel.getOwnedOrThrow(ownerId, req.params.id);
+  const messages = await MessageModel.recentByOwnerConversation(
+    ownerId,
+    req.params.id,
+    100
+  );
   sendResponse(res, 200, "conversation retrieved", {
     id: req.params.id,
     messages: messages.map((m) => ({
@@ -70,34 +77,39 @@ export async function getConversation(
       metadata: m.metadata as Record<string, unknown> | null,
       createdAt: m.createdAt.toISOString(),
     })),
-  })
+  });
 }
 
 export async function updateConversationStatus(
   req: Request<{ id: string }, any, UpdateConvStatusBody>,
-  res: Response,
+  res: Response
 ): Promise<void> {
-  getOwnerId(req)
-  await ConversationModel.setStatus(req.params.id, req.body.status)
-  sendResponse(res, 200, "conversation status updated")
+  const ownerId = getOwnerId(req);
+  await ConversationModel.setStatusOwned(
+    ownerId,
+    req.params.id,
+    req.body.status
+  );
+  sendResponse(res, 200, "conversation status updated");
 }
 
 export async function sendMessage(
   req: Request<{ id: string }, any, SendMessageBody>,
-  res: Response,
+  res: Response
 ): Promise<void> {
-  const ownerId = getOwnerId(req)
+  const ownerId = getOwnerId(req);
+  await ConversationModel.getOwnedOrThrow(ownerId, req.params.id);
   const msg = await MessageModel.append({
     ownerId,
     conversationId: req.params.id,
     role: "HUMAN",
     content: req.body.text,
-  })
-  await ConversationModel.touch(req.params.id)
+  });
+  await ConversationModel.touchOwned(ownerId, req.params.id);
   sendResponse(res, 201, "message sent", {
     id: msg.id,
     role: msg.role,
     content: msg.content,
     createdAt: msg.createdAt.toISOString(),
-  })
+  });
 }

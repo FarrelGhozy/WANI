@@ -1,11 +1,11 @@
 # Data Model
 
-Dua database PostgreSQL terpisah pada satu server:
+Database PostgreSQL pada satu server:
 
 | Database | Dipakai oleh | Model | Jumlah tabel |
 |----------|--------------|-------|--------------|
-| `wani_api` | `api/` | `api/prisma/models/*.prisma` (13 file) | 17 |
-| `wa_bot` | `wa-bot/` | `wa-bot/prisma/models/*.prisma` (2 file) | 2 |
+| `wani_api` | `api/` | `api/prisma/models/*.prisma` (14 file) | 18 |
+| `postgres` | WAHA | Dikelola WAHA sendiri (bukan Prisma API) | state sesi/autentikasi + media |
 
 ERD visual: [`erd.excalidraw`](erd.excalidraw) / [`ERD.excalidraw.png`](ERD.excalidraw.png).
 
@@ -13,7 +13,7 @@ ERD visual: [`erd.excalidraw`](erd.excalidraw) / [`ERD.excalidraw.png`](ERD.exca
 
 ## 1. Prinsip Multi-tenant
 
-- Kolom `ownerId: String` ada di: `Store`, `AiConfig`, `Category`, `Product`, `Customer`, `Conversation`, `Message`, `Order`, `StorePaymentMethod`, `ActivityLog`, `WebSite`, `WebsiteGeneration`.
+- Kolom `ownerId: String` ada di: `Store`, `AiConfig`, `Category`, `Product`, `Customer`, `Conversation`, `Message`, `Order`, `StorePaymentMethod`, `ActivityLog`, `WebSite`, `WebsiteGeneration`, `WaSession`, `ApiKey`.
 - **Tanpa relasi Prisma ke `User`** — sengaja, supaya tidak ada dependensi sirkular dan migrasi multi-tenant sederhana. Integritas dijaga di layer model (`ownerFilter`, `ownerWhere`, `updateOwned`, `deleteOwned`).
 - Constraint unik per pemilik:
 
@@ -25,8 +25,9 @@ ERD visual: [`erd.excalidraw`](erd.excalidraw) / [`ERD.excalidraw.png`](ERD.exca
 | `Category` | `[ownerId, name]` |
 | `Customer` | `[ownerId, phone]` |
 | `WebsiteGeneration` | `[ownerId, slug]` |
+| `WaSession` | `ownerId` |
 
-- **Pengecualian**: `WaSession` (satu baris global `id = "default"`) dan `UsageCounter` (global, key tanggal) tidak punya `ownerId`.
+- **Pengecualian**: `UsageCounter` (global, key tanggal) tidak punya `ownerId`. `WaSession` tetap per owner (`ownerId @unique`) dan menyimpan mirror status sesi WAHA.
 
 ---
 
@@ -100,9 +101,13 @@ Field yang dibaca generator dari `config`: `theme`, `heroHeadline`, `heroSubhead
 
 **`UsageCounter`** — counter LLM harian (global). PK `id` = `YYYY-MM-DD`; `llmCalls`, `tokensIn`, `tokensOut`, `updatedAt`.
 
-**`WaSession`** — status sesi WhatsApp (single row, `id = "default"`).
+**`WaSession`** — mirror status sesi WhatsApp milik satu owner.
 
-`status` (default `"disconnected"`), `phone?`, `qr?`, `pairingPhone?`, `pairingCode?`, `updatedAt`.
+`id` (uuid), `ownerId` (unique), `waSessionName` (unique, pola `store-<ownerId>`), `status` (enum `SessionStatus`, default `STARTING`), `phone?`, `qr?`, `pairingPhone?`, `pairingCode?`, `lastSeenActiveAt?`, `lastSyncedAt?`, `createdAt`, `updatedAt`.
+
+**`ApiKey`** — service API key untuk integrasi (termasuk webhook WAHA).
+
+`id`, `ownerId`, `name`, `prefix` (unique), `secretHash`, `scopes` (String[]), `expiresAt`, `revokedAt?`, `lastUsedAt?`, `createdAt` · index `[ownerId, createdAt]`, `[ownerId, revokedAt]`. Scope: `sessions:messages`, `sessions:qr`, `chat:write`, `outgoing:read`, `outgoing:write`.
 
 ---
 
@@ -115,36 +120,33 @@ Field yang dibaca generator dari `config`: `theme`, `heroHeadline`, `heroSubhead
 | `PaymentStatus` | `PENDING`, `PAID`, `FAILED`, `REFUNDED` |
 | `MessageRole` | `CUSTOMER`, `BOT`, `HUMAN` |
 | `ConversationStatus` | `ACTIVE`, `RESOLVED`, `ARCHIVED`, `ESCALATED` |
+| `SessionStatus` | `STOPPED`, `STARTING`, `SCAN_QR_CODE`, `PASSKEY_REQUIRED`, `PASSKEY_CONFIRMATION_REQUIRED`, `WORKING`, `FAILED` |
 
 Frontend wajib memakai tipe hasil generate Prisma (`as $Enums.OrderStatus`) daripada string literal bebas.
 
 ---
 
-## 4. Tabel `wa_bot`
+## 4. State WAHA (database `postgres`)
 
-Hanya menyimpan state autentikasi Baileys (implementasi `SignalKeyStore`):
+WAHA mengelola schema-nya sendiri; API **tidak** memiliki Prisma model untuk tabel-tabel ini. State sesi/autentikasi WhatsApp dan media disimpan di database `postgres` pada server PostgreSQL yang sama (dikonfigurasi lewat `WHATSAPP_SESSIONS_POSTGRESQL_URL` / `WAHA_MEDIA_POSTGRESQL_URL`).
 
-| Model | Struktur | Isi |
-|-------|----------|-----|
-| `Creds` | `id` (PK, selalu `"pairing"`), `data` (String JSON) | `AuthenticationCreds` terserialisasi |
-| `SignalKey` | `[type, id]` (PK komposit), `data` (String JSON) | Key protokol Signal (pre-key, session, dsb.) |
+Akibatnya sesi WhatsApp **tahan restart container** tanpa volume file di API. Tabel `WaSession` di `wani_api` hanya mirror status untuk dashboard (status, nomor, QR, pairing), bukan sumber kebenaran autentikasi.
 
-Akibatnya sesi WhatsApp **tahan restart container** tanpa volume khusus. Reset sesi (`POST /api/qr/reset`) menghapus kedua tabel ini dari sisi API melalui koneksi `pg` terpisah (`WABOT_DATABASE_URL`), lalu bot me-logout dan memulai ulang socket.
+Reset sesi (`POST /api/sessions/reset`) meminta WAHA logout + menghapus sesi, lalu membuat sesi baru dengan nama yang sama. `DELETE /api/sessions` melakukan logout + hapus sesi dan menghapus row `WaSession`.
 
 ---
 
 ## 5. Aturan Migrasi
 
-1. Ubah schema di `prisma/models/*.prisma` (bukan satu `schema.prisma` — Prisma 7 membaca seluruh direktori).
+1. Ubah schema di `api/prisma/models/*.prisma` (bukan satu `schema.prisma` — Prisma 7 membaca seluruh direktori).
 2. Jalankan **selalu** lewat perintah, jangan tulis SQL manual:
    ```bash
    cd api && bun run prisma:migrate -- --name <nama_migrasi>
-   cd wa-bot && bun run prisma:migrate -- --name <nama_migrasi>
    ```
 3. File di `prisma/migrations/**` **ikut di-commit** — itu bagian dari versioning schema.
 4. `generated/prisma/**` (Prisma Client) **gitignored**; di container dibuat saat build, di lokal lewat `bun run prisma:generate`.
-5. Container API dan bot menjalankan `prisma migrate deploy` di entrypoint sebelum start (lihat [DEPLOYMENT.md](DEPLOYMENT.md)).
-6. `prisma.config.ts` menentukan `schema: "prisma/"` dan `migrations.path: "prisma/migrations"`, serta membangun URL dari `DATABASE_HOST/PORT/USER/PASSWORD/NAME`.
+5. Container API menjalankan `prisma migrate deploy` di entrypoint sebelum start (lihat [DEPLOYMENT.md](DEPLOYMENT.md)).
+6. `prisma.config.ts` menentukan `schema: "prisma/"` dan `migrations.path: "prisma/migrations"`, serta membangun URL dari `DATABASE_HOST/PORT/USER/PASSWORD/NAME`. Migrasi WAHA dikelola WAHA sendiri, bukan lewat Prisma API.
 
 ### Migrasi terkait multi-tenant
 

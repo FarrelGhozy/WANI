@@ -1,6 +1,6 @@
 # Service: API (`api/`)
 
-Express 5 + Prisma 7 + Zod 4, dijalankan dengan Bun. Ini adalah inti sistem: satu-satunya penulis DB `wani_api`, penyedia REST untuk dashboard & bot, serta host AI pipeline dan website generator.
+Express 5 + Prisma 7 + Zod 4, dijalankan dengan Bun. Ini adalah inti sistem: satu-satunya penulis DB `wani_api`, penyedia REST untuk dashboard, klien HTTP ke WAHA, serta host AI pipeline dan website generator.
 
 ---
 
@@ -8,7 +8,7 @@ Express 5 + Prisma 7 + Zod 4, dijalankan dengan Bun. Ini adalah inti sistem: sat
 
 ```bash
 cd api
-cp ../.env.example .env          # atau pakai api/.env.example
+cp ../.env.example .env          # salin template root; sesuaikan DATABASE_HOST=localhost
 bun install
 bun run prisma:generate
 bun run prisma:migrate           # apply migrasi ke DB dev
@@ -45,11 +45,12 @@ Pendukung:
 
 | Folder | Isi |
 |--------|-----|
-| `schemas/` | 12 file Zod: `auth`, `ai-config`, `chat`, `customer`, `debug`, `log`, `order`, `product`, `store`, `store-payment`, `wa-session`, `website` |
-| `middleware/` | `auth` (API_TOKEN), `jwt` (`requireJwt`, `optionalJwt`), `owner` (`getOwnerId`, `getOwnerIdOrFirst`, `ownerFilter`, `ownerWhere`), `validate` (`validate()`, `getValidatedQuery()`), `error` |
+| `schemas/` | 13 file Zod: `auth`, `ai-config`, `api-key`, `chat`, `customer`, `debug`, `log`, `order`, `product`, `sessions`, `store`, `store-payment`, `website` |
+| `middleware/` | `auth` (`requireServiceAuth` untuk API key/legacy `API_TOKEN`), `jwt` (`requireJwt`, `optionalJwt`), `owner` (`getOwnerId`, `getOwnerIdOrFirst`, `ownerFilter`, `ownerWhere`), `validate` (`validate()`, `getValidatedQuery()`), `error` |
 | `services/email.ts` | Nodemailer transport; no-op + log bila SMTP tidak dikonfigurasi |
+| `services/waha.ts` | Client WAHA: session, sync/QR, pairing, reset, `sendText` |
 | `config/` | `db` (Prisma singleton + global cache), `env` (parsing env bertipe), `logger` (Winston + stream untuk morgan), `metrics` (prom-client) |
-| `utils/` | `errors` (`AppError` + subclass), `response` (`sendResponse`), `auth` (hash/verify password), `wa-bot-db` (`pg` Pool untuk reset `Creds`/`SignalKey`) |
+| `utils/` | `errors` (`AppError` + subclass), `response` (`sendResponse`), `auth` (hash/verify password) |
 | `ai/`, `guardrails/`, `debug/`, `types/` | Lihat [AI_PIPELINE.md](../AI_PIPELINE.md), [GUARDRAILS.md](../GUARDRAILS.md) |
 
 ### `BaseModel` (`models/base.ts`)
@@ -65,7 +66,7 @@ Kelas abstrak dengan `delegate` (Prisma model) dan helper:
 
 ### Daftar model
 
-`activity-log`, `ai-config`, `catalog` (Category + Product), `conversation`, `customer`, `dashboard` (agregasi stats, bukan BaseModel), `message`, `order`, `store`, `store-payment`, `user`, `wa-session`, `website`.
+`activity-log`, `ai-config`, `api-key`, `catalog` (Category + Product), `conversation`, `customer`, `dashboard` (agregasi stats, bukan BaseModel), `message`, `order`, `store`, `store-payment`, `user`, `wa-session`, `website`.
 
 ---
 
@@ -74,7 +75,7 @@ Kelas abstrak dengan `delegate` (Prisma model) dan helper:
 Lihat [ARCHITECTURE.md §5](../ARCHITECTURE.md). Ringkas untuk pengembangan:
 
 1. `optionalJwt` dipasang global pada `/api` → `req.user` opsional.
-2. Route yang butuh identitas memakai `requireJwt`; route internal bot memakai `requireAuth` (membandingkan `Authorization: Bearer <API_TOKEN>`).
+2. Route yang butuh identitas memakai `requireJwt`; endpoint service (webhook WAHA) memakai `requireServiceAuth(scope)` dengan managed API key atau legacy `API_TOKEN`.
 3. `validate({ body, query, params })` menaruh hasil parse di `req.body`, `req.validatedQuery`, `req.validatedParams` (deklarasi tipe Express di-augment di `src/types/`).
 4. Handler boleh `throw new BadRequestError(...)` — `errorHandler` di akhir rantai yang mengubahnya menjadi respons JSON.
 
@@ -85,9 +86,9 @@ Lihat [ARCHITECTURE.md §5](../ARCHITECTURE.md). Ringkas untuk pengembangan:
 Tabel lengkap: [API_CONTRACT.md](../API_CONTRACT.md). Router yang ter-mount (`routes/index.ts`):
 
 ```
-/qr  /chat  /store  /store/payment-methods  /ai-config  /products/categories  /products
+/sessions  /api-keys  /store  /store/payment-methods  /ai-config  /products/categories  /products
 /orders  /customers  /conversations  /dashboard  /logs  /usage  /auth  /website  /upload
-/outgoing  /  (monitoring: /health, /metrics)  /debug (hanya non-produksi)
+/  (monitoring: /health, /metrics)  /debug (hanya non-produksi)
 ```
 
 ---
@@ -121,7 +122,7 @@ Path dihitung relatif lokasi modul (`path.resolve(import.meta.dir, "..", ...)`) 
 
 | Perintah | Cakupan |
 |----------|---------|
-| `bun run test` | `test/**` — unit & integration: `ai/` (actions, budget, circuit-breaker, engine, grounding), `pipeline/` (coordinator, dedup, normalize, outboundPersister, outputParser), `models/`, `integration/` (auth, auth-gates, products, store), plus `firewall`, `guardrails`, `golden-reply`, `intent`, `middleware`, `schemas`, `security`, `errors`, `response`, `email`, `wa-session`, `catalog`, `auth` |
+| `bun run test` | `test/**` — unit & integration: `ai/` (actions, budget, circuit-breaker, engine, grounding), `pipeline/` (coordinator, dedup, normalize, outboundPersister, outputParser), `services/waha`, `models/`, `integration/` (auth, auth-gates, products, store), plus `firewall`, `guardrails`, `golden-reply`, `intent`, `middleware`, `schemas`, `security`, `errors`, `response`, `email`, `wa-session`, `catalog`, `auth`, `api-key` |
 | `bun run test:e2e` | `e2e/pipeline.test.ts` — jalur penuh pipeline |
 
 Pemisahan `test/` dan `e2e/` penting: `e2e` memakai `mock.module` dan berbagi state, sehingga dijalankan terpisah agar tidak mencemari tes unit. Test memakai `supertest` terhadap `app` dari `src/server.ts` (tanpa membuka port) dan Prisma yang di-mock/DB test.

@@ -25,15 +25,21 @@ export default function AiTab({ config, onUpdate }: AiTabProps) {
 
   useUnsavedChanges(dirty);
 
-  const [model, setModel] = useState(config.model)
-  const [maxTokens, setMaxTokens] = useState(config.maxTokens)
-  const [temperature, setTemperature] = useState(config.temperature)
-  const [greetingMessage, setGreetingMessage] = useState(config.greetingMessage ?? '')
-  const [systemPrompt, setSystemPrompt] = useState(config.systemPrompt)
-  const [knowledgeBase, setKnowledgeBase] = useState(config.knowledgeBase ?? '')
-  const [llmBaseUrl, setLlmBaseUrl] = useState(config.llmBaseUrl ?? '')
-  const [llmApiKey, setLlmApiKey] = useState(config.llmApiKey ?? '')
-  const [fallbackModel, setFallbackModel] = useState(config.fallbackModel ?? '')
+  const [model, setModel] = useState(config.model);
+  const [maxTokens, setMaxTokens] = useState(config.maxTokens);
+  const [temperature, setTemperature] = useState(config.temperature);
+  const [greetingMessage, setGreetingMessage] = useState(
+    config.greetingMessage ?? ""
+  );
+  const [systemPrompt, setSystemPrompt] = useState(config.systemPrompt);
+  const [knowledgeBase, setKnowledgeBase] = useState(
+    config.knowledgeBase ?? ""
+  );
+  const [llmBaseUrl, setLlmBaseUrl] = useState(config.llmBaseUrl ?? "");
+  const [llmApiKey, setLlmApiKey] = useState(config.llmApiKey ?? "");
+  const [fallbackModel, setFallbackModel] = useState(
+    config.fallbackModel ?? ""
+  );
 
   const handleSave = useCallback(async () => {
     setSaving(true);
@@ -55,7 +61,18 @@ export default function AiTab({ config, onUpdate }: AiTabProps) {
     } finally {
       setSaving(false);
     }
-  }, [model, maxTokens, temperature, greetingMessage, systemPrompt, knowledgeBase, llmBaseUrl, llmApiKey, fallbackModel, onUpdate]);
+  }, [
+    model,
+    maxTokens,
+    temperature,
+    greetingMessage,
+    systemPrompt,
+    knowledgeBase,
+    llmBaseUrl,
+    llmApiKey,
+    fallbackModel,
+    onUpdate,
+  ]);
 
   const handleToggle = useCallback(async () => {
     setSaving(true);
@@ -68,7 +85,9 @@ export default function AiTab({ config, onUpdate }: AiTabProps) {
 
   return (
     <Card accent="amber">
-      <h2 className="mb-4 text-base font-semibold text-stone-900 md:mb-6 md:text-lg">Konfigurasi AI Agent</h2>
+      <h2 className="mb-4 text-base font-semibold text-stone-900 md:mb-6 md:text-lg">
+        Konfigurasi AI Agent
+      </h2>
       <div className="grid gap-4 sm:grid-cols-2 md:gap-5">
         <Field label="Model">
           <input
@@ -91,11 +110,13 @@ export default function AiTab({ config, onUpdate }: AiTabProps) {
             >
               OpenCode Zen
             </a>
-            . Contoh: <code className="text-stone-500">deepseek-v4-flash-free</code>,{" "}
+            . Contoh:{" "}
+            <code className="text-stone-500">deepseek-v4-flash-free</code>,{" "}
             <code className="text-stone-500">north-mini-code-free</code>
           </p>
           <p className="mt-0.5 text-xs text-stone-400">
-            API Key bisa diatur di bawah atau via <code className="text-stone-500">LLM_API_KEY</code> env
+            API Key bisa diatur di bawah atau via{" "}
+            <code className="text-stone-500">LLM_API_KEY</code> env
           </p>
         </Field>
         <Field label="Token Maksimal">
@@ -104,11 +125,16 @@ export default function AiTab({ config, onUpdate }: AiTabProps) {
             min={1}
             max={32000}
             value={maxTokens}
-            onChange={(e) => { setMaxTokens(Number(e.target.value)); setDirty(true) }}
+            onChange={(e) => {
+              setMaxTokens(Number(e.target.value));
+              setDirty(true);
+            }}
             placeholder="4096"
             className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
           />
-          <p className="text-xs text-stone-400">Maksimal token per respons. Default: 4096. Kisaran: 1–32000.</p>
+          <p className="text-xs text-stone-400">
+            Maksimal token per respons. Default: 4096. Kisaran: 1–32000.
+          </p>
         </Field>
         <Field label="Temperature">
           <input
@@ -117,41 +143,62 @@ export default function AiTab({ config, onUpdate }: AiTabProps) {
             max="2"
             step="0.1"
             value={temperature}
-            onChange={(e) => { setTemperature(Number(e.target.value)); setDirty(true) }}
+            onChange={(e) => {
+              setTemperature(Number(e.target.value));
+              setDirty(true);
+            }}
             placeholder="0.7"
             className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
           />
-          <p className="text-xs text-stone-400">Kreativitas respons. 0 = konsisten, 1 = seimbang, 2 = kreatif. Default: 0.7.</p>
+          <p className="text-xs text-stone-400">
+            Kreativitas respons. 0 = konsisten, 1 = seimbang, 2 = kreatif.
+            Default: 0.7.
+          </p>
         </Field>
         <Field label="LLM Base URL">
           <input
             type="text"
             value={llmBaseUrl}
-            onChange={(e) => { setLlmBaseUrl(e.target.value); setDirty(true) }}
+            onChange={(e) => {
+              setLlmBaseUrl(e.target.value);
+              setDirty(true);
+            }}
             placeholder="https://openrouter.ai/api/v1/chat/completions"
             className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
           />
-          <p className="text-xs text-stone-400">Endpoint OpenAI-compatible. Kosongkan untuk pakai bawaan sistem.</p>
+          <p className="text-xs text-stone-400">
+            Endpoint OpenAI-compatible. Kosongkan untuk pakai bawaan sistem.
+          </p>
         </Field>
         <Field label="API Key">
           <input
             type="password"
             value={llmApiKey}
-            onChange={(e) => { setLlmApiKey(e.target.value); setDirty(true) }}
+            onChange={(e) => {
+              setLlmApiKey(e.target.value);
+              setDirty(true);
+            }}
             placeholder="sk-..."
             className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
           />
-          <p className="text-xs text-stone-400">API key untuk LLM provider. Kosongkan untuk pakai bawaan sistem.</p>
+          <p className="text-xs text-stone-400">
+            API key untuk LLM provider. Kosongkan untuk pakai bawaan sistem.
+          </p>
         </Field>
         <Field label="Fallback Model">
           <input
             type="text"
             value={fallbackModel}
-            onChange={(e) => { setFallbackModel(e.target.value); setDirty(true) }}
+            onChange={(e) => {
+              setFallbackModel(e.target.value);
+              setDirty(true);
+            }}
             placeholder="north-mini-code-free"
             className="h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
           />
-          <p className="text-xs text-stone-400">Model cadangan jika model utama gagal. Kosongkan untuk pakai bawaan.</p>
+          <p className="text-xs text-stone-400">
+            Model cadangan jika model utama gagal. Kosongkan untuk pakai bawaan.
+          </p>
         </Field>
         <Field label="Pesan Sapaan">
           <textarea
@@ -165,7 +212,8 @@ export default function AiTab({ config, onUpdate }: AiTabProps) {
             className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
           />
           <p className="text-xs text-stone-400">
-            Pesan otomatis ketika pelanggan menyapa. Biarkan kosong untuk menggunakan pesan bawaan.
+            Pesan otomatis ketika pelanggan menyapa. Biarkan kosong untuk
+            menggunakan pesan bawaan.
           </p>
         </Field>
         <div className="sm:col-span-2">
@@ -181,8 +229,9 @@ export default function AiTab({ config, onUpdate }: AiTabProps) {
               className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
             />
             <p className="text-xs text-stone-400">
-              Instruksi tambahan untuk AI. Jika dikosongkan, AI akan menggunakan prompt default yang mencakup info toko,
-              katalog produk, dan aturan keamanan.
+              Instruksi tambahan untuk AI. Jika dikosongkan, AI akan menggunakan
+              prompt default yang mencakup info toko, katalog produk, dan aturan
+              keamanan.
             </p>
           </Field>
         </div>
@@ -199,8 +248,8 @@ export default function AiTab({ config, onUpdate }: AiTabProps) {
               className="w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 transition-all focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
             />
             <p className="text-xs text-stone-400">
-              Informasi tambahan yang akan disisipkan ke prompt AI. Bisa diisi jam operasional, daftar promo, FAQ, atau
-              kebijakan khusus toko.
+              Informasi tambahan yang akan disisipkan ke prompt AI. Bisa diisi
+              jam operasional, daftar promo, FAQ, atau kebijakan khusus toko.
             </p>
           </Field>
         </div>
@@ -208,7 +257,9 @@ export default function AiTab({ config, onUpdate }: AiTabProps) {
       <div className="mt-5 flex items-center justify-between gap-3 rounded-lg bg-stone-50 px-3 py-2.5 md:mt-6 md:px-4 md:py-3">
         <div className="min-w-0">
           <p className="text-sm font-medium text-stone-900">AI Agent Aktif</p>
-          <p className="text-xs text-stone-500 truncate">Matikan untuk menjawab pelanggan secara manual</p>
+          <p className="text-xs text-stone-500 truncate">
+            Matikan untuk menjawab pelanggan secara manual
+          </p>
         </div>
         <button
           onClick={handleToggle}
@@ -225,7 +276,12 @@ export default function AiTab({ config, onUpdate }: AiTabProps) {
         </button>
       </div>
       <div className="mt-4 flex justify-end gap-3">
-        <Button size="sm" loading={saving} disabled={!dirty} onClick={handleSave}>
+        <Button
+          size="sm"
+          loading={saving}
+          disabled={!dirty}
+          onClick={handleSave}
+        >
           Simpan Perubahan
         </Button>
       </div>

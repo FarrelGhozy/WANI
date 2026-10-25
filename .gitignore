@@ -1,6 +1,9 @@
 # Project wide .gitignore file
 
 node_modules/
+dist
+out
+build
 bun.lock
 graphify-out
 .env
@@ -16,9 +19,16 @@ Docs/*.lot
 Docs/*.log
 Docs/*.out
 .claude
+.opencode
 
 # trash ds store
 .DS_Store
+
+# agent guidance — local per developer
+AGENTS.md
+
+# local todo / notes
+todo
 
 # design dna
 DESIGN_DNA.md

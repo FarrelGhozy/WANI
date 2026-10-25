@@ -6,7 +6,7 @@ import { ok, fail } from "../either"
 export const budgetStep: Step<ClearedInput, ClearedInput> = {
   name: "budget_check",
   async run(input, _ctx) {
-    if (await isBudgetExceeded()) {
+    if (await isBudgetExceeded(input.ownerId)) {
       await ActivityLogModel.log(input.ownerId, "budget_exceeded", "Daily LLM budget exceeded", input.conversationId)
       return fail({ type: "short_circuit", reply: STEP_REPLIES.BUDGET, intent: "budget_exceeded" })
     }

@@ -1,33 +1,41 @@
-import { createPortal } from 'react-dom'
-import type { ReactNode } from 'react'
-import { CheckIcon, CloseIcon, InfoIcon, AlertTriangleIcon } from '@/components/Icons.tsx'
-import type { Toast } from '@/hooks/useToast.ts'
+import { createPortal } from "react-dom";
+import type { ReactNode } from "react";
+import {
+  CheckIcon,
+  CloseIcon,
+  InfoIcon,
+  AlertTriangleIcon,
+} from "@/components/Icons.tsx";
+import type { Toast } from "@/hooks/useToast.ts";
 
-const colors: Record<Toast['type'], string> = {
-  success: 'border-emerald-300 bg-emerald-50 text-emerald-800',
-  error: 'border-red-300 bg-red-50 text-red-800',
-  info: 'border-stone-300 bg-stone-50 text-stone-800',
-  warning: 'border-amber-300 bg-amber-50 text-amber-800',
-}
+const colors: Record<Toast["type"], string> = {
+  success: "border-emerald-300 bg-emerald-50 text-emerald-800",
+  error: "border-red-300 bg-red-50 text-red-800",
+  info: "border-stone-300 bg-stone-50 text-stone-800",
+  warning: "border-amber-300 bg-amber-50 text-amber-800",
+};
 
-const icons: Record<Toast['type'], ReactNode> = {
+const icons: Record<Toast["type"], ReactNode> = {
   success: <CheckIcon size={16} />,
   error: <CloseIcon size={16} />,
   info: <InfoIcon size={16} />,
   warning: <AlertTriangleIcon size={16} />,
-}
+};
 
 interface ToastContainerProps {
-  toasts: Toast[]
-  onRemove: (id: string) => void
+  toasts: Toast[];
+  onRemove: (id: string) => void;
 }
 
-export default function ToastContainer({ toasts, onRemove }: ToastContainerProps) {
-  if (toasts.length === 0) return null
+export default function ToastContainer({
+  toasts,
+  onRemove,
+}: ToastContainerProps) {
+  if (toasts.length === 0) return null;
 
   return createPortal(
     <div className="fixed right-4 top-4 z-50 flex flex-col gap-2">
-      {toasts.map(t => (
+      {toasts.map((t) => (
         <div
           key={t.id}
           className={`flex items-start gap-2 rounded-lg border px-4 py-3 text-sm shadow-lg ${colors[t.type]}`}
@@ -39,8 +47,8 @@ export default function ToastContainer({ toasts, onRemove }: ToastContainerProps
             {t.action && (
               <button
                 onClick={() => {
-                  t.action?.onClick()
-                  onRemove(t.id)
+                  t.action?.onClick();
+                  onRemove(t.id);
                 }}
                 className="mt-1 text-xs font-medium underline underline-offset-2 hover:opacity-80"
               >
@@ -57,6 +65,6 @@ export default function ToastContainer({ toasts, onRemove }: ToastContainerProps
         </div>
       ))}
     </div>,
-    document.body,
-  )
+    document.body
+  );
 }

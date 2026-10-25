@@ -1,16 +1,19 @@
 # WANI — agent guidance
 
-Four independent Bun packages (not a monorepo). Each has its own `bun.lock` and `tsconfig.json`.
+Four independent packages (not a monorepo). Each has its own `bun.lock` and `tsconfig.json`.
 
 - **`api/`** — Express 5 + Prisma 7 — REST server with layered architecture (routes → controllers → models → Prisma delegate)
 - **`dashboard/`** — React 19 + TypeScript 6 + Vite 8 (Rolldown, not esbuild) — frontend UI
+- **`landingpage/`** — React 18 + Vite 6 + MUI — public landing page, bundled into dashboard
 - **`web-gen/`** — Bun + Astro 7 — static site generator for UMKM websites
-- **`wa-bot/`** — Baileys 7 RC (`baileys` unscoped) + Prisma 7 — WhatsApp bot with persistent auth, auto-reconnect
+
+WhatsApp is **not** a package anymore: it is the `waha` Docker service (`devlikeapro/waha`), called by the API through `api/src/services/waha.ts`.
 
 ## Architecture
 
 ```
-Bot pushes QR/status → API stores in WaSession DB → Dashboard polls GET /api/qr
+Dashboard ⇄ /api/sessions* → API ⇄ WAHA (X-Api-Key)
+WAHA webhook → POST /api/sessions/messages → AI pipeline → WAHA sendText
 ```
 
 - **api/src/index.ts** — Express 5 entrypoint (helmet, cors, morgan→Winston, json parser), graceful shutdown
@@ -18,19 +21,20 @@ Bot pushes QR/status → API stores in WaSession DB → Dashboard polls GET /api
 - **api/src/routes/** — Router modules, combined under `/api` in `routes/index.ts`
 - **api/src/controllers/** — Request handlers using `sendResponse()` unified JSON format
 - **api/src/models/** — `BaseModel<T>` abstract class with Prisma delegate pattern (getAll/getById/create/update/delete)
-- **api/src/schemas/** — Zod v4 schemas (upsertQrSchema, etc.)
-- **api/src/middleware/** — `requireAuth` (Bearer API_TOKEN), `requireJwt` (JWT-based), `optionalJwt` (silent JWT parse, no error on missing), `validate` (safeParseAsync), `errorHandler` (AppError-aware)
+- **api/src/schemas/** — Zod v4 schemas (`createSessionSchema`, `pairingSchema`, `createApiKeySchema`, etc.)
+- **api/src/middleware/** — `requireServiceAuth(scope)` (managed API key or legacy Bearer API_TOKEN), `requireJwt` (JWT-based), `optionalJwt` (silent JWT parse, no error on missing), `validate` (safeParseAsync), `errorHandler` (AppError-aware)
 - **api/src/utils/** — `AppError` subclasses (BadRequest/Unauthorized/Forbidden/NotFound/InternalServer), `sendResponse()`
-- **api/src/config/** — PrismaClient singleton (driver adapter `@prisma/adapter-pg`), Winston logger
+- **api/src/config/** — PrismaClient singleton (driver adapter `@prisma/adapter-pg`), typed env, Winston logger
 - **api/src/services/email.ts** — Nodemailer SMTP transport for password reset emails
+- **api/src/services/waha.ts** — WAHA client: create/get session, sync status/QR, pairing, reset, delete, `sendText`
 - **api/src/ai/** — Typed pipeline: `PipelineBuilder<I,O>` chain of `Step<I,O>` (16 typed steps), `Either<E,T>` railway-oriented error handling, per-label circuit breaker registry, OpenRouter LLM engine with retry+fallback, intent action handlers, hardened system prompt builder with canary
 - **api/src/guardrails/** — Multi-layer defense: PII scanner/redactor, ML classifier (OpenRouter fast model), deep LLM-judge, output grounding check. Plus per-customer sliding-window rate limit, regex injection detection (EN+ID), daily LLM budget tracker, output sanitizer + leak detector. 3-tier injection defense (T1 regex → T2 classifier → T3 judge) with conditional slow path
 - **dashboard/vite.config.ts** — `@vitejs/plugin-react` + `@rolldown/plugin-babel` with `reactCompilerPreset`, Tailwind v4, alias `@` → `src` dan `@landingpage` → `../landingpage/src`. **Tidak ada proxy `/api`**: dev butuh `dashboard/.env` berisi `VITE_API_URL=http://localhost:3001/api`; di Docker nginx yang mem-proxy `/api`, `/uploads`, `/s` ke `api:3001`
 - **dashboard/src/index.css** — `@import "tailwindcss"` (Tailwind v4 CSS-first config, no `tailwind.config.*`)
 - **dashboard/src/hooks/** — Hooks use real API via `fetchApi()` (JWT auth from localStorage). `useWaStatus` and `useAuth` retain `MOCK = false` toggle for legacy compatibility.
-- **wa-bot/src/index.ts** — Baileys `makeWASocket`, QR terminal print + API POST, auto-reconnect, **forwards messages to API's POST /api/chat** and sends the AI reply back
-- **wa-bot/src/config/db.ts** — PrismaClient singleton (driver adapter `@prisma/adapter-pg`)
-- **wa-bot/src/services/whatsapp-auth.ts** — `usePrismaAuthState()` implementing `SignalKeyStore` (Creds + SignalKey tables)
+- **api/src/routes/sessions.ts** + **controllers/sessions.ts** — `/api/sessions*` (session lifecycle, pairing, WAHA webhook)
+- **api/src/models/wa-session.ts** — per-owner `WaSession` mirror (`ownerId @unique`, `waSessionName = store-<ownerId>`)
+- **api/src/routes/api-key.ts** — managed service keys (`sessions:messages`, etc.) for WAHA webhook auth
 
 ## Commands
 
@@ -48,12 +52,11 @@ Bot pushes QR/status → API stores in WaSession DB → Dashboard polls GET /api
 - `bun run lint` — `eslint .` (flat config)
 - `bun run preview` — `vite preview`
 
-**WA Bot** (`wa-bot/`):
-- `bun run src/index.ts` — start WhatsApp bot
-- `bun run prisma:generate` — generate Prisma client
-- `bun run prisma:migrate` — apply dev migrations
-- `bun run prisma:migrate -- --name <nama>` — create named dev migration (wajib jalanin setiap ada perubahan schema!)
-- `bun run prisma:deploy` — apply production migrations
+**WAHA** (Docker, root):
+- `bun run dev:waha` — start WAHA locally (`docker-compose.local.yml`, host port 3000)
+- `bun run dev:waha:logs` — follow WAHA logs
+- `bun run dev` — WAHA + API + dashboard
+- Production stack: `docker compose up -d waha` (internal `waha:3000`, not published)
 
 **Web-Gen** (`web-gen/`):
 - `bun install` — install dependencies
@@ -68,14 +71,17 @@ Semua endpoint **sudah diimplementasikan** — **60+ endpoint**. Tabel lengkap +
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
 | `POST` | `/api/upload` | 🔒 JWT | Upload file (QRIS image, etc.) |
-| `GET` | `/api/qr` | — | Get current QR code string |
-| `GET` | `/api/qr/status` | — | Get connection status + phone number |
-| `POST` | `/api/qr` | Bearer API_TOKEN | Push QR code / update status (Zod validated) |
-| `DELETE` | `/api/qr` | Bearer API_TOKEN | Clear QR on successful connection |
-| `POST` | `/api/qr/reset` | 🔒 JWT | Reset sesi bot (hapus `WaSession` + `Creds`/`SignalKey`) |
-| `POST` | `/api/qr/pairing` | 🔒 JWT | Minta pairing code untuk nomor tertentu |
-| `POST` | `/api/qr/refresh-pairing` | 🔒 JWT | Buang pairing code agar bot membuat kode baru |
-| `POST` | `/api/chat` | Bearer API_TOKEN | Process message through AI pipeline → reply |
+| `GET` | `/api/sessions` | 🔒 JWT | Sesi WAHA milik owner (filter `status` opsional) |
+| `POST` | `/api/sessions` | 🔒 JWT | Buat/ambil sesi WAHA (`store-<ownerId>`) |
+| `DELETE` | `/api/sessions` | 🔒 JWT | Logout + hapus sesi WAHA dan row `WaSession` |
+| `POST` | `/api/sessions/sync` | 🔒 JWT | Sync status dari WAHA + refresh QR |
+| `POST` | `/api/sessions/reset` | 🔒 JWT | Reset sesi (logout, delete, create ulang) |
+| `POST` | `/api/sessions/pairing` | 🔒 JWT | Minta pairing code (`{ phone }`) |
+| `POST` | `/api/sessions/refresh-pairing` | 🔒 JWT | Minta ulang pairing code |
+| `POST` | `/api/sessions/messages` | Service key `sessions:messages` | Webhook pesan WAHA → AI pipeline |
+| `GET` | `/api/api-keys` | 🔒 JWT | List managed service keys |
+| `POST` | `/api/api-keys` | 🔒 JWT | Create managed key (token only shown once) |
+| `DELETE` | `/api/api-keys/:id` | 🔒 JWT | Revoke managed key |
 | `GET` | `/api/store` | — | Get store profile |
 | `PUT` | `/api/store` | 🔒 JWT | Update store profile |
 | `GET` | `/api/ai-config` | 🔒 JWT | Get AI config |
@@ -112,14 +118,12 @@ Semua endpoint **sudah diimplementasikan** — **60+ endpoint**. Tabel lengkap +
 | `POST` | `/api/website/publish` | 🔒 JWT | Mark as published (tidak men-deploy) |
 | `GET` | `/api/website/generations` | 🔒 JWT | Riwayat generate |
 | `DELETE` | `/api/website/generations/:id` | 🔒 JWT | Hapus generation + folder |
-| `GET` | `/api/outgoing` | Bearer API_TOKEN | Pesan HUMAN/notification yang belum terkirim (bot) |
-| `PATCH` | `/api/outgoing/:id/delivered` | Bearer API_TOKEN | Tandai pesan terkirim |
 | `GET` | `/api/health` | — | Health check (DB + LLM key) |
 | `GET` | `/api/metrics` | — | Prometheus metrics |
 | `GET` | `/s/:slug` | — | Serve generated static site |
 | `GET` | `/uploads/:file` | — | Serve uploaded file |
 
-> 🔒 = `requireJwt` (Authorization: Bearer `<JWT>`), `Bearer API_TOKEN` = `requireAuth` (bot ↔ API), — = publik (JWT opsional via `optionalJwt` global)
+> 🔒 = `requireJwt` (Authorization: Bearer `<JWT>`), Service key = `requireServiceAuth(scope)` (managed API key; legacy `API_TOKEN` only if `ALLOW_LEGACY_API_TOKEN=true`), — = publik (JWT opsional via `optionalJwt` global)
 
 Unified response: `{ status: "success"|"failure", message, data? }`
 
@@ -128,23 +132,27 @@ Error classes: BadRequestError (400), UnauthorizedError (401), ForbiddenError (4
 ## Dashboard
 
 - **14 halaman**: Dashboard, Products (+ProductForm), Orders (+OrderDetail), Customers (dual-panel inline chat), Settings, Website, LoginPage, SignUpPage, ForgotPasswordPage, ResetPasswordPage, VerifyEmailPage, NotFoundPage + landing page publik di `/`
-- **Settings punya 3 tab**: `Toko` (termasuk metode pembayaran via `PaymentTab`), `AI Agent`, `WA Session`
+- **Settings punya 4 tab**: `Toko` (termasuk metode pembayaran via `PaymentTab`), `AI Agent`, `WA Session`, `API Keys`
 - **Semua hook pakai API asli**: `useProducts`, `useOrders`, `useCustomers`, `useSettings`, `usePaymentMethods`, `useWebsite`, `useWaStatus`, `useAuth` — tanpa mock toggle, fetch via `fetchApi()`
 - **UI primitives** in `components/ui/` (Button, Card, Badge, Table, Modal, Input, Select, Spinner, EmptyState, Pagination) — no external component library
-- **Feature components**: StoreTab, AiTab, WaSessionTab, PaymentTab, CategoryModal, ProductListView, ProductCard, OrderListView, OrderTimeline, CustomerListView, ChatView
+- **Feature components**: StoreTab, AiTab, WaSessionTab, ApiKeysTab, PaymentTab, CategoryModal, ProductListView, ProductCard, OrderListView, OrderTimeline, CustomerListView, ChatView
 - **Layout**: `Layout.tsx` shell with `Sidebar.tsx` + `Topbar.tsx` + `<Outlet />`, `BottomNav.tsx` for mobile; `AuthLayout.tsx` for public pages
 - **Routing**: React Router v8 `createBrowserRouter` in `App.tsx`, with `ProtectedRoute` gate
 
 ## Docker Compose
 
 ```bash
-cp .env.example .env        # edit: isi POSTGRES_PASSWORD, API_TOKEN, JWT_SECRET
+cp .env.example .env        # edit: isi DATABASE_PASSWORD, WAHA_API_KEY, JWT_SECRET
 docker compose up --build   # build + start semua service
 ```
 
-4 services: `db` (PostgreSQL 17), `api` (Express, port 3001), `dashboard` (Vite dev, port 5173), `wa-bot` (Baileys).
+5 services: `db` (PostgreSQL 17), `api` (Express, internal port 3001), `dashboard` (nginx, port 5173), `waha` (WhatsApp HTTP API, internal port 3000), `backup`.
 
-Database `wani_api` + `wa_bot` dibuat otomatis via `init-dbs.sh`.
+Database `wani_api` dibuat otomatis via `init-dbs.sh`. WAHA menyimpan state sesi/autentikasi + media di database `postgres` pada server yang sama.
+
+Key env (root `.env`, shared by API + WAHA): `DATABASE_PASSWORD`, `DATABASE_NAME=wani_api`, `PORT=3001`, `WAHA_API_KEY`, `WAHA_API_URL`, `JWT_SECRET`, `ALLOWED_ORIGINS`, `ALLOW_LEGACY_API_TOKEN` (legacy `API_TOKEN` only during migration). Managed keys are created via `/api/api-keys`, not env.
+
+CI: `.github/workflows/api.yaml` + `.github/workflows/dashboard.yaml`.
 
 ## Type Casting Rules
 
@@ -161,7 +169,6 @@ Database `wani_api` + `wa_bot` dibuat otomatis via `init-dbs.sh`.
   - Within-package `./` imports for sibling files in the same directory are acceptable (standard TypeScript pattern).
   - `api/` → `@/*` (project root, maps to `./src/*`), `@db/*` (Prisma client), `@web-gen/*` (web-gen source, under `web-gen/src/`)
   - `dashboard/` → `@/*` (project root, under `src/`)
-  - `wa-bot/` → `@/*` (project root, maps to `./src/*`), `@db/*` (Prisma client)
   - `web-gen/` → `@/*` (project root)
 
   Vite/Rolldown projects (dashboard) also need `resolve.alias` in `vite.config.ts` to match the tsconfig paths.
@@ -169,8 +176,8 @@ Database `wani_api` + `wa_bot` dibuat otomatis via `init-dbs.sh`.
 ## Quirks
 
 - `verbatimModuleSyntax` is on everywhere — use `import type` for type-only imports
-- `api/`, `web-gen/`, and `wa-bot/` use `module: "Preserve"`, `allowImportingTsExtensions`, `noEmit: true` (Bun runtime, no tsc emit)
-- API + wa-bot path aliases: `@db/*` → `./generated/prisma/*`, `@/*` → `./src/*`
+- `api/` and `web-gen/` use `module: "Preserve"`, `allowImportingTsExtensions`, `noEmit: true` (Bun runtime, no tsc emit)
+- API path aliases: `@db/*` → `./generated/prisma/*`, `@/*` → `./src/*`
 - web-gen path alias: `@/*` → `./*`
 - Dashboard has TypeScript project references: `tsconfig.app.json` (src/) + `tsconfig.node.json` (vite.config.ts)
 - ESLint 10 flat config with `eslint/config` module — not `.eslintrc*`
@@ -179,9 +186,10 @@ Database `wani_api` + `wa_bot` dibuat otomatis via `init-dbs.sh`.
 - Prisma schemas split across `prisma/models/*.prisma` (not a single schema.prisma), output to `generated/prisma/` (gitignored)
 - Prisma uses `prisma.config.ts` (not `prisma/schema.prisma` as config) with Prisma 7's `defineConfig` — migrations path set there
 - Tests use Bun's built-in `bun:test` runner (via `bun run test`)
-- WaSession is single-row (`id: "default"`), always upserted
-- Bot expects API to be running first (POSTs QR on `connection.update`)
-- Both databases on same PG server: `wani_api` (api) + `wa_bot` (bot)
+- WaSession is per owner (`ownerId @unique`), name `store-<ownerId>`, used as a mirror of WAHA state
+- WAHA must be running before creating a WhatsApp session from the dashboard
+- WAHA env: `WAHA_API_KEY` (shared API ↔ WAHA), `WAHA_API_URL` (`http://waha:3000/api` in Compose, `http://localhost:3000/api` locally)
+- Both databases on same PG server: `wani_api` (API) + `postgres` (WAHA session/media state)
 - `import.meta.env.PROD == null` check in `api/src/config/db.ts` — this is always true under Bun; the global Prisma cache works in both dev and prod
 - `optionalJwt` middleware applied globally in `api/src/server.ts` — silently parses JWT on all `/api` routes; `req.user` available for public endpoints when JWT is present, falls through when absent
 
@@ -193,7 +201,7 @@ Database `wani_api` + `wa_bot` dibuat otomatis via `init-dbs.sh`.
 
 ## AI / ML Pipeline
 
-**Now wired end-to-end.** Bot forwards messages to POST /api/chat → processMessage() → guardrails → LLM → intent handler → reply back to WA.
+**Now wired end-to-end.** WAHA posts the webhook to POST /api/sessions/messages → processMessage() → guardrails → LLM → intent handler → reply sent back to WA via `WahaService.sendText`.
 
 ### Full Pipeline Flow (16 steps)
 
@@ -299,7 +307,7 @@ scanInput reasons mapped by confidence:
 
 ### Model config
 
-- **`AiConfig` table** (single-row `id: "default"`) — stores `model`, `systemPrompt`, `temperature`, `maxTokens`, `greetingMessage`, `knowledgeBase`, `isActive`
+- **`AiConfig` table** (one row per owner, `ownerId @unique`) — stores `model`, `systemPrompt`, `temperature`, `maxTokens`, `greetingMessage`, `knowledgeBase`, `isActive`
 - **`.env` env vars** (`LLM_MODEL`, `LLM_TEMPERATURE`, etc.) are fallback defaults — the DB row takes precedence at runtime
 - **Guardrail env vars**: `RATE_LIMIT_*`, `MAX_INPUT_CHARS`, `MAX_REPLY_CHARS`, `DAILY_LLM_BUDGET`, `CLASSIFIER_ENABLED`, `CLASSIFIER_MODEL`, `JUDGE_ENABLED`, `JUDGE_MODEL`, `GROUNDING_CHECK_ENABLED`, `GROUNDING_MODEL`
 - **OpenRouter** is the provider (`OPENROUTER_API_KEY` env var), not direct OpenAI. Model IDs are OpenRouter slugs (e.g. `opencode/deepseek-v4-flash-free`)
@@ -329,11 +337,11 @@ Semua dokumentasi kanonik ada di **`Docs/`** (README root adalah symlink ke `Doc
 | `Docs/ARCHITECTURE.md` | Alur sistem, multi-tenancy, topologi |
 | `Docs/REPOSITORY_STRUCTURE.md` | Struktur folder, path alias, konvensi |
 | `Docs/CONFIGURATION.md` | Semua env var + presedensi LLM |
-| `Docs/DATA_MODEL.md` | 17 tabel `wani_api` + 2 tabel `wa_bot`, enum, migrasi |
+| `Docs/DATA_MODEL.md` | 18 tabel `wani_api`, enum, migrasi; state WAHA di database `postgres` |
 | `Docs/API_CONTRACT.md` | Semua endpoint, auth, format respons, rate limit |
 | `Docs/AI_PIPELINE.md` | 16 step pipeline, LLM engine, intent action |
 | `Docs/GUARDRAILS.md` | 3-tier firewall, PII, rate limit, budget, output |
-| `Docs/SERVICES/API.md` · `DASHBOARD.md` · `WA_BOT.md` · `WEB_GEN.md` | Detail per paket |
+| `Docs/SERVICES/API.md` · `DASHBOARD.md` · `WAHA.md` · `WEB_GEN.md` | Detail per paket / service |
 | `Docs/DEVELOPMENT.md` · `Docs/DEPLOYMENT.md` | Setup lokal · deploy, CI/CD, backup |
 
 ## Workflow Step-by-Step
@@ -424,7 +432,7 @@ git commit -m "🔥 api: add products CRUD — route, schema, controller, model"
 - **`optionalJwt` globally** — silent JWT parse on all `/api` routes, public endpoints prefer auth'd user when JWT present
 - **`getOwnerIdOrFirst(req)`** — JWT user → first DB user → `"default"` fallback for public GET endpoints
 - **Owner scoping at Model layer** — Controllers call Model methods which add `where: { ownerId }` internally
-- **WaSession stays single-row global** — one WhatsApp connection shared by all users
+- **WaSession is per owner** — one WhatsApp connection per store (`store-<ownerId>`), mirroring WAHA state
 - **M9 leet normalization** — tokenized: digit→letter only in tokens with letters, preserves prices/years
 - **E2E tests in `e2e/`** — isolated from unit tests via `bun run test:e2e` (avoids `mock.module` global leakage)
 - **Merge `d6d9c1f`** — kept our test scripts (`bun run test` + `bun run test:e2e`), took their screenshots
