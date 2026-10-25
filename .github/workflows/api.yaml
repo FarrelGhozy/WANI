@@ -7,6 +7,7 @@ on:
     paths:
       - "api/**"
       - "web-gen/**" # API image bundles web-gen templates
+      - ".github/workflows/api.yaml"
     # For production deployment using semantic versioning
     tags:
       - "api-v*.*.*"
@@ -16,6 +17,7 @@ on:
     paths:
       - "api/**"
       - "web-gen/**" # API image bundles web-gen templates
+      - ".github/workflows/api.yaml"
 
 permissions:
   contents: read
