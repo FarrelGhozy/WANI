@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.2.1 — 2026-10-25
+
+Patch rilis untuk dokumentasi dan CI. **Tidak ada perubahan runtime**; image tetap `1.2.0`.
+
+- README quick start sekarang mewajibkan edit `.env` (`DATABASE_PASSWORD`, `JWT_SECRET`, `WAHA_API_KEY`) sebelum `docker compose up`
+- Workflow CI berjalan saat file workflow-nya sendiri berubah
+- API CI memasang dependency web-gen sebelum typecheck API
+- `.env.example` menandai nilai placeholder yang wajib diganti
+
 ## 1.2.0 — 2026-10-25
 
 ### What's Changed
